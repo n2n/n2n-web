@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map;
+namespace n2n\web\dispatch\map;
 
 use n2n\util\StringUtils;
 use n2n\util\ex\IllegalStateException;
@@ -111,7 +111,7 @@ class PropertyPathPart {
 	/**
 	 * @param string $expression
 	 * @throws InvalidPropertyExpressionException
-	 * @return \n2n\dispatch\map\PropertyPathPart
+	 * @return \n2n\web\dispatch\map\PropertyPathPart
 	 */
 	public static function createFromExpression($expression) {
 		if ($expression instanceof PropertyPathPart) {

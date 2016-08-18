@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 use n2n\l10n\MessageTranslator;
 use n2n\reflection\ArgUtils;
-use n2n\ui\Raw;
+use n2n\web\ui\Raw;
 use n2n\util\uri\Url;
-use n2n\http\nav\Murl;
+use n2n\web\http\nav\Murl;
 use n2n\l10n\MessageContainer;
 use n2n\l10n\N2nLocale;
 use n2n\core\config\GeneralConfig;
@@ -220,7 +220,7 @@ class HtmlBuilderMeta {
 	
 // 	/**
 // 	 * @param Murlable $murlBuilder
-// 	 * @return \n2n\ui\view\impl\html\Url
+// 	 * @return \n2n\web\ui\view\impl\html\Url
 // 	 */
 // 	public function buildUrl(Murlable $murlBuilder) {
 // 		return $murlBuilder->toUrl($this->view->getHttpContext(), $this->view->getControllerContext());

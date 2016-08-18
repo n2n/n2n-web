@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view;
+namespace n2n\web\ui\view;
 
 use n2n\model\ThreadScoped;
 use n2n\core\container\AppCache;
@@ -224,14 +224,14 @@ class ViewCacheStore implements ThreadScoped {
 // 	}
 // 	/**
 // 	 * (non-PHPdoc)
-// 	 * @see n2n\ui\view.ViewStateListener::onViewContentsBuffering()
+// 	 * @see n2n\web\ui\view.ViewStateListener::onViewContentsBuffering()
 // 	 */
 // 	public function onViewContentsBuffering(View $view) { 
 		
 // 	} 
 // 	/**
 // 	 * (non-PHPdoc)
-// 	 * @see n2n\ui\view.ViewStateListener::onPanelImport()
+// 	 * @see n2n\web\ui\view.ViewStateListener::onPanelImport()
 // 	 */
 // 	public function onPanelImport(View $view, $panelName) { 
 		
@@ -247,7 +247,7 @@ class ViewCacheStore implements ThreadScoped {
 // 	}
 // 	/**
 // 	 * (non-PHPdoc)
-// 	 * @see n2n\ui\view.ViewStateListener::viewContentsInitialized()
+// 	 * @see n2n\web\ui\view.ViewStateListener::viewContentsInitialized()
 // 	 */
 // 	public function viewContentsInitialized(View $view) {
 // 		$this->contentsWriter = IoUtils::createSafeFileOutputStream($this->baseFilePath . ViewCacheStore::VIEW_CONTENTS_FILE_SUFFIX);

@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
-use n2n\dispatch\property\ManagedPropertyProvider;
-use n2n\dispatch\model\SetupProcess;
+use n2n\web\dispatch\property\ManagedPropertyProvider;
+use n2n\web\dispatch\model\SetupProcess;
 use n2n\reflection\property\PropertiesAnalyzer;
 use n2n\reflection\property\InvalidPropertyAccessMethodException;
 use n2n\reflection\ReflectionException;
 use n2n\reflection\property\AccessProxy;
 use n2n\reflection\property\TypeConstraint;
 use n2n\reflection\property\ConstraintsConflictException;
-use n2n\dispatch\annotation\AnnoDispDateTime;
-use n2n\dispatch\annotation\AnnoDispDateTimeArray;
-use n2n\dispatch\annotation\AnnoIcuFormat;
+use n2n\web\dispatch\annotation\AnnoDispDateTime;
+use n2n\web\dispatch\annotation\AnnoDispDateTimeArray;
+use n2n\web\dispatch\annotation\AnnoIcuFormat;
 
 class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 	
@@ -59,7 +59,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		$annotationSet = $setupProcess->getAnnotationSet();
 
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispScalar');
+				'n2n\web\dispatch\annotation\AnnoDispScalar');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(new ScalarProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName), false), 
@@ -67,7 +67,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispScalar');
+				'n2n\web\dispatch\annotation\AnnoDispScalar');
 		foreach ($annotations as $methodName => $annotation) {			
 			$setupProcess->provideManagedProperty(new ScalarProperty(
 							$propertyAnalyzer->analyzeProperty(
@@ -76,7 +76,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispScalarArray');
+				'n2n\web\dispatch\annotation\AnnoDispScalarArray');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(new ScalarProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName), true), 
@@ -84,7 +84,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispScalarArray');
+				'n2n\web\dispatch\annotation\AnnoDispScalarArray');
 		foreach ($annotations as $methodName => $annotation) {
 			$setupProcess->provideManagedProperty(new ScalarProperty(
 							$propertyAnalyzer->analyzeProperty(
@@ -99,44 +99,44 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		$annotationSet = $setupProcess->getAnnotationSet();
 
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispDateTime');
+				'n2n\web\dispatch\annotation\AnnoDispDateTime');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(self::createDateTimeProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName),
 							$annotation, $annotationSet->getPropertyAnnotation($propertyName, 
-									'n2n\dispatch\annotation\AnnoIcuFormat')), 
+									'n2n\web\dispatch\annotation\AnnoIcuFormat')), 
 					$annotation);
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispDateTime');
+				'n2n\web\dispatch\annotation\AnnoDispDateTime');
 		foreach ($annotations as $methodName => $annotation) {			
 			$setupProcess->provideManagedProperty(self::createDateTimeProperty(
 							$propertyAnalyzer->analyzeProperty(
 									PropertiesAnalyzer::parsePropertyName($methodName)),
 							$annotation, $annotationSet->getPropertyAnnotation($propertyName, 
-									'n2n\dispatch\annotation\AnnoIcuFormat')), 
+									'n2n\web\dispatch\annotation\AnnoIcuFormat')), 
 					$annotation);
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispDateTimeArray');
+				'n2n\web\dispatch\annotation\AnnoDispDateTimeArray');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(self::createDateTimeProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName),
 							$annotation, $annotationSet->getPropertyAnnotation($propertyName, 
-									'n2n\dispatch\annotation\AnnoIcuFormat')), 
+									'n2n\web\dispatch\annotation\AnnoIcuFormat')), 
 					$annotation);
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispDateTimeArray');
+				'n2n\web\dispatch\annotation\AnnoDispDateTimeArray');
 		foreach ($annotations as $methodName => $annotation) {
 			$setupProcess->provideManagedProperty(self::createDateTimeProperty(
 							$propertyAnalyzer->analyzeProperty(
 									PropertiesAnalyzer::parsePropertyName($methodName)),
 							$annotation, $annotationSet->getMethodAnnotation($methodName, 
-									'n2n\dispatch\annotation\AnnoIcuFormat')), 
+									'n2n\web\dispatch\annotation\AnnoIcuFormat')), 
 					$annotation);
 		}
 	}
@@ -146,7 +146,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		$annotationSet = $setupProcess->getAnnotationSet();
 		
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispFile');
+				'n2n\web\dispatch\annotation\AnnoDispFile');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(new FileProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName), false), 
@@ -154,7 +154,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispFile');
+				'n2n\web\dispatch\annotation\AnnoDispFile');
 		foreach ($annotations as $methodName => $annotation) {			
 			$setupProcess->provideManagedProperty(new FileProperty(
 							$propertyAnalyzer->analyzeProperty(
@@ -164,7 +164,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispFileArray');
+				'n2n\web\dispatch\annotation\AnnoDispFileArray');
 		foreach ($annotations as $propertyName => $annotation) {
 			$setupProcess->provideManagedProperty(new FileProperty(
 							$propertyAnalyzer->analyzeProperty($propertyName), 
@@ -173,7 +173,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispFileArray');
+				'n2n\web\dispatch\annotation\AnnoDispFileArray');
 		foreach ($annotations as $methodName => $annotation) {
 			$setupProcess->provideManagedProperty(new FileProperty(
 							$propertyAnalyzer->analyzeProperty(
@@ -188,7 +188,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		$annotationSet = $setupProcess->getAnnotationSet();
 		
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispObject');
+				'n2n\web\dispatch\annotation\AnnoDispObject');
 		foreach ($annotations as $propertyName => $annotation) {
 			$objectProperty = new ObjectProperty($propertyAnalyzer->analyzeProperty($propertyName), false);
 			$objectProperty->setCreator($annotation->getCreator());
@@ -196,7 +196,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispObject');
+				'n2n\web\dispatch\annotation\AnnoDispObject');
 		foreach ($annotations as $methodName => $annotation) {			
 			$objectProperty = new ObjectProperty($propertyAnalyzer->analyzeProperty(
 					PropertiesAnalyzer::parsePropertyName($methodName)), false);
@@ -205,7 +205,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getPropertyAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispObjectArray');
+				'n2n\web\dispatch\annotation\AnnoDispObjectArray');
 		foreach ($annotations as $propertyName => $annotation) {
 			$objectProperty = new ObjectProperty($propertyAnalyzer->analyzeProperty($propertyName), 
 					true, $annotation->useArrayObject());
@@ -214,7 +214,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 		}
 		
 		$annotations = $annotationSet->getMethodAnnotationsByName(
-				'n2n\dispatch\annotation\AnnoDispObjectArray');
+				'n2n\web\dispatch\annotation\AnnoDispObjectArray');
 		foreach ($annotations as $methodName => $annotation) {
 			$objectProperty = new ObjectProperty(
 					$propertyAnalyzer->analyzeProperty(
@@ -251,7 +251,7 @@ class CommonManagedPropertyProvider implements ManagedPropertyProvider {
 							true, true));
 					return;
 				default:					
-					if (is_subclass_of($constraint->getTypeName(), 'n2n\dispatch\Dispatchable')) {
+					if (is_subclass_of($constraint->getTypeName(), 'n2n\web\dispatch\Dispatchable')) {
 						$setupProcess->provideManagedProperty(
 								new ObjectProperty($propertyAccessProxy, false));
 						return;

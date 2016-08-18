@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag;
+namespace n2n\web\dispatch\mag;
 
 class MagCollection {
 	private $mags = array();

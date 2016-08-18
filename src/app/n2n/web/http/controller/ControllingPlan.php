@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
 use n2n\l10n\N2nLocale;
 use n2n\core\container\N2nContext;
-use n2n\http\PageNotFoundException;
-use n2n\http\StatusException;
-use n2n\http\UnknownControllerContextException;
+use n2n\web\http\PageNotFoundException;
+use n2n\web\http\StatusException;
+use n2n\web\http\UnknownControllerContextException;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';

@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\dispatch\map\val\SimplePropertyValidator;
+use n2n\web\dispatch\map\val\SimplePropertyValidator;
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\map\val\ValidationUtils;
-use n2n\N2N;
+use n2n\web\dispatch\map\val\ValidationUtils;
+use n2n\core\N2N;
 
 class ValDateTime extends SimplePropertyValidator {
 	const DEFAULT_MIN_ERROR_TEXT_CODE = 'n2n.dispatch.val.ValDateTime.min';
@@ -42,7 +42,7 @@ class ValDateTime extends SimplePropertyValidator {
 		$this->max = $max;
 		$this->maxErrorMessage = ValidationUtils::createMessage($maxErrorMessage);
 		
-		$this->restrictType(array('n2n\dispatch\property\impl\DateTimeProperty'));
+		$this->restrictType(array('n2n\web\dispatch\property\impl\DateTimeProperty'));
 	}
 	
 	public static function minMax(\DateTime $min = null, \DateTime $max = null) {

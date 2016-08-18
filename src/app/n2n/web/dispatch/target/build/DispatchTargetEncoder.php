@@ -19,15 +19,15 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target\build;
+namespace n2n\web\dispatch\target\build;
 
-use n2n\dispatch\target\TargetItem;
-use n2n\dispatch\target\PropertyItem;
-use n2n\dispatch\target\ArrayItem;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\target\ObjectArrayItem;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\target\DispatchTarget;
+use n2n\web\dispatch\target\TargetItem;
+use n2n\web\dispatch\target\PropertyItem;
+use n2n\web\dispatch\target\ArrayItem;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\ObjectArrayItem;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\target\DispatchTarget;
 
 class DispatchTargetEncoder {
 	private $dispatchClassName;

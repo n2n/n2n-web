@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch;
+namespace n2n\web\dispatch;
 
-use n2n\dispatch\model\DispatchModel;
+use n2n\web\dispatch\model\DispatchModel;
 
 interface DynamicDispatchable extends Dispatchable {
 	public function setup(DispatchModel $dispatchModel);

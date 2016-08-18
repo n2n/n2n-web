@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\dispatch\property\impl\ScalarProperty;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\property\impl\ScalarProperty;
 
 abstract class ScalarMagAdapter extends MagAdapter {
 	
@@ -38,7 +38,7 @@ abstract class ScalarMagAdapter extends MagAdapter {
 	}
 	
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\Mag::setupBindingDefinition()
+	 * @see \n2n\web\dispatch\mag\Mag::setupBindingDefinition()
 	 */
 	public function setupBindingDefinition(BindingDefinition $bd) {
 	}

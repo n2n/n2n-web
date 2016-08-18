@@ -20,8 +20,8 @@
 	 * Thomas Günther.......: Developer, Hangar
 	 */
 
-	use n2n\dispatch\map\PropertyPath;
-	use n2n\ui\view\impl\html\HtmlView;
+	use n2n\web\dispatch\map\PropertyPath;
+	use n2n\web\ui\view\impl\html\HtmlView;
 
 	$view = HtmlView::view($this);
 	$formHtml = HtmlView::formHtml($this);

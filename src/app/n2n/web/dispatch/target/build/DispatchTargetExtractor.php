@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target\build;
+namespace n2n\web\dispatch\target\build;
 
-use n2n\dispatch\target\DispatchTargetException;
-use n2n\dispatch\target\DispatchTarget;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\map\InvalidPropertyExpressionException;
+use n2n\web\dispatch\target\DispatchTargetException;
+use n2n\web\dispatch\target\DispatchTarget;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\InvalidPropertyExpressionException;
 use n2n\reflection\ReflectionUtils;
-use n2n\dispatch\target\TargetItem;
-use n2n\dispatch\target\PropertyItem;
-use n2n\http\UploadDefinition;
+use n2n\web\dispatch\target\TargetItem;
+use n2n\web\dispatch\target\PropertyItem;
+use n2n\web\http\UploadDefinition;
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\target\ArrayItem;
-use n2n\dispatch\map\CorruptedDispatchException;
+use n2n\web\dispatch\target\ArrayItem;
+use n2n\web\dispatch\map\CorruptedDispatchException;
 
 class DispatchTargetExtractor {
 	private $coder;
@@ -221,7 +221,7 @@ class DispatchTargetExtractor {
 // 		if ($uploadDefinitions === null) return;
 		
 // 		try {
-// 			ArgUtils::valArray($uploadDefinitions, 'n2n\http\UploadDefinition');
+// 			ArgUtils::valArray($uploadDefinitions, 'n2n\web\http\UploadDefinition');
 // 		} catch (\InvalidArgumentException $e) {
 // 			throw $this->createException('Invalid upload definition.', $e);
 // 		}

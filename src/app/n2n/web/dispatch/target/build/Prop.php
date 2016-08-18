@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target\build;
+namespace n2n\web\dispatch\target\build;
 
 class Prop {
 	const KEY_TYPE = 't';

@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\PropertyPath;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\PropertyPath;
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\map\val\impl\ValArraySize;
-use n2n\ui\view\impl\html\HtmlUtils;
+use n2n\web\dispatch\map\val\impl\ValArraySize;
+use n2n\web\ui\view\impl\html\HtmlUtils;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\property\impl\ObjectProperty;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\ui\UiComponent;
-use n2n\dispatch\mag\MagDispatchable;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\property\impl\ObjectProperty;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\ui\UiComponent;
+use n2n\web\dispatch\mag\MagDispatchable;
 
 class MagCollectionArrayMag extends MagAdapter {
 	const DEFAULT_INC = 10;
@@ -129,7 +129,7 @@ class MagCollectionArrayMag extends MagAdapter {
 		$this->setContainerAttrs(
 				HtmlUtils::mergeAttrs(array('data-num' => $num), $this->getContainerAttrs($view)));
 					
-		return $view->getImport('\n2n\dispatch\mag\impl\view\magCollectionArrayOption.html',
+		return $view->getImport('\n2n\web\dispatch\mag\impl\view\magCollectionArrayOption.html',
 				array('propertyPath' => $propertyPath, 'numExisting' => $numExisting, 'num' => $num, 
 						'min' => $this->min));
 	}

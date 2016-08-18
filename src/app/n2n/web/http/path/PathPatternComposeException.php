@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\path;
+namespace n2n\web\http\path;
 
-use n2n\http\HttpRuntimeException;
+use n2n\web\http\HttpRuntimeException;
 
 class PathPatternComposeException extends HttpRuntimeException {
 }

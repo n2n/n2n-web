@@ -19,23 +19,23 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui;
+namespace n2n\web\ui;
 
-use n2n\ui\view\View;
-use n2n\ui\UiException;
-use n2n\N2N;
+use n2n\web\ui\view\View;
+use n2n\web\ui\UiException;
+use n2n\core\N2N;
 use n2n\core\SysTextUtils;
 use n2n\core\TypeLoader;
 use n2n\core\module\Module;
 use n2n\util\cache\CacheStore;
 use n2n\reflection\ReflectionUtils;
-use n2n\ui\view\ViewCacheControl;
-use n2n\ui\view\ViewStateListener;
+use n2n\web\ui\view\ViewCacheControl;
+use n2n\web\ui\view\ViewStateListener;
 use n2n\core\container\N2nContext;
 use n2n\core\module\impl\LazyModule;
 use n2n\model\ThreadScoped;
 use n2n\core\config\HttpConfig;
-use n2n\ui\view\ViewCacheStore;
+use n2n\web\ui\view\ViewCacheStore;
 
 class ViewFactory implements ThreadScoped {
 	const SCRIPT_NAME_TYPE_SEPARATOR = '.';
@@ -97,7 +97,7 @@ class ViewFactory implements ThreadScoped {
 	 * @param unknown_type $viewName
 	 * @param Module $module
 	 * @param unknown_type $params
-	 * @return \n2n\ui\view\View
+	 * @return \n2n\web\ui\view\View
 	 */
 	public function create($viewName, array $params = null, Module $module = null) {
 		return $this->createView(TypeLoader::getFilePathOfType($viewName, TypeLoader::SCRIPT_FILE_EXTENSION), 
@@ -181,9 +181,9 @@ class ViewFactory implements ThreadScoped {
 		}
 		
 		$viewClass = ReflectionUtils::createReflectionClass($this->viewClassNames[$type]);
-		if (!$viewClass->isSubclassOf('n2n\ui\view\View')) {
+		if (!$viewClass->isSubclassOf('n2n\web\ui\view\View')) {
 			throw new ViewStuffFailedException(
-					'View class must extend n2n\ui\view\View: ' . $viewClass->getName());
+					'View class must extend n2n\web\ui\view\View: ' . $viewClass->getName());
 		} 
 		
 		return $this->viewClasses[$type] = $viewClass;
@@ -216,14 +216,14 @@ class CacheViewStateListener implements ViewStateListener {
 		$this->viewCacheControl = $viewCacheControl;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\ui\view\ViewStateListener::onViewContentsBuffering()
+	 * @see \n2n\web\ui\view\ViewStateListener::onViewContentsBuffering()
 	 */
 	public function onViewContentsBuffering(View $view) {
 		// TODO Auto-generated method stub
 		
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\ui\view\ViewStateListener::viewContentsInitialized()
+	 * @see \n2n\web\ui\view\ViewStateListener::viewContentsInitialized()
 	 */
 	public function viewContentsInitialized(View $view) {
 		$this->cacheStore->store($view->getName(), $this->viewCacheControl->getCharacteristics(), 
@@ -231,9 +231,9 @@ class CacheViewStateListener implements ViewStateListener {
 	}
 
 	/* (non-PHPdoc)
-	 * @see \n2n\ui\view\ViewStateListener::onPanelImport()
+	 * @see \n2n\web\ui\view\ViewStateListener::onPanelImport()
 	 */
-	public function onPanelImport(\n2n\ui\view\View $view, $panelName) {
+	public function onPanelImport(\n2n\web\ui\view\View $view, $panelName) {
 		// TODO Auto-generated method stub
 		
 	}

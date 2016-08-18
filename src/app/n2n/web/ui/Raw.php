@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui;
+namespace n2n\web\ui;
 
 class Raw implements UiComponent {
 	/**
@@ -39,7 +39,7 @@ class Raw implements UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\ui.UiComponent::getContents()
+	 * @see n2n\web\ui.UiComponent::getContents()
 	 */
 	public function getContents(): string {
 		return $this->contents;

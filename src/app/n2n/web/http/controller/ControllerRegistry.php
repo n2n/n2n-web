@@ -19,20 +19,20 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
-use n2n\http\path\PathPatternCompiler;
+use n2n\web\http\path\PathPatternCompiler;
 use n2n\core\container\N2nContext;
 use n2n\util\uri\Path;
 use n2n\l10n\N2nLocale;
-use n2n\http\path\PlaceholderValidator;
-use n2n\http\Supersystem;
+use n2n\web\http\path\PlaceholderValidator;
+use n2n\web\http\Supersystem;
 use n2n\model\RequestScoped;
 use n2n\core\config\HttpConfig;
-use n2n\http\HttpContext;
-use n2n\http\Subsystem;
-use n2n\http\UnknownSubsystemException;
-use n2n\http\N2nLocaleFormat;
+use n2n\web\http\HttpContext;
+use n2n\web\http\Subsystem;
+use n2n\web\http\UnknownSubsystemException;
+use n2n\web\http\N2nLocaleFormat;
 
 class ControllerRegistry implements RequestScoped {
 	private $httpConfig;
@@ -58,7 +58,7 @@ class ControllerRegistry implements RequestScoped {
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
 	 * @param string $subsystemName
-	 * @return \n2n\http\controller\ControllingPlan
+	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
 	public function createControllingPlan(Path $cmdPath, string $subsystemName = null) {
 		$localeFormat = new N2nLocaleFormat($this->httpConfig->getAliasN2nLocales());
@@ -121,7 +121,7 @@ class ControllingPlanFactory {
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
 	 * @param string $subsystemName
-	 * @return \n2n\http\controller\ControllingPlan
+	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
 	public function createControllingPlan(N2nContext $n2nContext, Path $cmdPath): ControllingPlan {
 		$controllingPlan = new ControllingPlan($n2nContext);

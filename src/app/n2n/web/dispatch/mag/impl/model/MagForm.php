@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\dispatch\mag\MagCollection;
-use n2n\dispatch\mag\MagDispatchable;
-use n2n\dispatch\map\bind\MappingDefinition;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\model\DispatchModel;
-use n2n\dispatch\property\DynamicAccessProxy;
+use n2n\web\dispatch\mag\MagCollection;
+use n2n\web\dispatch\mag\MagDispatchable;
+use n2n\web\dispatch\map\bind\MappingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\model\DispatchModel;
+use n2n\web\dispatch\property\DynamicAccessProxy;
 
 class MagForm implements MagDispatchable {
 	private $magCollection;
@@ -36,7 +36,7 @@ class MagForm implements MagDispatchable {
 		$this->magCollection = $magCollection;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\MagDispatchable::getMagCollection()
+	 * @see \n2n\web\dispatch\mag\MagDispatchable::getMagCollection()
 	 */
 	public function getMagCollection(): MagCollection {
 		return $this->magCollection;
@@ -58,7 +58,7 @@ class MagForm implements MagDispatchable {
 		$this->magCollection->getMagByPropertyName($name)->setFormValue($value);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\DynamicDispatchable::setup()
+	 * @see \n2n\web\dispatch\DynamicDispatchable::setup()
 	 */
 	public function setup(DispatchModel $dispatchModel) {
 		foreach ($this->magCollection->getMags() as $name => $option) {

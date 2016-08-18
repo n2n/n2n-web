@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target;
+namespace n2n\web\dispatch\target;
 
 use n2n\util\crypt\Cipher;
 use n2n\util\JsonDecodeFailedException;
@@ -43,7 +43,7 @@ class DispatchTargetDecoder {
 		$this->encodedDispatchTargets = $encodedDispatchTargets;
 	}
 	/**
-	* @return \n2n\dispatch\target\Cipher
+	* @return \n2n\web\dispatch\target\Cipher
 	*/
 	public function getCipher() {
 		return $this->cipher;
@@ -139,7 +139,7 @@ class DispatchTargetDecoder {
 	 * @param string $fieldName
 	 * @param object $fieldAttributes
 	 * @throws DispatchTargetDecodingException
-	 * @return n2n\dispatch\target\TargetItem
+	 * @return n2n\web\dispatch\target\TargetItem
 	 */
 	private function createTargetItemField(TargetItem $parentTargetItem, $fieldClassName, $fieldName, $fieldAttributes) {
 		if (!(is_array($fieldAttributes) 
@@ -176,7 +176,7 @@ class DispatchTargetDecoder {
 	 * @param string $fieldName
 	 * @param object $fieldAttributes
 	 * @throws DispatchTargetDecodingException
-	 * @return n2n\dispatch\target\PropertyItem
+	 * @return n2n\web\dispatch\target\PropertyItem
 	 */
 	private function createObjectItemField(ObjectItem $parentObjectItem, $fieldClassName, $fieldName, $fieldAttributes) {
 		$field = null;
@@ -210,7 +210,7 @@ class DispatchTargetDecoder {
 	 * @param string $fieldName
 	 * @param object $fieldAttributes
 	 * @throws DispatchTargetDecodingException
-	 * @return n2n\dispatch\target\ObjectItem
+	 * @return n2n\web\dispatch\target\ObjectItem
 	 */
 	private function createObjectArrayItemField(ObjectArrayItem $parentObjectArrayItem, $fieldClassName, 
 			$fieldName, $fieldAttributes) {
@@ -228,7 +228,7 @@ class DispatchTargetDecoder {
 	 * @param string $fieldClassName
 	 * @param string $fieldName
 	 * @throws DispatchTargetDecodingException
-	 * @return n2n\dispatch\target\PropertyItem
+	 * @return n2n\web\dispatch\target\PropertyItem
 	 */
 	private function createArrayItemField(ArrayItem $parentArrayItem, $fieldClassName, $fieldName) {
 		if ($fieldClassName != self::CLASS_NAME_PROPERTY_ITEM) {
@@ -271,7 +271,7 @@ class DispatchTargetDecoder {
 	/**
 	 * Creates a simple DispatchTargetDecodingException
 	 * @param \Exception $e
-	 * @return \n2n\dispatch\target\DispatchTargetDecodingException
+	 * @return \n2n\web\dispatch\target\DispatchTargetDecodingException
 	 */
 	private function createDispatchTargetDecodingException(\Exception $e) {
 		return new DispatchTargetDecodingException('Dispatch target could not be decoded. Reason: ' 
@@ -279,7 +279,7 @@ class DispatchTargetDecoder {
 	}
 	/**
 	 * Creates a DispatchTargetDecodingException for invalid targetItem fieldtypes
-	 * @return \n2n\dispatch\target\DispatchTargetDecodingException
+	 * @return \n2n\web\dispatch\target\DispatchTargetDecodingException
 	 */
 	private function createDispatchTargetDecodingExceptionTargetItemNotValid() {
 		return new DispatchTargetDecodingException('Target item field type not valid.');

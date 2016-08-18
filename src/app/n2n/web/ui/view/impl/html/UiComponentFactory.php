@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 use n2n\io\managed\File;
-use n2n\ui\UiComponent;
+use n2n\web\ui\UiComponent;
 use n2n\io\managed\img\ThumbStrategy;
 use n2n\io\managed\img\ImageFile;
 use n2n\io\managed\img\ImageDimension;

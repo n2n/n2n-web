@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\nav;
+namespace n2n\web\http\nav;
 
-use n2n\http\controller\ControllerContext;
+use n2n\web\http\controller\ControllerContext;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\core\container\N2nContext;
@@ -29,7 +29,7 @@ use n2n\core\container\N2nContext;
 class Murl {
 
 	/**
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function context() {
 		return new MurlComposer(false);
@@ -37,7 +37,7 @@ class Murl {
 	
 	/**
 	 * @param mixed $controllerContext
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function controller($controllerContext = null) {
 		$murlBuilder = new MurlComposer(true);
@@ -47,7 +47,7 @@ class Murl {
 
 	/**
 	 * @param mixed $pathExts
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function pathExt(...$pathExts) {
 		$murlBuilder = new MurlComposer(true);
@@ -57,7 +57,7 @@ class Murl {
 
 	/**
 	 * @param array $query
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function queryExt(array $query) {
 		$murlBuilder = new MurlComposer(true);
@@ -67,7 +67,7 @@ class Murl {
 
 	/**
 	 * @param string $fragment
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function fragment($fragment) {
 		$murlBuilder = new MurlComposer(true);
@@ -77,7 +77,7 @@ class Murl {
 
 	/**
 	 * @param bool $ssl
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function ssl($ssl) {
 		$murlBuilder = new MurlComposer(true);
@@ -87,7 +87,7 @@ class Murl {
 
 	/**
 	 * @param mixed $subsystem
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public static function subsystem($subsystem) {
 		$murlBuilder = new MurlComposer(true);
@@ -110,7 +110,7 @@ class MurlComposer implements Murlable {
 	}
 
 	/**
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function context() {
 		$this->toController = false;
@@ -120,7 +120,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param mixed $controllerContext
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function controller($controllerContext = null) {
 		$this->toController = true;
@@ -130,7 +130,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param mixed ..$pathExts
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function pathExt(...$pathPartExts) {
 		$this->pathExts[] = $pathPartExts;
@@ -139,7 +139,7 @@ class MurlComposer implements Murlable {
 	
 	/**
 	 * @param mixed ...$pathExts
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function pathExtEnc(...$pathExts) {
 		$this->pathExts = array_merge($this->pathExts, $pathExts);
@@ -148,7 +148,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param mixed $query
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function queryExt($queryExt) {
 		$this->queryExt = $queryExt;
@@ -157,7 +157,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param string $fragment
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function fragment(string $fragment = null) {
 		$this->fragment = $fragment;
@@ -166,7 +166,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param bool $ssl
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function ssl(bool $ssl = null) {
 		$this->ssl = $ssl;
@@ -175,7 +175,7 @@ class MurlComposer implements Murlable {
 
 	/**
 	 * @param mixed $subsystem
-	 * @return \n2n\http\nav\MurlComposer
+	 * @return \n2n\web\http\nav\MurlComposer
 	 */
 	public function subsystem($subsystem) {
 		$this->subsystem = $subsystem;
@@ -207,7 +207,7 @@ class MurlComposer implements Murlable {
 		try {
 			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem)
 					->extR($path->ext($this->pathExts), $this->queryExt, $this->fragment);
-		} catch (\n2n\http\HttpContextNotAvailableException $e) {
+		} catch (\n2n\web\http\HttpContextNotAvailableException $e) {
 			throw new UnavailableMurlException(null, null, $e);
 		}
 	}

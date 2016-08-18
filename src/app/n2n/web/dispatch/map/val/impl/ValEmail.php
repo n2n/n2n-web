@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\N2N;
-use n2n\dispatch\map\val\ValidationUtils;
-use n2n\dispatch\map\val\SimplePropertyValidator;
+use n2n\core\N2N;
+use n2n\web\dispatch\map\val\ValidationUtils;
+use n2n\web\dispatch\map\val\SimplePropertyValidator;
 
 class ValEmail extends SimplePropertyValidator {
 	const DEFAULT_ERROR_TEXT_CODE = 'n2n.dispatch.val.ValEmail';
@@ -38,7 +38,7 @@ class ValEmail extends SimplePropertyValidator {
 		if ($value === null || self::isEMail($value)) return;
 	
 		$this->failed($this->errorMessage, self::DEFAULT_ERROR_TEXT_CODE, array(), N2N::NS);
-		$this->restrictType(array('n2n\dispatch\property\SimpleProperty'));
+		$this->restrictType(array('n2n\web\dispatch\property\SimpleProperty'));
 	}
 	/**
 	 * checks a string, if it is a valid e-mail address

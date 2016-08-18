@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map;
+namespace n2n\web\dispatch\map;
 
-use n2n\dispatch\Dispatchable;
-use n2n\dispatch\map\bind\BindingErrors;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\dispatch\map\bind\BindingErrors;
 use n2n\reflection\ReflectionUtils;
-use n2n\dispatch\model\DispatchModel;
+use n2n\web\dispatch\model\DispatchModel;
 use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
 use n2n\core\container\N2nContext;
 use n2n\util\col\ArrayUtils;

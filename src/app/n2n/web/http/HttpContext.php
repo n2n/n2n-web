@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 use n2n\core\container\N2nContext;
 use n2n\l10n\N2nLocale;
@@ -27,7 +27,7 @@ use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\core\VarStore;
 use n2n\util\col\ArrayUtils;
-use n2n\http\controller\ControllerContext;
+use n2n\web\http\controller\ControllerContext;
 use n2n\reflection\ArgUtils;
 
 class HttpContext {
@@ -53,21 +53,21 @@ class HttpContext {
 	}
 	
 	/**
-	 * @return \n2n\http\Request
+	 * @return \n2n\web\http\Request
 	 */
 	public function getRequest(): Request {
 		return $this->request;
 	}
 	
 	/**
-	 * @return \n2n\http\Response
+	 * @return \n2n\web\http\Response
 	 */
 	public function getResponse(): Response {
 		return $this->response;
 	}
 	
 	/**
-	 * @return \n2n\http\Session
+	 * @return \n2n\web\http\Session
 	 */
 	public function getSession(): Session {
 		return $this->session;
@@ -142,7 +142,7 @@ class HttpContext {
 	
 	/**
 	 * @param bool $ssl
-	 * @param mixed $subsystem name or instance of {@link \n2n\http\Subsystem}
+	 * @param mixed $subsystem name or instance of {@link \n2n\web\http\Subsystem}
 	 * @return \n2n\util\uri\Url
 	 */
 	public function buildContextUrl(bool $ssl = null, $subsystem = null, bool $absolute = false): Url {
@@ -203,7 +203,7 @@ class HttpContext {
 
 	/**
 	 * @param string $name
-	 * @return \n2n\http\Subsystem
+	 * @return \n2n\web\http\Subsystem
 	 * @throws UnknownSubsystemException
 	 */
 	public function getAvailableSubsystemByName($name) {

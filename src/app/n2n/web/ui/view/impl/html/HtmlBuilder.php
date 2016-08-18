@@ -19,15 +19,15 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 use n2n\io\managed\File;
-use n2n\N2N;
-use n2n\ui\UiComponent;
-use n2n\ui\Raw;
+use n2n\core\N2N;
+use n2n\web\ui\UiComponent;
+use n2n\web\ui\Raw;
 use n2n\io\ob\OutputBuffer;
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\ui\UiException;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\ui\UiException;
 use n2n\io\managed\img\ThumbStrategy;
 use n2n\util\uri\Url;
 
@@ -48,7 +48,7 @@ class HtmlBuilder {
 	}
 	
 	/**
-	 * @return \n2n\ui\view\impl\html\HtmlBuilderMeta
+	 * @return \n2n\web\ui\view\impl\html\HtmlBuilderMeta
 	 */
 	public function meta() {
 		return $this->meta;
@@ -161,7 +161,7 @@ class HtmlBuilder {
 	
 	/**
 	 * @param mixed $contents
-	 * @return \n2n\ui\Raw
+	 * @return \n2n\web\ui\Raw
 	 */
 	public function getEsc($contents) {
 		return new Raw(HtmlUtils::escape($contents));
@@ -177,7 +177,7 @@ class HtmlBuilder {
 	/**
 	 * @param mixed $contents
 	 * @param string $strict
-	 * @return \n2n\ui\Raw
+	 * @return \n2n\web\ui\Raw
 	 */
 	public function getEscP($contents, array $attrs = null, bool $strict = false): UiComponent {
 	    $attrsHtml = HtmlElement::buildAttrsHtml($attrs);
@@ -197,7 +197,7 @@ class HtmlBuilder {
 	}
 	/**
 	 * @param string $string
-	 * @return \n2n\ui\Raw
+	 * @return \n2n\web\ui\Raw
 	 */
 	public function getEscBr($contents) {
 		$html = HtmlUtils::escape($contents, function ($html) {
@@ -226,7 +226,7 @@ class HtmlBuilder {
 	 * @param mixed $label
 	 * @param array $attrs
 	 * @throws UnavailableMurlException
-	 * @return \n2n\ui\view\impl\html\Link
+	 * @return \n2n\web\ui\view\impl\html\Link
 	 */
 	public function getLink($murl, $label = null, array $attrs = null, string $alternateTagName = null, 
 			array $alternateAttrs = null, bool $required = false) {
@@ -325,7 +325,7 @@ class HtmlBuilder {
 	 * @param string $fragment
 	 * @param bool $ssl
 	 * @param string $subsystem
-	 * @return \n2n\ui\view\impl\html\Link
+	 * @return \n2n\web\ui\view\impl\html\Link
 	 */
 	public function getLinkToContext($pathExt, $label, array $attrs = null, $query = null, 
 			$fragment = null, $ssl = null, $subsystem = null) {
@@ -379,7 +379,7 @@ class HtmlBuilder {
 	 * @param unknown $email
 	 * @param unknown $label
 	 * @param array $attrs
-	 * @return \n2n\ui\Raw
+	 * @return \n2n\web\ui\Raw
 	 */
 	public function getLinkEmail($email, $label = null, array $attrs = null) {
 		$uriHtml = HtmlUtils::encodedEmailUrl($email);
@@ -415,7 +415,7 @@ class HtmlBuilder {
 	 * @param array $warnAttrs
 	 * @param array $infoAttrs
 	 * @param array $successAttrs
-	 * @return \n2n\ui\view\impl\html\MessageList
+	 * @return \n2n\web\ui\view\impl\html\MessageList
 	 */
 	public function getMessageList($groupName = null, $severity = null, array $attrs = null, array $errorAttrs = null, 
 			array $warnAttrs = null, array $infoAttrs = null, array $successAttrs = null) {

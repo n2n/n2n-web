@@ -19,15 +19,15 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
-use n2n\ui\UiComponent;
+use n2n\web\ui\UiComponent;
 
 use n2n\core\SysTextUtils;
-use n2n\ui\UiException;
+use n2n\web\ui\UiException;
 use n2n\util\HashUtils;
 use n2n\reflection\ReflectionUtils;
-use n2n\ui\view\View;
+use n2n\web\ui\view\View;
 
 class HtmlUtils {
 	public static function validateCustomAttrs(array $customAttrs, array $reservedAttrNames) {

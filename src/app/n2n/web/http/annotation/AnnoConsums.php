@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\annotation;
+namespace n2n\web\http\annotation;
 
 use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\MethodAnnotation;

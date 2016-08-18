@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\xml;
+namespace n2n\web\ui\view\impl\xml;
 
-use n2n\ui\view\View;
-use n2n\N2N;
+use n2n\web\ui\view\View;
+use n2n\core\N2N;
 use n2n\io\ob\OutputBuffer;
 
 class XmlView extends View {
@@ -47,7 +47,7 @@ class XmlView extends View {
 	
 	/**
 	 * @param XmlView $xmlView
-	 * @return \n2n\ui\view\impl\xml\XmlBuilder
+	 * @return \n2n\web\ui\view\impl\xml\XmlBuilder
 	 */
 	public static function xml(XmlView $xmlView): XmlBuilder {
 		return $xmlView->getXmlBuilder();
@@ -58,4 +58,4 @@ class XmlView extends View {
  * hack to provide autocompletion in views
  */
 return;
-$xml = new \n2n\ui\view\impl\xml\XmlBuilder();
+$xml = new \n2n\web\ui\view\impl\xml\XmlBuilder();

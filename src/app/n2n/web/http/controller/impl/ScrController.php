@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller\impl;
+namespace n2n\web\http\controller\impl;
 
-use n2n\http\controller\Controller;
+use n2n\web\http\controller\Controller;
 use n2n\model\RequestScoped;
 
 interface ScrController extends Controller, RequestScoped {

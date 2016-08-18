@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\map\UnresolvablePropertyPathException;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\UnresolvablePropertyPathException;
 use n2n\util\StringUtils;
 
 class BindingTree {

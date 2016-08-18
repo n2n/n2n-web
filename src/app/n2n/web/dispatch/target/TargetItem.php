@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target;
+namespace n2n\web\dispatch\target;
 
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\PropertyPath;
 
 abstract class TargetItem {
 	protected $propertyPath;

@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\dispatch\map\bind\MappingDefinition;
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\mag\Mag;
+use n2n\web\dispatch\map\bind\MappingDefinition;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\mag\Mag;
 use n2n\l10n\N2nLocale;
 use n2n\l10n\Lstr;
 
@@ -60,7 +60,7 @@ abstract class MagAdapter implements Mag {
 		$this->containerAttrs = $containerAttrs;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\Mag::setupMappingDefinition()
+	 * @see \n2n\web\dispatch\mag\Mag::setupMappingDefinition()
 	 */
 	public function setupMappingDefinition(MappingDefinition $md) {
 		$md->getMappingResult()->setLabel($this->propertyName, (string) $this->labelLstr);
@@ -72,19 +72,19 @@ abstract class MagAdapter implements Mag {
 		return $this->value;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\Mag::setValue()
+	 * @see \n2n\web\dispatch\mag\Mag::setValue()
 	 */
 	public function setFormValue($formValue) {
 		$this->value = $formValue;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\Mag::getValue()
+	 * @see \n2n\web\dispatch\mag\Mag::getValue()
 	 */
 	public function getValue() {
 		return $this->value;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\mag\Mag::setValue()
+	 * @see \n2n\web\dispatch\mag\Mag::setValue()
 	 */
 	public function setValue($value) {
 		$this->value = $value;

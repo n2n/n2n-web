@@ -19,16 +19,16 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
 use n2n\util\uri\Query;
-use n2n\http\path\PathPattern;
-use n2n\http\path\PathPatternComposeException;
+use n2n\web\http\path\PathPattern;
+use n2n\web\http\path\PathPatternComposeException;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\uri\Path;
 use n2n\reflection\magic\MagicContext;
-use n2n\http\Method;
+use n2n\web\http\Method;
 
 class ActionInvokerFactory {
 	const PARAM_CMD_CONTEXT_PATH = 'cmdContextPath';
@@ -93,27 +93,27 @@ class ActionInvokerFactory {
 	private function checkForQueryParam($paramName, $paramClass, &$value) {
 		$value = null;
 		switch ($paramClass->getName()) {
-			case 'n2n\http\controller\ParamQuery':
+			case 'n2n\web\http\controller\ParamQuery':
 				if ($this->query->contains($paramName)) {
 					$value = new ParamQuery($this->query->get($paramName));
 				}
 				return true;
-			case 'n2n\http\controller\ParamGet':
+			case 'n2n\web\http\controller\ParamGet':
 				if ($this->httpMethod == Method::GET && $this->query->contains($paramName)) {
 					$value = new ParamGet($this->query->get($paramName));
 				}
 				return true;
-			case 'n2n\http\controller\ParamPost':
+			case 'n2n\web\http\controller\ParamPost':
 				if ($this->httpMethod == Method::POST && $this->postQuery->contains($paramName)) {
 					$value = new ParamPost($this->postQuery->get($paramName));
 				}
 				return true;
-			case 'n2n\http\controller\ParamPut':
+			case 'n2n\web\http\controller\ParamPut':
 				if ($this->httpMethod == Method::PUT && $this->query->contains($paramName)) {
 					$value = new ParamPut($this->query->get($paramName));
 				}
 				return true;
-			case 'n2n\http\controller\ParamDelete':
+			case 'n2n\web\http\controller\ParamDelete':
 				if ($this->httpMethod == Method::DELETE && $this->query->contains($paramName)) {
 					$value = new ParamDelete($this->query->get($paramName));
 				}
@@ -160,7 +160,7 @@ class ActionInvokerFactory {
 					continue;
 				}
 
-				if ($paramClass->getName() === 'n2n\http\controller\ParamPath') {
+				if ($paramClass->getName() === 'n2n\web\http\controller\ParamPath') {
 					$pathObjParamNames[$paramName] = $paramName;
 				} else {
 					continue;

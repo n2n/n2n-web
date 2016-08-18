@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\N2N;
-use n2n\dispatch\map\val\ValidationUtils;
-use n2n\dispatch\map\val\SinglePropertyValidator;
+use n2n\core\N2N;
+use n2n\web\dispatch\map\val\ValidationUtils;
+use n2n\web\dispatch\map\val\SinglePropertyValidator;
 
 class ValArraySize extends SinglePropertyValidator {
 	const MIN_DEFAULT_ERROR_TEXT_CODE = 'n2n.dispatch.val.ValArraySize.min';

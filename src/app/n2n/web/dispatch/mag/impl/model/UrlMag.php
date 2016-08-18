@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\reflection\ArgUtils;
 use n2n\util\uri\Url;
-use n2n\dispatch\map\val\impl\ValUrl;
+use n2n\web\dispatch\map\val\impl\ValUrl;
 use n2n\util\ex\UnsupportedOperationException;
-use n2n\dispatch\map\bind\MappingDefinition;
+use n2n\web\dispatch\map\bind\MappingDefinition;
 
 class UrlMag extends StringMag {
 	private $allowedSchemes;
@@ -98,7 +98,7 @@ class UrlMag extends StringMag {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\dispatch\mag\Mag::setupBindingDefinition($bindingDefinition)
+	 * @see \n2n\web\dispatch\mag\Mag::setupBindingDefinition($bindingDefinition)
 	 */
 	public function setupBindingDefinition(BindingDefinition $bd) {
 		parent::setupBindingDefinition($bd);

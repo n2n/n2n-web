@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui;
+namespace n2n\web\ui;
 
 use n2n\core\SysTextUtils;
-use n2n\ui\view\impl\html\CouldNotRenderUiComponentException;
+use n2n\web\ui\view\impl\html\CouldNotRenderUiComponentException;
 
 class UiUtils {
 	public static function createCouldNotRenderUiComponentException(\Exception $previous) {

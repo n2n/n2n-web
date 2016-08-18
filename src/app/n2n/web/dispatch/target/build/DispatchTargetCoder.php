@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target\build;
+namespace n2n\web\dispatch\target\build;
 
 use n2n\util\crypt\Cipher;
 use n2n\util\StringUtils;
@@ -91,7 +91,7 @@ class DispatchTargetCoder {
 	/**
 	 * Creates a simple DispatchTargetDecodingException
 	 * @param \Exception $e
-	 * @return \n2n\dispatch\target\DispatchTargetDecodingException
+	 * @return \n2n\web\dispatch\target\DispatchTargetDecodingException
 	 */
 	private function createDispatchTargetDecodingException(\Exception $e = null) {
 		return new DispatchTargetDecodingException('Dispatch target could not be decoded.', 0, $e);

@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val;
+namespace n2n\web\dispatch\map\val;
 
 interface PropertyValidator extends Validator {
 	/**

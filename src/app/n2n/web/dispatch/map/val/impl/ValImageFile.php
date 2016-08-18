@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\io\managed\File;
-use n2n\dispatch\map\val\SimplePropertyValidator;
-use n2n\dispatch\map\val\ValidationUtils;
+use n2n\web\dispatch\map\val\SimplePropertyValidator;
+use n2n\web\dispatch\map\val\ValidationUtils;
 use n2n\io\img\impl\ImageSourceFactory;
 
 class ValImageFile extends SimplePropertyValidator {
@@ -40,7 +40,7 @@ class ValImageFile extends SimplePropertyValidator {
 		$this->notSupportedErrorMessage = ValidationUtils::createMessage($notSupportedErrorMessage);
 		$this->corruptedErrorMessage = ValidationUtils::createMessage($corruptedErrorMessage);
 
-		$this->restrictType(array('n2n\dispatch\property\impl\FileProperty'));
+		$this->restrictType(array('n2n\web\dispatch\property\impl\FileProperty'));
 	}
 	
 	protected function validateValue($mapValue) {

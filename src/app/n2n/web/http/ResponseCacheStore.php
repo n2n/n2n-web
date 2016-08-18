@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 use n2n\util\cache\CacheStore;
 use n2n\util\uri\Path;
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\model\ThreadScoped;
 use n2n\core\container\AppCache;
 use n2n\core\container\TransactionManager;

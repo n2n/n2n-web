@@ -19,35 +19,35 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view;
+namespace n2n\web\ui\view;
 
 use n2n\l10n\DynamicTextCollection;
 use n2n\l10n\DateTimeFormat;
 use n2n\l10n\L10nUtils;
-use n2n\http\controller\ControllerContext;
-use n2n\ui\view\ViewErrorException;
+use n2n\web\http\controller\ControllerContext;
+use n2n\web\ui\view\ViewErrorException;
 use n2n\io\ob\OutputBuffer;
-use n2n\N2N;
-use n2n\ui\UiComponent;
+use n2n\core\N2N;
+use n2n\web\ui\UiComponent;
 use n2n\core\SysTextUtils;
-use n2n\ui\UiException;
-use n2n\http\Response;
-use n2n\http\BufferedResponseContent;
+use n2n\web\ui\UiException;
+use n2n\web\http\Response;
+use n2n\web\http\BufferedResponseContent;
 use n2n\core\module\Module;
 use n2n\core\container\N2nContext;
-use n2n\ui\ViewStuffFailedException;
+use n2n\web\ui\ViewStuffFailedException;
 use n2n\reflection\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
 use n2n\l10n\MessageTranslator;
-use n2n\http\UnknownControllerContextException;
+use n2n\web\http\UnknownControllerContextException;
 use n2n\l10n\N2nLocale;
-use n2n\http\HttpContext;
-use n2n\ui\ViewFactory;
+use n2n\web\http\HttpContext;
+use n2n\web\ui\ViewFactory;
 use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\CastUtils;
-use n2n\http\nav\Murler;
-use n2n\http\nav\UnavailableMurlException;
+use n2n\web\http\nav\Murler;
+use n2n\web\http\nav\UnavailableMurlException;
 
 abstract class View implements BufferedResponseContent, UiComponent {
 	private $params = array();
@@ -134,7 +134,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	
 	/**
-	 * @return \n2n\http\HttpContext
+	 * @return \n2n\web\http\HttpContext
 	 */
 	public function getHttpContext(): HttpContext {
 		return $this->n2nContext->getHttpContext();
@@ -171,7 +171,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	/**
 	 * 
-	 * @return \n2n\http\controller\ControllerContext
+	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function getControllerContext() {
 		if ($this->controllerContext !== null) {
@@ -183,7 +183,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	/**
 	 *
-	 * @return \n2n\http\controller\ControllerContext
+	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function getControllerContextByName($name) {
 		return $this->getControllerContext()->getControllingPlan()->getByName($name);
@@ -241,7 +241,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\ui.UiComponent::getContents()
+	 * @see n2n\web\ui.UiComponent::getContents()
 	 */
 	public function getContents(): string {
 		if (!$this->isInitialized()) {
@@ -415,7 +415,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.ResponseThing::prepareForResponse()
+	 * @see n2n\web\http.ResponseThing::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: ' . $this->getContentType());
@@ -426,21 +426,21 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.ResponseThing::toKownResponseString()
+	 * @see n2n\web\http.ResponseThing::toKownResponseString()
 	 */
 	public function toKownResponseString() {
 		return $this->__toString();
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.ResponseThing::__toString()
+	 * @see n2n\web\http.ResponseThing::__toString()
 	 */
 	public function __toString(): string {
 		return 'View' . '(' . $this->getName() . ')';
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.BufferedResponseContent::getBufferedContents()
+	 * @see n2n\web\http.BufferedResponseContent::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->getContents();
@@ -784,7 +784,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	/**
 	 * @param View $view
-	 * @return \n2n\http\Request
+	 * @return \n2n\web\http\Request
 	 */
 	public static function request(View $view) {
 		return $view->getRequest();
@@ -792,7 +792,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	/**
 	 * @param View $view
-	 * @return \n2n\http\Response
+	 * @return \n2n\web\http\Response
 	 */
 	public static function response(View $view) {
 		return $view->getN2nContext()->getHttpContext()->getResponse();
@@ -800,7 +800,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	/**
 	 * @param View $view
-	 * @return \n2n\http\HttpContext
+	 * @return \n2n\web\http\HttpContext
 	 */
 	public static function httpContext(View $view) {
 		return $view->getHttpContext();
@@ -849,7 +849,7 @@ class ViewPanelNerverEndedException extends UiException {
  */
 return;
 
-$view = new \n2n\ui\view\View();
-$httpContext = new \n2n\http\HttpContext();
-$request = new \n2n\http\VarsRequest();
-$response = new \n2n\http\Response();
+$view = new \n2n\web\ui\view\View();
+$httpContext = new \n2n\web\http\HttpContext();
+$request = new \n2n\web\http\VarsRequest();
+$response = new \n2n\web\http\Response();

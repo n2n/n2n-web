@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\json;
+namespace n2n\web\ui\view\impl\json;
 
-use n2n\http\BufferedResponseContent;
-use n2n\http\Response;
+use n2n\web\http\BufferedResponseContent;
+use n2n\web\http\Response;
 use n2n\util\StringUtils;
 
 class JsonResponse implements BufferedResponseContent { 
@@ -36,21 +36,21 @@ class JsonResponse implements BufferedResponseContent {
 	}
 	
 	/* (non-PHPdoc)
-	 * @see \n2n\http\BufferedResponseContent::getBufferedContents()
+	 * @see \n2n\web\http\BufferedResponseContent::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->jsonString;
 	}
 	
 	/* (non-PHPdoc)
-	 * @see \n2n\http\ResponseThing::prepareForResponse()
+	 * @see \n2n\web\http\ResponseThing::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: application/json');
 	}
 	
 	/* (non-PHPdoc)
-	 * @see \n2n\http\ResponseThing::toKownResponseString()
+	 * @see \n2n\web\http\ResponseThing::toKownResponseString()
 	 */
 	public function toKownResponseString() {
 		return 'Json Response';

@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property;
+namespace n2n\web\dispatch\property;
 
-use n2n\dispatch\DynamicDispatchable;
+use n2n\web\dispatch\DynamicDispatchable;
 use n2n\reflection\property\AccessProxy;
 use n2n\reflection\property\TypeConstraint;
 use n2n\reflection\ArgUtils;

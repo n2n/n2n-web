@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 class PageNotFoundException extends StatusException {
 	public function __construct($message = null, $code = null, \Exception $previous =  null) {

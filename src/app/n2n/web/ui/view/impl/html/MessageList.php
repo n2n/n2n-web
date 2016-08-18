@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 use n2n\l10n\Message;
-use n2n\ui\UiComponent;
+use n2n\web\ui\UiComponent;
 
 class MessageList implements UiComponent {
 	private $messages = array();

@@ -19,24 +19,24 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\ui;
+namespace n2n\web\dispatch\ui;
 
 use n2n\reflection\ReflectionUtils;
-use n2n\dispatch\map\PropertyPath;
-use n2n\ui\Raw;
-use n2n\dispatch\target\DispatchTarget;
-use n2n\dispatch\Dispatchable;
-use n2n\ui\view\impl\html\HtmlElement;
-use n2n\ui\view\impl\html\HtmlUtils;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\ui\Raw;
+use n2n\web\dispatch\target\DispatchTarget;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\ui\view\impl\html\HtmlElement;
+use n2n\web\ui\view\impl\html\HtmlUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ArgUtils;
 use n2n\io\ob\OutputBuffer;
-use n2n\http\Method;
-use n2n\dispatch\map\MappingPathResolver;
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\target\build\DispatchTargetEncoder;
-use n2n\dispatch\DispatchContext;
+use n2n\web\http\Method;
+use n2n\web\dispatch\map\MappingPathResolver;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\target\build\DispatchTargetEncoder;
+use n2n\web\dispatch\DispatchContext;
 
 class Form {
 	const ENCTYPE_MULTIPART = 'multipart/form-data';
@@ -114,14 +114,14 @@ class Form {
 		return $this->dispatchTarget;
 	}
 	/**
-	 * @return \n2n\dispatch\target\build\DispatchTargetEncoder
+	 * @return \n2n\web\dispatch\target\build\DispatchTargetEncoder
 	 */
 	public function getDispatchTargetEncoder(): DispatchTargetEncoder {
 		return $this->dispatchTargetEncoder;
 	}
 	/**
 	 * 
-	 * @return \n2n\ui\view\impl\html\HtmlView
+	 * @return \n2n\web\ui\view\impl\html\HtmlView
 	 */
 	public function getView() {
 		return $this->view;

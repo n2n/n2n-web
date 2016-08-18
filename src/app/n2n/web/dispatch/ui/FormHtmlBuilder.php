@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\ui;
+namespace n2n\web\dispatch\ui;
 
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\Dispatchable;
-use n2n\ui\view\impl\html\HtmlElement;
-use n2n\http\Method;
-use n2n\ui\view\impl\html\MessageList;
-use n2n\ui\Raw;
-use n2n\ui\view\impl\html\HtmlUtils;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\ui\view\impl\html\HtmlElement;
+use n2n\web\http\Method;
+use n2n\web\ui\view\impl\html\MessageList;
+use n2n\web\ui\Raw;
+use n2n\web\ui\view\impl\html\HtmlUtils;
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\DispatchContext;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\DispatchContext;
 
 class FormHtmlBuilder {
 	private $view;
@@ -328,7 +328,7 @@ class FormHtmlBuilder {
 	 * @param array $attrs
 	 * @param string $label
 	 * @param array $labelAttrs
-	 * @return \n2n\ui\UiComponent
+	 * @return \n2n\web\ui\UiComponent
 	 */
 	public function getOptionalObjectCheckbox($propertyExpression = null, array $attrs = null, 
 			$label = null, array $labelAttrs = null) {

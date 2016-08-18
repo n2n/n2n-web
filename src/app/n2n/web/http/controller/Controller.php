@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
 interface Controller {
 	public function execute(ControllerContext $controllerContext): bool;

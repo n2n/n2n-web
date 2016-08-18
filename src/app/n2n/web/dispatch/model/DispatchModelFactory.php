@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\model;
+namespace n2n\web\dispatch\model;
 
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\property\PropertiesAnalyzer;
@@ -27,9 +27,9 @@ use n2n\reflection\ReflectionContext;
 use n2n\reflection\ReflectionException;
 use n2n\reflection\annotation\Annotation;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\DispatchErrorException;
+use n2n\web\dispatch\DispatchErrorException;
 use n2n\reflection\property\InvalidPropertyAccessMethodException;
-use n2n\dispatch\property\impl\ScalarProperty;
+use n2n\web\dispatch\property\impl\ScalarProperty;
 
 class DispatchModelFactory {
 	private $managedPropertyProviderClassNames;
@@ -40,7 +40,7 @@ class DispatchModelFactory {
 	}
 	/**
 	 * @throws ModelInitializationException
-	 * @return \n2n\dispatch\property\ManagedPropertyProvider[]
+	 * @return \n2n\web\dispatch\property\ManagedPropertyProvider[]
 	 */
 	private function getManagedPropertyProviders() {
 		if ($this->managedPropertyProviders !== null) {
@@ -50,9 +50,9 @@ class DispatchModelFactory {
 		$this->managedPropertyProviders = array();
 		foreach ($this->managedPropertyProviderClassNames as $factoryClassName) {
 			$factoryClass = ReflectionUtils::createReflectionClass($factoryClassName);
-			if (!$factoryClass->isSubclassOf('n2n\dispatch\property\ManagedPropertyProvider')) {
+			if (!$factoryClass->isSubclassOf('n2n\web\dispatch\property\ManagedPropertyProvider')) {
 				throw new ModelInitializationException('ManagedPropertyProvider must implement ' 
-						. 'interface n2n\dispatch\property\ManagedPropertyProvider: ' 
+						. 'interface n2n\web\dispatch\property\ManagedPropertyProvider: ' 
 						. $factoryClass->getName());
 			}	
 
@@ -63,7 +63,7 @@ class DispatchModelFactory {
 	}
 	/**
 	 * @param \ReflectionClass $class
-	 * @return \n2n\dispatch\model\DispatchModel
+	 * @return \n2n\web\dispatch\model\DispatchModel
 	 */
 	public function create(\ReflectionClass $class) { 
 		$dispatchModel = new DispatchModel($class);
@@ -89,7 +89,7 @@ class DispatchModelFactory {
 		
 		$propertyAccessProxies = null;
 		if (null !== ($annoDispProperties = $annotationSet
-				->getClassAnnotation('n2n\dispatch\annotation\AnnoDispProperties'))) {
+				->getClassAnnotation('n2n\web\dispatch\annotation\AnnoDispProperties'))) {
 			foreach ($annoDispProperties->getNames() as $name) {
 				try {
 					$propertyAccessProxies[$name] = $propertiesAnalyzer->analyzeProperty($name);

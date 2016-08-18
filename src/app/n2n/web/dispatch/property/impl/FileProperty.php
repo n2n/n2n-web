@@ -19,23 +19,23 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
-use n2n\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\map\CorruptedDispatchException;
-use n2n\dispatch\target\PropertyItem;
+use n2n\web\dispatch\map\CorruptedDispatchException;
+use n2n\web\dispatch\target\PropertyItem;
 use n2n\io\managed\impl\TmpFileManager;
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\http\UploadDefinition;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\http\UploadDefinition;
 use n2n\l10n\MessageCode;
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\io\managed\impl\FileFactory;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\target\build\ParamInvestigator;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\target\DispatchTargetException;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\DispatchTargetException;
 use n2n\io\UploadedFileExceedsMaxSizeException;
 use n2n\io\IncompleteFileUploadException;
 

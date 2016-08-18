@@ -19,33 +19,33 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller\impl;
+namespace n2n\web\http\controller\impl;
 
-use n2n\http\controller\ControllerContext;
-use n2n\http\ResponseCacheControl;
-use n2n\http\HttpCacheControl;
-use n2n\ui\view\ViewCacheControl;
-use n2n\ui\view\View;
-use n2n\dispatch\Dispatchable;
-use n2n\http\Redirect;
-use n2n\http\NoHttpRefererGivenException;
-use n2n\http\controller\Controller;
-use n2n\http\controller\ControllingPlan;
-use n2n\http\ResponseThing;
+use n2n\web\http\controller\ControllerContext;
+use n2n\web\http\ResponseCacheControl;
+use n2n\web\http\HttpCacheControl;
+use n2n\web\ui\view\ViewCacheControl;
+use n2n\web\ui\view\View;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\http\Redirect;
+use n2n\web\http\NoHttpRefererGivenException;
+use n2n\web\http\controller\Controller;
+use n2n\web\http\controller\ControllingPlan;
+use n2n\web\http\ResponseThing;
 use n2n\core\container\N2nContext;
-use n2n\http\HttpContext;
-use n2n\http\Request;
-use n2n\http\Response;
+use n2n\web\http\HttpContext;
+use n2n\web\http\Request;
+use n2n\web\http\Response;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
-use n2n\http\controller\ControllerErrorException;
+use n2n\web\http\controller\ControllerErrorException;
 use n2n\core\TypeNotFoundException;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
 	
 	/**
-	 * @return \n2n\http\controller\impl\ControllingUtils
+	 * @return \n2n\web\http\controller\impl\ControllingUtils
 	 */
 	private function cu() {
 		if ($this->controllingUtils !== null) {
@@ -75,13 +75,13 @@ trait ControllingUtilsTrait {
 		return $this->cu()->getHttpContext();
 	}
 	/**
-	 * @return \n2n\http\Request
+	 * @return \n2n\web\http\Request
 	 */
 	protected final function getRequest(): Request {
 		return $this->cu()->getRequest();
 	}
 	/**
-	 * @return \n2n\http\Response
+	 * @return \n2n\web\http\Response
 	 */
 	protected final function getResponse(): Response {
 		return $this->cu()->getResponse();

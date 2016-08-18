@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\dispatch\map\val\SinglePropertyValidator;
-use n2n\dispatch\map\val\ValidationUtils;
+use n2n\web\dispatch\map\val\SinglePropertyValidator;
+use n2n\web\dispatch\map\val\ValidationUtils;
 use n2n\reflection\ArgUtils;
-use n2n\N2N;
+use n2n\core\N2N;
 
 class ValMandatoryArrayKeys extends SinglePropertyValidator {
 	const DEFAULT_ERROR_TEXT_CODE = 'n2n.dispatch.val.ValMandatoryArrayKeys'; 

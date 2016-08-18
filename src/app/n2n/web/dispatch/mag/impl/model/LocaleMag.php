@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\l10n\N2nLocale;
 
 class N2nLocaleMag extends EnumMag {

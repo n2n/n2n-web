@@ -19,20 +19,20 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\dispatch\map\val\impl\ValImageFile;
-use n2n\dispatch\map\val\impl\ValFileExtensions;
-use n2n\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\val\impl\ValImageFile;
+use n2n\web\dispatch\map\val\impl\ValFileExtensions;
+use n2n\web\dispatch\map\PropertyPath;
 use n2n\io\managed\File;
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\val\impl\ValImageResourceMemory;
-use n2n\dispatch\property\impl\FileProperty;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\val\impl\ValImageResourceMemory;
+use n2n\web\dispatch\property\impl\FileProperty;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\map\val\impl\ValNotEmpty;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\ui\UiComponent;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\val\impl\ValNotEmpty;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\ui\UiComponent;
 
 class FileMag extends MagAdapter {
 	

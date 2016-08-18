@@ -19,18 +19,18 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property;
+namespace n2n\web\dispatch\property;
 
-use n2n\dispatch\Dispatchable;
+use n2n\web\dispatch\Dispatchable;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\ui\Form;
-use n2n\dispatch\map\AnalyzerResult;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\map\CorruptedDispatchException;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\ui\Form;
+use n2n\web\dispatch\map\AnalyzerResult;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\CorruptedDispatchException;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\build\ParamInvestigator;
 
 interface ManagedProperty {
 	/**

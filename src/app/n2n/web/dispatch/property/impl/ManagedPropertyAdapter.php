@@ -19,16 +19,16 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
-use n2n\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\property\ManagedProperty;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\Dispatchable;
+use n2n\web\dispatch\Dispatchable;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\map\AnalyzerResult;
-use n2n\dispatch\ui\Form;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\AnalyzerResult;
+use n2n\web\dispatch\ui\Form;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\PropertyPathPart;
 
 abstract class ManagedPropertyAdapter implements ManagedProperty {
 	protected $name;
@@ -54,13 +54,13 @@ abstract class ManagedPropertyAdapter implements ManagedProperty {
 		}
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::getName()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::getName()
 	 */
 	public function getName() {
 		return $this->name;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::isArray()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::isArray()
 	 */
 	public function isArray() {
 		return $this->array;			
@@ -78,19 +78,19 @@ abstract class ManagedPropertyAdapter implements ManagedProperty {
 		return array();
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::readValue()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::readValue()
 	 */
 	public function readValue(Dispatchable $dispatchable) {
 		return $this->accessProxy->getValue($dispatchable);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::writeValue()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::writeValue()
 	 */
 	public function writeValue(Dispatchable $dispatchable, $value) {
 		$this->accessProxy->setValue($dispatchable, $value);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::convertValueToMapValue()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::convertValueToMapValue()
 	 */
 	public function writeValueToMappingResult($value, MappingResult $mappingResult, N2nContext $n2nContext) {
 		$mapValue = null;
@@ -104,7 +104,7 @@ abstract class ManagedPropertyAdapter implements ManagedProperty {
 		$mappingResult->__set($this->getName(), $mapValue);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::createMapValueField()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::createMapValueField()
 	 */
 	public function resolveMapValue(PropertyPathPart $pathPart, MappingResult $mappingResult, 
 			N2nContext $n2nContext) {
@@ -123,19 +123,19 @@ abstract class ManagedPropertyAdapter implements ManagedProperty {
 		$mappingResult->__set($this->name, $mapValue);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::getMapTypeConstraint()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::getMapTypeConstraint()
 	 */
 	public function getMapTypeConstraint() {
 		return $this->mapTypeConstraint;	
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::convertMapValueToValue()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::convertMapValueToValue()
 	 */
 	public function readValueFromMappingResult(MappingResult $mappingResult, N2nContext $n2nContext) {
 		return $mappingResult->__get($this->getName());
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::prepareForm()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::prepareForm()
 	 */
 	public function prepareForm(Form $form, AnalyzerResult $analyzerResult = null) {
 	}

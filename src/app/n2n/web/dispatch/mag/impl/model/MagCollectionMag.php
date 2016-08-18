@@ -19,18 +19,18 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\mag\MagCollection;
-use n2n\ui\view\impl\html\HtmlUtils;
-use n2n\dispatch\property\impl\ObjectProperty;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\mag\MagCollection;
+use n2n\web\ui\view\impl\html\HtmlUtils;
+use n2n\web\dispatch\property\impl\ObjectProperty;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\reflection\ArgUtils;
-use n2n\ui\UiComponent;
-use n2n\dispatch\property\ManagedProperty;
+use n2n\web\ui\UiComponent;
+use n2n\web\dispatch\property\ManagedProperty;
 
 class MagCollectionMag extends MagAdapter {
 	private $magCollection;
@@ -48,17 +48,17 @@ class MagCollectionMag extends MagAdapter {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\dispatch\mag\Mag::createUiField($propertyPath, $view)
+	 * @see \n2n\web\dispatch\mag\Mag::createUiField($propertyPath, $view)
 	 * @return UiComponent
 	 */
 	public function createUiField(PropertyPath $propertyPath, HtmlView $view): UiComponent {
-		return $view->getImport('\n2n\dispatch\mag\impl\view\magCollectionOption.html',
+		return $view->getImport('\n2n\web\dispatch\mag\impl\view\magCollectionOption.html',
 				array('propertyPath' => $propertyPath));
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\dispatch\mag\Mag::createManagedProperty($accessProxy)
+	 * @see \n2n\web\dispatch\mag\Mag::createManagedProperty($accessProxy)
 	 * @return ManagedProperty
 	 */
 	public function createManagedProperty(AccessProxy $accessProxy): ManagedProperty {

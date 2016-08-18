@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\annotation;
+namespace n2n\web\dispatch\annotation;
 
 use n2n\reflection\annotation\ClassAnnotation;
 use n2n\reflection\annotation\ClassAnnotationTrait;

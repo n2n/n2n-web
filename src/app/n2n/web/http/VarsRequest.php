@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Path;
 use n2n\util\uri\Url;
 use n2n\util\uri\Query;
 use n2n\util\ex\NotYetImplementedException;
-use n2n\http\UploadDefinition;
+use n2n\web\http\UploadDefinition;
 use n2n\util\uri\Authority;
 use n2n\reflection\ArgUtils;
 
@@ -145,7 +145,7 @@ class VarsRequest implements Request {
 		return $this->requestedUrl->getScheme() == self::PROTOCOL_HTTPS;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\http\Request::getUrl()
+	 * @see \n2n\web\http\Request::getUrl()
 	 */
 	public function getUrl(): Url {
 		return $this->requestedUrl;

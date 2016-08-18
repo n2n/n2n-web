@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map;
+namespace n2n\web\dispatch\map;
 
-use n2n\dispatch\Dispatchable;
+use n2n\web\dispatch\Dispatchable;
 use n2n\core\container\N2nContext;
 use n2n\reflection\ReflectionUtils;
-use n2n\dispatch\DispatchErrorException;
-use n2n\dispatch\map\bind\MappingDefinition;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\model\DispatchModel;
-use n2n\dispatch\target\ObjectItem;
+use n2n\web\dispatch\DispatchErrorException;
+use n2n\web\dispatch\map\bind\MappingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\model\DispatchModel;
+use n2n\web\dispatch\target\ObjectItem;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\dispatch\target\build\ParamInvestigator;
-use n2n\dispatch\map\bind\BindingErrors;
+use n2n\web\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\map\bind\BindingErrors;
 
 class DispatchItemsFactory {
 	const MAPPING_METHOD = '_mapping';

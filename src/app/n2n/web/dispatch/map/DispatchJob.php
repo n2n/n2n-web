@@ -19,18 +19,18 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map;
+namespace n2n\web\dispatch\map;
 
-use n2n\dispatch\target\DispatchTarget;
-use n2n\dispatch\Dispatchable;
+use n2n\web\dispatch\target\DispatchTarget;
+use n2n\web\dispatch\Dispatchable;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\map\bind\ObjectMapper;
-use n2n\dispatch\map\bind\BindingTree;
-use n2n\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\map\bind\ObjectMapper;
+use n2n\web\dispatch\map\bind\BindingTree;
+use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\model\UnknownManagedMethodException;
+use n2n\web\dispatch\model\UnknownManagedMethodException;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\target\build\ParamInvestigator;
 
 class DispatchJob {
 	private $methodName;

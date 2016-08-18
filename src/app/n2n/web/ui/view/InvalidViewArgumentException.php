@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view;
+namespace n2n\web\ui\view;
 
-use n2n\ui\UiException;
+use n2n\web\ui\UiException;
 
 class InvalidViewArgumentException extends UiException {
 }

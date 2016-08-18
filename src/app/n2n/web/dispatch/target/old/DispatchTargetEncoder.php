@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-// namespace n2n\dispatch\target;
+// namespace n2n\web\dispatch\target;
 
 // use n2n\util\crypt\Cipher;
 
@@ -36,7 +36,7 @@
 // 		$this->dispatchTarget = $dispatchTarget;
 // 	}
 // 	/**
-// 	 * @return \n2n\dispatch\target\Cipher
+// 	 * @return \n2n\web\dispatch\target\Cipher
 // 	 */
 // 	public function getCipher() {
 // 		return $this->cipher;

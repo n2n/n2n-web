@@ -19,16 +19,16 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\map\val\PropertyValidator;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\val\PropertyValidator;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\reflection\ArgUtils;
-use n2n\dispatch\map\val\Validator;
+use n2n\web\dispatch\map\val\Validator;
 use n2n\util\col\GenericArrayObject;
-use n2n\dispatch\map\val\ClosureValidator;
-use n2n\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\val\ClosureValidator;
+use n2n\web\dispatch\map\PropertyPathPart;
 
 class BindingDefinition {
 	private $bindingTree;
@@ -49,7 +49,7 @@ class BindingDefinition {
 		$bindingTree->register($propertyPath, $this);
 		
 		$this->propertyPath = $propertyPath;
-		$this->validators = new GenericArrayObject(null, 'n2n\dispatch\map\val\Validator');
+		$this->validators = new GenericArrayObject(null, 'n2n\web\dispatch\map\val\Validator');
 	}
 	/**
 	 * @return MappingResult
@@ -84,7 +84,7 @@ class BindingDefinition {
 		$args = func_get_args();
 		array_shift($args);
 		if (count($args) > 2) {
-			ArgUtils::valArray($args, 'n2n\dispatch\map\val\PropertyValidator');
+			ArgUtils::valArray($args, 'n2n\web\dispatch\map\val\PropertyValidator');
 		}
 		
 		foreach ($args as $propertyValidator) {

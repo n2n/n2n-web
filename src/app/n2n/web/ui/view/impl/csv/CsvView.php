@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\csv;
+namespace n2n\web\ui\view\impl\csv;
 
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\io\ob\OutputBuffer;
-use n2n\ui\view\impl\csv\CsvBuilder;
-use n2n\ui\view\View;
+use n2n\web\ui\view\impl\csv\CsvBuilder;
+use n2n\web\ui\view\View;
 
 class CsvView extends View {
 	private $csvBuilder;
@@ -51,4 +51,4 @@ class CsvView extends View {
  * hack to provide autocompletion in views
  */
 return;
-$csv = new \n2n\ui\view\impl\csv\CsvBuilder();
+$csv = new \n2n\web\ui\view\impl\csv\CsvBuilder();

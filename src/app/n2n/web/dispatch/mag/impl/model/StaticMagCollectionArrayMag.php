@@ -19,16 +19,16 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag\impl\model;
+namespace n2n\web\dispatch\mag\impl\model;
 
 use n2n\util\config\Attributes;
-use n2n\dispatch\map\BindingConstraints;
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\ManagedPropertyType;
-use n2n\dispatch\DispatchableTypeAnalyzer;
-use n2n\dispatch\mag\MagDispatchable;
-use n2n\ui\UiComponent;
+use n2n\web\dispatch\map\BindingConstraints;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\ManagedPropertyType;
+use n2n\web\dispatch\DispatchableTypeAnalyzer;
+use n2n\web\dispatch\mag\MagDispatchable;
+use n2n\web\ui\UiComponent;
 
 class StaticMagCollectionArrayMag extends MagAdapter {
 	private $fields = array();

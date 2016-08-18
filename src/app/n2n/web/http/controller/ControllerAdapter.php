@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
-use n2n\http\StatusException;
-use n2n\http\Response;
+use n2n\web\http\StatusException;
+use n2n\web\http\Response;
 use n2n\reflection\ObjectAdapter;
-use n2n\http\Request;
-use n2n\http\controller\impl\ControllingUtilsTrait;
+use n2n\web\http\Request;
+use n2n\web\http\controller\impl\ControllingUtilsTrait;
 use n2n\model\Lookupable;
 
 abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lookupable {
@@ -33,7 +33,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 	
 	
 	/* (non-PHPdoc)
-	 * @see \n2n\http\controller\Controller::execute()
+	 * @see \n2n\web\http\controller\Controller::execute()
 	 */
 	public final function execute(ControllerContext $controllerContext): bool {
 		$this->init($controllerContext);

@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
-use n2n\N2N;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\dispatch\map\val\SimplePropertyValidator;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\map\val\ValidationUtils;
+use n2n\core\N2N;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\val\SimplePropertyValidator;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\val\ValidationUtils;
 
 class ValNumeric extends SimplePropertyValidator {
 	const DEFAULT_NUMERIC_ERROR_TEXT_CODE = 'n2n.dispatch.val.ValNumeric.numeric';

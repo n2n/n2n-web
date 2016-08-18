@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val\impl;
+namespace n2n\web\dispatch\map\val\impl;
 
 use n2n\reflection\ReflectionUtils;
 use n2n\core\TypeNotFoundException;
-use n2n\dispatch\map\val\SimplePropertyValidator;
+use n2n\web\dispatch\map\val\SimplePropertyValidator;
 use n2n\l10n\MessageCode;
 
 class ValReflectionClass extends SimplePropertyValidator {

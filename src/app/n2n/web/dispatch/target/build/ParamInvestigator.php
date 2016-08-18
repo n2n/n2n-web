@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\target\build;
+namespace n2n\web\dispatch\target\build;
 
-use n2n\dispatch\map\PropertyPath;
-use n2n\http\UploadDefinition;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\http\UploadDefinition;
 
 class ParamInvestigator {
 	private $valueParams;

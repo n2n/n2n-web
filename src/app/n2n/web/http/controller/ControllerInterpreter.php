@@ -19,15 +19,15 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller;
+namespace n2n\web\http\controller;
 
 use n2n\util\uri\Path;
-use n2n\http\path\PathPatternCompiler;
+use n2n\web\http\path\PathPatternCompiler;
 use n2n\reflection\ReflectionContext;
-use n2n\http\path\PathPatternCompileException;
-use n2n\http\annotation\PathMethod;
-use n2n\http\Method;
-use n2n\http\annotation\AnnoPath;
+use n2n\web\http\path\PathPatternCompileException;
+use n2n\web\http\annotation\PathMethod;
+use n2n\web\http\Method;
+use n2n\web\http\annotation\AnnoPath;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
@@ -143,9 +143,9 @@ class ControllerInterpreter {
 		$methodName = $method->getName();
 		
 		$anno = null;
-		if (null !== ($annoPath = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoPath'))) {
+		if (null !== ($annoPath = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPath'))) {
 			$anno = $annoPath;
-		} else if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoExt'))) {
+		} else if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
 			$anno = $annoExt;
 		} 
 		
@@ -159,13 +159,13 @@ class ControllerInterpreter {
 		$methodName = $method->getName();
 		
 		$anno = null;
-		if (null !== ($annoGet = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoGet'))) {
+		if (null !== ($annoGet = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoGet'))) {
 			$anno = $annoGet;
-		} else if (null !== ($annoPut = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoPut'))) {
+		} else if (null !== ($annoPut = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPut'))) {
 			$anno = $annoPut;
-		} else if (null !== ($annoPost = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoPost'))) {
+		} else if (null !== ($annoPost = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPost'))) {
 			$anno = $annoPost;
-		} else if (null !== ($annoDelete = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoDelete'))) {
+		} else if (null !== ($annoDelete = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoDelete'))) {
 			$anno = $annoDelete;
 		}
 		
@@ -189,7 +189,7 @@ class ControllerInterpreter {
 		if (!$this->checkHttpMethod($method->getName(), $annotationSet)) return false;
 		
 		if (null !== $annotationSet->getMethodAnnotation($method->getName(), 
-				'n2n\http\annotation\AnnoPath')) {
+				'n2n\web\http\annotation\AnnoPath')) {
 			return false;
 		}
 		
@@ -284,7 +284,7 @@ class ControllerInterpreter {
 		do {
 			$annotationSet = ReflectionContext::getAnnotationSet($class);
 			
-			foreach ($annotationSet->getMethodAnnotationsByName('n2n\http\annotation\AnnoPath') as $annoPath) {
+			foreach ($annotationSet->getMethodAnnotationsByName('n2n\web\http\annotation\AnnoPath') as $annoPath) {
 				if ($annoPath->getPattern() === null || !$this->checkHttpMethod($annoPath->getAnnotatedMethod()->getName(), $annotationSet)) continue;
 				
 				$methodName = $annoPath->getAnnotatedMethod()->getName();
@@ -299,22 +299,22 @@ class ControllerInterpreter {
 		$httpMethod = $this->invokerFactory->getHttpMethod();
 		$allAllowed = true;
 		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoGet')) {
+		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoGet')) {
 			if ($httpMethod == Method::GET) return true;
 			$allAllowed = false;
 		}
 		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoPut')) {
+		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPut')) {
 			if ($httpMethod == Method::PUT) return true;
 			$allAllowed = false;
 		}
 		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoPost')) {
+		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPost')) {
 			if ($httpMethod == Method::POST) return true;
 			$allAllowed = false;
 		}
 		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoDelete')) {
+		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoDelete')) {
 			if ($httpMethod == Method::DELETE) return true;
 			$allAllowed = false;
 		}
@@ -323,11 +323,11 @@ class ControllerInterpreter {
 	}
 	
 	private function findExtensions($methodName, AnnotationSet $annotationSet) {
-		if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\http\annotation\AnnoExt'))) {
+		if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
 			return $annoExt->getNames();
 		}
 		
-		if (null !== ($annoExt = $annotationSet->getClassAnnotation('n2n\http\annotation\AnnoExt'))) {
+		if (null !== ($annoExt = $annotationSet->getClassAnnotation('n2n\web\http\annotation\AnnoExt'))) {
 			return $annoExt->getNames();
 		}
 		

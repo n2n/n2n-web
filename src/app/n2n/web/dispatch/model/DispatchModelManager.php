@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\model;
+namespace n2n\web\dispatch\model;
 
 use n2n\util\cache\CacheStore;
-use n2n\dispatch\Dispatchable;
-use n2n\dispatch\DynamicDispatchable;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\dispatch\DynamicDispatchable;
 
 class DispatchModelManager {
 	private $cacheStore;

@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\MappingResult;
 
 class ObjectMappingResult extends MappingResult {
 	private $created = false;

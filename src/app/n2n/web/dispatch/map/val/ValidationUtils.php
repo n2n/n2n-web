@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val;
+namespace n2n\web\dispatch\map\val;
 
 use n2n\l10n\Message;
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\l10n\MessageCode;
 use n2n\reflection\ArgUtils;
 

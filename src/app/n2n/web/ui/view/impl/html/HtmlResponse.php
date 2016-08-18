@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
-use n2n\http\BufferedResponseContent;
-use n2n\http\Response;
+use n2n\web\http\BufferedResponseContent;
+use n2n\web\http\Response;
 
 class HtmlResponse implements BufferedResponseContent {
 	private $uiComponent;
@@ -33,7 +33,7 @@ class HtmlResponse implements BufferedResponseContent {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\http\BufferedResponseContent::getBufferedContents()
+	 * @see \n2n\web\http\BufferedResponseContent::getBufferedContents()
 	 */
 	public function getBufferedContents() {
 		return HtmlUtils::contentsToHtml($this->uiComponent);
@@ -41,7 +41,7 @@ class HtmlResponse implements BufferedResponseContent {
 
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\http\ResponseThing::prepareForResponse()
+	 * @see \n2n\web\http\ResponseThing::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: text/html; charset=utf-8');
@@ -49,7 +49,7 @@ class HtmlResponse implements BufferedResponseContent {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\http\ResponseThing::toKownResponseString()
+	 * @see \n2n\web\http\ResponseThing::toKownResponseString()
 	 */
 	public function toKownResponseString() {
 		return 'Html Response';

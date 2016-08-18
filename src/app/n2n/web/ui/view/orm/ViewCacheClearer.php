@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\orm;
+namespace n2n\web\ui\view\orm;
 
 use n2n\reflection\ObjectAdapter;
-use n2n\ui\view\ViewCacheStore;
+use n2n\web\ui\view\ViewCacheStore;
 
 class ViewCacheClearer extends ObjectAdapter {
 	private $viewCacheControl;

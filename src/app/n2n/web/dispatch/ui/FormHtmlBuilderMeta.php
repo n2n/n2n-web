@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\ui;
+namespace n2n\web\dispatch\ui;
 
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\ui\view\impl\html\HtmlView;
 use n2n\l10n\MessageTranslator;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\dispatch\property\impl\ObjectProperty;
-use n2n\dispatch\mag\MagDispatchable;
-use n2n\dispatch\map\PropertyTypeMissmatchException;
-use n2n\ui\view\ViewErrorException;
+use n2n\web\dispatch\property\impl\ObjectProperty;
+use n2n\web\dispatch\mag\MagDispatchable;
+use n2n\web\dispatch\map\PropertyTypeMissmatchException;
+use n2n\web\ui\view\ViewErrorException;
 use n2n\reflection\magic\CanNotFillParameterException;
-use n2n\dispatch\map\InvalidPropertyExpressionException;
+use n2n\web\dispatch\map\InvalidPropertyExpressionException;
 
 class FormHtmlBuilderMeta {
 	private $view;
@@ -49,7 +49,7 @@ class FormHtmlBuilderMeta {
 	}
 	/**
 	 * @param string $propertyExpression
-	 * @return \n2n\dispatch\map\PropertyPath
+	 * @return \n2n\web\dispatch\map\PropertyPath
 	 */
 	public function createPropertyPath($propertyExpression = null, bool $emptyAllowed = false): PropertyPath {
 		if ($propertyExpression instanceof PropertyPath) {
@@ -242,7 +242,7 @@ class FormHtmlBuilderMeta {
 			$mappingResult = $resolver->getBaseMappingResult();
 		} else {
 			$mappingResult = $resolver->analyze($propertyPath, 
-					array('n2n\dispatch\property\impl\ObjectProperty'), false)->getMapValue();
+					array('n2n\web\dispatch\property\impl\ObjectProperty'), false)->getMapValue();
 		}
 
 		if ($mappingResult === null) {
@@ -281,7 +281,7 @@ class FormHtmlBuilderMeta {
 	/**
 	 * @param PropertyPath $propertyPath
 	 * @throws PropertyTypeMissmatchException
-	 * @return \n2n\dispatch\mag\Mag
+	 * @return \n2n\web\dispatch\mag\Mag
 	 */
 	public function lookupOption(PropertyPath $propertyPath) {
 		$form = $this->getForm();

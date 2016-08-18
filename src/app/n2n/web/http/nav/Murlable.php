@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\nav;
+namespace n2n\web\http\nav;
 
 use n2n\util\uri\Url;
-use n2n\http\controller\ControllerContext;
+use n2n\web\http\controller\ControllerContext;
 use n2n\core\container\N2nContext;
 
 interface Murlable {

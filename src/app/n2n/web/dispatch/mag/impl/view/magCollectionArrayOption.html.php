@@ -20,13 +20,13 @@
 	 * Thomas Günther.......: Developer, Hangar
 	 */
 
-	use n2n\dispatch\map\PropertyPath;
-	use n2n\ui\view\impl\html\HtmlBuilderMeta;
+	use n2n\web\dispatch\map\PropertyPath;
+	use n2n\web\ui\view\impl\html\HtmlBuilderMeta;
 
-	use n2n\ui\view\impl\html\HtmlView;
+	use n2n\web\ui\view\impl\html\HtmlView;
 	
 	/**
-	 * @var \n2n\ui\view\View $view
+	 * @var \n2n\web\ui\view\View $view
 	 */
 	$view = HtmlView::view($view);
 	$html = HtmlView::html($view);

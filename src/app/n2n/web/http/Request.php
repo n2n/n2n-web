@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 use n2n\l10n\N2nLocale;
-use n2n\http\controller\ControllerContext;
+use n2n\web\http\controller\ControllerContext;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 
@@ -56,7 +56,7 @@ interface Request {
 	public function getCmdPath(): Path;
 	
 	/**
-	 * @return \n2n\http\Subsystem
+	 * @return \n2n\web\http\Subsystem
 	 */
 	public function getSubsystem();
 	

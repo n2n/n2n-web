@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 abstract class LibraryAdapter implements Library {
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\ui\view\impl\html.NN6HtmlLibrary::hashCode()
+	 * @see n2n\web\ui\view\impl\html.NN6HtmlLibrary::hashCode()
 	 */
 	public function hashCode() {
 		return get_class($this);

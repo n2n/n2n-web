@@ -20,7 +20,7 @@
 	 * Thomas Günther.......: Developer, Hangar
 	 */
 
-	use n2n\dispatch\map\PropertyPath;
+	use n2n\web\dispatch\map\PropertyPath;
 
 	$propertyPath = $view->getParam('propertyPath');
 	$view->assert($propertyPath instanceof PropertyPath);

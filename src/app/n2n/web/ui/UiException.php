@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui;
+namespace n2n\web\ui;
 
 class UiException extends \RuntimeException {
 	

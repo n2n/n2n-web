@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\model;
+namespace n2n\web\dispatch\model;
 
 use n2n\reflection\property\PropertiesAnalyzer;
 use n2n\reflection\annotation\Annotation;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\dispatch\DispatchErrorException;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\DispatchErrorException;
 use n2n\reflection\annotation\AnnotationSet;
 
 class SetupProcess {

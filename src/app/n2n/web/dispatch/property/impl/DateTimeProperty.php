@@ -19,23 +19,23 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
-use n2n\dispatch\property\SimpleProperty;
+use n2n\web\dispatch\property\SimpleProperty;
 use n2n\core\container\N2nContext;
 use n2n\l10n\L10nUtils;
 use n2n\l10n\ParseException;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\target\TargetItem;
-use n2n\dispatch\target\ValueItem;
-use n2n\dispatch\map\CorruptedDispatchException;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\target\TargetItem;
+use n2n\web\dispatch\target\ValueItem;
+use n2n\web\dispatch\map\CorruptedDispatchException;
 use n2n\l10n\MessageCode;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\l10n\Message;
-use n2n\N2N;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\target\build\ParamInvestigator;
+use n2n\core\N2N;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\build\ParamInvestigator;
 
 class DateTimeProperty extends ManagedPropertyAdapter implements SimpleProperty {
 	const PARSE_ERROR_CODE = 'n2n.dispatch.property.impl.DateTimeProperty.parseDateTime';
@@ -75,7 +75,7 @@ class DateTimeProperty extends ManagedPropertyAdapter implements SimpleProperty 
 		$this->icuPattern = $icuPattern;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\SimpleProperty::convertMapValueToScalar()
+	 * @see \n2n\web\dispatch\property\SimpleProperty::convertMapValueToScalar()
 	 */
 	public function convertMapValueToScalar($mapValue, N2nContext $n2nContext) {
 		if ($mapValue instanceof \DateTime) {

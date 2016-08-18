@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map;
+namespace n2n\web\dispatch\map;
 
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\dispatch\DispatchException;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\DispatchException;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\ui\Form;
-use n2n\dispatch\DispatchContext;
+use n2n\web\dispatch\ui\Form;
+use n2n\web\dispatch\DispatchContext;
 
 class MappingPathResolver {
 	private $baseMappingResult;
@@ -66,7 +66,7 @@ class MappingPathResolver {
 	 * @param array $allowedPropertyClassNames
 	 * @param string $arrayRequired
 	 * @throws IllegalStateException
-	 * @return \n2n\dispatch\map\AnalyzerResult
+	 * @return \n2n\web\dispatch\map\AnalyzerResult
 	 */
 	public function analyze(PropertyPath $propertyPath, array $allowedPropertyClassNames = null, 
 			$arrayRequired = null, $prepareForm = true): AnalyzerResult {

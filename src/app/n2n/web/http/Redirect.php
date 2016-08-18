@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
-use n2n\N2N;
+use n2n\core\N2N;
 class Redirect implements ResponseThing {
 	private $httpStatus;
 	private $httpLocation;
@@ -36,7 +36,7 @@ class Redirect implements ResponseThing {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.ResponseThing::prepareForResponse()
+	 * @see n2n\web\http.ResponseThing::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setStatus($this->httpStatus);
@@ -45,7 +45,7 @@ class Redirect implements ResponseThing {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\http.ResponseThing::toKownResponseString()
+	 * @see n2n\web\http.ResponseThing::toKownResponseString()
 	 */
 	public function toKownResponseString() {
 		return $this->httpStatus . ' redirect to \'' . $this->httpLocation . '\'';

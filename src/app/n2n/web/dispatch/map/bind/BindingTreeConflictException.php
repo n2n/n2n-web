@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\DispatchException;
+use n2n\web\dispatch\DispatchException;
 
 class BindingTreeConflictException extends DispatchException {
 }

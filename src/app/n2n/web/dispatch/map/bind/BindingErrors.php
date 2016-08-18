@@ -19,11 +19,11 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\PropertyPathPart;
 use n2n\l10n\Message;
-use n2n\dispatch\map\val\ValidationUtils;
+use n2n\web\dispatch\map\val\ValidationUtils;
 use n2n\l10n\MessageCode;
 
 class BindingErrors {

@@ -19,19 +19,19 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
-use n2n\ui\UiException;
+use n2n\web\ui\UiException;
 use n2n\io\ob\OutputBuffer;
-use n2n\N2N;
-use n2n\ui\view\View;
-use n2n\ui\view\ViewCacheReader;
-use n2n\ui\view\ViewCacheWriter;
+use n2n\core\N2N;
+use n2n\web\ui\view\View;
+use n2n\web\ui\view\ViewCacheReader;
+use n2n\web\ui\view\ViewCacheWriter;
 use n2n\reflection\ArgUtils;
-use n2n\ui\ViewStuffFailedException;
-use n2n\http\Response;
-use n2n\dispatch\ui\FormHtmlBuilder;
-use n2n\ui\view\ViewCacheControl;
+use n2n\web\ui\ViewStuffFailedException;
+use n2n\web\http\Response;
+use n2n\web\dispatch\ui\FormHtmlBuilder;
+use n2n\web\ui\view\ViewCacheControl;
 use n2n\core\module\Module;
 
 class HtmlView extends View {
@@ -41,7 +41,7 @@ class HtmlView extends View {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\ui\view\View::getContentType()
+	 * @see \n2n\web\ui\view\View::getContentType()
 	 */
 	public function getContentType() {
 		return 'text/html; charset=' . N2N::CHARSET;
@@ -49,7 +49,7 @@ class HtmlView extends View {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\ui\view\View::compile($contentBuffer)
+	 * @see \n2n\web\ui\view\View::compile($contentBuffer)
 	 */
 	protected function compile(OutputBuffer $contentBuffer) {
 		if ($this->htmlProperties === null) {
@@ -114,13 +114,13 @@ class HtmlView extends View {
 		return $this->htmlProperties;
 	}
 	/**
-	 * @return \n2n\ui\view\impl\html\HtmlBuilder
+	 * @return \n2n\web\ui\view\impl\html\HtmlBuilder
 	 */
 	public function getHtmlBuilder() {
 		return $this->htmlBuilder;
 	}
 	/**
-	 * @return \n2n\dispatch\ui\FormHtmlBuilder
+	 * @return \n2n\web\dispatch\ui\FormHtmlBuilder
 	 */
 	public function getFormHtmlBuilder() {
 		return $this->formHtmlBuilder;
@@ -163,7 +163,7 @@ class HtmlView extends View {
 	
 	/**
 	 * @param HtmlView $view
-	 * @return \n2n\ui\view\impl\html\HtmlBuilder
+	 * @return \n2n\web\ui\view\impl\html\HtmlBuilder
 	 */
 	public static function html(HtmlView $view) {
 		return $view->getHtmlBuilder();
@@ -171,7 +171,7 @@ class HtmlView extends View {
 	
 	/**
 	 * @param HtmlView $view
-	 * @return \n2n\dispatch\ui\FormHtmlBuilder
+	 * @return \n2n\web\dispatch\ui\FormHtmlBuilder
 	 */
 	public static function formHtml(HtmlView $view): FormHtmlBuilder {
 		return $view->getFormHtmlBuilder();
@@ -186,5 +186,5 @@ class NoHttpControllerContextAssignetException extends UiException {
  * hack to provide autocompletion in views
  */
 return;
-$html = new \n2n\ui\view\impl\html\HtmlBuilder();
-$formHtml = new \n2n\dispatch\ui\FormHtmlBuilder();
+$html = new \n2n\web\ui\view\impl\html\HtmlBuilder();
+$formHtml = new \n2n\web\dispatch\ui\FormHtmlBuilder();

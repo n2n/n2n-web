@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
 use n2n\util\config\Attributes;
-use n2n\ui\UiComponent;
+use n2n\web\ui\UiComponent;
 use n2n\io\ob\OutputBuffer;
-use n2n\ui\ViewStuffFailedException;
-use n2n\dispatch\ui\Form;
+use n2n\web\ui\ViewStuffFailedException;
+use n2n\web\dispatch\ui\Form;
 
 class HtmlProperties {	
 	protected $prependedAttributes;

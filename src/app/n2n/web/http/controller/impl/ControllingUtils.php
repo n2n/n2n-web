@@ -19,34 +19,34 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller\impl;
+namespace n2n\web\http\controller\impl;
 
-use n2n\http\controller\ControllerContext;
-use n2n\http\controller\ControllingPlanException;
+use n2n\web\http\controller\ControllerContext;
+use n2n\web\http\controller\ControllingPlanException;
 use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\ReflectionUtils;
 use n2n\util\ex\IllegalStateException;
-use n2n\ui\view\ViewCacheControl;
-use n2n\http\controller\ControllingPlan;
-use n2n\http\ResponseThing;
-use n2n\http\controller\NoHttpRefererGivenException;
-use n2n\http\nav\Murlable;
-use n2n\http\Redirect;
-use n2n\dispatch\DispatchContext;
-use n2n\dispatch\Dispatchable;
-use n2n\http\ResponseCacheControl;
-use n2n\http\HttpCacheControl;
-use n2n\ui\ViewFactory;
+use n2n\web\ui\view\ViewCacheControl;
+use n2n\web\http\controller\ControllingPlan;
+use n2n\web\http\ResponseThing;
+use n2n\web\http\controller\NoHttpRefererGivenException;
+use n2n\web\http\nav\Murlable;
+use n2n\web\http\Redirect;
+use n2n\web\dispatch\DispatchContext;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\http\ResponseCacheControl;
+use n2n\web\http\HttpCacheControl;
+use n2n\web\ui\ViewFactory;
 use n2n\reflection\CastUtils;
-use n2n\http\controller\Controller;
+use n2n\web\http\controller\Controller;
 use n2n\core\container\N2nContext;
-use n2n\http\Response;
-use n2n\http\Request;
-use n2n\http\HttpContext;
-use n2n\http\controller\InvokerInfo;
-use n2n\ui\view\View;
-use n2n\http\nav\Murl;
-use n2n\http\BadRequestException;
+use n2n\web\http\Response;
+use n2n\web\http\Request;
+use n2n\web\http\HttpContext;
+use n2n\web\http\controller\InvokerInfo;
+use n2n\web\ui\view\View;
+use n2n\web\http\nav\Murl;
+use n2n\web\http\BadRequestException;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -82,14 +82,14 @@ class ControllingUtils {
 	}
 	
 	/**
-	 * @return \n2n\http\Request
+	 * @return \n2n\web\http\Request
 	 */
 	public function getRequest(): Request {
 		return $this->getHttpContext()->getRequest();
 	}
 	
 	/**
-	 * @return \n2n\http\Response
+	 * @return \n2n\web\http\Response
 	 */
 	public function getResponse(): Response {
 		return $this->getHttpContext()->getResponse();
@@ -278,7 +278,7 @@ class ControllingUtils {
 		try {
 			return $this->getN2nContext()->lookup(DispatchContext::class)->dispatch($dispatchable, $methodName,
 					$this->getN2nContext());
-		} catch (\n2n\dispatch\map\CorruptedDispatchException $e) {
+		} catch (\n2n\web\dispatch\map\CorruptedDispatchException $e) {
 			throw new BadRequestException(null, 0, $e);
 		}
 	}
@@ -385,7 +385,7 @@ class ControllingUtils {
 	/**
 	 * @param Controller $controller
 	 * @param unknown $pathPartsToShift
-	 * @return \n2n\http\controller\ControllerContext
+	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function createDelegateContext(Controller $controller = null, $pathPartsToShift = null) {
 		$controllerContext = $this->controllerContext;

@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller\impl;
+namespace n2n\web\http\controller\impl;
 
 class ScrException extends \RuntimeException {
 }

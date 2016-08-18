@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag;
+namespace n2n\web\dispatch\mag;
 
-use n2n\dispatch\DynamicDispatchable;
+use n2n\web\dispatch\DynamicDispatchable;
 
 interface MagDispatchable extends DynamicDispatchable {
 	public function getMagCollection(): MagCollection;

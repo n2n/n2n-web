@@ -19,13 +19,13 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 use n2n\core\N2nErrorException;
 use n2n\util\HashUtils;
 use n2n\core\N2nRuntimeException;
 use n2n\io\ob\OutputBuffer;
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 
 class Response {

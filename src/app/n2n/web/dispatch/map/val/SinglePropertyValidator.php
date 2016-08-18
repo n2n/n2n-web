@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val;
+namespace n2n\web\dispatch\map\val;
 
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\property\ManagedProperty;
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\map\bind\BindingErrors;
-use n2n\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\bind\BindingErrors;
+use n2n\web\dispatch\map\PropertyPathPart;
 use n2n\l10n\MessageCode;
 use n2n\l10n\Message;
 

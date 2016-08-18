@@ -19,17 +19,17 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\val;
+namespace n2n\web\dispatch\map\val;
 
 use n2n\core\container\N2nContext;
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\reflection\magic\CanNotFillParameterException;
-use n2n\dispatch\DispatchErrorException;
+use n2n\web\dispatch\DispatchErrorException;
 use n2n\l10n\MessageCode;
 use n2n\l10n\Message;
-use n2n\N2N;
-use n2n\dispatch\map\PropertyPathPart;
+use n2n\core\N2N;
+use n2n\web\dispatch\map\PropertyPathPart;
 
 class ClosureValidator implements Validator {
 	const SINGULAR_DEFAULT_ERROR_TEXT_CODE = 'n2n.model.dispatch.val.ClosureValidator.singular';

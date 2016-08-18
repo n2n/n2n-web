@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\ui\view\impl\html;
+namespace n2n\web\ui\view\impl\html;
 
-use n2n\ui\UiUtils;
-use n2n\dispatch\DispatchException;
-use n2n\ui\UiException;
-use n2n\dispatch\PropertyExpressionResolver;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\ManagedPropertyType;
+use n2n\web\ui\UiUtils;
+use n2n\web\dispatch\DispatchException;
+use n2n\web\ui\UiException;
+use n2n\web\dispatch\PropertyExpressionResolver;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\ManagedPropertyType;
 
 class InputTextarea extends HtmlElement {
 	/**

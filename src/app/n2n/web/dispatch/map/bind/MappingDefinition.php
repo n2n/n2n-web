@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\ObjectItem;
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\map\MappingResult;
-use n2n\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\map\MappingResult;
+use n2n\web\dispatch\target\build\ParamInvestigator;
 
 class MappingDefinition {
 	private $mappingResult;

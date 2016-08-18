@@ -19,28 +19,28 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\property\impl;
+namespace n2n\web\dispatch\property\impl;
 
 use n2n\core\container\N2nContext;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\target\ObjectArrayItem;
-use n2n\dispatch\map\CorruptedDispatchException;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\target\ObjectArrayItem;
+use n2n\web\dispatch\map\CorruptedDispatchException;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\dispatch\Dispatchable;
-use n2n\dispatch\map\MappingResult;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\dispatch\map\MappingResult;
 use n2n\util\col\ArrayUtils;
 use n2n\reflection\ArgUtils;
 use n2n\reflection\property\TypeConstraint;
-use n2n\dispatch\map\bind\ObjectMapper;
-use n2n\dispatch\map\PropertyPathPart;
-use n2n\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\bind\ObjectMapper;
+use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\web\dispatch\map\PropertyPath;
 use n2n\reflection\magic\CanNotFillParameterException;
-use n2n\dispatch\DispatchErrorException;
-use n2n\dispatch\target\build\ParamInvestigator;
-use n2n\dispatch\target\DispatchTargetException;
+use n2n\web\dispatch\DispatchErrorException;
+use n2n\web\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\target\DispatchTargetException;
 use n2n\reflection\ReflectionUtils;
-use n2n\dispatch\DispatchContext;
+use n2n\web\dispatch\DispatchContext;
 
 class ObjectProperty extends ManagedPropertyAdapter {
 	const CREATOR_KEY_PARAM = 'key';
@@ -52,9 +52,9 @@ class ObjectProperty extends ManagedPropertyAdapter {
 	public function __construct($accessProxy, $array, $useArrayObject = null) {
 		$constraints = $accessProxy->getConstraint();
 		if (!$array && ($constraints->isEmpty() || !is_subclass_of($constraints->getTypeName(), 
-				'n2n\dispatch\Dispatchable'))) {
+				'n2n\web\dispatch\Dispatchable'))) {
 			CommonManagedPropertyProvider::restrictConstraints($accessProxy, 
-					'n2n\dispatch\Dispatchable', $array, $useArrayObject);
+					'n2n\web\dispatch\Dispatchable', $array, $useArrayObject);
 		}
 		
 		if ($array) {
@@ -62,13 +62,13 @@ class ObjectProperty extends ManagedPropertyAdapter {
 			if ($arryFieldTypeConstraint === null || $arryFieldTypeConstraint->isEmpty()
 					|| !is_subclass_of($arryFieldTypeConstraint->getTypeName(), Dispatchable::class)) {
 			 	CommonManagedPropertyProvider::restrictConstraints($accessProxy, 
-					'n2n\dispatch\Dispatchable', $array, $useArrayObject);
+					'n2n\web\dispatch\Dispatchable', $array, $useArrayObject);
 			 	
 			}
 		}
 		
 		if (!$array) {
-			$this->mapTypeConstraint = TypeConstraint::createSimple('n2n\dispatch\map\MappingResult');
+			$this->mapTypeConstraint = TypeConstraint::createSimple('n2n\web\dispatch\map\MappingResult');
 		} else {
 			$type = $accessProxy->getConstraint()->getTypeName();
 			if ($type === null) {
@@ -76,7 +76,7 @@ class ObjectProperty extends ManagedPropertyAdapter {
 			}
 			
 			$this->mapTypeConstraint = TypeConstraint::createArrayLike($type, 
-					false, TypeConstraint::createSimple('n2n\dispatch\map\MappingResult'));
+					false, TypeConstraint::createSimple('n2n\web\dispatch\map\MappingResult'));
 		}
 		
 		$accessProxy->setNullReturnAllowed(true);
@@ -200,7 +200,7 @@ class ObjectProperty extends ManagedPropertyAdapter {
 		return $mapValue;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::convertValueToMapValue()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::convertValueToMapValue()
 	 */
 	public function writeValueToMappingResult($value, MappingResult $mappingResult, N2nContext $n2nContext) {
 		if ($this->isArray()) {
@@ -225,7 +225,7 @@ class ObjectProperty extends ManagedPropertyAdapter {
 		$mappingResult->__set($this->getName(), null);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\property\ManagedProperty::createMapValueField()
+	 * @see \n2n\web\dispatch\property\ManagedProperty::createMapValueField()
 	 */
 	public function resolveMapValue(PropertyPathPart $pathPart, MappingResult $mappingResult, N2nContext $n2nContext) {
 		$mapValue = null;

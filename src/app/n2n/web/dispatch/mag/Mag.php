@@ -19,16 +19,16 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\mag;
+namespace n2n\web\dispatch\mag;
 
-use n2n\ui\view\impl\html\HtmlView;
-use n2n\dispatch\map\PropertyPath;
-use n2n\dispatch\map\BindingConstraints;
-use n2n\dispatch\map\bind\MappingDefinition;
+use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\web\dispatch\map\PropertyPath;
+use n2n\web\dispatch\map\BindingConstraints;
+use n2n\web\dispatch\map\bind\MappingDefinition;
 use n2n\reflection\property\AccessProxy;
-use n2n\dispatch\map\bind\BindingDefinition;
-use n2n\dispatch\property\ManagedProperty;
-use n2n\ui\UiComponent;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\ui\UiComponent;
 use n2n\l10n\Label;
 use n2n\l10n\N2nLocale;
 

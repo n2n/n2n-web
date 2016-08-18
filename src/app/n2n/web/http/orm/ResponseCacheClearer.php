@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\orm;
+namespace n2n\web\http\orm;
 
 use n2n\reflection\ObjectAdapter;
-use n2n\http\ResponseCacheStore;
+use n2n\web\http\ResponseCacheStore;
 
 class ResponseCacheClearer extends ObjectAdapter {
 	private $responseCacheControl;

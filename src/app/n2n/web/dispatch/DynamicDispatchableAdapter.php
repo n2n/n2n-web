@@ -19,12 +19,12 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch;
+namespace n2n\web\dispatch;
 
 abstract class DynamicDispatchableAdapter implements DynamicDispatchable {
 	private $values;
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\DynamicDispatchable::getPropertyValue()
+	 * @see \n2n\web\dispatch\DynamicDispatchable::getPropertyValue()
 	 */
 	public function getPropertyValue($name) {
 		if (isset($this->values[$name])) {
@@ -33,7 +33,7 @@ abstract class DynamicDispatchableAdapter implements DynamicDispatchable {
 		return null;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\dispatch\DynamicDispatchable::setPropertyValue()
+	 * @see \n2n\web\dispatch\DynamicDispatchable::setPropertyValue()
 	 */
 	public function setPropertyValue($name, $value) {
 		$this->values[$name] = $value;

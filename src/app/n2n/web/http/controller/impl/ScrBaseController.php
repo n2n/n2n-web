@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http\controller\impl;
+namespace n2n\web\http\controller\impl;
 
-use n2n\http\controller\ControllerAdapter;
-use n2n\http\PageNotFoundException;
+use n2n\web\http\controller\ControllerAdapter;
+use n2n\web\http\PageNotFoundException;
 
 class ScrBaseController extends ControllerAdapter {
 	

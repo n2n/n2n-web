@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\model;
+namespace n2n\web\dispatch\model;
 
-use n2n\dispatch\DispatchException;
+use n2n\web\dispatch\DispatchException;
 
 class UnknownManagedPropertyException extends DispatchException {
 

@@ -19,23 +19,23 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch;
+namespace n2n\web\dispatch;
 
-use n2n\http\Method;
+use n2n\web\http\Method;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\model\DispatchModelManager;
-use n2n\dispatch\map\DispatchJob;
-use n2n\dispatch\map\CorruptedDispatchException;
-use n2n\http\Request;
+use n2n\web\dispatch\model\DispatchModelManager;
+use n2n\web\dispatch\map\DispatchJob;
+use n2n\web\dispatch\map\CorruptedDispatchException;
+use n2n\web\http\Request;
 use n2n\util\ex\IllegalStateException;
-use n2n\dispatch\target\build\DispatchTargetCoder;
-use n2n\dispatch\target\build\DispatchTargetExtractor;
+use n2n\web\dispatch\target\build\DispatchTargetCoder;
+use n2n\web\dispatch\target\build\DispatchTargetExtractor;
 use n2n\model\ThreadScoped;
 use n2n\core\config\HttpConfig;
-use n2n\dispatch\model\DispatchModelFactory;
+use n2n\web\dispatch\model\DispatchModelFactory;
 use n2n\core\VarStore;
 use n2n\util\crypt\EncryptionDescriptor;
-use n2n\N2N;
+use n2n\core\N2N;
 use n2n\io\IoUtils;
 use n2n\util\crypt\Cipher;
 
@@ -100,7 +100,7 @@ class DispatchContext implements ThreadScoped {
 	/**
 	 * @param Dispatchable $dispatchable
 	 * @param N2nContext $n2nCotext
-	 * @return \n2n\dispatch\map\MappingResult
+	 * @return \n2n\web\dispatch\map\MappingResult
 	 */
 	public function getOrCreateMappingResult(Dispatchable $dispatchable, N2nContext $n2nCotext) {
 		if ($this->dispatchJob !== null 

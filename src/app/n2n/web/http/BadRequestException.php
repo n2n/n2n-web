@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\http;
+namespace n2n\web\http;
 
 class BadRequestException extends StatusException {
 	public function __construct(string $message = null, int $code = null, \Throwable $previous =  null) {

@@ -19,14 +19,14 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\map\bind;
+namespace n2n\web\dispatch\map\bind;
 
-use n2n\dispatch\Dispatchable;
-use n2n\dispatch\target\ObjectItem;
-use n2n\dispatch\map\PropertyPath;
+use n2n\web\dispatch\Dispatchable;
+use n2n\web\dispatch\target\ObjectItem;
+use n2n\web\dispatch\map\PropertyPath;
 use n2n\core\container\N2nContext;
-use n2n\dispatch\target\build\ParamInvestigator;
-use n2n\dispatch\DispatchContext;
+use n2n\web\dispatch\target\build\ParamInvestigator;
+use n2n\web\dispatch\DispatchContext;
 
 class ObjectMapper {
 	private $objectItem;

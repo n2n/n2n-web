@@ -19,10 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\dispatch\model;
+namespace n2n\web\dispatch\model;
 
-use n2n\dispatch\property\ManagedProperty;
-use n2n\dispatch\map\DispatchItemsFactory;
+use n2n\web\dispatch\property\ManagedProperty;
+use n2n\web\dispatch\map\DispatchItemsFactory;
 
 class DispatchModel {
 	private $class;
