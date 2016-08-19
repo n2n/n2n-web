@@ -530,7 +530,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	/**
 	 * 
 	 * @param unknown_type $useableClassName
-	 * @return \n2n\model\Lookupable
+	 * @return \n2n\context\Lookupable
 	 */
 	public function lookup($useableClassName) {
 		return $this->getN2nContext()->lookup($useableClassName);

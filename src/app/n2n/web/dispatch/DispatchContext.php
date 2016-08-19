@@ -30,7 +30,7 @@ use n2n\web\http\Request;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\target\build\DispatchTargetCoder;
 use n2n\web\dispatch\target\build\DispatchTargetExtractor;
-use n2n\model\ThreadScoped;
+use n2n\context\ThreadScoped;
 use n2n\core\config\HttpConfig;
 use n2n\web\dispatch\model\DispatchModelFactory;
 use n2n\core\VarStore;

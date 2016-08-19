@@ -33,7 +33,7 @@ use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\ui\view\ViewStateListener;
 use n2n\core\container\N2nContext;
 use n2n\core\module\impl\LazyModule;
-use n2n\model\ThreadScoped;
+use n2n\context\ThreadScoped;
 use n2n\core\config\HttpConfig;
 use n2n\web\ui\view\ViewCacheStore;
 

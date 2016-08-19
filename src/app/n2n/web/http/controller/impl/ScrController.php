@@ -22,7 +22,7 @@
 namespace n2n\web\http\controller\impl;
 
 use n2n\web\http\controller\Controller;
-use n2n\model\RequestScoped;
+use n2n\context\RequestScoped;
 
 interface ScrController extends Controller, RequestScoped {
 	

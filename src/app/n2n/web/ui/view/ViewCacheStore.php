@@ -21,7 +21,7 @@
  */
 namespace n2n\web\ui\view;
 
-use n2n\model\ThreadScoped;
+use n2n\context\ThreadScoped;
 use n2n\core\container\AppCache;
 
 class ViewCacheStore implements ThreadScoped {

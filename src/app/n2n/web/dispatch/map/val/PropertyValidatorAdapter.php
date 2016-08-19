@@ -52,7 +52,7 @@ abstract class PropertyValidatorAdapter implements PropertyValidator {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\model\dispatch\val.PropertyValidator::initialize()
+	 * @see n2n\context\dispatch\val.PropertyValidator::initialize()
 	 */
 	public function initialize(array $managedProperties) {
 		foreach ($managedProperties as $managedProperty) {

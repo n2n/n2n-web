@@ -26,7 +26,7 @@ use n2n\web\http\Response;
 use n2n\reflection\ObjectAdapter;
 use n2n\web\http\Request;
 use n2n\web\http\controller\impl\ControllingUtilsTrait;
-use n2n\model\Lookupable;
+use n2n\context\Lookupable;
 
 abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lookupable {
 	use ControllingUtilsTrait;

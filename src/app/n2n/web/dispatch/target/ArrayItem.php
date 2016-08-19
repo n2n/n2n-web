@@ -41,7 +41,7 @@ class ArrayItem extends TargetItem {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\model\dispatch\target.ArrayTargetItem::getField($key)
+	 * @see n2n\context\dispatch\target.ArrayTargetItem::getField($key)
 	 */
 	public function getPropertyItem($key) {
 		if ($this->containsPropertyItemKey($key)) {
@@ -52,7 +52,7 @@ class ArrayItem extends TargetItem {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\model\dispatch\target.BranchTargetItem::getFields()
+	 * @see n2n\context\dispatch\target.BranchTargetItem::getFields()
 	 */
 	public function getPropertyItems() {
 		return $this->propertyItems;

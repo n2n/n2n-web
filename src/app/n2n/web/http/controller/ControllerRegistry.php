@@ -27,7 +27,7 @@ use n2n\util\uri\Path;
 use n2n\l10n\N2nLocale;
 use n2n\web\http\path\PlaceholderValidator;
 use n2n\web\http\Supersystem;
-use n2n\model\RequestScoped;
+use n2n\context\RequestScoped;
 use n2n\core\config\HttpConfig;
 use n2n\web\http\HttpContext;
 use n2n\web\http\Subsystem;

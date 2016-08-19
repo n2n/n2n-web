@@ -21,11 +21,11 @@
  */
 namespace n2n\web\http\controller\impl;
 
-use n2n\model\RequestScoped;
+use n2n\context\RequestScoped;
 use n2n\util\uri\Url;
 use n2n\reflection\annotation\AnnoInit;
-use n2n\model\annotation\AnnoSessionScoped;
-use n2n\model\LookupManager;
+use n2n\context\annotation\AnnoSessionScoped;
+use n2n\context\LookupManager;
 use n2n\util\HashUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\core\TypeNotFoundException;
