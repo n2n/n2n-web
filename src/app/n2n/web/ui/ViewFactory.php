@@ -103,25 +103,25 @@ class ViewFactory implements ThreadScoped {
 		return $this->createView(TypeLoader::getFilePathOfType($viewName, TypeLoader::SCRIPT_FILE_EXTENSION), 
 				$viewName, $params, $module);
 	}
-	/**
-	 * 
-	 * @param unknown_type $scriptPath
-	 * @param Module $module
-	 * @param unknown_type $props
-	 * @throws ViewNotFoundException
-	 * @throws ViewErrorException
-	 * @return View
-	 */
-	public function createFromScript($scriptPath, $params, Module $module = null) {
-		if (!is_file($scriptPath)) {
-			throw new ViewNotFoundException(SysTextUtils::get('n2n_error_view_not_found', array('scriptPath' => $scriptPath)));
-		} else if (!is_readable($scriptPath)) {
-			throw new ViewErrorException(SysTextUtils::get('n2n_error_view_cant_access_script', 
-					array('scriptPath' => $scriptPath)), 0, E_USER_ERROR, scriptPath);
-		}
+// 	/**
+// 	 * 
+// 	 * @param unknown_type $scriptPath
+// 	 * @param Module $module
+// 	 * @param unknown_type $props
+// 	 * @throws ViewNotFoundException
+// 	 * @throws ViewErrorException
+// 	 * @return View
+// 	 */
+// 	public function createFromScript($scriptPath, $params, Module $module = null) {
+// 		if (!is_file($scriptPath)) {
+// 			throw new ViewNotFoundException(SysTextUtils::get('n2n_error_view_not_found', array('scriptPath' => $scriptPath)));
+// 		} else if (!is_readable($scriptPath)) {
+// 			throw new ViewErrorException(SysTextUtils::get('n2n_error_view_cant_access_script', 
+// 					array('scriptPath' => $scriptPath)), 0, E_USER_ERROR, scriptPath);
+// 		}
 		
-		return $this->createView($scriptPath, TypeLoader::pathToTypeName($scriptPath), $module, $props);
-	}
+// 		return $this->createView($scriptPath, TypeLoader::pathToTypeName($scriptPath), $module, $props);
+// 	}
 	/**
 	 * 
 	 * @param unknown_type $scriptPath
