@@ -27,3 +27,31 @@
         }
     }
 }
+{
+    "name": "n2n/n2n-web",
+    "type": "library",
+    "description": "n2n web",
+    "keywords": ["n2n","rest","controler","http","form api"],
+    "homepage": "http://n2n.rocks/",
+    "license": "GNU LGPL",
+    "authors": [
+        {
+            "name": "Andreas von Burg",
+            "email": "a@von-burg.net",
+            "homepage": "http://www.von-burg.net",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "n2n/n2n-io": "master-dev",
+        "n2n/n2n-l10n": "master-dev",
+        "n2n/n2n-reflection": "master-dev",
+        "n2n/n2n-util": "master-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "n2n\\web\\": "src/app/n2n/web"
+        }
+    }
+}
