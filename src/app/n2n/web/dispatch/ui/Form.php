@@ -26,14 +26,14 @@ use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\ui\Raw;
 use n2n\web\dispatch\target\DispatchTarget;
 use n2n\web\dispatch\Dispatchable;
-use n2n\web\ui\view\impl\html\HtmlElement;
-use n2n\web\ui\view\impl\html\HtmlUtils;
+use n2n\impl\web\ui\view\html\HtmlElement;
+use n2n\impl\web\ui\view\html\HtmlUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ArgUtils;
 use n2n\io\ob\OutputBuffer;
 use n2n\web\http\Method;
 use n2n\web\dispatch\map\MappingPathResolver;
-use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\web\dispatch\map\MappingResult;
 use n2n\web\dispatch\target\build\DispatchTargetEncoder;
 use n2n\web\dispatch\DispatchContext;
@@ -121,7 +121,7 @@ class Form {
 	}
 	/**
 	 * 
-	 * @return \n2n\web\ui\view\impl\html\HtmlView
+	 * @return \n2n\impl\web\ui\view\html\HtmlView
 	 */
 	public function getView() {
 		return $this->view;

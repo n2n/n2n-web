@@ -24,19 +24,19 @@ namespace n2n\web\dispatch\ui;
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\dispatch\map\AnalyzerResult;
 use n2n\web\ui\Raw;
-use n2n\web\ui\view\impl\html\HtmlElement;
-use n2n\web\ui\view\impl\html\HtmlUtils;
+use n2n\impl\web\ui\view\html\HtmlElement;
+use n2n\impl\web\ui\view\html\HtmlUtils;
 use n2n\web\dispatch\property\SimpleProperty;
 use n2n\web\dispatch\target\TargetItem;
 use n2n\web\dispatch\map\InvalidPropertyExpressionException;
 use n2n\reflection\ArgUtils;
 use n2n\util\col\ArrayUtils;
 use n2n\io\managed\File;
-use n2n\web\dispatch\property\impl\FileProperty;
+use n2n\impl\web\dispatch\property\FileProperty;
 use n2n\core\N2N;
 use n2n\io\managed\impl\TmpFileManager;
 use n2n\web\dispatch\map\PropertyTypeMissmatchException;
-use n2n\web\dispatch\property\impl\ObjectProperty;
+use n2n\impl\web\dispatch\property\ObjectProperty;
 use n2n\reflection\ReflectionUtils;
 use n2n\web\ui\UiComponent;
 use n2n\web\dispatch\target\PropertyPathMissmatchException;
@@ -69,7 +69,7 @@ class FormUiComponentFactory {
 	
 	/**
 	 * @param TargetItem $targetItem
-	 * @return \n2n\web\ui\view\impl\html\HtmlElement
+	 * @return \n2n\impl\web\ui\view\html\HtmlElement
 	 */
 	private function buildTargetItemHidden(TargetItem $targetItem) {
 		$dtAttrs = $this->form->getDispatchTargetEncoder()->encodeTargetItem($targetItem);
@@ -213,7 +213,7 @@ class FormUiComponentFactory {
 	 * @throws UiException
 	 */
 	public function createInputFile(PropertyPath $propertyPath, array $attrs = null) {
-		$result = $this->resolver->analyze($propertyPath, array('n2n\web\dispatch\property\impl\FileProperty'), false);
+		$result = $this->resolver->analyze($propertyPath, array('n2n\impl\web\dispatch\property\FileProperty'), false);
 		$propertyItem = $this->form->getDispatchTarget()->registerProperty($propertyPath);
 
 		$elemAttrs = $this->form->enhanceElementAttrs(array('type' => 'file', 
@@ -230,7 +230,7 @@ class FormUiComponentFactory {
 	 * @return n2n\web\ui\Raw
 	 */
 	public function createInputFileLabel(PropertyPath $propertyPath, array $attrs = null, $deleteLinkLabel = null) {
-		$result = $this->resolver->analyze($propertyPath, array('n2n\web\dispatch\property\impl\FileProperty'), false);
+		$result = $this->resolver->analyze($propertyPath, array('n2n\impl\web\dispatch\property\FileProperty'), false);
 		$propertyItem = $this->form->getDispatchTarget()->registerProperty($propertyPath);
 			
 		$mapValue = $result->getMapValue();
@@ -452,7 +452,7 @@ class FormUiComponentFactory {
 	 * @param PropertyPath $propertyPath
 	 * @param unknown $label
 	 * @param array $attrs
-	 * @return \n2n\web\ui\view\impl\html\HtmlElement
+	 * @return \n2n\impl\web\ui\view\html\HtmlElement
 	 * @throws AttributeNameIsReservedException
 	 */
 	public function createLabel(PropertyPath $propertyPath, $label, array $attrs = null) {

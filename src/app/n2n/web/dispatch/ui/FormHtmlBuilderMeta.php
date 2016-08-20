@@ -23,10 +23,10 @@ namespace n2n\web\dispatch\ui;
 
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\dispatch\map\PropertyPathPart;
-use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\l10n\MessageTranslator;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\web\dispatch\property\impl\ObjectProperty;
+use n2n\impl\web\dispatch\property\ObjectProperty;
 use n2n\web\dispatch\mag\MagDispatchable;
 use n2n\web\dispatch\map\PropertyTypeMissmatchException;
 use n2n\web\ui\view\ViewErrorException;
@@ -242,7 +242,7 @@ class FormHtmlBuilderMeta {
 			$mappingResult = $resolver->getBaseMappingResult();
 		} else {
 			$mappingResult = $resolver->analyze($propertyPath, 
-					array('n2n\web\dispatch\property\impl\ObjectProperty'), false)->getMapValue();
+					array('n2n\impl\web\dispatch\property\ObjectProperty'), false)->getMapValue();
 		}
 
 		if ($mappingResult === null) {

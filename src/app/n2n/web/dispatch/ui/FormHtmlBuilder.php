@@ -21,13 +21,13 @@
  */
 namespace n2n\web\dispatch\ui;
 
-use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\web\dispatch\Dispatchable;
-use n2n\web\ui\view\impl\html\HtmlElement;
+use n2n\impl\web\ui\view\html\HtmlElement;
 use n2n\web\http\Method;
-use n2n\web\ui\view\impl\html\MessageList;
+use n2n\impl\web\ui\view\html\MessageList;
 use n2n\web\ui\Raw;
-use n2n\web\ui\view\impl\html\HtmlUtils;
+use n2n\impl\web\ui\view\html\HtmlUtils;
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\map\PropertyPath;

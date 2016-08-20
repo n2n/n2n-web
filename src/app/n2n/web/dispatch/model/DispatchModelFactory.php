@@ -29,7 +29,7 @@ use n2n\reflection\annotation\Annotation;
 use n2n\reflection\property\AccessProxy;
 use n2n\web\dispatch\DispatchErrorException;
 use n2n\reflection\property\InvalidPropertyAccessMethodException;
-use n2n\web\dispatch\property\impl\ScalarProperty;
+use n2n\impl\web\dispatch\property\ScalarProperty;
 
 class DispatchModelFactory {
 	private $managedPropertyProviderClassNames;

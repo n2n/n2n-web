@@ -21,7 +21,7 @@
  */
 namespace n2n\web\dispatch\mag;
 
-use n2n\web\ui\view\impl\html\HtmlView;
+use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\dispatch\map\BindingConstraints;
 use n2n\web\dispatch\map\bind\MappingDefinition;

@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\ui\view\impl\html;
+namespace n2n\impl\web\ui\view\html;
 
 use n2n\web\ui\UiException;
 
