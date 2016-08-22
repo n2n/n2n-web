@@ -31,7 +31,7 @@ use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\target\build\DispatchTargetCoder;
 use n2n\web\dispatch\target\build\DispatchTargetExtractor;
 use n2n\context\ThreadScoped;
-use n2n\core\config\HttpConfig;
+use n2n\core\config\WebConfig;
 use n2n\web\dispatch\model\DispatchModelFactory;
 use n2n\core\VarStore;
 use n2n\util\crypt\EncryptionDescriptor;
@@ -53,7 +53,7 @@ class DispatchContext implements ThreadScoped {
 	private $dispatchTargetCoder;
 	private $dispatchJob;
 	
-	private function _init(HttpConfig $httpConfig, VarStore $varStore) {
+	private function _init(WebConfig $httpConfig, VarStore $varStore) {
 		$this->dispatchModelManager = new DispatchModelManager(new DispatchModelFactory(
 				$httpConfig->getDispatchPropertyProviderClassNames()));
 		$this->dispatchTargetCoder = new DispatchTargetCoder($this->createCipher(

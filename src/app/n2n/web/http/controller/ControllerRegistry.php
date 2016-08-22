@@ -28,7 +28,7 @@ use n2n\l10n\N2nLocale;
 use n2n\web\http\path\PlaceholderValidator;
 use n2n\web\http\Supersystem;
 use n2n\context\RequestScoped;
-use n2n\core\config\HttpConfig;
+use n2n\core\config\WebConfig;
 use n2n\web\http\HttpContext;
 use n2n\web\http\Subsystem;
 use n2n\web\http\UnknownSubsystemException;
@@ -41,7 +41,7 @@ class ControllerRegistry implements RequestScoped {
 	/**
 	 * 
 	 */
-	private function _init(HttpConfig $httpConfig, N2nContext $n2nContext) {
+	private function _init(WebConfig $httpConfig, N2nContext $n2nContext) {
 		$this->httpConfig = $httpConfig;
 		$this->n2nContext = $n2nContext;
 	}

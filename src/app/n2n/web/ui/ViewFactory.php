@@ -34,7 +34,7 @@ use n2n\web\ui\view\ViewStateListener;
 use n2n\core\container\N2nContext;
 use n2n\core\module\impl\LazyModule;
 use n2n\context\ThreadScoped;
-use n2n\core\config\HttpConfig;
+use n2n\core\config\WebConfig;
 use n2n\web\ui\view\ViewCacheStore;
 
 class ViewFactory implements ThreadScoped {
@@ -47,7 +47,7 @@ class ViewFactory implements ThreadScoped {
 	private $viewCachingEnabled = true;
 	private static $creationListeners = array();
 	
-	private function _init(N2nContext $n2nContext, HttpConfig $httpConfig, ViewCacheStore $viewCacheStore) {
+	private function _init(N2nContext $n2nContext, WebConfig $httpConfig, ViewCacheStore $viewCacheStore) {
 		$this->n2nContext = $n2nContext;
 		$this->viewClassNames = $httpConfig->getViewClassNames();
 		$this->viewCacheStore = $viewCacheStore;
