@@ -111,7 +111,7 @@ class VarsRequest implements Request {
 		$scriptDirName = str_replace('\\', '/', dirname($this->extractServerVar('SCRIPT_NAME')));
 		
 		$this->cmdContextPath = Path::create($scriptDirName, true)->chEndingDelimiter(true);
-		$this->cmdPath = Path::create(mb_substr($requestUrl, mb_strlen($scriptDirName)));
+		$this->cmdPath = Path::create(mb_substr($requestUrl, mb_strlen($scriptDirName)), true);
 		
 		$protocol = isset($this->serverVars['HTTPS']) && $this->serverVars['HTTPS'] != 'off' 
 				&& $this->serverVars['HTTPS'] ? Request::PROTOCOL_HTTPS : Request::PROTOCOL_HTTP;
