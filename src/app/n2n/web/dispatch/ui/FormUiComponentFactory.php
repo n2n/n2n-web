@@ -248,7 +248,7 @@ class FormUiComponentFactory {
 	
 		if ($deleteLinkLabel === null) {
 			$deleteLinkLabel = $this->form->getView()->getL10nText(self::DELETE_LINK_DEFAULT_CODE,
-					null, null, N2N::NS);
+					null, null, 'n2n\impl\web\dispatch');
 		}
 		
 		if (!isset($attrs['id'])) {

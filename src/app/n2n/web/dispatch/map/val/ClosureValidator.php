@@ -113,12 +113,12 @@ class ClosureValidator implements Validator {
 		if (count($invalidPathParts) == 1) {
 			return new MessageCode(self::SINGULAR_DEFAULT_ERROR_TEXT_CODE, 
 					array('field' => current($labels)), Message::SEVERITY_ERROR, 
-					N2N::NS);
+					'n2n\impl\web\dispatch');
 		}
 		
 		return new MessageCode(self::PLURAL_DEFAULT_ERROR_TEXT_CODE,
 				array('field' => implode(', ', $labels)), Message::SEVERITY_ERROR,
-				N2N::NS);
+				'n2n\impl\web\dispatch');
 	}
 		
 }
