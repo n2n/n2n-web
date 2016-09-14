@@ -307,15 +307,15 @@ class FormHtmlBuilder {
 // 		}
 	}
 	
-	public function optionalObjectActivator($propertyExpression = null) {
-		$this->view->out($this->getOptionalObjectActivator($propertyExpression));
-	}
+// 	public function optionalObjectActivator($propertyExpression = null) {
+// 		$this->view->out($this->getOptionalObjectActivator($propertyExpression));
+// 	}
 	
-	public function getOptionalObjectActivator($propertyExpression = null) {
-		$emptyAllowed = null !== $this->meta()->getForm()->getDispatchTargetEncoder()->getPseudoBasePropertyPath();
-		return $this->getFactory()->createOptionalObjectActivator(
-				$this->meta->createPropertyPath($propertyExpression, $emptyAllowed));
-	}
+// 	public function getOptionalObjectActivator($propertyExpression = null) {
+// 		$emptyAllowed = null !== $this->meta()->getForm()->getDispatchTargetEncoder()->getPseudoBasePropertyPath();
+// 		return $this->getFactory()->createOptionalObjectActivator(
+// 				$this->meta->createPropertyPath($propertyExpression, $emptyAllowed));
+// 	}
 	
 	public function optionalObjectCheckbox($propertyExpression = null, array $attrs = null, 
 			$label = null, array $labelAttrs = null) {

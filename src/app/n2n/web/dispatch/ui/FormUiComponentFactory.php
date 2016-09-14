@@ -306,28 +306,28 @@ class FormUiComponentFactory {
 		return new HtmlElement('button', HtmlUtils::mergeAttrs($elemAttrs, (array) $attrs));
 	}
 	
-	public function createOptionalObjectActivator(PropertyPath $propertyPath) {
-		$targetItem = null;
+// 	public function createOptionalObjectActivator(PropertyPath $propertyPath) {
+// 		$targetItem = null;
 		
-		if ($propertyPath->isEmpty()) {
-			$targetItem = $this->form->getDispatchTarget()->getObjectItem();
-		} else {
-			$result = $this->analyzeOptionalObjectActivator($propertyPath);
-			if ($result->getManagedProperty()->isArray()) {
-				$targetItem = $this->form->getDispatchTarget()->registerObjectArray($propertyPath);
-			} else {
-				$targetItem = $this->form->getDispatchTarget()->registerObject($propertyPath);
-			}
-		}
+// 		if ($propertyPath->isEmpty()) {
+// 			$targetItem = $this->form->getDispatchTarget()->getObjectItem();
+// 		} else {
+// 			$result = $this->analyzeOptionalObjectActivator($propertyPath);
+// 			if ($result->getManagedProperty()->isArray()) {
+// 				$targetItem = $this->form->getDispatchTarget()->registerObjectArray($propertyPath);
+// 			} else {
+// 				$targetItem = $this->form->getDispatchTarget()->registerObject($propertyPath);
+// 			}
+// 		}
 		
-		// 		$objectItem->setAttr(ObjectProperty::OPTION_OPTIONAL_OBJECT, 'check');
-		$targetItem->setAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED, 'check');
-		return $this->buildTargetItemHidden($targetItem);		
-	}
+// 		// 		$objectItem->setAttr(ObjectProperty::OPTION_OPTIONAL_OBJECT, 'check');
+// 		$targetItem->setAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED, 'check');
+// 		return $this->buildTargetItemHidden($targetItem);		
+// 	}
 	
 	public function createOptionalObjectCheckbox(PropertyPath $propertyPath, array $attrs = null, 
 			$label = null, array $labelAttrs = null) {
-		$this->valOptionalObjectItem($propertyPath);
+// 		$this->valOptionalObjectItem($propertyPath);
 				
 		$objectItem = null;
 		$checked = null;
@@ -375,7 +375,7 @@ class FormUiComponentFactory {
 	}
 	
 	public function createEnabledOptionalObjectHidden(PropertyPath $propertyPath) {
-		$this->valOptionalObjectItem($propertyPath);
+// 		$this->valOptionalObjectItem($propertyPath);
 		
 		if ($propertyPath->isEmpty()) {
 			$objectItem = $this->form->getDispatchTarget()->getObjectItem();
@@ -419,34 +419,34 @@ class FormUiComponentFactory {
 		return $result;
 	}
 	
-	private function valOptionalObjectItem(PropertyPath $propertyPath) {
-		$dt = $this->form->getDispatchTarget();
+// 	private function valOptionalObjectItem(PropertyPath $propertyPath) {
+// 		$dt = $this->form->getDispatchTarget();
 		
-		if (!$propertyPath->isEmpty() && $propertyPath->getLast()->isArray()) {
-			if ($dt->registerObjectArray($propertyPath->fieldReduced())
-					->getAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED) !== null) {
-				return;
-			}
+// 		if (!$propertyPath->isEmpty() && $propertyPath->getLast()->isArray()) {
+// 			if ($dt->registerObjectArray($propertyPath->fieldReduced())
+// 					->getAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED) !== null) {
+// 				return;
+// 			}
 			
-			throw new PropertyPathMissmatchException('Dynamic object array not activated: ' . $propertyPath);
-		} 
+// 			throw new PropertyPathMissmatchException('Dynamic object array not activated: ' . $propertyPath);
+// 		} 
 		
-		$objectItem = null;
-		if ($propertyPath->isEmpty()) {
-			$objectItem = $dt->getObjectItem();
-			if (null !== $this->form->getDispatchTargetEncoder()->getPseudoBasePropertyPath()) {
-				return;
-			}
-		} else {
-			$objectItem = $dt->registerObject($propertyPath);
-		}
+// 		$objectItem = null;
+// 		if ($propertyPath->isEmpty()) {
+// 			$objectItem = $dt->getObjectItem();
+// 			if (null !== $this->form->getDispatchTargetEncoder()->getPseudoBasePropertyPath()) {
+// 				return;
+// 			}
+// 		} else {
+// 			$objectItem = $dt->registerObject($propertyPath);
+// 		}
 		
-		if ($objectItem->getAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED) !== null) {
-			return;
-		}
+// 		if ($objectItem->getAttr(ObjectProperty::OPTION_OBJECT_ACTIVATED) !== null) {
+// 			return;
+// 		}
 		
-		throw new PropertyPathMissmatchException('Optional object not activated: ' . $propertyPath);
-	}
+// 		throw new PropertyPathMissmatchException('Optional object not activated: ' . $propertyPath);
+// 	}
 	
 	/**
 	 * @param PropertyPath $propertyPath
