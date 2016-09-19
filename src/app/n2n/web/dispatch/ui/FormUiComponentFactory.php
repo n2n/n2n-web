@@ -146,8 +146,6 @@ class FormUiComponentFactory {
 	}
 	
 	public function createInputCheckbox(PropertyPath $propertyPath, $value, array $attrs = null, UiComponent $label = null) {
-		
-		
 		$raw = new Raw($this->createTestElement('checkbox', $propertyPath, $value, $attrs));
 		$raw->append($label);
 		
@@ -395,29 +393,40 @@ class FormUiComponentFactory {
 	}
 	
 	private function analyzeOptionalObject(PropertyPath $propertyPath) {
-		return $this->resolver->analyze($propertyPath, array(ObjectProperty::class));
-	}
-// 	return $this->getDispatchTform->getDispatchTargetEncoder()->registerExternalAttr($propertyPath,
-// 			ObjectProperty::OPTION_OBJECT_ENABLED);
-	
-	private function analyzeOptionalObjectActivator(PropertyPath $propertyPath) {
-		$result = $this->resolver->analyze($propertyPath, array(ObjectProperty::class));
-		
-		if ($propertyPath->getLast()->isArray()) {
-			throw new PropertyTypeMissmatchException();
-		}
+		$result = $this->resolver->analyze($propertyPath, array(ObjectProperty::class), false);
 		
 		if (null === $result->getManagedProperty()->getCreator()) {
 			$objectProperty = $result->getManagedProperty();
-				
-			throw new PropertyTypeMissmatchException('ObjectProperty '  
+	
+			throw new PropertyTypeMissmatchException('ObjectProperty '
 					. ReflectionUtils::prettyPropName(get_class($result->getMappingResult()->getObject()),
 							$objectProperty->getName()) . ' not ' . ($objectProperty->isArray() ? 'dynamic' : 'optional')
 					. '. PropertyPath: ' . $propertyPath);
 		}
-		
+	
 		return $result;
 	}
+// 	return $this->getDispatchTform->getDispatchTargetEncoder()->registerExternalAttr($propertyPath,
+// 			ObjectProperty::OPTION_OBJECT_ENABLED);
+	
+// 	private function analyzeOptionalObjectActivator(PropertyPath $propertyPath) {
+// 		$result = $this->resolver->analyze($propertyPath, array(ObjectProperty::class));
+		
+// 		if ($propertyPath->getLast()->isArray()) {
+// 			throw new PropertyTypeMissmatchException();
+// 		}
+		
+// 		if (null === $result->getManagedProperty()->getCreator()) {
+// 			$objectProperty = $result->getManagedProperty();
+				
+// 			throw new PropertyTypeMissmatchException('ObjectProperty '  
+// 					. ReflectionUtils::prettyPropName(get_class($result->getMappingResult()->getObject()),
+// 							$objectProperty->getName()) . ' not ' . ($objectProperty->isArray() ? 'dynamic' : 'optional')
+// 					. '. PropertyPath: ' . $propertyPath);
+// 		}
+		
+// 		return $result;
+// 	}
 	
 // 	private function valOptionalObjectItem(PropertyPath $propertyPath) {
 // 		$dt = $this->form->getDispatchTarget();
