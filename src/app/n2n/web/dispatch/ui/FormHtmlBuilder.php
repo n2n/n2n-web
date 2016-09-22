@@ -151,6 +151,18 @@ class FormHtmlBuilder {
 		return new HtmlElement($containerTagName, $containerAttrs, current($messages));
 	}
 	
+	public function outOnError($propertyExpression = null, $contents = null) {
+		return $this->view->out($this->getOutOnError($propertyExpression, $contents));
+	}
+	
+	public function getOutOnError($propertyExpression = null, $contents = null) {
+		if ($this->meta()->hasErrors($propertyExpression)) {
+			return $this->view->getHtmlBuilder()->getOut($contents);
+		}
+		
+		return null;
+	}
+	
 	private function getFactory() {
 		// ensure form is open
 		$form = $this->meta->getForm();
