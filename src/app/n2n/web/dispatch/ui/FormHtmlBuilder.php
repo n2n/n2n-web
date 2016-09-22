@@ -152,7 +152,7 @@ class FormHtmlBuilder {
 	}
 	
 	public function outOnError($propertyExpression = null, $contents = null) {
-		return $this->view->out($this->getOutOnError($propertyExpression, $contents));
+		$this->view->out($this->getOutOnError($propertyExpression, $contents));
 	}
 	
 	public function getOutOnError($propertyExpression = null, $contents = null) {
