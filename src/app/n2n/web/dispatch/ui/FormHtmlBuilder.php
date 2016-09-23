@@ -47,11 +47,17 @@ class FormHtmlBuilder {
 // 	const ARRAY_CLOSE_EXISTS_PARAM = 'exists';
 // 	const OBJECT_CLOSE_PROPERTY_PARAM = 'propertyName';
 
+	/**
+	 * @param HtmlView $view
+	 */
 	public function __construct(HtmlView $view) {
 		$this->view = $view;
 		$this->meta = new FormHtmlBuilderMeta($view);
 	}
 	
+	/**
+	 * @return \n2n\web\dispatch\ui\FormHtmlBuilderMeta
+	 */
 	public function meta() {
 		return $this->meta;
 	}
