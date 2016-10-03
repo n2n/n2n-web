@@ -22,6 +22,7 @@
 namespace n2n\web\http;
 
 use n2n\l10n\N2nLocale;
+use n2n\l10n\IllegalN2nLocaleFormatException;
 
 class N2nLocaleFormat {
 	private $aliasN2nLocales;
@@ -29,8 +30,24 @@ class N2nLocaleFormat {
 	public function __construct(array $aliasN2nLocales) {
 		$this->aliasN2nLocales = $aliasN2nLocales;
 	}
+		
+	/**
+	 * @param N2nLocale $n2nLocale
+	 * @return boolean
+	 */
+	public function getAliasForN2nLocale(N2nLocale $n2nLocale) {
+		foreach ($this->aliasN2nLocales as $httpId => $n2nLocale) {
+			if ($n2nLocale->equals($n2nLocale)) return $httpId;
+		}
+		
+		return $httpId;
+	}
 	
-	public function formatHttpId(N2nLocale $n2nLocale): string {
+	/**
+	 * @param N2nLocale $n2nLocale
+	 * @return string
+	 */
+	public function formatHttpId(N2nLocale $n2nLocale) {
 		foreach ($this->aliasN2nLocales as $alias => $aliasN2nLocale) {
 			if ($n2nLocale->equals($aliasN2nLocale)) return $alias;
 		}
@@ -43,11 +60,19 @@ class N2nLocaleFormat {
 	 * @return \n2n\l10n\N2nLocale
 	 * @throws IllegalN2nLocaleFormatException
 	 */
-	public function parseN2nLocale(string $httpId): N2nLocale {
+	public function parseN2nLocale(string $httpId, bool $lenient = false): N2nLocale {
 		if (isset($this->aliasN2nLocales[$httpId])) {
 			return $this->aliasN2nLocales[$httpId];
 		}
 		
-		return N2nLocale::createFromHttpId($httpId);
+		$n2nLocale = N2nLocale::createFromHttpId($httpId);
+		$alias = $this->getAliasForN2nLocale($n2nLocale);
+		if (null === $alias) {
+			return $n2nLocale;
+		}
+		
+		throw new IllegalN2nLocaleFormatException('Invalid http locale id \'' . $httpId 
+				. '\'. For N2nLocale ' . $n2nLocale . ' is only the alias \'' . $alias 
+				. '\' acceptable.');
 	}
 }

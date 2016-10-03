@@ -82,8 +82,8 @@ class HttpContext {
 	 * @return N2nLocale
 	 * @throws IllegalN2nLocaleFormatException
 	 */
-	public function httpIdToN2nLocale($n2nLocaleHttpId): N2nLocale {
-		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId);
+	public function httpIdToN2nLocale($n2nLocaleHttpId, bool $lenient = false): N2nLocale {
+		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId, $lenient);
 	}
 	
 	public function getMainN2nLocale(): N2nLocale {
