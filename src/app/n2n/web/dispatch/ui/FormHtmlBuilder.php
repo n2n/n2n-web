@@ -62,7 +62,7 @@ class FormHtmlBuilder {
 		return $this->meta;
 	}
 	
-	public function open(Dispatchable $dispatchable, $enctype = null, $method = null, 
+	public function open(Dispatchable $dispatchable, string $enctype = null, $method = null, 
 			array $attrs = null, $action = null) {
 		$form = $this->view->getHtmlProperties()->getForm();
 		if ($form !== null) {
