@@ -40,7 +40,7 @@ class N2nLocaleFormat {
 			if ($n2nLocale->equals($n2nLocale)) return $httpId;
 		}
 		
-		return $httpId;
+		return null;
 	}
 	
 	/**
