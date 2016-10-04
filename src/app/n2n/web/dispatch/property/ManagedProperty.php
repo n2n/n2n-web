@@ -23,7 +23,7 @@ namespace n2n\web\dispatch\property;
 
 use n2n\web\dispatch\Dispatchable;
 use n2n\core\container\N2nContext;
-use n2n\web\dispatch\ui\Form;
+use n2n\impl\web\dispatch\ui\Form;
 use n2n\web\dispatch\map\AnalyzerResult;
 use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\web\dispatch\map\CorruptedDispatchException;

@@ -22,7 +22,7 @@
 namespace n2n\web\ui;
 
 use n2n\core\SysTextUtils;
-use n2n\impl\web\ui\view\html\CouldNotRenderUiComponentException;
+use n2n\web\ui\CouldNotRenderUiComponentException;
 
 class UiUtils {
 	public static function createCouldNotRenderUiComponentException(\Exception $previous) {

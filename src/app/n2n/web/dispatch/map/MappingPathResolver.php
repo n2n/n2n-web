@@ -25,7 +25,7 @@ use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\property\ManagedProperty;
 use n2n\web\dispatch\DispatchException;
 use n2n\core\container\N2nContext;
-use n2n\web\dispatch\ui\Form;
+use n2n\impl\web\dispatch\ui\Form;
 use n2n\web\dispatch\DispatchContext;
 
 class MappingPathResolver {
