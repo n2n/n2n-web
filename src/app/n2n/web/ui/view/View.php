@@ -680,6 +680,15 @@ abstract class View implements BufferedResponseContent, UiComponent {
 		
 		return (string) $contents;
 	}
+	
+	public function delayedOut($contents) {
+		$cb = $this->getContentBuffer();
+		$key = $cb->breakPoint();
+		$that = $this;
+		$cb->on(function () use ($cb, $contents, $that) {
+			$cb->insertOnBreakPoint($key, $that->getOut($contents));
+		});
+	}
 	/**
 	 * @param string $groupName
 	 * @param string $severity
