@@ -152,7 +152,7 @@ class HttpContext {
 			$url = $this->request->getContextPath()->toUrl();
 		} else {
 			if (!($subsystem instanceof Subsystem)) {
-				ArgUtils::valType($subsystem, array('stirng', 'Subsystem'), true, 'subsystem');
+				ArgUtils::valType($subsystem, array('string', 'Subsystem'), true, 'subsystem');
 				$subsystem = $this->getAvailableSubsystemByName($subsystem);
 			}
 		
@@ -189,7 +189,7 @@ class HttpContext {
 		$url = new Url();
 		
 		if (null !== ($subsystemHostName = $subsystem->getHostName())) {
-			if ($this->requestgetHostName() != $subsystemHostName) {
+			if ($this->request->getHostName() != $subsystemHostName) {
 				$url = $url->chHost($subsystemHostName);
 			}
 		}
@@ -208,7 +208,7 @@ class HttpContext {
 	 */
 	public function getAvailableSubsystemByName($name) {
 		if (isset($this->availableSubsystems[$name])) {
-			return isset($this->availableSubsystems[$name]);
+			return $this->availableSubsystems[$name];
 		}
 		
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
