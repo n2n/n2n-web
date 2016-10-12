@@ -196,6 +196,8 @@ class HttpContext {
 	
 		if (null !== ($contextPath = $subsystem->getContextPath())) {
 			$url = $url->chPath($contextPath);
+		} else {
+			$url = $url->chPath($this->request->getContextPath());
 		}
 	
 		return $url;
