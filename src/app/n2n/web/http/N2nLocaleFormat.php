@@ -36,8 +36,8 @@ class N2nLocaleFormat {
 	 * @return boolean
 	 */
 	public function getAliasForN2nLocale(N2nLocale $n2nLocale) {
-		foreach ($this->aliasN2nLocales as $httpId => $n2nLocale) {
-			if ($n2nLocale->equals($n2nLocale)) return $httpId;
+		foreach ($this->aliasN2nLocales as $httpId => $aliasN2nLocale) {
+			if ($aliasN2nLocale->equals($n2nLocale)) return $httpId;
 		}
 		
 		return null;
@@ -66,6 +66,10 @@ class N2nLocaleFormat {
 		}
 		
 		$n2nLocale = N2nLocale::createFromHttpId($httpId);
+		if ($lenient) {
+			return $n2nLocale;
+		}
+		
 		$alias = $this->getAliasForN2nLocale($n2nLocale);
 		if (null === $alias) {
 			return $n2nLocale;
