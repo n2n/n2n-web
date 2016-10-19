@@ -117,6 +117,7 @@ abstract class Param {
 			return null;
 		}
 		
+		// value could be an array
 		return $this->toNotEmptyStringOrReject($rejectStatus);
 	}
 	
