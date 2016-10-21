@@ -22,7 +22,7 @@
 namespace n2n\web\dispatch\map\val;
 
 use n2n\web\dispatch\property\ManagedProperty;
-use n2n\impl\web\dispatch\map\val\ValidatorInitializationException;
+use n2n\web\dispatch\map\val\ValidatorInitializationException;
 use n2n\util\ex\IllegalStateException;
 
 abstract class PropertyValidatorAdapter implements PropertyValidator {	

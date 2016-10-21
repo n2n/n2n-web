@@ -93,7 +93,9 @@ class Response {
 		$this->listeners = array();
 
 		$prevContent = ob_get_contents();
-		@ob_clean();
+		if ($prevContent !== false) {
+			@ob_clean();
+		}
 		
 		$outputBuffer = $this->createOutputBuffer();
 		$outputBuffer->start();
@@ -373,6 +375,8 @@ class Response {
 	 * @throws HttpHeadersAlreadySentException
 	 */	
 	private function flushHeaders() {
+		$file = null; 
+		$line = null;
 		if (headers_sent($file, $line)) {
 			throw new \ErrorException('Response sent outside of n2n context', 
 					0, E_USER_ERROR, $file, $line);

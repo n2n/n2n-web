@@ -108,6 +108,9 @@ class ControllingPlan {
 		return null;
 	}
 	
+	/**
+	 * @return ControllerContext|NULL
+	 */
 	private function nextMain() {
 		$this->currentMainIndex++;
 		

@@ -82,8 +82,8 @@ class HttpContext {
 	 * @return N2nLocale
 	 * @throws IllegalN2nLocaleFormatException
 	 */
-	public function httpIdToN2nLocale($n2nLocaleHttpId): N2nLocale {
-		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId);
+	public function httpIdToN2nLocale($n2nLocaleHttpId, bool $lenient = false): N2nLocale {
+		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId, $lenient);
 	}
 	
 	public function getMainN2nLocale(): N2nLocale {
@@ -152,7 +152,7 @@ class HttpContext {
 			$url = $this->request->getContextPath()->toUrl();
 		} else {
 			if (!($subsystem instanceof Subsystem)) {
-				ArgUtils::valType($subsystem, array('stirng', 'Subsystem'), true, 'subsystem');
+				ArgUtils::valType($subsystem, array('string', 'Subsystem'), true, 'subsystem');
 				$subsystem = $this->getAvailableSubsystemByName($subsystem);
 			}
 		
@@ -189,13 +189,15 @@ class HttpContext {
 		$url = new Url();
 		
 		if (null !== ($subsystemHostName = $subsystem->getHostName())) {
-			if ($this->requestgetHostName() != $subsystemHostName) {
+			if ($this->request->getHostName() != $subsystemHostName) {
 				$url = $url->chHost($subsystemHostName);
 			}
 		}
 	
 		if (null !== ($contextPath = $subsystem->getContextPath())) {
 			$url = $url->chPath($contextPath);
+		} else {
+			$url = $url->chPath($this->request->getContextPath());
 		}
 	
 		return $url;
@@ -208,7 +210,7 @@ class HttpContext {
 	 */
 	public function getAvailableSubsystemByName($name) {
 		if (isset($this->availableSubsystems[$name])) {
-			return isset($this->availableSubsystems[$name]);
+			return $this->availableSubsystems[$name];
 		}
 		
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);

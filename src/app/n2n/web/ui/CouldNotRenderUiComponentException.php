@@ -19,32 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\dispatch\ui;
+namespace n2n\web\ui;
 
-class SelectChoiceGroup {
-	private $attrs;
-	private $label;
-	private $options;
-	/**
-	 * @param string $label
-	 * @param array $options
-	 * @param array $attrs
-	 */
-	public function __construct($label, array $options, array $attrs = null) {
-		$this->label = $label;
-		$this->options = $options;
-		$this->attrs = (array) $attrs;
-	}
+use n2n\web\ui\UiException;
 
-	public function getLabel(): string {
-		return $this->label;
-	}
+class CouldNotRenderUiComponentException extends UiException {
 	
-	public function getOptions() {
-		return $this->options;
-	}
-	
-	public function getAttrs() {
-		return $this->attrs;
-	}
 }

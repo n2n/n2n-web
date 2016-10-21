@@ -107,7 +107,7 @@ class ControllerInterpreter {
 	 */
 	public function interpretCustom($methodName) {
 		$method = $this->getMethod($methodName);
-	
+
 		$invokerInfo = $this->invokerFactory->createFullMagic($method, $this->invokerFactory->getCmdPath());
 		if ($invokerInfo === null) return null;
 	

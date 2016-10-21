@@ -19,9 +19,10 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\dispatch\ui;
+namespace n2n\web\dispatch\map\val;
 
 use n2n\web\dispatch\DispatchException;
 
-class IllegalFormStateException extends DispatchException {
+class ValidatorInitializationException extends DispatchException {
+	
 }
