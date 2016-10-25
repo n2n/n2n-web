@@ -31,6 +31,7 @@ use n2n\web\http\annotation\AnnoPath;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
+use n2n\web\http\annotation\AnnoConsums;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
@@ -147,7 +148,7 @@ class ControllerInterpreter {
 			$anno = $annoPath;
 		} else if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
 			$anno = $annoExt;
-		} 
+		}
 		
 		if ($anno === null) return;
 		
@@ -319,6 +320,17 @@ class ControllerInterpreter {
 			$allAllowed = false;
 		}
 		
+		return $allAllowed;
+	}
+	
+
+	private function checkAccept($methodName, AnnotationSet $annotationSet) {
+		$annoConsums = $annotationSet->getMethodAnnotation($methodName, AnnoConsums::class);
+		
+		if (null === $annoConsums) return true;
+		
+		$annoConsums->get();
+	
 		return $allAllowed;
 	}
 	

@@ -426,4 +426,31 @@ class ControllingUtils {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
 	}
+	
+	public function accepted(string ...$mimeTypes) {
+		$curMimeType = null;
+		$curQuality = null;
+		
+		foreach ($this->getRequest()->getAcceptMimeTypes() as $acceptMimeType) {
+			if ($curQuality !== null && $curQuality > $acceptMimeType->getRealMimeType()) {
+				continue;
+			}
+			
+			foreach ($mimeTypes as $mimeType) {
+				if (!$acceptMimeType->matches($mimeType)) continue;
+				
+				$curMimeType = $mimeType;
+				$curQuality = $acceptMimeType->getRealQuality();
+				
+				if ($curQuality == 1) {
+					return $curMimeType;
+				}
+				
+				break;
+			}
+		}
+		
+		return $curMimeType;
+	}
+	
 }

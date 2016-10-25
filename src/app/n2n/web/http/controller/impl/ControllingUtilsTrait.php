@@ -293,4 +293,7 @@ trait ControllingUtilsTrait {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	
+	protected final function accepted(string ...$mimeTypes) {
+		return $this->cu()->accepted($mimeTypes);
+	}
 }
