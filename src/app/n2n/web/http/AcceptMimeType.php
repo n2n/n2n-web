@@ -1,7 +1,8 @@
 <?php
-namespace lib\n2n\web\http;
+namespace n2n\web\http;
 
 class AcceptMimeType {
+	const TYPE_SEPARATOR = '/';
 	const WILDCARD = '*';
 	
 	private $type;
@@ -42,13 +43,34 @@ class AcceptMimeType {
 		return $this->params;
 	}
 	
+	public function matches($mimeType) { 
+		$mimeTypeParts = self::parseMimeTypeParts($mimeType);
+		
+		if ($mimeTypeParts[0] != self::WILDCARD && $this->type !== null
+				&& $mimeTypeParts[0] == $this->type) {
+			return false;
+		}
+		
+		if ($mimeTypeParts[1] != self::WILDCARD && $this->subtype !== null
+				&& $mimeTypeParts[1] == $this->subtype) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private static function parseMimeTypeParts($expr) {
+		$mineTypeParts = explode('/', trim($expr), 2);
+		if (count($mineTypeParts) != 2) {
+			throw new \InvalidArgumentException('Invalid mime type format: ' . $expr);
+		}
+		return $mineTypeParts;
+	}	
+	
 	public static function createFromExression(string $expr) {
 		$parts = explode(';', $expr);
 		
-		$mineTypeParts = explode('/', trim($parts[0]), 2);
-		if (count($mineTypeParts) != 2) {
-			throw new \InvalidArgumentException('Invalid accept mime type format: ' . $expr);
-		}
+		$mineTypeParts = self::parseMimeTypeParts($parts[0]);
 		$type = ($mineTypeParts[0] === self::WILDCARD ? null : $mineTypeParts[0]);
 		$subType = ($mineTypeParts[1] === self::WILDCARD ? null : $mineTypeParts[1]);
 	

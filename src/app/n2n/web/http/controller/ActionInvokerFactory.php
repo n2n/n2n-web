@@ -29,6 +29,7 @@ use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\uri\Path;
 use n2n\reflection\magic\MagicContext;
 use n2n\web\http\Method;
+use n2n\web\http\AcceptRange;
 
 class ActionInvokerFactory {
 	const PARAM_CMD_CONTEXT_PATH = 'cmdContextPath';
@@ -42,16 +43,18 @@ class ActionInvokerFactory {
 	private $httpMethod;
 	private $query;
 	private $postQuery;
+	private $acceptRange;
 	private $magicContext;
 	private $constantValues;
 		
 	public function __construct(Path $cmdPath, Path $cmdContextPath, $httpMethod, 
-			Query $query, Query $postQuery, MagicContext $magicContext = null) {
+			Query $query, Query $postQuery, AcceptRange $acceptRange, MagicContext $magicContext = null) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
 		$this->httpMethod = $httpMethod;
 		$this->query = $query;
 		$this->postQuery = $postQuery;
+		$this->acceptRange = $acceptRange;
 		$this->magicContext = $magicContext;
 	}
 	
@@ -69,6 +72,10 @@ class ActionInvokerFactory {
 	
 	public function getHttpMethod() {
 		return $this->httpMethod;
+	}
+	
+	public function getAcceptRange() {
+		return $this->acceptRange;
 	}
 	
 	private function checkForCmdParam($paramName) {

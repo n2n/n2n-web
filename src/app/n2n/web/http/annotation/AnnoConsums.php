@@ -33,4 +33,8 @@ class AnnoConsums implements MethodAnnotation {
 	public function __construct(string... $mimeTypes) {
 		$this->mimeTypes = $mimeTypes;
 	}
+	
+	public function getMimeTypes() {
+		return $this->mimeTypes;
+	}
 }

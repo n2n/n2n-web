@@ -187,7 +187,8 @@ class ControllerInterpreter {
 		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
 		if ($annotationSet->isEmpty()) return true; 
 		
-		if (!$this->checkHttpMethod($method->getName(), $annotationSet)) return false;
+		if (!$this->checkHttpMethod($method->getName(), $annotationSet)
+				|| !$this->checkAccept($method->getName(), $annotationSet)) return false;
 		
 		if (null !== $annotationSet->getMethodAnnotation($method->getName(), 
 				'n2n\web\http\annotation\AnnoPath')) {
@@ -286,9 +287,14 @@ class ControllerInterpreter {
 			$annotationSet = ReflectionContext::getAnnotationSet($class);
 			
 			foreach ($annotationSet->getMethodAnnotationsByName('n2n\web\http\annotation\AnnoPath') as $annoPath) {
-				if ($annoPath->getPattern() === null || !$this->checkHttpMethod($annoPath->getAnnotatedMethod()->getName(), $annotationSet)) continue;
-				
 				$methodName = $annoPath->getAnnotatedMethod()->getName();
+				
+				if ($annoPath->getPattern() === null 
+						|| !$this->checkHttpMethod($methodName, $annotationSet)
+						|| !$this->checkAccept($methodName, $annotationSet)) {
+					continue;
+				}
+				
 				if (null !== ($invoker = $this->analyzePattern($annoPath, $this->findExtensions($methodName, $annotationSet)))) {
 					return $invoker;
 				}
@@ -329,9 +335,7 @@ class ControllerInterpreter {
 		
 		if (null === $annoConsums) return true;
 		
-		$annoConsums->get();
-	
-		return $allAllowed;
+		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($annoConsums->getMimeTypes());
 	}
 	
 	private function findExtensions($methodName, AnnotationSet $annotationSet) {
