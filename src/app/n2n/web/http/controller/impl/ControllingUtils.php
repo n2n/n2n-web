@@ -428,7 +428,7 @@ class ControllingUtils {
 	}
 	
 	public function accepted(string ...$mimeTypes) {
-		
+		return $this->getRequest()->getAcceptRange()->bestMatch($mimeTypes);
 	}
 	
 }
