@@ -31,7 +31,6 @@ use n2n\context\Lookupable;
 abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lookupable {
 	use ControllingUtilsTrait;
 	
-	
 	/* (non-PHPdoc)
 	 * @see \n2n\web\http\controller\Controller::execute()
 	 */
