@@ -30,7 +30,7 @@ use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\http\controller\ControllingPlan;
 use n2n\web\http\ResponseThing;
 use n2n\web\http\controller\NoHttpRefererGivenException;
-use n2n\web\http\nav\Murlable;
+use n2n\web\http\nav\UrlComposer;
 use n2n\web\http\Redirect;
 use n2n\web\dispatch\DispatchContext;
 use n2n\web\dispatch\Dispatchable;
@@ -301,7 +301,7 @@ class ControllingUtils {
 	public function redirect($murl, int $httpStatus = null) {
 		$this->assignCacheControls();
 	
-		if ($murl instanceof Murlable) {
+		if ($murl instanceof UrlComposer) {
 			$murl = $murl->toUrl($this->getN2nContext(), $this->controllerContext);
 		}
 	

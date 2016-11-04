@@ -22,12 +22,17 @@
 namespace n2n\web\http\nav;
 
 use n2n\util\uri\Url;
+use n2n\web\http\controller\ControllerContext;
+use n2n\core\container\N2nContext;
 
-interface Linkable {
+interface UrlComposer {
 	
 	/**
-	 * @throws UnavailableMurlException 
+	 * @param N2nContext $n2nContext
+	 * @param ControllerContext $controllerContext
+	 * @throws UnavailableMurlException
 	 * @return \n2n\util\uri\Url
 	 */
-	public function toUrl(string &$suggestedLabel = null): Url;
+	public function toUrl(N2nContext $n2nContext, ControllerContext $controllerContext = null, 
+			string &$suggestedLabel = null): Url;
 }

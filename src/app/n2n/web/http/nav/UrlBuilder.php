@@ -26,8 +26,9 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\uri\Url;
 use n2n\util\StringUtils;
 use n2n\core\container\N2nContext;
+use n2n\util\uri\Linkable;
 
-class Murler {
+class UrlBuilder {
 
 	public static function buildUrlStr($arg, N2nContext $n2nContext = null,
 			ControllerContext $controllerContext = null, string &$suggestedLabel = null): string {
@@ -39,7 +40,7 @@ class Murler {
 			return (string) $arg;
 		}
 
-		if ($arg instanceof Murlable && $n2nContext !== null) {
+		if ($arg instanceof UrlComposer && $n2nContext !== null) {
 			return (string) $arg->toUrl($n2nContext, $controllerContext, $suggestedLabel);
 		}
 
@@ -61,7 +62,7 @@ class Murler {
 			return null;
 		}
 
-		if ($arg instanceof Murlable && $n2nContext !== null) {
+		if ($arg instanceof UrlComposer && $n2nContext !== null) {
 			return $arg->toUrl($n2nContext, $controllerContext, $suggestedLabel);
 		}
 

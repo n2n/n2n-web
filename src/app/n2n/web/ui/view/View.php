@@ -29,7 +29,6 @@ use n2n\web\ui\view\ViewErrorException;
 use n2n\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\web\ui\UiComponent;
-use n2n\core\SysTextUtils;
 use n2n\web\ui\UiException;
 use n2n\web\http\Response;
 use n2n\web\http\BufferedResponseContent;
@@ -46,7 +45,7 @@ use n2n\web\http\HttpContext;
 use n2n\web\ui\ViewFactory;
 use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\CastUtils;
-use n2n\web\http\nav\Murler;
+use n2n\web\http\nav\UrlBuilder;
 use n2n\web\http\nav\UnavailableMurlException;
 
 abstract class View implements BufferedResponseContent, UiComponent {
@@ -560,9 +559,8 @@ abstract class View implements BufferedResponseContent, UiComponent {
 		$this->ensureBufferIsActive();
 		
 		if (isset($this->bufferingPanel)) {
-			throw $this->decorateException(new ViewPanelAlreadyStartedException(
-					SysTextUtils::get('n2n_error_view_panel_already_started', 
-							array('panel' => $this->bufferingPanel->getName()))));
+			throw new ViewPanelAlreadyStartedException('View panel already started: ' 
+					. $this->bufferingPanel->getName());
 		}
 		
 		if ($append) {
@@ -767,7 +765,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
-			return Murler::buildUrl($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
+			return UrlBuilder::buildUrl($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
 		} catch (UnavailableMurlException $e) {
 			if ($required) throw $e;
 			return null;
@@ -776,7 +774,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	public function buildUrlStr($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
-			return Murler::buildUrlStr($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
+			return UrlBuilder::buildUrlStr($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
 		} catch (UnavailableMurlException $e) {
 			if ($required || $e->isCritical()) throw $e;
 			return null;
