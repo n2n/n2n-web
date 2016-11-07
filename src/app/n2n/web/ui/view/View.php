@@ -719,13 +719,13 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	/**
 	 * @return string
 	 */
-	public function getL10nText($code, array $args = null, $num = null, $module = null) {
+	public function getL10nText($code, array $args = null, $num = null, array $replacements = null, $module = null) {
 		if ($module === null) {
-			return $this->getDynamicTextCollection()->translate($code, $args, $num);
+			return $this->getDynamicTextCollection()->translate($code, $args, $num, $replacements);
 		}
 		
 		return L10nUtils::translateModuleTextCode($this->getDynamicTextCollection(), $module, 
-				$code, $args, $num);
+				$code, $args, $num, $replacements);
 	}
 	/**
 	 * 
