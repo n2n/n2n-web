@@ -196,7 +196,7 @@ class ViewFactory implements ThreadScoped {
 // 		if (self::$cacheManager) {
 // 			self::$cacheManager = new ViewCacheStore(
 // 					N2N::getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP, N2N::NS, self::VIEW_CACHE_DIR), 
-// 					N2N::getAppConfig()->http()->isViewCachingEnabled(), N2N::getCurrentRequest());
+// 					N2N::getAppConfig()->web()->isViewCachingEnabled(), N2N::getCurrentRequest());
 // 		}
 		
 // 		return self::$cacheManager;
