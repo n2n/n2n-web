@@ -47,12 +47,12 @@ class AcceptMimeType {
 		$mimeTypeParts = self::parseMimeTypeParts($mimeType);
 		
 		if ($mimeTypeParts[0] != self::WILDCARD && $this->type !== null
-				&& $mimeTypeParts[0] == $this->type) {
+				&& $mimeTypeParts[0] != $this->type) {
 			return false;
 		}
-		
+
 		if ($mimeTypeParts[1] != self::WILDCARD && $this->subtype !== null
-				&& $mimeTypeParts[1] == $this->subtype) {
+				&& $mimeTypeParts[1] != $this->subtype) {
 			return false;
 		}
 		
@@ -69,11 +69,11 @@ class AcceptMimeType {
 	
 	public static function createFromExression(string $expr) {
 		$parts = explode(';', $expr);
-		
-		$mineTypeParts = self::parseMimeTypeParts($parts[0]);
+
+		$mineTypeParts = self::parseMimeTypeParts(array_shift($parts));
 		$type = ($mineTypeParts[0] === self::WILDCARD ? null : $mineTypeParts[0]);
 		$subType = ($mineTypeParts[1] === self::WILDCARD ? null : $mineTypeParts[1]);
-	
+		
 		$quality = null;
 		$params = array();
 		foreach ($parts as $part) {

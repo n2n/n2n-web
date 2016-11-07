@@ -14,7 +14,7 @@ class AcceptRange {
 			return $this->acceptMimeTypes;
 		}
 		
-		foreach (explode(';', $this->acceptStr) as $acceptMimeType) {
+		foreach (explode(',', $this->acceptStr) as $acceptMimeType) {
 			try {
 				$this->acceptMimeTypes[] = AcceptMimeType::createFromExression($acceptMimeType);
 			} catch (\InvalidArgumentException $e) {
@@ -57,16 +57,15 @@ class AcceptRange {
 	 */
 	public function matchQuality(string $mimeType) {
 		$bestQuality = 0;
-		
+
 		foreach ($this->getAcceptMimeTypes() as $acceptMimeType) {
-			if ($bestQuality > $acceptMimeType->getRealQuality()
-					|| !$acceptMimeType->matches($mimeType)) {
+			if ($bestQuality >= $acceptMimeType->getRealQuality() || !$acceptMimeType->matches($mimeType)) {
 				continue;
 			}
 		
 			$bestMimeType = $mimeType;
 			$bestQuality = $acceptMimeType->getRealQuality();
-		
+			
 			if ($bestQuality == 1) {
 				return $bestQuality;
 			}
