@@ -47,11 +47,11 @@ class ViewFactory implements ThreadScoped {
 	private $viewCachingEnabled = true;
 	private static $creationListeners = array();
 	
-	private function _init(N2nContext $n2nContext, WebConfig $httpConfig, ViewCacheStore $viewCacheStore) {
+	private function _init(N2nContext $n2nContext, WebConfig $webConfig, ViewCacheStore $viewCacheStore) {
 		$this->n2nContext = $n2nContext;
-		$this->viewClassNames = $httpConfig->getViewClassNames();
+		$this->viewClassNames = $webConfig->getViewClassNames();
 		$this->viewCacheStore = $viewCacheStore;
-		$this->viewCachingEnabled = $httpConfig->isViewCachingEnabled();
+		$this->viewCachingEnabled = $webConfig->isViewCachingEnabled();
 	}
 	
 	public function isViewCachingEnabled(): bool {
