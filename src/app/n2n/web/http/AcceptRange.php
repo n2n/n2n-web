@@ -59,7 +59,7 @@ class AcceptRange {
 		$bestQuality = 0;
 		
 		foreach ($this->getAcceptMimeTypes() as $acceptMimeType) {
-			if ($bestQuality > $acceptMimeType->getRealMimeType()
+			if ($bestQuality > $acceptMimeType->getRealQuality()
 					|| !$acceptMimeType->matches($mimeType)) {
 				continue;
 			}

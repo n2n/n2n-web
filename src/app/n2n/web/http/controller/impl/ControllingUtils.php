@@ -431,4 +431,7 @@ class ControllingUtils {
 		return $this->getRequest()->getAcceptRange()->bestMatch($mimeTypes);
 	}
 	
+	public function acceptQuality(string $mimeType) {
+		return $this->getRequest()->getAcceptRange()->matchQuality($mimeType);
+	}
 }

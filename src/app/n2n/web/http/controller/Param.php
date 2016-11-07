@@ -106,6 +106,10 @@ abstract class Param {
 		return is_scalar($this->value) && mb_strlen($this->value) > 0;
 	}
 	
+	private function valNotEmptyString($value) {
+		return is_scalar($value) && mb_strlen($value) > 0;
+	}
+	
 	public function toNotEmptyStringOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
 		$this->rejectIfNotNotEmptyString($status);
 		
@@ -132,6 +136,36 @@ abstract class Param {
 			}
 		}
 		
+		return $this->value;
+	}
+	
+	public function toIntArrayOrReject($status = Response::STATUS_404_NOT_FOUND): array {
+		if (!is_array($this->value)) {
+			throw new StatusException($status);
+		}
+	
+		$values = array();
+		
+		foreach ($this->value as $key => $fieldValue) {
+			if (false !== ($value = filter_var($fieldValue, FILTER_VALIDATE_INT))) {
+				$values[$key] = $value;
+				continue;
+			}
+			
+			throw new StatusException($status);
+		}
+	
+		return $this->value;
+	}
+	
+	
+	public function toNotEmptyStringArrayOrReject($status = Response::STATUS_404_NOT_FOUND) {
+		$values = $this->toArrayOrReject($status);
+		foreach ($values as $value) {
+			if (!self::valNotEmptyString($value)) {
+				throw new StatusException($status);
+			}
+		}
 		return $this->value;
 	}
 	

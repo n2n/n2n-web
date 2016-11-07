@@ -296,4 +296,8 @@ trait ControllingUtilsTrait {
 	protected final function accepted(string ...$mimeTypes) {
 		return $this->cu()->accepted($mimeTypes);
 	}
+	
+	protected final function acceptQuality(string $mimeType) {
+		return $this->cu()->acceptQuality($mimeType);
+	}
 }
