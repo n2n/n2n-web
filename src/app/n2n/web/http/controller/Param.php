@@ -92,6 +92,12 @@ abstract class Param {
 		return $this->value;
 	}
 	
+	public function rejectIfNot($value, $status = Response::STATUS_404_NOT_FOUND) {
+		if ($this->value === $value) return;
+		
+		throw new StatusException($status, 'Param invalid');
+	}
+	
 	public function rejectIfNotNotEmptyString($status = Response::STATUS_404_NOT_FOUND) {
 		if ($this->isNotEmptyString()) return;
 		
