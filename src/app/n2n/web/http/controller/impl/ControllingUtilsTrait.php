@@ -224,6 +224,13 @@ trait ControllingUtilsTrait {
 		return $this->cu()->dispatch($dispatchable, $methodName);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
+	protected function hasDispatch(Dispatchable $dispatchable = null, $methodName = null) {
+		return $this->cu()->hasDispatch($dispatchable, $methodName);
+	}
+	
 	protected final function refresh(int $httpStatus = null) {
 		$this->cu()->refresh($httpStatus);
 	}

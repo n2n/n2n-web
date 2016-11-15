@@ -165,6 +165,17 @@ class DispatchContext implements ThreadScoped {
 		
 // 	}
 
+	public function hasDispatchJob() {
+		return $this->dispatchJob !== null;
+	}
+
+	/**
+	 * @return \n2n\web\dispatch\map\DispatchJob
+	 */
+	public function getDispatchJob() {
+		return $this->dispatchJob;
+	}
+	
 	/**
 	 * @param Dispatchable $dispatchable
 	 * @param string $methodName can be null
