@@ -33,7 +33,7 @@ class UrlBuilder {
 	public static function buildUrlStr($arg, N2nContext $n2nContext = null,
 			ControllerContext $controllerContext = null, string &$suggestedLabel = null): string {
 		if ($arg === null) {
-			return null;
+			throw new UnavailableMurlException(false);
 		}
 
 		if (is_scalar($arg)) {
@@ -59,7 +59,7 @@ class UrlBuilder {
 	public static function buildUrl($arg, N2nContext $n2nContext = null,
 			ControllerContext $controllerContext = null, string &$suggestedLabel = null): Url {
 		if ($arg === null) {
-			return null;
+			throw new UnavailableMurlException(false);
 		}
 
 		if ($arg instanceof UrlComposer && $n2nContext !== null) {
