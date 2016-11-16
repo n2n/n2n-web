@@ -406,7 +406,7 @@ class Response {
 		$this->ensureBuffering();
 		if (null !== $this->sentResponseThing) {
 			throw new MalformedResponseException('ResponseThing already sent: ' 
-					. $this->sentResponseThing->toKownResponseString());
+					. $this->sentResponseThing->toKownResponseString(), 0, null, 1);
 		}
 		$this->sentResponseThing = $thing;
 

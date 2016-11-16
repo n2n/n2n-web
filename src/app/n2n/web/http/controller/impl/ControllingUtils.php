@@ -30,7 +30,7 @@ use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\http\controller\ControllingPlan;
 use n2n\web\http\ResponseThing;
 use n2n\web\http\controller\NoHttpRefererGivenException;
-use n2n\web\http\nav\Murlable;
+use n2n\web\http\nav\UrlComposer;
 use n2n\web\http\Redirect;
 use n2n\web\dispatch\DispatchContext;
 use n2n\web\dispatch\Dispatchable;
@@ -275,15 +275,43 @@ class ControllingUtils {
 		$this->getResponse()->send($view);
 	}
 	
+	/**
+	 * @return DispatchContext
+	 */
+	private function getDispatchContext() {
+		return $this->getN2nContext()->lookup(DispatchContext::class);
+	}
+	
+	/**
+	 * @param Dispatchable $dispatchable
+	 * @param string|null $methodName
+	 * @return boolean
+	 */
+	public function hasDispatch(Dispatchable $dispatchable = null, $methodName = null) {
+		$dc = $this->getDispatchContext();
+		
+		return $dc->hasDispatchJob() && ($dispatchable === null 
+				|| $dc->getDispatchJob()->matches($dispatchable, $methodName));
+	}
+	
+	/**
+	 * @param Dispatchable $dispatchable
+	 * @param string|null $methodName
+	 * @throws BadRequestException
+	 * @return mixed
+	 */
 	public function dispatch(Dispatchable $dispatchable, $methodName = null) {
 		try {
-			return $this->getN2nContext()->lookup(DispatchContext::class)->dispatch($dispatchable, $methodName,
+			return $this->getDispatchContext()->dispatch($dispatchable, $methodName,
 					$this->getN2nContext());
 		} catch (\n2n\web\dispatch\map\CorruptedDispatchException $e) {
 			throw new BadRequestException(null, 0, $e);
 		}
 	}
 	
+	/**
+	 * @param int|null $httpStatus
+	 */
 	public function refresh(int $httpStatus = null) {
 		$this->redirect($this->getRequest()->getUrl(), $httpStatus);
 	}
@@ -301,7 +329,7 @@ class ControllingUtils {
 	public function redirect($murl, int $httpStatus = null) {
 		$this->assignCacheControls();
 	
-		if ($murl instanceof Murlable) {
+		if ($murl instanceof UrlComposer) {
 			$murl = $murl->toUrl($this->getN2nContext(), $this->controllerContext);
 		}
 	
@@ -425,5 +453,13 @@ class ControllingUtils {
 	public function send(ResponseThing $responseThing, bool $includeBuffer = true) {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
+	}
+	
+	public function accepted(string ...$mimeTypes) {
+		return $this->getRequest()->getAcceptRange()->bestMatch($mimeTypes);
+	}
+	
+	public function acceptQuality(string $mimeType) {
+		return $this->getRequest()->getAcceptRange()->matchQuality($mimeType);
 	}
 }

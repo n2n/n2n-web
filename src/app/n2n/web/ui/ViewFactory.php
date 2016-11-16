@@ -47,11 +47,11 @@ class ViewFactory implements ThreadScoped {
 	private $viewCachingEnabled = true;
 	private static $creationListeners = array();
 	
-	private function _init(N2nContext $n2nContext, WebConfig $httpConfig, ViewCacheStore $viewCacheStore) {
+	private function _init(N2nContext $n2nContext, WebConfig $webConfig, ViewCacheStore $viewCacheStore) {
 		$this->n2nContext = $n2nContext;
-		$this->viewClassNames = $httpConfig->getViewClassNames();
+		$this->viewClassNames = $webConfig->getViewClassNames();
 		$this->viewCacheStore = $viewCacheStore;
-		$this->viewCachingEnabled = $httpConfig->isViewCachingEnabled();
+		$this->viewCachingEnabled = $webConfig->isViewCachingEnabled();
 	}
 	
 	public function isViewCachingEnabled(): bool {
@@ -196,7 +196,7 @@ class ViewFactory implements ThreadScoped {
 // 		if (self::$cacheManager) {
 // 			self::$cacheManager = new ViewCacheStore(
 // 					N2N::getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP, N2N::NS, self::VIEW_CACHE_DIR), 
-// 					N2N::getAppConfig()->http()->isViewCachingEnabled(), N2N::getCurrentRequest());
+// 					N2N::getAppConfig()->web()->isViewCachingEnabled(), N2N::getCurrentRequest());
 // 		}
 		
 // 		return self::$cacheManager;

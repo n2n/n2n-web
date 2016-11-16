@@ -25,10 +25,10 @@ use n2n\l10n\N2nLocale;
 use n2n\util\uri\Path;
 use n2n\util\uri\Url;
 use n2n\util\uri\Query;
-use n2n\util\ex\NotYetImplementedException;
 use n2n\web\http\UploadDefinition;
 use n2n\util\uri\Authority;
 use n2n\reflection\ArgUtils;
+use n2n\web\http\AcceptRange;
 
 class VarsRequest implements Request {
 	private $serverVars;
@@ -281,7 +281,19 @@ class VarsRequest implements Request {
 		throw new UnknownSubsystemException('Unknown subystem name: ' . $name);
 	}
 	
+	private $acceptRange;
 	
+	public function getAcceptRange(): AcceptRange {
+		if ($this->acceptRange !== null) {
+			return $this->acceptRange;
+		}
+		
+		if (isset($this->serverVars['HTTP_ACCEPT'])) {
+			return $this->acceptRange = AcceptRange::createFromStr($this->serverVars['HTTP_ACCEPT']);
+		}
+		
+		return $this->acceptRange = new AcceptRange(array());
+	}
 	
 // 	public function completeUrl($relativeUrl, $ssl, $subsystemName) {
 // 		$protocol = null;

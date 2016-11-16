@@ -224,6 +224,13 @@ trait ControllingUtilsTrait {
 		return $this->cu()->dispatch($dispatchable, $methodName);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
+	protected function hasDispatch(Dispatchable $dispatchable = null, $methodName = null) {
+		return $this->cu()->hasDispatch($dispatchable, $methodName);
+	}
+	
 	protected final function refresh(int $httpStatus = null) {
 		$this->cu()->refresh($httpStatus);
 	}
@@ -293,4 +300,11 @@ trait ControllingUtilsTrait {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	
+	protected final function accepted(string ...$mimeTypes) {
+		return $this->cu()->accepted(...$mimeTypes);
+	}
+	
+	protected final function acceptQuality(string $mimeType) {
+		return $this->cu()->acceptQuality($mimeType);
+	}
 }

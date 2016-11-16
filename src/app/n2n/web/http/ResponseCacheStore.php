@@ -49,7 +49,7 @@ class ResponseCacheStore implements ThreadScoped {
 			ksort($queryParams);
 		}
 		return array('method' => $method, 'subsystemName' => $subsystemName, 'path' => $path->__toString(), 
-						'query' => $queryParams);
+				'query' => $queryParams);
 	}
 	
 	private function buildIndexCharacteristics(array $responseCharacteristics, array $customCharacteristics) {

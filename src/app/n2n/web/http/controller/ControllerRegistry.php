@@ -26,23 +26,20 @@ use n2n\core\container\N2nContext;
 use n2n\util\uri\Path;
 use n2n\l10n\N2nLocale;
 use n2n\web\http\path\PlaceholderValidator;
-use n2n\web\http\Supersystem;
 use n2n\context\RequestScoped;
 use n2n\core\config\WebConfig;
-use n2n\web\http\HttpContext;
-use n2n\web\http\Subsystem;
 use n2n\web\http\UnknownSubsystemException;
 use n2n\web\http\N2nLocaleFormat;
 
 class ControllerRegistry implements RequestScoped {
-	private $httpConfig;
+	private $webConfig;
 	private $n2nContext;
 	
 	/**
 	 * 
 	 */
-	private function _init(WebConfig $httpConfig, N2nContext $n2nContext) {
-		$this->httpConfig = $httpConfig;
+	private function _init(WebConfig $webConfig, N2nContext $n2nContext) {
+		$this->webConfig = $webConfig;
 		$this->n2nContext = $n2nContext;
 	}
 	
@@ -61,15 +58,15 @@ class ControllerRegistry implements RequestScoped {
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
 	public function createControllingPlan(Path $cmdPath, string $subsystemName = null) {
-		$localeFormat = new N2nLocaleFormat($this->httpConfig->getAliasN2nLocales());
+		$localeFormat = new N2nLocaleFormat($this->webConfig->getAliasN2nLocales());
 		
 		$contextN2nLocales = new \ArrayObject();
-		foreach ($this->httpConfig->getSupersystem()->getN2nLocales() as $n2nLocale) {
+		foreach ($this->webConfig->getSupersystem()->getN2nLocales() as $n2nLocale) {
 			$contextN2nLocales[$localeFormat->formatHttpId($n2nLocale)] = $n2nLocale;	
 		}
 		
 		if ($subsystemName !== null) {
-			$subsystems = $this->httpConfig->getSubsystems();
+			$subsystems = $this->webConfig->getSubsystems();
 			if (!isset($subsystems[$subsystemName])) {
 				throw new UnknownSubsystemException('Unknown subystem name: ' . $subsystemName);
 			}
@@ -81,7 +78,7 @@ class ControllerRegistry implements RequestScoped {
 		
 		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales);
 		
-		foreach ($this->httpConfig->getFilterControllerDefs() as $filterControllerDef) {
+		foreach ($this->webConfig->getFilterControllerDefs() as $filterControllerDef) {
 			if ($subsystemName !== null && $filterControllerDef->getSubsystemName() != $subsystemName) {
 				continue;
 			}
@@ -89,7 +86,7 @@ class ControllerRegistry implements RequestScoped {
 			$controllingPlanFactory->registerFilterControllerDef($filterControllerDef);
 		}
 		
-		foreach ($this->httpConfig->getMainControllerDefs() as $mainControllerDef) {
+		foreach ($this->webConfig->getMainControllerDefs() as $mainControllerDef) {
 			if ($mainControllerDef->getSubsystemName() !== null
 					&& $mainControllerDef->getSubsystemName() !== $subsystemName) {
 				continue;

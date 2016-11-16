@@ -31,6 +31,7 @@ use n2n\web\http\annotation\AnnoPath;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
+use n2n\web\http\annotation\AnnoConsums;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
@@ -147,7 +148,7 @@ class ControllerInterpreter {
 			$anno = $annoPath;
 		} else if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
 			$anno = $annoExt;
-		} 
+		}
 		
 		if ($anno === null) return;
 		
@@ -186,7 +187,8 @@ class ControllerInterpreter {
 		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
 		if ($annotationSet->isEmpty()) return true; 
 		
-		if (!$this->checkHttpMethod($method->getName(), $annotationSet)) return false;
+		if (!$this->checkHttpMethod($method->getName(), $annotationSet)
+				|| !$this->checkAccept($method->getName(), $annotationSet)) return false;
 		
 		if (null !== $annotationSet->getMethodAnnotation($method->getName(), 
 				'n2n\web\http\annotation\AnnoPath')) {
@@ -285,9 +287,14 @@ class ControllerInterpreter {
 			$annotationSet = ReflectionContext::getAnnotationSet($class);
 			
 			foreach ($annotationSet->getMethodAnnotationsByName('n2n\web\http\annotation\AnnoPath') as $annoPath) {
-				if ($annoPath->getPattern() === null || !$this->checkHttpMethod($annoPath->getAnnotatedMethod()->getName(), $annotationSet)) continue;
-				
 				$methodName = $annoPath->getAnnotatedMethod()->getName();
+				
+				if ($annoPath->getPattern() === null 
+						|| !$this->checkHttpMethod($methodName, $annotationSet)
+						|| !$this->checkAccept($methodName, $annotationSet)) {
+					continue;
+				}
+				
 				if (null !== ($invoker = $this->analyzePattern($annoPath, $this->findExtensions($methodName, $annotationSet)))) {
 					return $invoker;
 				}
@@ -320,6 +327,15 @@ class ControllerInterpreter {
 		}
 		
 		return $allAllowed;
+	}
+	
+
+	private function checkAccept($methodName, AnnotationSet $annotationSet) {
+		$annoConsums = $annotationSet->getMethodAnnotation($methodName, AnnoConsums::class);
+		
+		if (null === $annoConsums) return true;
+		
+		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($annoConsums->getMimeTypes());
 	}
 	
 	private function findExtensions($methodName, AnnotationSet $annotationSet) {

@@ -53,11 +53,11 @@ class DispatchContext implements ThreadScoped {
 	private $dispatchTargetCoder;
 	private $dispatchJob;
 	
-	private function _init(WebConfig $httpConfig, VarStore $varStore) {
+	private function _init(WebConfig $webConfig, VarStore $varStore) {
 		$this->dispatchModelManager = new DispatchModelManager(new DispatchModelFactory(
-				$httpConfig->getDispatchPropertyProviderClassNames()));
+				$webConfig->getDispatchPropertyProviderClassNames()));
 		$this->dispatchTargetCoder = new DispatchTargetCoder($this->createCipher(
-				$httpConfig->getDispatchTargetCryptAlgorithm(), $varStore));
+				$webConfig->getDispatchTargetCryptAlgorithm(), $varStore));
 	}
 	
 
@@ -165,6 +165,17 @@ class DispatchContext implements ThreadScoped {
 		
 // 	}
 
+	public function hasDispatchJob() {
+		return $this->dispatchJob !== null;
+	}
+
+	/**
+	 * @return \n2n\web\dispatch\map\DispatchJob
+	 */
+	public function getDispatchJob() {
+		return $this->dispatchJob;
+	}
+	
 	/**
 	 * @param Dispatchable $dispatchable
 	 * @param string $methodName can be null
