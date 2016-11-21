@@ -727,10 +727,10 @@ abstract class View implements BufferedResponseContent, UiComponent {
 		return L10nUtils::translateModuleTextCode($this->getDynamicTextCollection(), $module, 
 				$code, $args, $num, $replacements);
 	}
+	
 	/**
-	 * 
-	 * @param unknown_type $value
-	 * @param unknown_type $currency
+	 * @param float $value
+	 * @param string $currency The 3-letter ISO 4217 currency code indicating the currency to use.
 	 * @return string
 	 */
 	public function getL10nCurrency($value, $currency = null) {
