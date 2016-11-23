@@ -165,6 +165,50 @@ abstract class Param {
 	}
 	
 	
+	
+	public function splitToStringArrayOrReject(string $separator = ',', bool $sorted = true, int $status = Response::STATUS_404_NOT_FOUND) {
+		$this->rejectIfNotNotEmptyString();
+		
+		$values = explode($separator, $this->value);
+		
+		if (!$sorted) return $values;
+		
+		$values2 = $values;
+		sort($values);
+		
+		if ($values !== $values2) {
+			throw new StatusException($status);
+		}
+		
+		return $values;
+	}
+	
+	
+	public function splitToIntArrayOrReject(string $separator = '-', bool $sorted = true, int $status = Response::STATUS_404_NOT_FOUND) {
+		$this->rejectIfNotNotEmptyString();
+		
+		$values = array();
+		foreach (explode($separator, $this->value) as $key => $fieldValue) {
+			if (false !== ($value = filter_var($fieldValue, FILTER_VALIDATE_INT))) {
+				$values[$key] = $value;
+				continue;
+			}
+			
+			throw new StatusException($status);
+		}
+		
+		if (!$sorted) return $values;
+		
+		$values2 = $values;
+		sort($values2, SORT_NUMERIC);
+		
+		if ($values !== $values2) {
+			throw new StatusException($status);
+		}
+		
+		return $values;
+	}
+	
 	public function toNotEmptyStringArrayOrReject($status = Response::STATUS_404_NOT_FOUND) {
 		$values = $this->toArrayOrReject($status);
 		foreach ($values as $value) {
