@@ -40,7 +40,7 @@ class SimpleResponseContent implements BufferedResponseContent {
 	/**
 	 * @param unknown $contents
 	 */
-	public function appendNl($contents) {
+	public function appendLn($contents) {
 		$this->append($contents . N2N_CRLF);
 	}
 	/**
