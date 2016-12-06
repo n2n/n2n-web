@@ -673,7 +673,6 @@ abstract class View implements BufferedResponseContent, UiComponent {
 		
 		if ($contents instanceof UiComponent) {
 			return $contents->getContents();
-			return;
 		}
 		
 		return (string) $contents;
