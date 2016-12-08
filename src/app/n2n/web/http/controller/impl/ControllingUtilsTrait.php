@@ -47,7 +47,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @return \n2n\web\http\controller\impl\ControllingUtils
 	 */
-	private function cu() {
+	protected function cu() {
 		if ($this->controllingUtils !== null) {
 			return $this->controllingUtils;
 		}
