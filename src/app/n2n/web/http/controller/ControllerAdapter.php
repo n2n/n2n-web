@@ -62,6 +62,8 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 					$this->cu()->setInvokerInfo($invokerInfo);
 					$invokerInfo->getInvoker()->invoke($this);
 				}
+
+				$this->cu()->reset();
 				return true;
 			}
 		} catch (StatusException $e) {
@@ -79,6 +81,8 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 						$invokerInfo->getInvoker()->invoke($this);
 						$catchedStatusException = null;
 					}
+					
+					$this->cu()->reset();
 					return true;
 				}
 			} catch (StatusException $e) {
