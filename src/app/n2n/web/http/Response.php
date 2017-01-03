@@ -31,6 +31,7 @@ use n2n\util\ex\IllegalStateException;
 class Response {
 	const STATUS_100_CONTINUE = 100;
 	const STATUS_101_SWITCHING_PROTOCOLS = 101;
+	const STATUS_102_PROCESSING = 102;
 	const STATUS_200_OK = 200;
 	const STATUS_201_CREATED = 201;
 	const STATUS_202_ACCEPTED = 202;
@@ -38,6 +39,9 @@ class Response {
 	const STATUS_204_NO_CONTENT = 204;
 	const STATUS_205_RESET_CONTENT = 205;
 	const STATUS_206_PARTIAL_CONTENT = 206;
+	const STATUS_207_MULTI_STATUS = 207; 
+	const STATUS_208_ALREADY_REPORTED = 208; 
+	const STATUS_226_IM_USED = 226; 
 	const STATUS_300_MULTIPLE_CHOICES = 300;
 	const STATUS_301_MOVED_PERMANENTLY = 301;
 	const STATUS_302_FOUND = 302;
@@ -45,6 +49,7 @@ class Response {
 	const STATUS_304_NOT_MODIFIED = 304;
 	const STATUS_305_USE_PROXY = 305;
 	const STATUS_307_TEMPORARY_REDIRECT = 307;
+	const STATUS_308_PERMANENT_REDIRECT = 308;
 	const STATUS_400_BAD_REQUEST = 400;
 	const STATUS_401_UNAUTHORIZED = 401;
 	const STATUS_402_PAYMENT_REQUIRED = 402;
@@ -63,12 +68,30 @@ class Response {
 	const STATUS_415_UNSUPPORTED_MEDIA_TYPE = 415;
 	const STATUS_416_REQUEST_RANGE_NOT_SATISFIABLE = 416;
 	const STATUS_417_EXPECTATION_FAILED = 417;
+	const STATUS_418_IM_A_TEAPOT = 418;
+	const STATUS_420_POLICY_NOT_FULFILLED = 420;
+	const STATUS_421_MISDIRECTED_REQUEST = 421;
+	const STATUS_422_UNPROCESSABLE_ENTITY = 422;
+	const STATUS_423_LOCKED = 423;
+	const STATUS_424_FAILED_DEPENDENCY = 424;
+	const STATUS_425_UNORDERED_COLLECTION = 425;
+	const STATUS_426_UPGRADE_REQUIRED = 426;
+	const STATUS_428_PRECONDITION_REQUIRED = 428;
+	const STATUS_429_TOO_MANY_REQUESTS = 429;
+	const STATUS_431_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
+	const STATUS_451_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 	const STATUS_500_INTERNAL_SERVER_ERROR = 500;
 	const STATUS_501_NOT_IMPLEMENTED = 501;
 	const STATUS_502_BAD_GATEWAY = 502;
 	const STATUS_503_SERVICE_UNAVAILABLE = 503;
 	const STATUS_504_GATEWAY_TIME_OUT = 504;
 	const STATUS_505_HTTP_VERSION_NOT_SUPPORTED = 505;
+	const STATUS_506_VARIANT_ALSO_NEGOTIATES = 506;
+	const STATUS_507_INSUFFICIENT_STORAGE = 507;
+	const STATUS_508_LOOP_DETECTED = 508;
+	const STATUS_509_BANDWIDTH_LIMIT_EXCEEDED = 509;
+	const STATUS_510_NOT_EXTENDED = 510;
+	const STATUS_511_NETWORK_AUTHENTICATION_REQUIRED = 511;
 	
 	private $listeners;
 	private $request;
@@ -451,10 +474,11 @@ class Response {
 	 * @throws UnknownHttpStatusCodeException
 	 * @return int
 	 */
-	public static function textOfStatusCode($code) {
+	public static function textOfStatusCode($code, bool $required = false) {
 		switch ((int) $code) {
 			case self::STATUS_100_CONTINUE: return 'Continue'; 
 			case self::STATUS_101_SWITCHING_PROTOCOLS: return 'Switching Protocols'; 
+			case self::STATUS_102_PROCESSING: return 'Processing';
 			case self::STATUS_200_OK: return 'OK'; 
 			case self::STATUS_201_CREATED: return 'Created'; 
 			case self::STATUS_202_ACCEPTED: return 'Accepted'; 
@@ -462,6 +486,9 @@ class Response {
 			case self::STATUS_204_NO_CONTENT: return 'No Content'; 
 			case self::STATUS_205_RESET_CONTENT: return 'Reset Content'; 
 			case self::STATUS_206_PARTIAL_CONTENT: return 'Partial Content'; 
+			case self::STATUS_207_MULTI_STATUS: return 'Multi-Status'; 
+			case self::STATUS_208_ALREADY_REPORTED: return 'Already Reported'; 
+			case self::STATUS_226_IM_USED: return 'IM Used'; 
 			case self::STATUS_300_MULTIPLE_CHOICES: return 'Multiple Choices'; 
 			case self::STATUS_301_MOVED_PERMANENTLY: return 'Moved Permanently'; 
 			case self::STATUS_302_FOUND: return 'Found'; 
@@ -469,6 +496,7 @@ class Response {
 			case self::STATUS_304_NOT_MODIFIED: return 'Not Modified'; 
 			case self::STATUS_305_USE_PROXY: return 'Use Proxy';  
 			case self::STATUS_307_TEMPORARY_REDIRECT: return 'Temporary Redirect'; 
+			case self::STATUS_308_PERMANENT_REDIRECT: return 'Permanent Redirect'; 
 			case self::STATUS_400_BAD_REQUEST: return 'Bad Request'; 
 			case self::STATUS_401_UNAUTHORIZED: return 'Unauthorized'; 
 			case self::STATUS_402_PAYMENT_REQUIRED: return 'Payment Required'; 
@@ -487,13 +515,32 @@ class Response {
 			case self::STATUS_415_UNSUPPORTED_MEDIA_TYPE: return 'Unsupported Media Type'; 
 			case self::STATUS_416_REQUEST_RANGE_NOT_SATISFIABLE: return 'Requested Range Not Satisfiable';
 			case self::STATUS_417_EXPECTATION_FAILED: return 'Expectation Failed';
+			case self::STATUS_418_IM_A_TEAPOT: return 'I’m a teapot';
+			case self::STATUS_420_POLICY_NOT_FULFILLED: return 'Policy Not Fulfilled';
+			case self::STATUS_421_MISDIRECTED_REQUEST: return 'Misdirected Request';
+			case self::STATUS_422_UNPROCESSABLE_ENTITY: return 'Unprocessable Entity';
+			case self::STATUS_423_LOCKED: return 'Locked';
+			case self::STATUS_424_FAILED_DEPENDENCY: return 'Failed Dependency';
+			case self::STATUS_425_UNORDERED_COLLECTION: return 'Unordered Collection';
+			case self::STATUS_426_UPGRADE_REQUIRED: return 'Upgrade Required';
+			case self::STATUS_428_PRECONDITION_REQUIRED: return 'Precondition Required';
+			case self::STATUS_429_TOO_MANY_REQUESTS: return 'Too Many Requests';
+			case self::STATUS_431_REQUEST_HEADER_FIELDS_TOO_LARGE: return 'Request Header Fields Too Large';
+			case self::STATUS_451_UNAVAILABLE_FOR_LEGAL_REASONS: return 'Unavailable For Legal Reasons';
 			case self::STATUS_500_INTERNAL_SERVER_ERROR: return 'Internal Server Error'; 
 			case self::STATUS_501_NOT_IMPLEMENTED: return 'Not Implemented'; 
 			case self::STATUS_502_BAD_GATEWAY: return 'Bad Gateway'; 
 			case self::STATUS_503_SERVICE_UNAVAILABLE: return 'Service Unavailable'; 
 			case self::STATUS_504_GATEWAY_TIME_OUT: return 'Gateway Timeout'; 
 			case self::STATUS_505_HTTP_VERSION_NOT_SUPPORTED: return 'HTTP Version not supported'; 
+			case self::STATUS_506_VARIANT_ALSO_NEGOTIATES: return 'Variant Also Negotiates';  
+			case self::STATUS_507_INSUFFICIENT_STORAGE: return 'Insufficient Storage';  
+			case self::STATUS_508_LOOP_DETECTED: return 'Loop Detected';  
+			case self::STATUS_509_BANDWIDTH_LIMIT_EXCEEDED: return 'Bandwidth Limit Exceeded';  
+			case self::STATUS_510_NOT_EXTENDED: return 'Not Extended';  
+			case self::STATUS_511_NETWORK_AUTHENTICATION_REQUIRED: return 'Network Authentication Required'; 
 			default:
+				if (!$required) return null;
 				throw new \InvalidArgumentException('Unknown http status code: ' . $code);
 		}
 	}

@@ -125,11 +125,14 @@ class HttpContext {
 		return $this->availableSubsystems;
 	}
 	
-	public function getAssetsUrl(string $moduleNamespace): Url {
-		return $this->assetsUrl->extR(VarStore::namespaceToDirName($moduleNamespace));
-// 		$assetPath = new Path(array($this->assetsDirName, VarStore::namespaceToDirName((string) $module)));
-			
-// 		return $this->getContextPath()->ext($assetPath)->toUrl();
+	public function getAssetsUrl(string $moduleNamespace, bool $absolute = false): Url {
+		$assetsUrl = $this->assetsUrl->extR(VarStore::namespaceToDirName($moduleNamespace));
+		
+		if (!$absolute) {
+			return $assetsUrl;
+		}
+
+		return $this->request->getHostUrl()->ext($absolute);
 	}
 	
 	/**
