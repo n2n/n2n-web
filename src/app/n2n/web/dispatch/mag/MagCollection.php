@@ -96,9 +96,9 @@ class MagCollection {
 	}
 	
 	public function writeValues(array $values) {
-		foreach ($this->magWrappers as $propertyName => $mag) {
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			if (!array_key_exists($propertyName, $values)) continue;
-			$mag->setValue($values[$propertyName]);
+			$magWrapper->getMag()->setValue($values[$propertyName]);
 		}
 	}
 }
