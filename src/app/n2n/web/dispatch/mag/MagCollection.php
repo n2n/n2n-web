@@ -28,9 +28,9 @@ class MagCollection {
 		return $this->magWrappers[$mag->getPropertyName()] = new MagWrapper($mag);
 	}
 	
-// 	public function getMagByPropertyName(string $propertyName) {
-// 		return $this->getMagByPropertyName($propertyName)->getMag();
-// 	}
+	public function getMagByPropertyName(string $propertyName) {
+		return $this->getMagWrapperByPropertyName($propertyName)->getMag();
+	}
 	
 	/**
 	 * @param string $propertyName
@@ -84,13 +84,13 @@ class MagCollection {
 					continue;
 				}
 				
-				$values[$propertyName] = $this->getMagByPropertyName($propertyName)->getValue();
+				$values[$propertyName] = $this->getMagWrapperByPropertyName($propertyName)->getMag()->getValue();
 			}
 			return $values;
 		}
 		
-		foreach ($this->magWrappers as $propertyName => $mag) {
-			$values[$propertyName] = $mag->getValue();
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
+			$values[$propertyName] = $magWrapper->getMag()->getValue();
 		}
 		return $values;
 	}
