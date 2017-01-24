@@ -23,7 +23,7 @@ namespace n2n\web\http\nav;
 
 use n2n\web\http\HttpRuntimeException;
 
-class UnavailableMurlException extends HttpRuntimeException {
+class UnavailableUrlException extends HttpRuntimeException {
 	private $critical;
 
 	public function __construct(bool $critical, string $message = null, $code = null, \Throwable $previous = null) {

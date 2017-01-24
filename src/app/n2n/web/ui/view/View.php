@@ -46,7 +46,7 @@ use n2n\web\ui\ViewFactory;
 use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\CastUtils;
 use n2n\web\http\nav\UrlBuilder;
-use n2n\web\http\nav\UnavailableMurlException;
+use n2n\web\http\nav\UnavailableUrlException;
 
 abstract class View implements BufferedResponseContent, UiComponent {
 	private $params = array();
@@ -765,7 +765,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrl($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
-		} catch (UnavailableMurlException $e) {
+		} catch (UnavailableUrlException $e) {
 			if ($required) throw $e;
 			return null;
 		}
@@ -774,7 +774,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	public function buildUrlStr($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrlStr($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
-		} catch (UnavailableMurlException $e) {
+		} catch (UnavailableUrlException $e) {
 			if ($required || $e->isCritical()) throw $e;
 			return null;
 		}
