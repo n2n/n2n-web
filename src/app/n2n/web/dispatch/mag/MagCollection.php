@@ -22,50 +22,55 @@
 namespace n2n\web\dispatch\mag;
 
 class MagCollection {
-	private $mags = array();
+	private $magWrappers = array();
 	
 	public function addMag(Mag $mag) {
-		$this->mags[$mag->getPropertyName()] = $mag;
+		return $this->magWrappers[$mag->getPropertyName()] = new MagWrapper($mag);
 	}
+	
+	public function getMagByPropertyName(string $propertyName) {
+		return $this->getMagWrapperByPropertyName($propertyName)->getMag();
+	}
+	
 	/**
 	 * @param string $propertyName
 	 * @throws UnknownMagException
-	 * @return Option
+	 * @return MagWrapper
 	 */
-	public function getMagByPropertyName($propertyName) {
+	public function getMagWrapperByPropertyName(string $propertyName) {
 		if ($this->containsPropertyName($propertyName)) {
-			return $this->mags[$propertyName];
+			return $this->magWrappers[$propertyName];
 		}
 		throw new UnknownMagException('Mag not found: ' . $propertyName);
 	}
 	
 	public function containsPropertyName($propertyName) {
-		return isset($this->mags[$propertyName]);
+		return isset($this->magWrappers[$propertyName]);
 	}
 	
-	public function removeOptionByPropertyName($propertyName) {
-		unset($this->mags[$propertyName]);
+	public function removeMagByPropertyName($propertyName) {
+		unset($this->magWrappers[$propertyName]);
 	}
 	
 	public function isEmpty() {
-		return empty($this->mags);
+		return empty($this->magWrappers);
 	}
 	
 	/**
-	 * @return Mag[]
+	 * @return MagWrapper[]
 	 */
-	public function getMags() {
-		return $this->mags;
+	public function getMagWrappers() {
+		return $this->magWrappers;
 	}
 	
 	public function getPropertyNames() {
-		return array_keys($this->mags);
+		return array_keys($this->magWrappers);
 	}
 	
 	public function readFormValues() {
 		$formValues = array();
-		foreach ($this->mags as $propertyName => $mag) {
-			$formValues[$propertyName] = $mag->getFormValue();
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
+			$formValues[$propertyName] = $magWrapper->getMag()->getFormValue();
 		}
 		return $formValues;
 	}
@@ -79,21 +84,21 @@ class MagCollection {
 					continue;
 				}
 				
-				$values[$propertyName] = $this->getMagByPropertyName($propertyName)->getValue();
+				$values[$propertyName] = $this->getMagWrapperByPropertyName($propertyName)->getMag()->getValue();
 			}
 			return $values;
 		}
 		
-		foreach ($this->mags as $propertyName => $mag) {
-			$values[$propertyName] = $mag->getValue();
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
+			$values[$propertyName] = $magWrapper->getMag()->getValue();
 		}
 		return $values;
 	}
 	
 	public function writeValues(array $values) {
-		foreach ($this->mags as $propertyName => $mag) {
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			if (!array_key_exists($propertyName, $values)) continue;
-			$mag->setValue($values[$propertyName]);
+			$magWrapper->getMag()->setValue($values[$propertyName]);
 		}
 	}
 }

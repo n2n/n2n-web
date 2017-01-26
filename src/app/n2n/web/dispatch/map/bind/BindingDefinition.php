@@ -28,7 +28,6 @@ use n2n\reflection\ArgUtils;
 use n2n\web\dispatch\map\val\Validator;
 use n2n\util\col\GenericArrayObject;
 use n2n\web\dispatch\map\val\ClosureValidator;
-use n2n\web\dispatch\map\PropertyPathPart;
 
 class BindingDefinition {
 	private $bindingTree;

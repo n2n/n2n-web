@@ -29,7 +29,6 @@ use n2n\reflection\property\AccessProxy;
 use n2n\web\dispatch\map\bind\BindingDefinition;
 use n2n\web\dispatch\property\ManagedProperty;
 use n2n\web\ui\UiComponent;
-use n2n\l10n\Label;
 use n2n\l10n\N2nLocale;
 
 interface Mag {
@@ -37,46 +36,58 @@ interface Mag {
 	 * @return string 
 	 */
 	public function getPropertyName(): string;
+	
 	/**
 	 * @return string
 	 */
 	public function getLabel(N2nLocale $n2nLocale): string;
+	
 	/**
 	 * @return ManagedProperty
 	 */
 	public function createManagedProperty(AccessProxy $accessProxy): ManagedProperty;
+	
 	/**
 	 * @param MappingDefinition $mappingDefinition
 	 */
 	public function setupMappingDefinition(MappingDefinition $mappingDefinition);
+	
 	/**
 	 * @param BindingConstraints $bindingConstraints
 	 */
 	public function setupBindingDefinition(BindingDefinition $bindingDefinition);
+	
 	/**
 	 * @return mixed
 	 */
 	public function getFormValue();
+	
 	/**
 	 * @param mixed $value
 	 */
 	public function setFormValue($value);
+	
 	/**
 	 * @return array 
 	 */
 	public function getContainerAttrs(HtmlView $view): array;
+	
 	/**
 	 * @param PropertyPath $propertyPath
 	 * @param HtmlView $view
 	 */
 	public function createUiField(PropertyPath $propertyPath, HtmlView $view): UiComponent;
+	
 	/**
 	 * @return mixed 
 	 */
 	public function getValue();
+	
 	/**
 	 * @param mixed $value
 	 * @throws \InvalidArgumentException if passed value is invalid.
 	 */
 	public function setValue($value);
+	
+	public function whenAssigned(MagCollection $magCollection);
 }

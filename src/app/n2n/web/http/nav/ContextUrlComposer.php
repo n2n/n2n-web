@@ -102,7 +102,7 @@ class ContextUrlComposer implements UrlComposer {
 		if ($this->controllerContext === null) {
 			if ($this->toController) {
 				if ($controllerContext === null) {
-					throw new UnavailableMurlException(true, 'No ControllerContext known.');
+					throw new UnavailableUrlException(true, 'No ControllerContext known.');
 				}
 				$path = $controllerContext->getCmdContextPath();
 			} else {
@@ -119,7 +119,7 @@ class ContextUrlComposer implements UrlComposer {
 			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem)
 					->extR($path->ext($this->pathExts), $this->queryExt, $this->fragment);
 		} catch (HttpContextNotAvailableException $e) {
-			throw new UnavailableMurlException(null, null, $e);
+			throw new UnavailableUrlException(null, null, $e);
 		}
 	}
 }
