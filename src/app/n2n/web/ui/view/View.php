@@ -360,6 +360,16 @@ abstract class View implements BufferedResponseContent, UiComponent {
 		
 		return $this->contentBuffer;
 	}
+
+	public final function getActiveBuffer() {
+		$this->ensureBufferIsActive();
+	
+		if ($this->activePanelBuffer !== null) {
+			return $this->activePanelBuffer;
+		}
+	
+		return $this->contentBuffer;
+	}
 	/**
 	 * 
 	 * @throws ViewNotInitializedException
