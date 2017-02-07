@@ -102,6 +102,7 @@ class ControllerRegistry implements RequestScoped {
 class ControllingPlanFactory {
 	const LOCALE_PLACEHOLDER = 'locale';
 	
+	private $contextN2nLocales;
 	private $pathPatternCompiler;
 	private $filterControllerDefs = array();
 	private $filterPathPatterns = array();
@@ -109,6 +110,7 @@ class ControllingPlanFactory {
 	private $mainPathPatterns = array();
 	
 	public function __construct(\ArrayObject $contextN2nLocales) {
+		$this->contextN2nLocales = $contextN2nLocales;
 		$this->pathPatternCompiler = new PathPatternCompiler();
 		$this->pathPatternCompiler->addPlaceholder(self::LOCALE_PLACEHOLDER,
 				new N2nLocalePlaceholderValidator($contextN2nLocales));
@@ -175,6 +177,7 @@ class ControllingPlanFactory {
 	 */
 	private function applyMain(ControllingPlan $controllingPlan, N2nContext $n2nContext, 
 			Path $cmdPath) {
+		
 		$currentMatchResult = null;
 		$currentMainControllerDef = null;
 		foreach ($this->mainControllerDefs as $key => $mainControllerDef) {
@@ -187,21 +190,27 @@ class ControllingPlanFactory {
 			if (null === $matchResult) continue;
 			
 			if (null === $currentMatchResult 
-					|| ($currentMatchResult->hasPlaceholderValues() 
-							&& !$matchResult->hasPlaceholderValues())
+					/*|| ($currentMatchResult->hasPlaceholderValues() 
+							&& !$matchResult->hasPlaceholderValues())*/
 					|| ($currentMainControllerDef->getSubsystemName() === null 
 							&& $mainControllerDef->getSubsystemName() !== null)) {
 				$currentMatchResult = $matchResult;
 				$currentMainControllerDef = $mainControllerDef;
 				continue;
 			}
-			
-			if (!$currentMatchResult->hasPlaceholderValues() && $matchResult->hasPlaceholderValues()) {
-				continue;
-			}
-			
+
 			$currentUsedPathSize = $currentMatchResult->getUsedPath()->size();
 			$usedPathSize = $matchResult->getUsedPath()->size();
+				
+			if ($currentUsedPathSize == $usedPathSize) {
+				if (!$currentMatchResult->hasPlaceholderValues() && $matchResult->hasPlaceholderValues()) {
+					continue;
+				} else if ($currentMatchResult->hasPlaceholderValues() && !$matchResult->hasPlaceholderValues()) {
+					$currentMatchResult = $matchResult;
+					$currentMainControllerDef = $mainControllerDef;
+					continue;
+				}
+			}
 			
 			if ($currentUsedPathSize < $usedPathSize) {
 				$currentMatchResult = $matchResult;
