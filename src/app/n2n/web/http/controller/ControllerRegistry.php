@@ -51,6 +51,7 @@ class ControllerRegistry implements RequestScoped {
 	public function setContextN2nLocale($alias, N2nLocale $contextN2nLocale) {
 		$this->contextN2nLocales[$alias] = $contextN2nLocale;
 	}
+	
 	/**
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
