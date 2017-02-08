@@ -123,7 +123,7 @@ class VarsRequest implements Request {
 		}
 		
 		$this->method = Method::createFromString($this->extractServerVar('REQUEST_METHOD'));
-		$this->requestedUrl = new Url($protocol, new Authority(null, $hostName), 
+		$this->requestedUrl = new Url($protocol, new Authority($hostName), 
 				$this->cmdContextPath->ext($this->cmdPath), new Query($getVars));		
 	}	
 	
