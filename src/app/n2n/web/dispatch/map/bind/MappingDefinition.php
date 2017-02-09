@@ -49,6 +49,10 @@ class MappingDefinition {
 		$this->ignoredPropertyNames[$propertyName] = $propertyName;
 	}
 	
+	public function removeIgnore($propertyName) {
+		unset($this->ignoredPropertyNames[$propertyName]);
+	}
+	
 	public function isPropertyIgnored($propertyName) {
 		return isset($this->ignoredPropertyNames[$propertyName]);
 	}
