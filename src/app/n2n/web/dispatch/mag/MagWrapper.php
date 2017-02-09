@@ -12,6 +12,8 @@ class MagWrapper {
 	private $markAttrs = array();
 	private $ignored = false;
 	
+	private $lastMappingDefinition;
+	
 	public function __construct(Mag $mag) {
 		$this->mag = $mag;
 	}
@@ -38,6 +40,14 @@ class MagWrapper {
 	
 	public function setIgnored(bool $ignored) {
 		$this->ignored = $ignored;
+		
+		if ($this->lastMappingDefinition === null) return;
+		
+		if ($ignored) {
+			$this->lastMappingDefinition->ignore($this->mag->getPropertyName());
+		} else {
+			$this->lastMappingDefinition->removeIgnore($this->mag->getPropertyName());
+		}
 	}
 	
 	public function isIgnored() {
@@ -45,10 +55,11 @@ class MagWrapper {
 	}
 	
 	public function setupMappingDefinition(MappingDefinition $md) {
+		$this->lastMappingDefinition = $md;
+		
 		if ($this->ignored) {
 			$md->ignore($this->mag->getPropertyName());
 		}
-		
 		$this->mag->setupMappingDefinition($md);
 	}
 	
