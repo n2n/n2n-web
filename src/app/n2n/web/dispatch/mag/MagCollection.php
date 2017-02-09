@@ -21,6 +21,9 @@
  */
 namespace n2n\web\dispatch\mag;
 
+use n2n\web\dispatch\map\bind\MappingDefinition;
+use n2n\web\dispatch\map\bind\BindingDefinition;
+
 class MagCollection {
 	private $magWrappers = array();
 	
@@ -99,6 +102,19 @@ class MagCollection {
 		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			if (!array_key_exists($propertyName, $values)) continue;
 			$magWrapper->getMag()->setValue($values[$propertyName]);
+		}
+	}
+	
+
+	public function setupMappingDefinition(MappingDefinition $md) {
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
+			$magWrapper->setupMappingDefinition($md);
+		}
+	}
+	
+	public function setupBindingDefinition(BindingDefinition $bd) {
+		foreach ($this->magWrappers as $propertyName => $magWrapper) {
+			$magWrapper->setupBindingDefinition($bd);
 		}
 	}
 }
