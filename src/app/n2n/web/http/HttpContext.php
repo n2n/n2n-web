@@ -132,7 +132,7 @@ class HttpContext {
 			return $assetsUrl;
 		}
 
-		return $this->request->getHostUrl()->ext($absolute);
+		return $this->request->getHostUrl()->ext($assetsUrl);
 	}
 	
 	/**
