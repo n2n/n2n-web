@@ -89,6 +89,14 @@ class ScrRegistry implements RequestScoped {
 	}
 	
 	public function findScrController(string $key) {
+		try {
+			return $this->getScrController($key);
+		} catch (\n2n\web\http\controller\impl\ScrException $e) {
+			return null;
+		}
+	}
+	
+	public function getScrController(string $key) {
 		foreach ($this->sessScrLookupIds as $sessScrLookupId => $sessKey) {
 			if ($key !== $sessKey) continue; 
 			
