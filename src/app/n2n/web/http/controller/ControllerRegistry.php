@@ -30,6 +30,7 @@ use n2n\context\RequestScoped;
 use n2n\core\config\WebConfig;
 use n2n\web\http\UnknownSubsystemException;
 use n2n\web\http\N2nLocaleFormat;
+use n2n\context\LookupFailedException;
 
 class ControllerRegistry implements RequestScoped {
 	private $webConfig;
@@ -238,8 +239,13 @@ class ControllingPlanFactory {
 						$placeholderValues[self::LOCALE_PLACEHOLDER]));
 			}
 			
+			$controller = $n2nContext->lookup($currentMainControllerDef->getControllerClassName());
+			if (!($controller instanceof Controller)) {
+				throw new LookupFailedException('Registered controller ' . get_class($controller) 
+						. ' does not implement: ' . Controller::class);
+			}
 			$controllerContext = new ControllerContext($currentMatchResult->getSurplusPath(), $currentMatchResult->getUsedPath(),
-							$n2nContext->lookup($currentMainControllerDef->getControllerClassName()));
+					$controller);
 			$controllerContext->setParams($currentMatchResult->getParamValues());
 			$controllingPlan->addMain($controllerContext);
 		}
