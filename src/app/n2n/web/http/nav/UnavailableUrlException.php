@@ -26,7 +26,7 @@ use n2n\web\http\HttpRuntimeException;
 class UnavailableUrlException extends HttpRuntimeException {
 	private $critical;
 
-	public function __construct(bool $critical, string $message = null, $code = null, \Throwable $previous = null) {
+	public function __construct(bool $critical, string $message = null, int $code = null, \Throwable $previous = null) {
 		parent::__construct($message, $code, $previous);
 
 		$this->critical = $critical;
