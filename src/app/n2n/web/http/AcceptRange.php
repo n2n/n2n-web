@@ -9,6 +9,9 @@ class AcceptRange {
 		$this->acceptMimeTypes = $acceptMimeTypes;
 	}
 	
+	/**
+	 * @return AcceptMimeType[]  
+	 */
 	public function getAcceptMimeTypes() {
 		if ($this->acceptStr === null) {
 			return $this->acceptMimeTypes;
