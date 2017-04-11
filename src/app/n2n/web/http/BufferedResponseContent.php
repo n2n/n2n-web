@@ -22,5 +22,5 @@
 namespace n2n\web\http;
 
 interface BufferedResponseContent extends ResponseThing {
-	public function getBufferedContents(): string ;
+	public function getBufferedContents(): string;
 }

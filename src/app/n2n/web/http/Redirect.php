@@ -47,7 +47,7 @@ class Redirect implements ResponseThing {
 	 * (non-PHPdoc)
 	 * @see n2n\web\http.ResponseThing::toKownResponseString()
 	 */
-	public function toKownResponseString() {
+	public function toKownResponseString(): string {
 		return $this->httpStatus . ' redirect to \'' . $this->httpLocation . '\'';
 	}
 }
