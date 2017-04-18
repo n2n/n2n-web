@@ -31,5 +31,5 @@ interface ResponseThing {
 	 * 
 	 * @return string
 	 */
-	public function toKownResponseString();
+	public function toKownResponseString(): string;
 }
