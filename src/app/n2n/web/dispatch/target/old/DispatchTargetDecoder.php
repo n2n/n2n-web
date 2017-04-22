@@ -182,7 +182,7 @@ class DispatchTargetDecoder {
 		$field = null;
 		switch ($fieldClassName) {
 			case (self::CLASS_NAME_OBJECT_ITEM):
-				$field = $parentObjectItem->createEiField($fieldName);
+				$field = $parentObjectItem->createEiProp($fieldName);
 				break;		
 			case (self::CLASS_NAME_OBJECT_ARRAY_ITEM):
 				$field = $parentObjectItem->createObjectArrayField($fieldName);
@@ -217,7 +217,7 @@ class DispatchTargetDecoder {
 		if ($fieldClassName != self::CLASS_NAME_OBJECT_ITEM) {
 			throw $this->createDispatchTargetDecodingExceptionTargetItemNotValid();
 		}
-		$field = $parentObjectArrayItem->createEiField($fieldName);
+		$field = $parentObjectArrayItem->createEiProp($fieldName);
 		$this->createFieldsFor($field, $fieldAttributes);
 		return $field;
 	}
