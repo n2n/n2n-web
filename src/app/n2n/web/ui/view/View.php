@@ -50,6 +50,7 @@ use n2n\web\http\nav\UnavailableUrlException;
 
 abstract class View implements BufferedResponseContent, UiComponent {
 	private $params = array();
+	private $stateObjs = array();
 	
 	private $scriptPath;
 	private $moduleNamespace;
@@ -187,6 +188,27 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	public function getControllerContextByName($name) {
 		return $this->getControllerContext()->getControllingPlan()->getByName($name);
 	}
+	
+	protected function getStateObjs() {
+		return $this->stateObjs;
+	}
+	
+	protected function setStateObjs(array $stateObjs) {
+		$this->stateObjs = $stateObjs;
+	}
+	
+	public function getStateObj(string $refTypeName) {
+		if (isset($this->stateObjs[$refTypeName])) {
+			return $this->stateObjs[$refTypeName];
+		}
+		
+		return null;
+	}
+	
+	public function setStateObj(string $refTypeName, $stateObj) {
+		$this->stateObjs[$refTypeName] = $stateObj;
+	}
+	
 	/**
 	 * 
 	 * @return boolean
@@ -622,6 +644,10 @@ abstract class View implements BufferedResponseContent, UiComponent {
 			$view = $this->createImportView($viewNameExpression, $params, $viewCacheControl, $module);
 		}
 		$view->setControllerContext($this->controllerContext);
+		
+		if (!$view->isInitialized()) {
+			$view->setStateObjs($this->getStateObjs());
+		}
 		
 		return $view;
 	}
