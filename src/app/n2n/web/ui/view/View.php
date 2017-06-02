@@ -31,7 +31,7 @@ use n2n\core\N2N;
 use n2n\web\ui\UiComponent;
 use n2n\web\ui\UiException;
 use n2n\web\http\Response;
-use n2n\web\http\BufferedResponseContent;
+use n2n\web\http\BufferedResponseObject;
 use n2n\core\module\Module;
 use n2n\core\container\N2nContext;
 use n2n\web\ui\ViewStuffFailedException;
@@ -48,7 +48,7 @@ use n2n\reflection\CastUtils;
 use n2n\web\http\nav\UrlBuilder;
 use n2n\web\http\nav\UnavailableUrlException;
 
-abstract class View implements BufferedResponseContent, UiComponent {
+abstract class View extends BufferedResponseObject implements UiComponent {
 	private $params = array();
 	private $stateObjs = array();
 	
@@ -446,7 +446,7 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseThing::prepareForResponse()
+	 * @see n2n\web\http.ResponseObject::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: ' . $this->getContentType());
@@ -457,21 +457,21 @@ abstract class View implements BufferedResponseContent, UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseThing::toKownResponseString()
+	 * @see n2n\web\http.ResponseObject::toKownResponseString()
 	 */
 	public function toKownResponseString(): string {
 		return $this->__toString();
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseThing::__toString()
+	 * @see n2n\web\http.ResponseObject::__toString()
 	 */
 	public function __toString(): string {
 		return 'View' . '(' . $this->getName() . ')';
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.BufferedResponseContent::getBufferedContents()
+	 * @see n2n\web\http.BufferedResponseObject::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->getContents();

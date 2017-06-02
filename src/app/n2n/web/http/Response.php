@@ -93,7 +93,7 @@ class Response {
 	const STATUS_510_NOT_EXTENDED = 510;
 	const STATUS_511_NETWORK_AUTHENTICATION_REQUIRED = 511;
 	
-	private $listeners;
+	private $listeners = array();
 	private $request;
 	private $responseCachingEnabled = true;
 	private $httpCachingEnabled = true;
@@ -106,7 +106,7 @@ class Response {
 	private $bufferedHttpCacheControl;
 	private $bufferedResponseCacheControl;
 	private $responseCacheStore;
-	private $sentResponseThing;
+	private $sentResponseObject;
 	/**
 	 * 
 	 * @param Request $request
@@ -127,7 +127,7 @@ class Response {
 		$outputBuffer->append($prevContent);
 	}
 	
-	public function setSendEtagAllowed($sendEtagAllowed) {
+	public function setSendEtagAllowed(bool $sendEtagAllowed) {
 		$this->sendEtagAllowed = $sendEtagAllowed;
 	}
 	
@@ -135,7 +135,7 @@ class Response {
 		return $this->sendEtagAllowed;
 	}
 	
-	public function setSendLastModifiedAllowed($sendLastModifiedAllowed) {
+	public function setSendLastModifiedAllowed(bool $sendLastModifiedAllowed) {
 		$this->sendLastModifiedAllowed = $sendLastModifiedAllowed;
 	}
 	
@@ -143,10 +143,34 @@ class Response {
 		return $this->sendLastModifiedAllowed;
 	}
 	
+	/**
+	 * @see self::setResponseCachingEnabled()
+	 * @return bool
+	 */
+	public function isResponseCachingEnabled() {
+		return $this->responseCachingEnabled;
+	}
+	
+	/**
+	 * If false response cache configurations assigned over {@see self::setHttpCacheControl()} will be ignored.
+	 * @param bool $httpCachingEnabled
+	 */
 	public function setResponseCachingEnabled(bool $responseCachingEnabled) {
 		$this->responseCachingEnabled = $responseCachingEnabled;
 	}
 	
+	/**
+	 * @see self::setResponseCachingEnabled()
+	 * @return bool
+	 */
+	public function isHttpCachingEnabled() {
+		return $this->httpCachingEnabled;
+	}
+	
+	/**
+	 * If false http cache configurations assigned over {@see self::setHttpCacheControl()} will be ignored.
+	 * @param bool $httpCachingEnabled
+	 */
 	public function setHttpCachingEnabled(bool $httpCachingEnabled) {
 		$this->httpCachingEnabled = $httpCachingEnabled;
 	}
@@ -158,8 +182,8 @@ class Response {
 	public function isBuffering() {
 		return (bool) sizeof($this->outputBuffers);
 	}
+	
 	/**
-	 * 
 	 * @throws ResponseBufferIsClosed
 	 */
 	private function ensureBuffering() {
@@ -167,8 +191,8 @@ class Response {
 		
 		throw new IllegalStateException('Response buffer is closed');
 	}
+	
 	/**
-	 * 
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
@@ -183,8 +207,8 @@ class Response {
 		$this->outputBuffers[] = $outputBuffer; 
 		return $outputBuffer;
 	}
+	
 	/**
-	 * 
 	 * @return string
 	 */
 	public function getBufferedOutput() {
@@ -229,10 +253,15 @@ class Response {
 
 		return $contents;
 	}
+	
 	/**
 	 * 
 	 */
 	public function reset() {
+		foreach ($this->listeners as $listener) {
+			$listener->onReset($this);
+		}
+		
 		$this->ensureBuffering();
 		
 		$this->bufferedStatusCode = self::STATUS_200_OK;
@@ -240,8 +269,9 @@ class Response {
 		$this->fetchBufferedOutput(false);
 		$this->bufferedHttpCacheControl = null;
 		$this->bufferedResponseCacheControl = null;
-		$this->sentResponseThing = null;
+		$this->sentResponseObject = null;
 	}
+	
 	/**
 	 * 
 	 * @param string $etag
@@ -282,7 +312,11 @@ class Response {
 		return false;
 	}
 	
-	public function sendCachedResponseThing() {
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public function sendCachedResponseObject() {
 		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) return false;
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
 					$this->request->getSubsystemName(), $this->request->getPath());
@@ -299,6 +333,9 @@ class Response {
 		return true;
 	}
 	
+	/**
+	 * @return array|null
+	 */
 	public function buildQueryParamsCharacteristic() {
 		$paramNames = $this->bufferedResponseCacheControl->getIncludedQueryParamNames();
 		if (null === $paramNames) return null;
@@ -311,10 +348,15 @@ class Response {
 		}
 		return $characteristic;
 	}
+	
 	/**
 	 * 
 	 */
 	public function flush() {
+		foreach ($this->listeners as $listener) {
+			$listener->onFlush($this);
+		}
+		
 		if (!$this->isBuffering()) return;
 		
 		$contents = $this->fetchBufferedOutput(false);
@@ -353,6 +395,12 @@ class Response {
 	 * @param int $code
 	 */
 	public function setStatus($code) {
+		if ($this->bufferedStatusCode != $code) {
+			foreach ($this->listeners as $listener) {
+				$listener->onReset($code, $this);
+			}
+		}
+		
 		$this->ensureBuffering();
 		
 		$this->bufferedStatusCode = $code;
@@ -420,18 +468,22 @@ class Response {
 	}
 	/**
 	 * 
-	 * @param ResponseThing $thing
+	 * @param ResponseObject $thing
 	 * @param HttpCacheControl $httpCacheControl
 	 * @param unknown_type $includeBuffer
-	 * @throws ResponseThingAlreadySentException
+	 * @throws ResponseObjectAlreadySentException
 	 */
-	public function send(ResponseThing $thing, bool $includeBuffer = true) {
-		$this->ensureBuffering();
-		if (null !== $this->sentResponseThing) {
-			throw new MalformedResponseException('ResponseThing already sent: ' 
-					. $this->sentResponseThing->toKownResponseString(), 0, null, 1);
+	public function send(ResponseObject $thing, bool $includeBuffer = true) {
+		foreach ($this->listeners as $listener) {
+			$listener->onSend($thing, $this);
 		}
-		$this->sentResponseThing = $thing;
+		
+		$this->ensureBuffering();
+		if (null !== $this->sentResponseObject) {
+			throw new MalformedResponseException('ResponseObject already sent: ' 
+					. $this->sentResponseObject->toKownResponseString(), 0, null, 1);
+		}
+		$this->sentResponseObject = $thing;
 
 		$thing->prepareForResponse($this);
 		$bufferdContents = '';
@@ -439,12 +491,12 @@ class Response {
 			$bufferdContents = $this->fetchBufferedOutput(false);
 		}
 		
-		if ($thing instanceof BufferedResponseContent) {
+		if ($thing->isBufferable()) {
 			echo $bufferdContents;
 			echo $thing->getBufferedContents();
-		} else if ($thing instanceof ResponseContent) {
+		} else {
 			if ($this->bufferedResponseCacheControl !== null) {
-				throw new MalformedResponseException('ResponseCacheControl only works with BufferedResponseContent.');
+				throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
 			}
 			
 			if (!strlen($bufferdContents) && $this->notModified($thing->getEtag(), $thing->getLastModified())) {
@@ -456,18 +508,25 @@ class Response {
 			$this->closeBuffer();
 			echo $bufferdContents;
 			$thing->responseOut();
-		} else {
-			echo $bufferdContents;
 		}
 	}
 	
-	public function hasSentResponseThing() {
-		return $this->sentResponseThing !== null;
+	public function hasSentResponseObject() {
+		return $this->sentResponseObject !== null;
 	}
 	
-	public function getSentResponseThing() {
-		return $this->sentResponseThing;
+	public function getSentResponseObject() {
+		return $this->sentResponseObject;
 	}
+	
+	public function registerListener(ResponseListener $listener) {
+		$this->listeners[spl_object_hash($listener)] = $listener;
+	}
+	
+	public function unregisterListener(ResponseListener $listener) {
+		unset($this->listeners[spl_object_hash($listener)]);
+	}
+	
 	/**
 	 * 
 	 * @param unknown_type $code
@@ -587,6 +646,6 @@ class ResponseBufferIsClosed extends N2nRuntimeException {
 	
 }
 
-class ResponseThingAlreadySentException extends N2nRuntimeException {
+class ResponseObjectAlreadySentException extends N2nRuntimeException {
 	
 }

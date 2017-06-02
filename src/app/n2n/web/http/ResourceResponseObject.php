@@ -21,21 +21,28 @@
  */
 namespace n2n\web\http;
 
-interface ResponseContent extends ResponseThing {
+use n2n\util\ex\IllegalStateException;
+
+/**
+ * Extend this class for an easy implemenation of a not bufferable {@see ResponseObject}.
+ * See {ResponseObject::isBufferable()} for more information.
+ */
+abstract class ResourceResponseObject implements ResponseObject {
 	/**
-	 * 
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::isBufferable()
 	 */
-	public function responseOut();
+	public function isBufferable(): bool {
+		return false;
+	}
+	
 	/**
-	 * 
-	 * @return string
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::getBufferedContents()
 	 */
-	public function getEtag();
-	/**
-	 * 
-	 * @return \DateTime
-	 */
-	public function getLastModified();
+	public function getBufferedContents(): string {
+		throw new IllegalStateException('Response object is not bufferable.');
+	}
 }
 
 // INode 

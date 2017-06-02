@@ -31,7 +31,7 @@ use n2n\web\http\Redirect;
 use n2n\web\http\NoHttpRefererGivenException;
 use n2n\web\http\controller\Controller;
 use n2n\web\http\controller\ControllingPlan;
-use n2n\web\http\ResponseThing;
+use n2n\web\http\ResponseObject;
 use n2n\core\container\N2nContext;
 use n2n\web\http\HttpContext;
 use n2n\web\http\Request;
@@ -296,7 +296,7 @@ trait ControllingUtilsTrait {
 		return $this->cu()->delegateToControllerContext($nextControllerContext, $execute, $tryIfMain);
 	}
 	
-	protected final function send(ResponseThing $responseThing, bool $includeBuffer = true) {
+	protected final function send(ResponseObject $responseThing, bool $includeBuffer = true) {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	

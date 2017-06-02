@@ -28,7 +28,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\http\controller\ControllingPlan;
-use n2n\web\http\ResponseThing;
+use n2n\web\http\ResponseObject;
 use n2n\web\http\controller\NoHttpRefererGivenException;
 use n2n\web\http\nav\UrlComposer;
 use n2n\web\http\Redirect;
@@ -450,7 +450,7 @@ class ControllingUtils {
 		return null;
 	}
 	
-	public function send(ResponseThing $responseThing, bool $includeBuffer = true) {
+	public function send(ResponseObject $responseThing, bool $includeBuffer = true) {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
 	}

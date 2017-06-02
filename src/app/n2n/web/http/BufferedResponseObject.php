@@ -21,15 +21,50 @@
  */
 namespace n2n\web\http;
 
-interface ResponseThing {
+use n2n\util\ex\IllegalStateException;
+
+/**
+ * Extend this class for an easy implemenation of an bufferable {@see ResponseObject}.
+ * See {ResponseObject::isBufferable()} for more information.
+ */
+abstract class BufferedResponseObject implements ResponseObject {
+	
 	/**
-	 * 
-	 * @param Response $response
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::isBufferable()
 	 */
-	public function prepareForResponse(Response $response);
+	public function isBufferable(): bool {
+		return true;
+	}
+
 	/**
-	 * 
-	 * @return string
+	 * @throws IllegalStateException
 	 */
-	public function toKownResponseString(): string;
+	private function fail() {
+		throw new IllegalStateException('Response object is bufferable.');
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::responseOut()
+	 */
+	public function responseOut() {
+		$this->fail();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::getEtag()
+	 */
+	public function getEtag() {
+		$this->fail();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::getLastModified()
+	 */
+	public function getLastModified() {
+		$this->fail();
+	}
 }

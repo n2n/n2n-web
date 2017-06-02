@@ -22,10 +22,18 @@
 namespace n2n\web\http;
 
 use n2n\core\N2N;
-class Redirect implements ResponseThing {
+
+/**
+ * Causes a http redirect when sent to {@see Response}
+ */
+class Redirect extends BufferedResponseObject {
 	private $httpStatus;
 	private $httpLocation;
 	
+	/**
+	 * @param string $httpLocation
+	 * @param int $httpStatus
+	 */
 	public function __construct(string $httpLocation, int $httpStatus = null) {
 		$this->httpStatus = $httpStatus;
 		$this->httpLocation = $httpLocation;
@@ -34,18 +42,28 @@ class Redirect implements ResponseThing {
  			$this->httpStatus = Response::STATUS_302_FOUND;
 		}
 	}
+	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseThing::prepareForResponse()
+	 * @see n2n\web\http.ResponseObject::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setStatus($this->httpStatus);
 		$response->setHeader('Content-Type: text/html; charset=' . N2N::CHARSET);
 		$response->setHeader('Location: ' . $this->httpLocation);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\ResponseObject::getBufferedContents()
+	 */
+	public function getBufferedContents(): string {
+		return '';
+	}
+	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseThing::toKownResponseString()
+	 * @see n2n\web\http.ResponseObject::toKownResponseString()
 	 */
 	public function toKownResponseString(): string {
 		return $this->httpStatus . ' redirect to \'' . $this->httpLocation . '\'';
