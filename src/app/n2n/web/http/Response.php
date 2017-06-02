@@ -28,6 +28,10 @@ use n2n\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 
+/**
+ * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
+ * n2n creates an object of this class in its initialization phase lets you access it over the {@see HttpContext}.
+ */
 class Response {
 	const STATUS_100_CONTINUE = 100;
 	const STATUS_101_SWITCHING_PROTOCOLS = 101;
@@ -107,8 +111,8 @@ class Response {
 	private $bufferedResponseCacheControl;
 	private $responseCacheStore;
 	private $sentResponseObject;
+	
 	/**
-	 * 
 	 * @param Request $request
 	 */
 	public function __construct(Request $request) {		
@@ -127,18 +131,40 @@ class Response {
 		$outputBuffer->append($prevContent);
 	}
 	
+	/**
+	 * If true the response will use {@link https://en.wikipedia.org/wiki/HTTP_ETag etags} to determine if 
+	 * the response was modified since last request and send 304 Not Modified http status to reduce traffic if not.
+	 * @param bool $sendEtagAllowed
+	 */
 	public function setSendEtagAllowed(bool $sendEtagAllowed) {
 		$this->sendEtagAllowed = $sendEtagAllowed;
 	}
 	
+	/**
+	 * @see self::setSendEtagAllowed()
+	 * @return bool
+	 */
 	public function isSendEtagAllowed() {
 		return $this->sendEtagAllowed;
 	}
 	
+	/**
+	 * If last modified DateTime is provided by the sent {@see ResponseObject} it will be used to determine if 
+	 * the response was modified since last request and send 304 Not Modified http status to reduce traffic if not.
+	 * 
+	 * @see self::send()
+	 * @see ResponseObject::getLastModified()
+	 *  
+	 * @param bool $sendLastModifiedAllowed
+	 */
 	public function setSendLastModifiedAllowed(bool $sendLastModifiedAllowed) {
 		$this->sendLastModifiedAllowed = $sendLastModifiedAllowed;
 	}
 	
+	/**
+	 * @see self::setSendLastMoidifiedAllowed()
+	 * @return boolean|\n2n\web\http\bool
+	 */
 	public function isSendLastModifiedAllowed() {
 		return $this->sendLastModifiedAllowed;
 	}
@@ -176,7 +202,6 @@ class Response {
 	}
 	
 	/**
-	 * 
 	 * @return bool
 	 */
 	public function isBuffering() {
