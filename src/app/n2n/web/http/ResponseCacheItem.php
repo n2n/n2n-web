@@ -21,7 +21,7 @@
  */
 namespace n2n\web\http;
 
-class ResponseCacheItem implements BufferedResponseContent {
+class ResponseCacheItem extends BufferedResponseObject {
 	private $contents;
 	private $statusCode;
 	private $headers;
@@ -55,13 +55,13 @@ class ResponseCacheItem implements BufferedResponseContent {
 		return $this->expireTimestamp < $now->getTimestamp();
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\BufferedResponseContent::getBufferedContents()
+	 * @see \n2n\web\http\BufferedResponseObject::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->contents;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\ResponseThing::prepareForResponse()
+	 * @see \n2n\web\http\ResponseObject::prepareForResponse()
 	 */
 	public function prepareForResponse(\n2n\web\http\Response $response) {
 		$response->setStatus($this->statusCode);
@@ -73,10 +73,9 @@ class ResponseCacheItem implements BufferedResponseContent {
 
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\ResponseThing::toKownResponseString()
+	 * @see \n2n\web\http\ResponseObject::toKownResponseString()
 	 */
 	public function toKownResponseString(): string {
 		return 'Cached response';
 	}
-
 }

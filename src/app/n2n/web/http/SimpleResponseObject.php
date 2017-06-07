@@ -21,7 +21,7 @@
  */
 namespace n2n\web\http;
 
-class SimpleResponseContent implements BufferedResponseContent {
+class SimpleResponseObject extends BufferedResponseObject {
 	private $contentType;
 	private $contents = '';
 	/**
@@ -50,19 +50,19 @@ class SimpleResponseContent implements BufferedResponseContent {
 		$this->contents = (string) $contents;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\BufferedResponseContent::getBufferedContents()
+	 * @see \n2n\web\http\BufferedResponseObject::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->contents;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\ResponseThing::prepareForResponse()
+	 * @see \n2n\web\http\ResponseObject::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: ' . $this->contentType);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\web\http\ResponseThing::toKownResponseString()
+	 * @see \n2n\web\http\ResponseObject::toKownResponseString()
 	 */
 	public function toKownResponseString(): string {
 		return 'Simple Response (' . $this->contentType . ')';
