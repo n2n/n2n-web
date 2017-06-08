@@ -24,11 +24,11 @@ interface ResponseListener {
 	/**
 	 * Gets invoked when {@see Response::reset()} is called.
 	 */
-	public function onReset();
+	public function onReset(Response $response);
 	
 	/**
 	 * Gets invoked when {@see Response::flush()} is called.
 	 */
-	public function onFlush();
+	public function onFlush(Response $response);
 }
 
