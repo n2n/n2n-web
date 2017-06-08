@@ -429,7 +429,7 @@ class Response {
 	public function setStatus($code) {
 		if ($this->bufferedStatusCode != $code) {
 			foreach ($this->listeners as $listener) {
-				$listener->onReset($code, $this);
+				$listener->onReset($this);
 			}
 		}
 		
