@@ -130,6 +130,13 @@ class Response {
 		$this->reset();
 		$outputBuffer->append($prevContent);
 	}
+
+	/**
+	 * @return Request
+	 */
+	public function getRequest() {
+		return $this->request;
+	}
 	
 	/**
 	 * If true the response will use {@link https://en.wikipedia.org/wiki/HTTP_ETag etags} to determine if 
@@ -422,7 +429,7 @@ class Response {
 	public function setStatus($code) {
 		if ($this->bufferedStatusCode != $code) {
 			foreach ($this->listeners as $listener) {
-				$listener->onReset($code, $this);
+				$listener->onReset($this);
 			}
 		}
 		
