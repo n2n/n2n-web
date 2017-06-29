@@ -416,22 +416,22 @@ class ControllingUtils {
 	 * @param unknown $pathPartsToShift
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
-	public function createDelegateContext(Controller $controller = null, $pathPartsToShift = null) {
+	public function createDelegateContext(Controller $controller = null, int $numPathPartsToShift = null) {
 		$controllerContext = $this->controllerContext;
 	
-		if ($pathPartsToShift === null) {
-			$pathPartsToShift = $this->getInvokerInfo()->getNumSinglePathParts();
+		if ($numPathPartsToShift === null) {
+			$numPathPartsToShift = $this->getInvokerInfo()->getNumSinglePathParts();
 		}
 	
 		$cmdPath = $controllerContext->getCmdPath();
 		$cmdContextPath = $controllerContext->getCmdContextPath();
 	
-		return new ControllerContext($cmdPath->sub($pathPartsToShift),
-				$cmdContextPath->ext($cmdPath->sub(0, $pathPartsToShift)), $controller);
+		return new ControllerContext($cmdPath->sub($numPathPartsToShift),
+				$cmdContextPath->ext($cmdPath->sub(0, $numPathPartsToShift)), $controller);
 	}
 	
-	public function delegate(Controller $controller, $pathPartsToShift = null, $execute = true, bool $try = false) {
-		return $this->delegateToControllerContext($this->createDelegateContext($controller, $pathPartsToShift), $execute, 
+	public function delegate(Controller $controller, int $numPathPartsToShift = null, $execute = true, bool $try = false) {
+		return $this->delegateToControllerContext($this->createDelegateContext($controller, $numPathPartsToShift), $execute, 
 				$try);
 	}
 	

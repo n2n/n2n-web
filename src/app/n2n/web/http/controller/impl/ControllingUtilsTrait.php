@@ -286,9 +286,9 @@ trait ControllingUtilsTrait {
 		return $this->cu()->createDelegateContext($controller, $pathPartsToShift);
 	}
 	
-	protected final function delegate(Controller $controller, $pathPartsToShift = null, $execute = true,
+	protected final function delegate(Controller $controller, int $numPathPartsToShift = null, $execute = true,
 			bool $tryIfMain = false) {
-		return $this->cu()->delegate($controller, $pathPartsToShift, $execute, $tryIfMain);
+		return $this->cu()->delegate($controller, $numPathPartsToShift, $execute, $tryIfMain);
 	}
 	
 	protected final function delegateToControllerContext(ControllerContext $nextControllerContext, $execute = true,
