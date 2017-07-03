@@ -73,8 +73,26 @@ class HttpContext {
 		return $this->session;
 	}
 	
+	/**
+	 * @param N2nLocale $n2nLocale
+	 * @return string
+	 */
 	public function n2nLocaleToHttpId(N2nLocale $n2nLocale): string {
 		return $this->localeFormat->formatHttpId($n2nLocale);
+	}
+	
+	/**
+	 * @return \n2n\l10n\N2nLocale
+	 */
+	public function getN2nLocale() {
+		return $this->request->getN2nLocale();
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getN2nLocaleHttpId() {
+		return $this->n2nLocaleToHttpId($this->getN2nLocale());
 	}
 	
 	/**
@@ -86,6 +104,9 @@ class HttpContext {
 		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId, $lenient);
 	}
 	
+	/**
+	 * @return N2nLocale
+	 */
 	public function getMainN2nLocale(): N2nLocale {
 		$mainN2nLocale = ArrayUtils::first($this->getContextN2nLocales());
 		if ($mainN2nLocale !== null) {
@@ -95,6 +116,10 @@ class HttpContext {
 		return N2nLocale::getDefault();
 	}
 	
+	/**
+	 * @param N2nLocale $n2nLocale
+	 * @return boolean
+	 */
 	public function containsContextN2nLocale(N2nLocale $n2nLocale) {
 		$n2nLocaleId = $n2nLocale->getId();
 		if ($this->supersystem->containsN2nLocaleId($n2nLocaleId)) {
@@ -109,6 +134,9 @@ class HttpContext {
 		return false;
 	}
 	
+	/**
+	 * @return N2nLocale[]
+	 */
 	public function getContextN2nLocales(): array {
 		$contextN2nLocales = $this->supersystem->getN2nLocales();
 		$subsystem = $this->request->getSubsystem();
@@ -125,6 +153,11 @@ class HttpContext {
 		return $this->availableSubsystems;
 	}
 	
+	/**
+	 * @param string $moduleNamespace
+	 * @param bool $absolute
+	 * @return Url
+	 */
 	public function getAssetsUrl(string $moduleNamespace, bool $absolute = false): Url {
 		$assetsUrl = $this->assetsUrl->extR(VarStore::namespaceToDirName($moduleNamespace));
 		
@@ -164,13 +197,17 @@ class HttpContext {
 		
 		if ($absolute && $url->isRelative()) {
 			$url = $this->request->getHostUrl()->ext($url);
-		}
-		
+		}		
 		return $this->completeSchemaCheck($url, $ssl);
 		
 	}
 	
-	private function completeSchemaCheck(Url $url, $ssl = null) {
+	/**
+	 * @param Url $url
+	 * @param bool|null $ssl
+	 * @return \n2n\util\uri\Url
+	 */
+	private function completeSchemaCheck(Url $url, bool $ssl = null) {
 		if ($ssl === null) return $url;
 	
 		if ($ssl) {
@@ -188,6 +225,10 @@ class HttpContext {
 		return $url->chScheme(self::PROTOCOL_HTTP);
 	}
 	
+	/**
+	 * @param Subsystem $subsystem
+	 * @return \n2n\util\uri\Url
+	 */
 	private function buildSubsystemUrl(Subsystem $subsystem) {
 		$url = new Url();
 		
@@ -219,6 +260,9 @@ class HttpContext {
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
 	}
 	
+	/**
+	 * @return N2nContext
+	 */
 	public function getN2nContext(): N2nContext {
 		return $this->n2nContext;
 	}
