@@ -16,7 +16,7 @@
  * The following people participated in this project:
  *
  * Andreas von Burg.....: Architect, Lead Developer
- * Bert Hofmänner.......: Idea, Community Leader, Marketing
+ * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
 namespace n2n\web\http\nav;
