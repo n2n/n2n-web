@@ -16,7 +16,7 @@
  * The following people participated in this project:
  *
  * Andreas von Burg.....: Architect, Lead Developer
- * Bert Hofmänner.......: Idea, Community Leader, Marketing
+ * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
 namespace n2n\web\http\controller;
@@ -157,6 +157,22 @@ class ControllingPlan {
 		if (empty($this->mainControllerContexts)) {
 			throw new PageNotFoundException();
 		}
+	}
+	public function executeNextFilter(bool $try = false) {
+		if ($this->status !== self::STATUS_FILTER) {
+			throw new ControllingPlanException('ControllingPlan is not executing filter controllers.');
+		}
+		
+		$nextFilter = $this->nextFilter();
+		if (null === $nextFilter) {
+			throw new ControllingPlanException('No filter controller to execute.');
+		}
+		
+		if ($nextFilter->execute()) return true;
+		
+		if ($try) return false;
+		
+		throw new PageNotFoundException();
 	}
 	
 	public function executeNextMain(bool $try = false) {
