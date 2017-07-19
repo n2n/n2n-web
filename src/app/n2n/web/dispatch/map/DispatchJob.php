@@ -58,6 +58,21 @@ class DispatchJob {
 	public function getMappingResult() {
 		return $this->mappingResult;
 	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getMethodName() {
+		return $this->methodName;
+	}
+	
+	/**
+	 * @return \n2n\web\dispatch\target\DispatchTarget
+	 */
+	public function getDispatchTarget() {
+		return $this->dispatchTarget;
+	}
+	
 	/**
 	 * @return mixed 
 	 */
