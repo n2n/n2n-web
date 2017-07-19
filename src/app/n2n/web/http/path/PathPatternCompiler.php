@@ -75,7 +75,7 @@ class PathPatternCompiler {
 				}
 			} catch (PathPatternComposeException $e) {
 				throw new PathPatternCompileException('Error while compiling path part \'' . $pathPart 
-						. '\' of pattern: ' . $pathPattern, $e);
+						. '\' of pattern: ' . $expression, 0, $e);
 			}
 		}
 		
