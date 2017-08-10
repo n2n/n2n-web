@@ -24,7 +24,6 @@ namespace n2n\web\dispatch\annotation;
 use n2n\reflection\annotation\ClassAnnotation;
 use n2n\reflection\annotation\ClassAnnotationTrait;
 use n2n\reflection\annotation\AnnotationTrait;
-use n2n\reflection\ArgUtils;
 
 class AnnoDispProperties implements ClassAnnotation {
 	use AnnotationTrait, ClassAnnotationTrait;
