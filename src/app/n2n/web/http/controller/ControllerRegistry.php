@@ -29,7 +29,6 @@ use n2n\web\http\path\PlaceholderValidator;
 use n2n\context\RequestScoped;
 use n2n\core\config\WebConfig;
 use n2n\web\http\UnknownSubsystemException;
-use n2n\web\http\N2nLocaleFormat;
 use n2n\context\LookupFailedException;
 
 class ControllerRegistry implements RequestScoped {
@@ -60,11 +59,9 @@ class ControllerRegistry implements RequestScoped {
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
 	public function createControllingPlan(Path $cmdPath, string $subsystemName = null) {
-		$localeFormat = new N2nLocaleFormat($this->webConfig->getAliasN2nLocales());
-		
 		$contextN2nLocales = new \ArrayObject();
 		foreach ($this->webConfig->getSupersystem()->getN2nLocales() as $n2nLocale) {
-			$contextN2nLocales[$localeFormat->formatHttpId($n2nLocale)] = $n2nLocale;	
+			$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;	
 		}
 		
 		if ($subsystemName !== null) {
@@ -74,7 +71,7 @@ class ControllerRegistry implements RequestScoped {
 			}
 			
 			foreach ($subsystems[$subsystemName]->getN2nLocales() as $n2nLocale) {
-				$contextN2nLocales[$localeFormat->n2nLocaleToHttpId($n2nLocale)] = $n2nLocale;
+				$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;
 			}
 		}
 		

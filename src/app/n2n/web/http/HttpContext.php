@@ -35,18 +35,16 @@ class HttpContext {
 	private $response;
 	private $session;
 	private $assetsUrl;
-	private $localeFormat;
 	private $supersystem;
 	private $availableSubsystems;
 	private $n2nContext;
 	
 	public function __construct(Request $request, Response $response, Session $session, Url $assetsUrl, 
-			N2nLocaleFormat $localeFormat, Supersystem $supersystem, array $availableSubsystems, N2nContext $n2nContext) {
+			Supersystem $supersystem, array $availableSubsystems, N2nContext $n2nContext) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->session = $session;
 		$this->assetsUrl = $assetsUrl;
-		$this->localeFormat = $localeFormat;
 		$this->supersystem = $supersystem;
 		$this->availableSubsystems = $availableSubsystems;
 		$this->n2nContext = $n2nContext;
@@ -78,7 +76,7 @@ class HttpContext {
 	 * @return string
 	 */
 	public function n2nLocaleToHttpId(N2nLocale $n2nLocale): string {
-		return $this->localeFormat->formatHttpId($n2nLocale);
+		return $n2nLocale->toWebId();
 	}
 	
 	/**
@@ -100,8 +98,8 @@ class HttpContext {
 	 * @return N2nLocale
 	 * @throws IllegalN2nLocaleFormatException
 	 */
-	public function httpIdToN2nLocale($n2nLocaleHttpId, bool $lenient = false): N2nLocale {
-		return $this->localeFormat->parseN2nLocale($n2nLocaleHttpId, $lenient);
+	public function httpIdToN2nLocale(string $n2nLocaleHttpId, bool $lenient = false): N2nLocale {
+		return N2nLocale::fromWebId($n2nLocaleHttpId, false, $lenient);
 	}
 	
 	/**
