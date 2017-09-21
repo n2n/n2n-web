@@ -186,7 +186,7 @@ class DispatchContext implements ThreadScoped {
 	public function dispatch(Dispatchable $dispatchable, $methodName, N2nContext $n2nContext) {
 		if ($this->dispatchJob === null 
 				|| !$this->dispatchJob->matches($dispatchable, $methodName)) return null;
-		
+				
 		if (!$this->dispatchJob->execute($dispatchable, $methodName, $n2nContext)) return false;
 		
 		if (null !== ($returnValue = $this->dispatchJob->getReturnValue())) {
