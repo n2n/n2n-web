@@ -22,7 +22,7 @@ class HttpUtils {
 	 * @return boolean true if valid, false otherwise
 	 */
 	public static function isSessionIdValid(string $id) {
-		return (bool) preg_match('/^[0-9a-zA-Z,-]$/', $id);
+		return (bool) preg_match('/^[0-9a-zA-Z,-]+$/', $id);
 	}
 	
 	/**
