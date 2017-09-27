@@ -57,7 +57,7 @@ class Session {
 // 		}
 
 		session_cache_limiter(null);
-		session_start();
+		HttpUtils::sessionStart();
 		
 		if (!isset($_SESSION[$this->applicationName])) $_SESSION[$this->applicationName] = array();
 		
