@@ -703,9 +703,9 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	}
 	
 	public function getOut($contents) {
-		if ($contents instanceof View && !$contents->isInitialized()) {
-			$contents->initialize();
-		}
+// 		if ($contents instanceof View && !$contents->isInitialized()) {
+// 			$contents->initialize();
+// 		}
 		
 		if ($contents instanceof UiComponent) {
 			return $contents->getContents();
