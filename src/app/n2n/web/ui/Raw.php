@@ -39,9 +39,9 @@ class Raw implements UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\ui.UiComponent::getContents()
+	 * @see n2n\web\ui.UiComponent::build()
 	 */
-	public function getContents(): string {
+	public function build(BuildContext $buildContext): string {
 		return $this->contents;
 	}
 	/**

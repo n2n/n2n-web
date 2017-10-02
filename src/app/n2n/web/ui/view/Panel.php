@@ -48,7 +48,7 @@ class Panel {
 		$allContentsStr = '';
 		foreach ($this->contents as $contents) {
 			if ($contents instanceof UiComponent) {
-				$allContentsStr .= $contents->getContents();
+				$allContentsStr .= $contents->build();
 			} else {
 				$allContentsStr .= $contents;
 			}
