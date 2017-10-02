@@ -44,6 +44,11 @@ class Raw implements UiComponent {
 	public function build(BuildContext $buildContext): string {
 		return $this->contents;
 	}
+	
+	public function getContents() {
+		return $this->__toString();
+	}
+	
 	/**
 	 * 
 	 * @return string

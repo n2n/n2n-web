@@ -280,6 +280,14 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	
 		return $this->contents;
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getContents() {
+		return $this->build(new SimpleBuildContext());
+	}
+	
 	/**
 	 * 
 	 * @param mixed $contents
