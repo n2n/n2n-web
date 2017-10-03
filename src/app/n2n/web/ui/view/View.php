@@ -47,6 +47,8 @@ use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\CastUtils;
 use n2n\web\http\nav\UrlBuilder;
 use n2n\web\http\nav\UnavailableUrlException;
+use n2n\web\ui\BuildContext;
+use n2n\web\ui\SimpleBuildContext;
 
 abstract class View extends BufferedResponseObject implements UiComponent {
 	private $params = array();
@@ -61,6 +63,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	private $templateView;
 	private $stateListeners;
 	private $controllerContext = null;
+	protected $contentsBuildContext;
 	
 	private $contentView = null;
 	private $activePanelBuffer = null;
@@ -78,6 +81,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		$this->moduleNamespace = $module;
 		$this->n2nContext = $n2nContext;
 		$this->stateListeners = array();
+		$this->contentsBuildContext = new SimpleBuildContext($this);
 		$this->reset();
 	}
 	
@@ -221,7 +225,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	 * @param Response $response
 	 * @param View $contentView
 	 */
-	public final function initialize(View $contentView = null) {
+	public final function initialize(View $contentView = null, BuildContext $buildContext = null) {
 		$this->ensureContentsAreNotInitialized();
 		$this->ensureBufferIsNotActive();
 		
@@ -235,8 +239,12 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		} else {
 			$this->contentBuffer = new OutputBuffer();
 		}
+		
+		if ($buildContext === null) {
+			$buildContext = new SimpleBuildContext();
+		}
 
-		$this->compile($this->contentBuffer);
+		$this->compile($this->contentBuffer, $buildContext);
 
 		$this->contentBuffer = null;
 		
@@ -262,16 +270,24 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\ui.UiComponent::getContents()
+	 * @see n2n\web\ui.UiComponent::build()
 	 */
-	public function getContents(): string {
+	public function build(BuildContext $buildContext): string {
 		if (!$this->isInitialized()) {
-			$this->initialize();
+			$this->initialize(null, $buildContext);
 		}
 // 		$this->ensureContentsAreInitialized();
 	
 		return $this->contents;
 	}
+	
+	/**
+	 * @return string
+	 */
+	public function getContents() {
+		return $this->build(new SimpleBuildContext());
+	}
+	
 	/**
 	 * 
 	 * @param mixed $contents
@@ -296,6 +312,14 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		$this->bufferingPanel = null;
 		$this->panels = array();
 	}
+	
+	/**
+	 * @return \n2n\web\ui\SimpleBuildContext
+	 */
+	public function getContentsBuildContext() {
+		return $this->contentsBuildContext;
+	}
+	
 	/**
 	 * 
 	 */
@@ -366,7 +390,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		
 		if ($this->templateView !== null) {
 			$this->templateView->initialize($this);
-			$this->contents = $this->templateView->getContents();
+			$this->contents = $this->templateView->build(new SimpleBuildContext());
 		}
 	}
 	/**
@@ -437,7 +461,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	 * Builds view content
 	 * @return OutputBuffer
 	 */
-	protected function compile(OutputBuffer $contentBuffer) {
+	protected function compile(OutputBuffer $contentBuffer, BuildContext $buildContext) {
 		$n2nContext = $this->getN2nContext();
 		return $this->bufferContents(array('request' => $this->getHttpContext()->getRequest(), 
 				'response' => $this->getHttpContext()->getResponse(), 'view' => $this,
@@ -474,7 +498,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	 * @see n2n\web\http.BufferedResponseObject::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
-		return $this->getContents();
+		return $this->build(new SimpleBuildContext());
 	}
 	/**
 	 * 
@@ -703,12 +727,12 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	}
 	
 	public function getOut($contents) {
-		if ($contents instanceof View && !$contents->isInitialized()) {
-			$contents->initialize();
-		}
+// 		if ($contents instanceof View && !$contents->isInitialized()) {
+// 			$contents->initialize();
+// 		}
 		
 		if ($contents instanceof UiComponent) {
-			return $contents->getContents();
+			return $contents->build($this->contentsBuildContext);
 		}
 		
 		return (string) $contents;

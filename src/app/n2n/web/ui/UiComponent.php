@@ -21,9 +21,35 @@
  */
 namespace n2n\web\ui;
 
+use n2n\web\ui\view\View;
+
 interface UiComponent {
 	/**
 	 * @return string
 	 */
-	public function getContents(): string;
+	public function build(BuildContext $buildContext): string;
+}
+
+
+interface BuildContext {
+	/**
+	 * @return \n2n\web\ui\view\View
+	 */
+	public function getView();
+}
+
+class SimpleBuildContext implements BuildContext {
+	private $view;
+	
+	public function __construct(View $view = null) {
+		$this->view = $view;	
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\ui\BuildContext::getView()
+	 */
+	public function getView() {
+		return $this->view;
+	}
 }
