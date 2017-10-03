@@ -714,7 +714,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		}
 		
 		if (!$this->hasPanel($panelName)) return;
-		$this->out($this->getOrCreatePanel($panelName)->buildContents());
+		$this->out($this->getOrCreatePanel($panelName)->buildContents($this->contentsBuildContext));
 	} 
 	/**
 	 * 

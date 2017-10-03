@@ -22,6 +22,7 @@
 namespace n2n\web\ui\view;
 
 use n2n\web\ui\UiComponent;
+use n2n\web\ui\BuildContext;
 
 class Panel {
 	private $name;
@@ -44,11 +45,11 @@ class Panel {
 		}
 	}
 	
-	public function buildContents() {
+	public function buildContents(BuildContext $buildContext) {
 		$allContentsStr = '';
 		foreach ($this->contents as $contents) {
 			if ($contents instanceof UiComponent) {
-				$allContentsStr .= $contents->build();
+				$allContentsStr .= $contents->build($buildContext);
 			} else {
 				$allContentsStr .= $contents;
 			}
