@@ -701,7 +701,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	 */
 	public function importContentView() {
 		if (isset($this->contentView)) {
-			$this->out($this->contentView);
+			$this->import($this->contentView);
 		}
 	}
 	/**
