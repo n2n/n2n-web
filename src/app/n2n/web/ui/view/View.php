@@ -312,6 +312,14 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 		$this->bufferingPanel = null;
 		$this->panels = array();
 	}
+	
+	/**
+	 * @return \n2n\web\ui\SimpleBuildContext
+	 */
+	public function getContentsBuildContext() {
+		return $this->contentsBuildContext;
+	}
+	
 	/**
 	 * 
 	 */
