@@ -22,19 +22,21 @@
 namespace n2n\web\ui;
 
 class Raw implements UiComponent {
+	private $contents;
+	
 	/**
 	 * 
 	 * @param string $raw
 	 */
-	public function __construct($raw = '') {
-		$this->contents = (string) $raw;
+	public function __construct(string $raw = '') {
+		$this->contents = $raw;
 	}
 	
-	public function append($raw) {
-		$this->contents .= (string) $raw;
+	public function append(string $raw) {
+		$this->contents .= $raw;
 	}
 	
-	public function appendLn($raw) {
+	public function appendLn(string $raw) {
 		$this->append($raw . "\n");
 	}
 	/**
