@@ -32,11 +32,11 @@ class Raw implements UiComponent {
 		$this->contents = $raw;
 	}
 	
-	public function append(string $raw) {
+	public function append(string $raw = null) {
 		$this->contents .= $raw;
 	}
 	
-	public function appendLn(string $raw) {
+	public function appendLn(string $raw = null) {
 		$this->append($raw . "\n");
 	}
 	/**
