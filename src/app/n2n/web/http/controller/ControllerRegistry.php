@@ -78,10 +78,11 @@ class ControllerRegistry implements RequestScoped {
 		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales);
 		
 		foreach ($this->webConfig->getFilterControllerDefs() as $filterControllerDef) {
-			if ($subsystemName !== null && $filterControllerDef->getSubsystemName() != $subsystemName) {
+			if ($filterControllerDef->getSubsystemName() !== null
+					&& $filterControllerDef->getSubsystemName() != $subsystemName) {
 				continue;
 			}
-			
+
 			$controllingPlanFactory->registerFilterControllerDef($filterControllerDef);
 		}
 		
