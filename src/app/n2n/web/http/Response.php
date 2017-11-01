@@ -170,7 +170,7 @@ class Response {
 	
 	/**
 	 * @see self::setSendLastMoidifiedAllowed()
-	 * @return boolean|\n2n\web\http\bool
+	 * @return bool
 	 */
 	public function isSendLastModifiedAllowed() {
 		return $this->sendLastModifiedAllowed;

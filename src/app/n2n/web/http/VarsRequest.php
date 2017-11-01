@@ -220,7 +220,7 @@ class VarsRequest implements Request {
 	 * @param string $path
 	 * @param string $query
 	 * @param string $fragment
-	 * @return \n2n\util\uri\RelativeUrl
+	 * @return Url
 	 */
 	public function extContext($path = null, $query = null, $fragment = null) {
 		return $this->cmdContextPath->ext($path)->toUrl($query, $fragment);

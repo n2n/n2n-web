@@ -138,7 +138,7 @@ class PropertyPath implements \IteratorAggregate, \Countable {
 	 * 
 	 * @param string $propertyExpression
 	 * @throws InvalidPropertyExpressionException
-	 * @return \PropertyPathPart
+	 * @return PropertyPath
 	 */
 	public static function createFromPropertyExpression($propertyExpression): PropertyPath {
 		$expressionParts = array();
