@@ -26,8 +26,6 @@ use n2n\web\dispatch\target\DispatchTarget;
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\dispatch\map\InvalidPropertyExpressionException;
 use n2n\web\dispatch\target\TargetItem;
-use n2n\web\dispatch\target\PropertyItem;
-use n2n\web\dispatch\target\ArrayItem;
 use n2n\web\dispatch\map\CorruptedDispatchException;
 
 class DispatchTargetExtractor {

@@ -31,7 +31,7 @@ class DispatchTarget {
 		
 	private $dispatchClassName;
 	private $objectItem;
-	private $methodItems;
+// 	private $methodItems;
 	
 	/**
 	 * @param string $dispatchableClassName
@@ -40,7 +40,7 @@ class DispatchTarget {
 	public function __construct($dispatchableClassName) {
 		$this->dispatchClassName = (string) $dispatchableClassName;
 		$this->objectItem = new ObjectItem(new PropertyPath(array()));
-		$this->methodItems = array();
+// 		$this->methodItems = array();
 	}
 	
 	/**
@@ -57,13 +57,13 @@ class DispatchTarget {
 		return $this->objectItem;
 	}
 	
-	/**
-	 * 
-	 * @return MethodItem[]
-	 */
-	public function getMethodItems() {
-		return $this->methodItems;
-	}
+// 	/**
+// 	 * 
+// 	 * @return MethodItem[]
+// 	 */
+// 	public function getMethodItems() {
+// 		return $this->methodItems;
+// 	}
 	
 	/**
 	 * 
