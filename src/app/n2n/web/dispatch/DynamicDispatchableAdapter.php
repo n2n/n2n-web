@@ -26,7 +26,7 @@ abstract class DynamicDispatchableAdapter implements DynamicDispatchable {
 	/* (non-PHPdoc)
 	 * @see \n2n\web\dispatch\DynamicDispatchable::getPropertyValue()
 	 */
-	public function getPropertyValue($name) {
+	public function getPropertyValue(string $name) {
 		if (isset($this->values[$name])) {
 			return $this->values[$name];
 		}
@@ -35,7 +35,7 @@ abstract class DynamicDispatchableAdapter implements DynamicDispatchable {
 	/* (non-PHPdoc)
 	 * @see \n2n\web\dispatch\DynamicDispatchable::setPropertyValue()
 	 */
-	public function setPropertyValue($name, $value) {
+	public function setPropertyValue(string $name, $value) {
 		$this->values[$name] = $value;
 	}	
 	
