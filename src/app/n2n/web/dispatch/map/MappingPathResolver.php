@@ -204,7 +204,6 @@ class MappingPathResolver {
 		}
 		
 		$key = $pathPart->getResolvedArrayKey();
-		
 		if (!array_key_exists($key, $mapValue)) {
 			throw $this->createNotSetException($mappingResult, $managedProperty);
 		}

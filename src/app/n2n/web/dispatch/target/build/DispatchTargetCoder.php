@@ -91,7 +91,7 @@ class DispatchTargetCoder {
 	/**
 	 * Creates a simple DispatchTargetDecodingException
 	 * @param \Exception $e
-	 * @return \n2n\web\dispatch\target\DispatchTargetDecodingException
+	 * @return DispatchTargetDecodingException
 	 */
 	private function createDispatchTargetDecodingException(\Exception $e = null) {
 		return new DispatchTargetDecodingException('Dispatch target could not be decoded.', 0, $e);

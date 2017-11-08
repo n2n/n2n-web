@@ -25,10 +25,10 @@ class ArrayItem extends TargetItem {
 	private $propertyItems = array();
 	/**
 	 * 
-	 * @param unknown_type $key
+	 * @param string $key
 	 * @return PropertyItem
 	 */
-	public function createPropertyItem($key) {
+	public function createPropertyItem(string $key) {
 		if (!isset($this->propertyItems[$key])) {
 			$this->propertyItems[$key] = new PropertyItem($this->propertyPath->fieldExt($key));
 		}

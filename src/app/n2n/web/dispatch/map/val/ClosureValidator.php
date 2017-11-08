@@ -28,7 +28,6 @@ use n2n\reflection\magic\CanNotFillParameterException;
 use n2n\web\dispatch\DispatchErrorException;
 use n2n\l10n\MessageCode;
 use n2n\l10n\Message;
-use n2n\core\N2N;
 use n2n\web\dispatch\map\PropertyPathPart;
 
 class ClosureValidator implements Validator {

@@ -35,17 +35,18 @@ class ObjectItem extends TargetItem {
 	}
 	/**	
 	 * 
-	 * @param unknown_type $propertyName
+	 * @param string $propertyName
+	 * @return bool
 	 */
-	public function containsItemPropertyName($propertyName) {
+	public function containsItemPropertyName(string $propertyName) {
 		return isset($this->items[$propertyName]);
 	} 
 	/**
 	 * 
-	 * @param unknown_type $propertyName
+	 * @param string $propertyName
 	 * @return TargetItem
 	 */
-	public function getItemByPropertyName($propertyName) {
+	public function getItemByPropertyName(string $propertyName) {
 		if (!$this->containsItemPropertyName($propertyName)) return null;
 		
 		return $this->items[$propertyName];
@@ -86,7 +87,8 @@ class ObjectItem extends TargetItem {
 			
 		$disp = $this->items[$propertyName];
 		if (!($disp instanceof ObjectItem)) {
-			throw new PropertyPathMissmatchException();
+			throw new PropertyPathMissmatchException('Property ' . $this->extPropertyPath($propertyName) 
+					. ' path already taken by non ObjectItem: ' . get_class($disp));
 		}
 		
 		return $disp;
