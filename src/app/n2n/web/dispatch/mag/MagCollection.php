@@ -21,16 +21,31 @@
  */
 namespace n2n\web\dispatch\mag;
 
+use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\map\bind\MappingDefinition;
 use n2n\web\dispatch\map\bind\BindingDefinition;
 
+/**
+ * Class MagCollection
+ * @package n2n\web\dispatch\mag
+ */
 class MagCollection {
 	private $magWrappers = array();
-	
-	public function addMag(Mag $mag) {
-		return $this->magWrappers[$mag->getPropertyName()] = new MagWrapper($mag);
+
+	/**
+	 * @param string $propertyName
+	 * @param Mag $mag
+	 * @return MagWrapper
+	 */
+	public function addMag(string $propertyName, Mag $mag) {
+		$mag->setPropertyName($propertyName);
+		return $this->magWrappers[$propertyName] = new MagWrapper($mag);
 	}
-	
+
+	/**
+	 * @param string $propertyName
+	 * @return Mag
+	 */
 	public function getMagByPropertyName(string $propertyName) {
 		return $this->getMagWrapperByPropertyName($propertyName)->getMag();
 	}
@@ -46,15 +61,25 @@ class MagCollection {
 		}
 		throw new UnknownMagException('Mag not found: ' . $propertyName);
 	}
-	
-	public function containsPropertyName($propertyName) {
+
+	/**
+	 * @param string $propertyName
+	 * @return bool
+	 */
+	public function containsPropertyName(string $propertyName) {
 		return isset($this->magWrappers[$propertyName]);
 	}
-	
-	public function removeMagByPropertyName($propertyName) {
+
+	/**
+	 * @param $propertyName
+	 */
+	public function removeMagByPropertyName(string $propertyName) {
 		unset($this->magWrappers[$propertyName]);
 	}
-	
+
+	/**
+	 * @return bool
+	 */
 	public function isEmpty() {
 		return empty($this->magWrappers);
 	}
@@ -65,11 +90,17 @@ class MagCollection {
 	public function getMagWrappers() {
 		return $this->magWrappers;
 	}
-	
+
+	/**
+	 * @return array
+	 */
 	public function getPropertyNames() {
 		return array_keys($this->magWrappers);
 	}
-	
+
+	/**
+	 * @return array
+	 */
 	public function readFormValues() {
 		$formValues = array();
 		foreach ($this->magWrappers as $propertyName => $magWrapper) {
@@ -77,7 +108,12 @@ class MagCollection {
 		}
 		return $formValues;
 	}
-	
+
+	/**
+	 * @param array|null $propertyNames
+	 * @param bool $ignoreUnknown
+	 * @return array
+	 */
 	public function readValues(array $propertyNames = null, bool $ignoreUnknown = false): array {
 		$values = array();
 		
@@ -97,21 +133,29 @@ class MagCollection {
 		}
 		return $values;
 	}
-	
+
+	/**
+	 * @param array $values
+	 */
 	public function writeValues(array $values) {
 		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			if (!array_key_exists($propertyName, $values)) continue;
 			$magWrapper->getMag()->setValue($values[$propertyName]);
 		}
 	}
-	
 
+	/**
+	 * @param MappingDefinition $md
+	 */
 	public function setupMappingDefinition(MappingDefinition $md) {
 		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			$magWrapper->setupMappingDefinition($md);
 		}
 	}
-	
+
+	/**
+	 * @param BindingDefinition $bd
+	 */
 	public function setupBindingDefinition(BindingDefinition $bd) {
 		foreach ($this->magWrappers as $propertyName => $magWrapper) {
 			$magWrapper->setupBindingDefinition($bd);

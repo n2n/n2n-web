@@ -32,6 +32,15 @@ use n2n\web\ui\UiComponent;
 use n2n\l10n\N2nLocale;
 
 interface Mag {
+	const NATURE_GROUP = 1;
+	const NATURE_LABELLESS = 2;
+
+	/**
+	 * @param string $propertyName
+	 * @return mixed
+	 */
+	public function setPropertyName(string $propertyName);
+
 	/**
 	 * @return string 
 	 */
@@ -76,7 +85,7 @@ interface Mag {
 	 * @param PropertyPath $propertyPath
 	 * @param HtmlView $view
 	 */
-	public function createUiField(PropertyPath $propertyPath, HtmlView $view): UiComponent;
+	public function createUiField(PropertyPath $propertyPath, HtmlView $view, UiOutfitter $uiOutfitter): UiComponent;
 	
 	/**
 	 * @return mixed 
@@ -88,6 +97,15 @@ interface Mag {
 	 * @throws \InvalidArgumentException if passed value is invalid.
 	 */
 	public function setValue($value);
-	
+
+	/**
+	 * @param MagCollection $magCollection
+	 * @return mixed
+	 */
 	public function whenAssigned(MagCollection $magCollection);
+
+	/**
+	 * @return bool
+	 */
+	public function getNature(): int;
 }

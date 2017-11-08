@@ -25,6 +25,6 @@ use n2n\web\dispatch\model\DispatchModel;
 
 interface DynamicDispatchable extends Dispatchable {
 	public function setup(DispatchModel $dispatchModel);
-	public function getPropertyValue($name);
-	public function setPropertyValue($name, $value);
+	public function getPropertyValue(string $name);
+	public function setPropertyValue(string $name, $value);
 }
