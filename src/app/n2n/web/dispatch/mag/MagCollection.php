@@ -21,7 +21,6 @@
  */
 namespace n2n\web\dispatch\mag;
 
-use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\map\bind\MappingDefinition;
 use n2n\web\dispatch\map\bind\BindingDefinition;
 

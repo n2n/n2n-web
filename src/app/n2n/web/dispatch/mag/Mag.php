@@ -23,7 +23,6 @@ namespace n2n\web\dispatch\mag;
 
 use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\web\dispatch\map\PropertyPath;
-use n2n\web\dispatch\map\BindingConstraints;
 use n2n\web\dispatch\map\bind\MappingDefinition;
 use n2n\reflection\property\AccessProxy;
 use n2n\web\dispatch\map\bind\BindingDefinition;
@@ -62,7 +61,7 @@ interface Mag {
 	public function setupMappingDefinition(MappingDefinition $mappingDefinition);
 	
 	/**
-	 * @param BindingConstraints $bindingConstraints
+	 * @param BindingDefinition $bindingDefinition
 	 */
 	public function setupBindingDefinition(BindingDefinition $bindingDefinition);
 	
