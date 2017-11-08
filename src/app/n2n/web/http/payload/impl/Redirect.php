@@ -19,14 +19,16 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\payload\impl;
 
 use n2n\core\N2N;
+use n2n\web\http\payload\BufferedPayload;
+use n2n\web\http\Response;
 
 /**
  * Causes a http redirect when sent to {@see Response}
  */
-class Redirect extends BufferedResponseObject {
+class Redirect extends BufferedPayload {
 	private $httpStatus;
 	private $httpLocation;
 	
@@ -45,7 +47,7 @@ class Redirect extends BufferedResponseObject {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseObject::prepareForResponse()
+	 * @see n2n\web\http.Payload::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setStatus($this->httpStatus);
@@ -55,7 +57,7 @@ class Redirect extends BufferedResponseObject {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::getBufferedContents()
+	 * @see \n2n\web\http\payload\Payload::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return '';
@@ -63,9 +65,9 @@ class Redirect extends BufferedResponseObject {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseObject::toKownResponseString()
+	 * @see n2n\web\http.Payload::toKownPayloadString()
 	 */
-	public function toKownResponseString(): string {
+	public function toKownPayloadString(): string {
 		return $this->httpStatus . ' redirect to \'' . $this->httpLocation . '\'';
 	}
 }

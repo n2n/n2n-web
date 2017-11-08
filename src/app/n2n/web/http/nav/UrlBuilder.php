@@ -30,6 +30,15 @@ use n2n\util\uri\Linkable;
 
 class UrlBuilder {
 
+	/**
+	 * @param unknown $arg
+	 * @param N2nContext $n2nContext
+	 * @param ControllerContext $controllerContext
+	 * @param string $suggestedLabel
+	 * @throws UnavailableUrlException
+	 * @throws \InvalidArgumentException
+	 * @return string
+	 */
 	public static function buildUrlStr($arg, N2nContext $n2nContext = null,
 			ControllerContext $controllerContext = null, string &$suggestedLabel = null): string {
 		if ($arg === null) {

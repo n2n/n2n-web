@@ -27,6 +27,7 @@ use n2n\core\N2nRuntimeException;
 use n2n\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
+use n2n\web\http\payload\Payload;
 
 /**
  * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
@@ -110,7 +111,7 @@ class Response {
 	private $bufferedHttpCacheControl;
 	private $bufferedResponseCacheControl;
 	private $responseCacheStore;
-	private $sentResponseObject;
+	private $sentPayload;
 	
 	/**
 	 * @param Request $request
@@ -156,11 +157,11 @@ class Response {
 	}
 	
 	/**
-	 * If last modified DateTime is provided by the sent {@see ResponseObject} it will be used to determine if 
+	 * If last modified DateTime is provided by the sent {@see Payload} it will be used to determine if 
 	 * the response was modified since last request and send 304 Not Modified http status to reduce traffic if not.
 	 * 
 	 * @see self::send()
-	 * @see ResponseObject::getLastModified()
+	 * @see Payload::getLastModified()
 	 *  
 	 * @param bool $sendLastModifiedAllowed
 	 */
@@ -301,7 +302,7 @@ class Response {
 		$this->fetchBufferedOutput(false);
 		$this->bufferedHttpCacheControl = null;
 		$this->bufferedResponseCacheControl = null;
-		$this->sentResponseObject = null;
+		$this->sentPayload = null;
 	}
 	
 	/**
@@ -348,7 +349,7 @@ class Response {
 	 * 
 	 * @return boolean
 	 */
-	public function sendCachedResponseObject() {
+	public function sendCachedPayload() {
 		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) return false;
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
 					$this->request->getSubsystemName(), $this->request->getPath());
@@ -500,22 +501,22 @@ class Response {
 	}
 	/**
 	 * 
-	 * @param ResponseObject $thing
+	 * @param Payload $thing
 	 * @param HttpCacheControl $httpCacheControl
 	 * @param unknown_type $includeBuffer
-	 * @throws ResponseObjectAlreadySentException
+	 * @throws PayloadAlreadySentException
 	 */
-	public function send(ResponseObject $thing, bool $includeBuffer = true) {
+	public function send(Payload $thing, bool $includeBuffer = true) {
 		foreach ($this->listeners as $listener) {
 			$listener->onSend($thing, $this);
 		}
 		
 		$this->ensureBuffering();
-		if (null !== $this->sentResponseObject) {
-			throw new MalformedResponseException('ResponseObject already sent: ' 
-					. $this->sentResponseObject->toKownResponseString(), 0, null, 1);
+		if (null !== $this->sentPayload) {
+			throw new MalformedResponseException('Payload already sent: ' 
+					. $this->sentPayload->toKownPayloadString(), 0, null, 1);
 		}
-		$this->sentResponseObject = $thing;
+		$this->sentPayload = $thing;
 
 		$thing->prepareForResponse($this);
 		$bufferdContents = '';
@@ -543,12 +544,12 @@ class Response {
 		}
 	}
 	
-	public function hasSentResponseObject() {
-		return $this->sentResponseObject !== null;
+	public function hasSentPayload() {
+		return $this->sentPayload !== null;
 	}
 	
-	public function getSentResponseObject() {
-		return $this->sentResponseObject;
+	public function getSentPayload() {
+		return $this->sentPayload;
 	}
 	
 	public function registerListener(ResponseListener $listener) {
@@ -678,6 +679,6 @@ class ResponseBufferIsClosed extends N2nRuntimeException {
 	
 }
 
-class ResponseObjectAlreadySentException extends N2nRuntimeException {
+class PayloadAlreadySentException extends N2nRuntimeException {
 	
 }

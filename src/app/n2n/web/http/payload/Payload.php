@@ -19,7 +19,9 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\payload;
+
+use n2n\web\http\Response;
 
 /**
  * <p>A response object represents content which can be sent over {@see Response::send()} to the client. This could be a 
@@ -28,10 +30,10 @@ namespace n2n\web\http;
  * <p>
  * 	There are to kinds of response object; bufferable and not bufferable, which both have their own advantages. See 
  * {@see::isBufferable()} for more information. Implementations are started best by extending 
- * {@see BufferedResponseObject} or {@see ResourceResponseObject}
+ * {@see BufferedPayload} or {@see ResourcePayload}
  * </p>
  */
-interface ResponseObject {
+interface Payload {
 	
 	/**
 	 * <p>This method gets called before the respone object is flushed to the client and is supposed to make necessary 
@@ -52,18 +54,18 @@ interface ResponseObject {
 	 * Returns a string which describes this object. This string is mainly used to be displayed in error messages.
 	 * @return string
 	 */
-	public function toKownResponseString(): string;
+	public function toKownPayloadString(): string;
 
 	/**
-	 * <p>Returns true if the content of this {@see ResponseObject} can be buffered and returned by 
-	 * 	{@see self::getBufferedContents()}. This would be false if this {@see ResponseObject} contained a large file which 
+	 * <p>Returns true if the content of this {@see Payload} can be buffered and returned by 
+	 * 	{@see self::getBufferedContents()}. This would be false if this {@see Payload} contained a large file which 
 	 * 	can not be buffered due to lack of memory.</p> 
 	 * 
 	 * <p>
 	 * 	Implemation examples:
 	 * 	<pre>
 	 * 		<ul>
-	 * 			<li>{@see \n2n\web\http\ResponseObject} (bufferable)</li>
+	 * 			<li>{@see \n2n\web\http\payload\Payload} (bufferable)</li>
 	 * 			<li>{@see \n2n\io\managed\File} (not bufferable)</li>
 	 * 		</ul>
 	 * 	</pre>

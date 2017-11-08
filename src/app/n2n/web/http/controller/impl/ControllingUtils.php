@@ -28,10 +28,10 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\http\controller\ControllingPlan;
-use n2n\web\http\ResponseObject;
+use n2n\web\http\payload\Payload;
 use n2n\web\http\controller\NoHttpRefererGivenException;
 use n2n\web\http\nav\UrlComposer;
-use n2n\web\http\Redirect;
+use n2n\web\http\payload\impl\Redirect;
 use n2n\web\dispatch\DispatchContext;
 use n2n\web\dispatch\Dispatchable;
 use n2n\web\http\ResponseCacheControl;
@@ -48,6 +48,14 @@ use n2n\web\ui\view\View;
 use n2n\web\http\nav\Murl;
 use n2n\web\http\BadRequestException;
 use n2n\core\container\Transaction;
+use n2n\web\http\payload\impl\JsonPayload;
+use n2n\web\http\payload\impl\HtmlPayload;
+use n2n\web\http\payload\impl\HtmlUiPayload;
+use n2n\io\managed\File;
+use n2n\web\http\payload\impl\FilePayload;
+use n2n\io\fs\FsPath;
+use n2n\web\http\payload\impl\FsPathPayload;
+use n2n\web\ui\UiComponent;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -353,7 +361,7 @@ class ControllingUtils {
 			$fragment = null, $ssl = null, $subsystem = null) {
 		if (isset($controllerContext)) {
 			if (!($controllerContext instanceof ControllerContext)) {
-				$controllerContext = $this->getRequest()->getControllerContextByName((string) $controllerContext);
+				$controllerContext = $this->getControllingPlan()->getMainControllerContextByKey((string) $controllerContext);
 			}
 		} else {
 			$controllerContext = $this->controllerContext;
@@ -450,7 +458,65 @@ class ControllingUtils {
 		return null;
 	}
 	
-	public function send(ResponseObject $responseThing, bool $includeBuffer = true) {
+	/**
+	 * @param array $data
+	 * @param bool $includeBuffer
+	 */
+	public function sendJson(array $data, bool $includeBuffer = true) {
+		$this->send(new JsonPayload($data), $includeBuffer);
+	}
+	
+	/**
+	 * @param string $htmlStr
+	 * @param bool $includeBuffer
+	 */
+	public function sendHtml(string $htmlStr, bool $includeBuffer = true) {
+		$this->send(new HtmlPayload($htmlStr), $includeBuffer);
+	}
+	
+	/**
+	 * @param string|UiComponent $uiComponent
+	 * @param bool $includeBuffer
+	 */
+	public function sendHtmlUi($uiComponent, bool $includeBuffer = true) {
+		$this->send(new HtmlUiPayload($uiComponent), $includeBuffer);
+	}
+	
+	/**
+	 * @param File $file
+	 * @param bool $includeBuffer
+	 */
+	public function sendFile(File $file, bool $includeBuffer = true) {
+		$this->send(new FilePayload($file), $includeBuffer);
+	}
+	
+	/**
+	 * @param File $file
+	 * @param string $name
+	 * @param bool $includeBuffer
+	 */
+	public function sendFileAttachment(File $file, string $name = null, bool $includeBuffer = true) {
+		$this->send(new FilePayload($file, true, $name), $includeBuffer);
+	}
+	
+	/**
+	 * @param FsPath|string $fsPath
+	 * @param bool $includeBuffer
+	 */
+	public function sendFsPath($fsPath, bool $includeBuffer = true) {
+		$this->send(new FsPathPayload(FsPath::create($fsPath)), $includeBuffer);
+	}
+	
+	/**
+	 * @param FsPath|string $fsPath
+	 * @param string $name
+	 * @param bool $includeBuffer
+	 */
+	public function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true) {
+		$this->send(new FsPathPayload(FsPath::create($fsPath), true, $name), $includeBuffer);
+	}
+	
+	public function send(Payload $responseThing, bool $includeBuffer = true) {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
 	}

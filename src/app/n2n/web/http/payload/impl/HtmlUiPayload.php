@@ -19,32 +19,41 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\payload\impl;
 
-use n2n\util\ex\IllegalStateException;
+use n2n\web\http\payload\BufferedPayload;
+use n2n\web\http\Response;
+use n2n\web\ui\SimpleBuildContext;
+use n2n\impl\web\ui\view\html\HtmlUtils;
 
-/**
- * Extend this class for an easy implemenation of a not bufferable {@see ResponseObject}.
- * See {ResponseObject::isBufferable()} for more information.
- */
-abstract class ResourceResponseObject implements ResponseObject {
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::isBufferable()
-	 */
-	public function isBufferable(): bool {
-		return false;
+class HtmlUiPayload extends BufferedPayload {
+	private $uiComponent;
+	
+	public function __construct($uiComponent) {
+		$this->uiComponent = $uiComponent;
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::getBufferedContents()
+	 * @see \n2n\web\http\payload\BufferedPayload::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
-		throw new IllegalStateException('Response object is not bufferable.');
+		return HtmlUtils::contentsToHtml($this->uiComponent, new SimpleBuildContext());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
+	 */
+	public function prepareForResponse(Response $response) {
+		$response->setHeader('Content-Type: text/html; charset=utf-8');
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::toKownPayloadString()
+	 */
+	public function toKownPayloadString(): string {
+		return 'Html Ui Payload';
 	}
 }
-
-// INode 
-// $fs = stat($file);
-// header("Etag: ".sprintf('"%x-%x-%s"', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16)));

@@ -19,52 +19,40 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\payload\impl;
 
-use n2n\util\ex\IllegalStateException;
+use n2n\web\http\payload\BufferedPayload;
+use n2n\web\http\Response;
+use n2n\util\StringUtils;
 
-/**
- * Extend this class for an easy implemenation of an bufferable {@see ResponseObject}.
- * See {ResponseObject::isBufferable()} for more information.
- */
-abstract class BufferedResponseObject implements ResponseObject {
+class JsonPayload extends BufferedPayload { 
+	private $jsonString;
 	
 	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::isBufferable()
+	 * @param array $data
 	 */
-	public function isBufferable(): bool {
-		return true;
-	}
-
-	/**
-	 * @throws IllegalStateException
-	 */
-	private function fail() {
-		throw new IllegalStateException('Response object is bufferable.');
+	public function __construct(array $data = null)  {
+		$this->jsonString = StringUtils::jsonEncode($data);
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::responseOut()
+	/* (non-PHPdoc)
+	 * @see \n2n\web\http\payload\BufferedPayload::getBufferedContents()
 	 */
-	public function responseOut() {
-		$this->fail();
+	public function getBufferedContents(): string {
+		return $this->jsonString;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::getEtag()
+	
+	/* (non-PHPdoc)
+	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
 	 */
-	public function getEtag() {
-		$this->fail();
+	public function prepareForResponse(Response $response) {
+		$response->setHeader('Content-Type: application/json');
 	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\ResponseObject::getLastModified()
+	
+	/* (non-PHPdoc)
+	 * @see \n2n\web\http\payload\Payload::toKownPayloadString()
 	 */
-	public function getLastModified() {
-		$this->fail();
-	}
+	public function toKownPayloadString(): string {
+		return 'Json Response';
+	}	
 }

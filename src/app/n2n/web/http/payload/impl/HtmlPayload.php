@@ -19,20 +19,40 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http\nav;
+namespace n2n\web\http\payload\impl;
 
-use n2n\web\http\HttpRuntimeException;
+use n2n\web\http\payload\BufferedPayload;
+use n2n\web\http\Response;
+use n2n\web\ui\SimpleBuildContext;
 
-class UnavailableUrlException extends HttpRuntimeException {
-	private $critical;
-
-	public function __construct(bool $critical, string $message = null, int $code = null, \Throwable $previous = null) {
-		parent::__construct($message, $code, $previous);
-
-		$this->critical = $critical;
+class HtmlPayload extends BufferedPayload {
+	private $htmlStr;
+	
+	public function __construct(string $htmlStr) {
+		$this->htmlStr = $htmlStr;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\BufferedPayload::getBufferedContents()
+	 */
+	public function getBufferedContents(): string {
+		return $this->htmlStr;
 	}
 
-	public function isCritical(): bool {
-		return $this->critical;
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
+	 */
+	public function prepareForResponse(Response $response) {
+		$response->setHeader('Content-Type: text/html; charset=utf-8');
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::toKownPayloadString()
+	 */
+	public function toKownPayloadString(): string {
+		return 'Html Payload';
 	}
 }

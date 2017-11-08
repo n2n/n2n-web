@@ -19,36 +19,52 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\payload;
+
+use n2n\util\ex\IllegalStateException;
 
 /**
- * Implemenations of this listener can be registered {@see Response::registerListener()} to get notified about
- * status changes.
+ * Extend this class for an easy implemenation of an bufferable {@see Payload}.
+ * See {Payload::isBufferable()} for more information.
  */
-interface ResponseListener {
+abstract class BufferedPayload implements Payload {
 	
 	/**
-	 * Gets invoked when {@see Response::send()} is called.
-	 * @param Payload $responseObject
-	 * @param Response $response
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::isBufferable()
 	 */
-	public function onSend(Payload $responseObject, Response $response);
-	
-	/**
-	 * Gets invoked when a new Status is set over {@see Response::setStatus()}.
-	 * @param int $newStatus
-	 * @param Response $response
-	 */
-	public function onStatusChange(int $newStatus, Response $response);
-	
-	/**
-	 * Gets invoked when {@see Response::reset()} is called.
-	 */
-	public function onReset(Response $response);
-	
-	/**
-	 * Gets invoked when {@see Response::flush()} is called.
-	 */
-	public function onFlush(Response $response);
-}
+	public function isBufferable(): bool {
+		return true;
+	}
 
+	/**
+	 * @throws IllegalStateException
+	 */
+	private function fail() {
+		throw new IllegalStateException('Response object is bufferable.');
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::responseOut()
+	 */
+	public function responseOut() {
+		$this->fail();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::getEtag()
+	 */
+	public function getEtag() {
+		$this->fail();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\payload\Payload::getLastModified()
+	 */
+	public function getLastModified() {
+		$this->fail();
+	}
+}

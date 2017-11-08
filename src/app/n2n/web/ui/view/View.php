@@ -31,7 +31,7 @@ use n2n\core\N2N;
 use n2n\web\ui\UiComponent;
 use n2n\web\ui\UiException;
 use n2n\web\http\Response;
-use n2n\web\http\BufferedResponseObject;
+use n2n\web\http\payload\BufferedPayload;
 use n2n\core\module\Module;
 use n2n\core\container\N2nContext;
 use n2n\web\ui\ViewStuffFailedException;
@@ -46,11 +46,11 @@ use n2n\web\ui\ViewFactory;
 use n2n\reflection\TypeExpressionResolver;
 use n2n\reflection\CastUtils;
 use n2n\web\http\nav\UrlBuilder;
-use n2n\web\http\nav\UnavailableUrlException;
+use n2n\util\uri\UnavailableUrlException;
 use n2n\web\ui\BuildContext;
 use n2n\web\ui\SimpleBuildContext;
 
-abstract class View extends BufferedResponseObject implements UiComponent {
+abstract class View extends BufferedPayload implements UiComponent {
 	private $params = array();
 	private $stateObjs = array();
 	
@@ -470,7 +470,7 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseObject::prepareForResponse()
+	 * @see n2n\web\http.Payload::prepareForResponse()
 	 */
 	public function prepareForResponse(Response $response) {
 		$response->setHeader('Content-Type: ' . $this->getContentType());
@@ -481,21 +481,21 @@ abstract class View extends BufferedResponseObject implements UiComponent {
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseObject::toKownResponseString()
+	 * @see n2n\web\http.Payload::toKownPayloadString()
 	 */
-	public function toKownResponseString(): string {
+	public function toKownPayloadString(): string {
 		return $this->__toString();
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.ResponseObject::__toString()
+	 * @see n2n\web\http.Payload::__toString()
 	 */
 	public function __toString(): string {
 		return 'View' . '(' . $this->getName() . ')';
 	}
 	/**
 	 * (non-PHPdoc)
-	 * @see n2n\web\http.BufferedResponseObject::getBufferedContents()
+	 * @see n2n\web\http.BufferedPayload::getBufferedContents()
 	 */
 	public function getBufferedContents(): string {
 		return $this->build(new SimpleBuildContext());

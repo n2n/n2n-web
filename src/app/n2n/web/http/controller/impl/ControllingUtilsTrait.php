@@ -27,11 +27,11 @@ use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\ui\view\View;
 use n2n\web\dispatch\Dispatchable;
-use n2n\web\http\Redirect;
+use n2n\web\http\payload\impl\Redirect;
 use n2n\web\http\NoHttpRefererGivenException;
 use n2n\web\http\controller\Controller;
 use n2n\web\http\controller\ControllingPlan;
-use n2n\web\http\ResponseObject;
+use n2n\web\http\payload\Payload;
 use n2n\core\container\N2nContext;
 use n2n\web\http\HttpContext;
 use n2n\web\http\Request;
@@ -40,6 +40,7 @@ use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
 use n2n\web\http\controller\ControllerErrorException;
 use n2n\core\TypeNotFoundException;
+use n2n\io\managed\File;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -296,7 +297,35 @@ trait ControllingUtilsTrait {
 		return $this->cu()->delegateToControllerContext($nextControllerContext, $execute, $tryIfMain);
 	}
 	
-	protected final function send(ResponseObject $responseThing, bool $includeBuffer = true) {
+	protected final function sendJson(array $data, bool $includeBuffer = true) {
+		$this->cu()->sendJson($data, $includeBuffer);
+	}
+	
+	protected final function sendHtml(string $htmlStr, bool $includeBuffer = true) {
+		$this->cu()->sendHtml($htmlStr, $includeBuffer);
+	}
+	
+	protected final function sendHtmlUi($uiComponent, bool $includeBuffer = true) {
+		$this->cu()->sendHtmlUi($uiComponent, $includeBuffer);
+	}
+	
+	protected final function sendFile(File $file, bool $includeBuffer = true) {
+		$this->cu()->sendFile($file, $includeBuffer);
+	}
+	
+	protected final function sendFileAttachment(File $file, string $name = null, bool $includeBuffer = true) {
+		$this->cu()->sendFileAttachment($file, $name, $includeBuffer);
+	}
+	
+	protected final function sendFsPath($fsPath, bool $includeBuffer = true) {
+		$this->cu()->sendFsPath($fsPath, $includeBuffer);
+	}
+	
+	protected final function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true) {
+		$this->cu()->sendFsPathAttachment($fsPath, $name, $includeBuffer);
+	}
+	
+	protected final function send(Payload $responseThing, bool $includeBuffer = true) {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	
