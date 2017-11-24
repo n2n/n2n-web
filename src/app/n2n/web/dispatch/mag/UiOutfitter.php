@@ -16,6 +16,9 @@ interface UiOutfitter {
 	const NATURE_LEGEND = 128;
 	const NATURE_BTN_PRIMARY = 256;
 	const NATURE_BTN_SECONDARY = 512;
+	
+	// added from andreas -> @todo nikolai has to check this
+	const NATURE_SELECT = 1024;
 
 	/**
 	 * @param string $nature
