@@ -84,7 +84,7 @@ class DispatchJob {
 	 * @param string $methodName
 	 * @return boolean
 	 */
-	public function matches(Dispatchable $dispatchable, string $methodName) {
+	public function matches(Dispatchable $dispatchable, string $methodName = null) {
 		return $this->dispatchTarget->getDispatchClassName() == get_class($dispatchable)
 				&& $this->methodName === $methodName;
 	}
