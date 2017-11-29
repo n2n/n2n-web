@@ -503,7 +503,7 @@ class Response {
 	 * 
 	 * @param Payload $thing
 	 * @param HttpCacheControl $httpCacheControl
-	 * @param unknown_type $includeBuffer
+	 * @param bool $includeBuffer
 	 * @throws PayloadAlreadySentException
 	 */
 	public function send(Payload $thing, bool $includeBuffer = true) {
@@ -562,8 +562,8 @@ class Response {
 	
 	/**
 	 * 
-	 * @param unknown_type $code
-	 * @throws UnknownHttpStatusCodeException
+	 * @param int $code
+	 * @throws \InvalidArgumentException
 	 * @return int
 	 */
 	public static function textOfStatusCode($code, bool $required = false) {
@@ -643,10 +643,10 @@ class Header {
 	private $replace; 
 	/**
 	 * 
-	 * @param unknown_type $headerStr
-	 * @param unknown_type $replace
+	 * @param string $headerStr
+	 * @param bool $replace
 	 */
-	public function __construct($headerStr, $replace = true) {
+	public function __construct(string $headerStr, bool $replace = true) {
 		if (is_numeric(strpos($headerStr, "\r")) || is_numeric(strpos($headerStr, "\n"))) {
 			throw new \InvalidArgumentException('Illegal chars in http header str: ' . $headerStr);
 		}

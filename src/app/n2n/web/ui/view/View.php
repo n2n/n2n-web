@@ -25,7 +25,6 @@ use n2n\l10n\DynamicTextCollection;
 use n2n\l10n\DateTimeFormat;
 use n2n\l10n\L10nUtils;
 use n2n\web\http\controller\ControllerContext;
-use n2n\web\ui\view\ViewErrorException;
 use n2n\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\web\ui\UiComponent;
@@ -34,7 +33,6 @@ use n2n\web\http\Response;
 use n2n\web\http\payload\BufferedPayload;
 use n2n\core\module\Module;
 use n2n\core\container\N2nContext;
-use n2n\web\ui\ViewStuffFailedException;
 use n2n\reflection\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
@@ -70,12 +68,12 @@ abstract class View extends BufferedPayload implements UiComponent {
 	private $bufferingPanel = null;
 	private $panels = array();
 	/**
-	 * @param unknown $scriptPath
-	 * @param unknown $name
+	 * @param string $scriptPath
+	 * @param string $name
 	 * @param Module $module
 	 * @param N2nContext $n2nContext
 	 */
-	public final function __construct($scriptPath, $name, Module $module, N2nContext $n2nContext) {
+	public final function __construct(string $scriptPath, string $name, Module $module, N2nContext $n2nContext) {
 		$this->scriptPath = $scriptPath;
 		$this->name = $name;
 		$this->moduleNamespace = $module;
@@ -102,7 +100,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	/**
 	 * 
-	 * @return unknown_type
+	 * @return string
 	 */
 	public function getScriptPath() {
 		return $this->scriptPath;
@@ -251,7 +249,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->triggerContentsInitialized();
 	}
 	/**
-	 * @param unknown $data
+	 * @param string $data
 	 * @throws \InvalidArgumentException if not good
 	 */
 	public function initializeFromCache($data) {
@@ -536,10 +534,10 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	/**
 	 * 
-	 * @param unknown_type $panelName
+	 * @param string $panelName
 	 * @param UiComponent $uiComponent
 	 */
-	public function appendToPanel($panelName, UiComponent $uiComponent) {
+	public function appendToPanel(string $panelName, UiComponent $uiComponent) {
 		$this->getOrCreatePanel($panelName)->append($uiComponent);
 	}
 	/**
@@ -584,7 +582,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	/**
 	 * 
-	 * @param unknown_type $useableClassName
+	 * @param string|\ReflectionClass $useableClassName
 	 * @return \n2n\context\Lookupable
 	 */
 	public function lookup($useableClassName) {
@@ -592,8 +590,8 @@ abstract class View extends BufferedPayload implements UiComponent {
  	}
 	/**
 	 * 
-	 * @param unknown_type $viewNameExpression
-	 * @param unknown_type $params
+	 * @param string $viewNameExpression
+	 * @param mixed $params
 	 */
 	public function useTemplate(string $viewNameExpression, $params = null) {
 		$this->ensureContentsAreNotInitialized();
@@ -608,10 +606,10 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	/**
 	 * 
-	 * @param unknown_type $name
-	 * @param unknown_type $append
+	 * @param string $name
+	 * @param bool $append
 	 */
-	public function panelStart($name, $append = false) {
+	public function panelStart(string $name, bool $append = false) {
 		$this->ensureBufferIsActive();
 		
 		if (isset($this->bufferingPanel)) {
@@ -629,6 +627,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->activePanelBuffer = $this->getHttpContext()->getResponse()->createOutputBuffer();
 		$this->activePanelBuffer->start();
 	}
+	
 	/**
 	 * 
 	 */
@@ -646,15 +645,19 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->activePanelBuffer->clean();
 		$this->activePanelBuffer = null;
 	}
+
 	/**
-	 * 
-	 * @param unknown_type $viewName
-	 * @param unknown_type $params
+	 * @param string|View $viewName
+	 * @param mixed $params
 	 */
 	public function import($viewNameExpression, $params = null, ViewCacheControl $viewCacheControl = null, Module $module = null) {
 		$this->out($this->getImport($viewNameExpression, $params, $viewCacheControl, $module));
 	}
 	
+	/**
+	 * @param string|View $viewName
+	 * @param mixed $params
+	 */
 	public function getImport($viewNameExpression, array $params = null, 
 			ViewCacheControl $viewCacheControl = null, Module $module = null) {
 		$view = null;
@@ -706,9 +709,9 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	/**
 	 * 
-	 * @param unknown_type $panelName
+	 * @param string $panelName
 	 */
-	public function importPanel($panelName) {
+	public function importPanel(string $panelName) {
 		foreach ($this->stateListeners as $stateListener) {
 			$stateListener->onPanelImport($this, $panelName);
 		}
@@ -717,8 +720,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->out($this->getOrCreatePanel($panelName)->buildContents($this->contentsBuildContext));
 	} 
 	/**
-	 * 
-	 * @param unknown_type $contents
+	 * @param UiComponent|string $contents
 	 */
 	public function out($contents) {
 		// $this->ensureBufferIsActive();
@@ -726,6 +728,9 @@ abstract class View extends BufferedPayload implements UiComponent {
 		echo $this->getOut($contents); 
 	}
 	
+	/**
+	 * @param UiComponent|string $contents
+	 */
 	public function getOut($contents) {
 // 		if ($contents instanceof View && !$contents->isInitialized()) {
 // 			$contents->initialize();
@@ -738,6 +743,9 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return (string) $contents;
 	}
 	
+	/**
+	 * @param UiComponent|string $contents
+	 */
 	public function delayedOut($contents) {
 		$cb = $this->getContentBuffer();
 		$key = $cb->breakPoint();

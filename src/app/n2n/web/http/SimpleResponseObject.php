@@ -21,30 +21,32 @@
  */
 namespace n2n\web\http;
 
+use n2n\web\http\payload\BufferedPayload;
+
 class SimplePayload extends BufferedPayload {
 	private $contentType;
 	private $contents = '';
 	/**
-	 * @param unknown $contentType
+	 * @param string $contentType
 	 * @param string $contents
 	 */
 	public function __construct($contentType, $contents = '') {
 		$this->setBufferedContents($contents);
 	}
 	/**
-	 * @param unknown $contents
+	 * @param string $contents
 	 */
 	public function append($contents) {
 		$this->contents .= (string) $contents;
 	}
 	/**
-	 * @param unknown $contents
+	 * @param string $contents
 	 */
 	public function appendLn($contents) {
 		$this->append($contents . N2N_CRLF);
 	}
 	/**
-	 * @param unknown $contents
+	 * @param string $contents
 	 */
 	public function setBufferedContents($contents) {
 		$this->contents = (string) $contents;

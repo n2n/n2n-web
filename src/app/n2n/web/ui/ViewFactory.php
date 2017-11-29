@@ -22,12 +22,9 @@
 namespace n2n\web\ui;
 
 use n2n\web\ui\view\View;
-use n2n\web\ui\UiException;
 use n2n\core\N2N;
-use n2n\core\SysTextUtils;
 use n2n\core\TypeLoader;
 use n2n\core\module\Module;
-use n2n\util\cache\CacheStore;
 use n2n\reflection\ReflectionUtils;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\ui\view\ViewStateListener;
@@ -94,12 +91,12 @@ class ViewFactory implements ThreadScoped {
 // 	}
 	/**
 	 * 
-	 * @param unknown_type $viewName
+	 * @param string $viewName
+	 * @param mixed $params
 	 * @param Module $module
-	 * @param unknown_type $params
 	 * @return \n2n\web\ui\view\View
 	 */
-	public function create($viewName, array $params = null, Module $module = null) {
+	public function create(string $viewName, array $params = null, Module $module = null) {
 		return $this->createView(TypeLoader::getFilePathOfType($viewName, TypeLoader::SCRIPT_FILE_EXTENSION), 
 				$viewName, $params, $module);
 	}
@@ -124,18 +121,17 @@ class ViewFactory implements ThreadScoped {
 // 	}
 	/**
 	 * 
-	 * @param unknown_type $scriptPath
+	 * @param string $scriptPath
+	 * @param array $params
 	 * @param Module $module
-	 * @param unknown_type $props
 	 * @throws InvalidViewNameException
 	 * @return View
 	 */
 	private function createView($scriptPath, $viewName, array $params = null, Module $module = null) {
 		$fileNameParts = explode(self::SCRIPT_NAME_TYPE_SEPARATOR, basename($scriptPath, TypeLoader::SCRIPT_FILE_EXTENSION));
 		if (2 != sizeof($fileNameParts) || !mb_strlen($fileNameParts[0]) || !mb_strlen($fileNameParts[1])) {
-			throw new \InvalidArgumentException(SysTextUtils::get('n2n_error_view_invalid_script_name',
-					array('file' => $scriptPath, 'pattern' => '[viewName]' . self::SCRIPT_NAME_TYPE_SEPARATOR . '[viewType]'
-							. TypeLoader::SCRIPT_FILE_EXTENSION)));
+			 throw new \InvalidArgumentException('Invalid script name: ' . $scriptPath . ' Pattern: [viewName]' 
+			         . self::SCRIPT_NAME_TYPE_SEPARATOR . '[viewType]' . TypeLoader::SCRIPT_FILE_EXTENSION);
 		}
 		
 		if ($module === null) {
@@ -167,7 +163,7 @@ class ViewFactory implements ThreadScoped {
 	}
 	/**
 	 * 
-	 * @param unknown_type $type
+	 * @param string $type
 	 * @throws ViewTypeNotAvailableException
 	 * @return \ReflectionClass
 	 */
@@ -219,8 +215,6 @@ class CacheViewStateListener implements ViewStateListener {
 	 * @see \n2n\web\ui\view\ViewStateListener::onViewContentsBuffering()
 	 */
 	public function onViewContentsBuffering(View $view) {
-		// TODO Auto-generated method stub
-		
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\web\ui\view\ViewStateListener::viewContentsInitialized()
@@ -234,8 +228,6 @@ class CacheViewStateListener implements ViewStateListener {
 	 * @see \n2n\web\ui\view\ViewStateListener::onPanelImport()
 	 */
 	public function onPanelImport(\n2n\web\ui\view\View $view, $panelName) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	

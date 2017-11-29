@@ -19,15 +19,15 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\ui;
+// namespace n2n\web\ui;
 
-use n2n\core\SysTextUtils;
-use n2n\web\ui\CouldNotRenderUiComponentException;
+// use n2n\core\SysTextUtils;
+// use n2n\web\ui\CouldNotRenderUiComponentException;
 
-class UiUtils {
-	public static function createCouldNotRenderUiComponentException(\Exception $previous) {
-		return new CouldNotRenderUiComponentException(
-				SysTextUtils::get('n2n_error_ui_could_not_render_component',
-						array('reason' => $previous->getMessage())), 0, $previous);
-	} 
-}
+// class UiUtils {
+// 	public static function createCouldNotRenderUiComponentException(\Exception $previous) {
+// 		return new CouldNotRenderUiComponentException(
+// 				SysTextUtils::get('n2n_error_ui_could_not_render_component',
+// 						array('reason' => $previous->getMessage())), 0, $previous);
+// 	} 
+// }

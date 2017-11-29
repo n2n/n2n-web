@@ -26,6 +26,7 @@ use n2n\web\http\controller\ControllerContext;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\web\http\HttpContextNotAvailableException;
+use n2n\util\uri\UnavailableUrlException;
 
 class ContextUrlComposer implements UrlComposer {
 	private $toController;
@@ -112,9 +113,10 @@ class ContextUrlComposer implements UrlComposer {
 		$this->subsystem = $subsystem;
 		return $this;
 	}
+	
 	/**
-	 * @param View $view
-	 * @return Url
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\nav\UrlComposer::toUrl()
 	 */
 	public function toUrl(N2nContext $n2nContext, ControllerContext $controllerContext = null, 
 			string &$suggestedLabel = null): Url {

@@ -23,7 +23,6 @@ namespace n2n\web\http\payload\impl;
 
 use n2n\web\http\payload\BufferedPayload;
 use n2n\web\http\Response;
-use n2n\web\ui\SimpleBuildContext;
 
 class HtmlPayload extends BufferedPayload {
 	private $htmlStr;

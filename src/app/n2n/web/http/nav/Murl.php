@@ -21,8 +21,6 @@
  */
 namespace n2n\web\http\nav;
 
-use n2n\web\http\controller\ControllerContext;
-
 class Murl {
 
 	/**

@@ -21,9 +21,7 @@
  */
 namespace n2n\web\http;
 
-use n2n\util\cache\CacheStore;
 use n2n\util\uri\Path;
-use n2n\core\N2N;
 use n2n\context\ThreadScoped;
 use n2n\core\container\AppCache;
 use n2n\core\container\TransactionManager;

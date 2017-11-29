@@ -35,7 +35,7 @@ class DispatchModel {
 		$this->class = $class;
 	}
 	/**
-	 * @return ReflectionClass
+	 * @return \ReflectionClass
 	 */
 	public function getClass() {
 		return $this->class;
@@ -47,7 +47,7 @@ class DispatchModel {
 		$this->properties[$property->getName()] = $property;
 	}
 	/**
-	 * @return AnnoDispProperties[]
+	 * @return ManagedProperty[]
 	 */
 	public function getProperties() {
 		return $this->properties;

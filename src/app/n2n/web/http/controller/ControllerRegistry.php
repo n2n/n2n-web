@@ -148,10 +148,8 @@ class ControllingPlanFactory {
 	 * @param ControllingPlan $controllingPlan
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
-	 * @param unknown $subsystemName
 	 */
-	private function applyFilters(ControllingPlan $controllingPlan, N2nContext $n2nContext, 
-			Path $cmdPath) {
+	private function applyFilters(ControllingPlan $controllingPlan, N2nContext $n2nContext, Path $cmdPath) {
 		foreach ($this->filterControllerDefs as $key => $filterControllerDef) {
 			if (!isset($this->filterPathPatterns[$key])) {
 				$this->filterPathPatterns[$key] = $this->pathPatternCompiler
@@ -172,12 +170,9 @@ class ControllingPlanFactory {
 	 * @param ControllingPlan $controllingPlan
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
-	 * @param unknown $subsystemName
 	 * @throws ControllingPlanException
 	 */
-	private function applyMain(ControllingPlan $controllingPlan, N2nContext $n2nContext, 
-			Path $cmdPath) {
-		
+	private function applyMain(ControllingPlan $controllingPlan, N2nContext $n2nContext, Path $cmdPath) {
 		$currentMatchResult = null;
 		$currentMainControllerDef = null;
 		foreach ($this->mainControllerDefs as $key => $mainControllerDef) {

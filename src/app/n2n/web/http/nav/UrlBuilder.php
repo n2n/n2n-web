@@ -27,11 +27,12 @@ use n2n\util\uri\Url;
 use n2n\util\StringUtils;
 use n2n\core\container\N2nContext;
 use n2n\util\uri\Linkable;
+use n2n\util\uri\UnavailableUrlException;
 
 class UrlBuilder {
 
 	/**
-	 * @param unknown $arg
+	 * @param mixed $arg
 	 * @param N2nContext $n2nContext
 	 * @param ControllerContext $controllerContext
 	 * @param string $suggestedLabel

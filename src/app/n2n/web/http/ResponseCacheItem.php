@@ -21,6 +21,8 @@
  */
 namespace n2n\web\http;
 
+use n2n\web\http\payload\BufferedPayload;
+
 class ResponseCacheItem extends BufferedPayload {
 	private $contents;
 	private $statusCode;

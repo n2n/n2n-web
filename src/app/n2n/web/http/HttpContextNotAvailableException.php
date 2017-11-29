@@ -21,8 +21,6 @@
  */
 namespace n2n\web\http;
 
-use n2n\web\http\HttpRuntimeException;
-
 class HttpContextNotAvailableException extends HttpRuntimeException {
 	
 }

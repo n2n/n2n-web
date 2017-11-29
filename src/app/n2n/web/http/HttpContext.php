@@ -96,7 +96,7 @@ class HttpContext {
 	/**
 	 * @param string $n2nLocaleHttpId
 	 * @return N2nLocale
-	 * @throws IllegalN2nLocaleFormatException
+	 * @throws \n2n\l10n\IllegalN2nLocaleFormatException
 	 */
 	public function httpIdToN2nLocale(string $n2nLocaleHttpId, bool $lenient = false): N2nLocale {
 		return N2nLocale::fromWebId($n2nLocaleHttpId, false, $lenient);

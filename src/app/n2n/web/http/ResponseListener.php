@@ -21,6 +21,8 @@
  */
 namespace n2n\web\http;
 
+use n2n\web\http\payload\Payload;
+
 /**
  * Implemenations of this listener can be registered {@see Response::registerListener()} to get notified about
  * status changes.
@@ -29,10 +31,10 @@ interface ResponseListener {
 	
 	/**
 	 * Gets invoked when {@see Response::send()} is called.
-	 * @param Payload $responseObject
+	 * @param Payload $payload
 	 * @param Response $response
 	 */
-	public function onSend(Payload $responseObject, Response $response);
+	public function onSend(Payload $payload, Response $response);
 	
 	/**
 	 * Gets invoked when a new Status is set over {@see Response::setStatus()}.

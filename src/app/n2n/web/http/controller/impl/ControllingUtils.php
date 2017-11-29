@@ -258,8 +258,6 @@ class ControllingUtils {
 	 *
 	 * @param string $viewNameExpression
 	 * @param ViewCacheControl $viewCacheControl
-	 * @param HttpCacheControl $httpCacheControl
-	 * @param StaticCacheControl $staticCacheControl
 	 */
 	public function forwardCache(string $viewNameExpression, ViewCacheControl $viewCacheControl = null) {
 		$cachedView = $this->createViewFromCache($viewNameExpression, $viewCacheControl);
@@ -421,7 +419,7 @@ class ControllingUtils {
 	
 	/**
 	 * @param Controller $controller
-	 * @param unknown $pathPartsToShift
+	 * @param int $pathPartsToShift
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function createDelegateContext(Controller $controller = null, int $numPathPartsToShift = null) {

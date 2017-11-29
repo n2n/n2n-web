@@ -25,7 +25,6 @@ use n2n\util\uri\Path;
 use n2n\web\http\path\PathPatternCompiler;
 use n2n\reflection\ReflectionContext;
 use n2n\web\http\path\PathPatternCompileException;
-use n2n\web\http\annotation\PathMethod;
 use n2n\web\http\Method;
 use n2n\web\http\annotation\AnnoPath;
 use n2n\reflection\ReflectionUtils;
@@ -64,10 +63,10 @@ class ControllerInterpreter {
 		$this->pathPatternCompiler = new PathPatternCompiler();
 	}
 	/**
-	 * @param unknown $detectOptions
+	 * @param int $detectOptions
 	 * @return InvokerInfo[]
 	 */
-	public function interpret($detectOptions = self::DETECT_ALL) {
+	public function interpret(int $detectOptions = self::DETECT_ALL) {
 		$invokers = array();
 		
 		if ($detectOptions & self::DETECT_PREPARE_METHOD
@@ -101,7 +100,6 @@ class ControllerInterpreter {
 		
 		return $invokers;
 	}
-	
 
 	/**
 	 * @return InvokerInfo
@@ -127,7 +125,11 @@ class ControllerInterpreter {
 				$method->getFileName(), $method->getStartLine());
 	}
 	
-	private function getMethod($methodName) {
+	/**
+	 * @param string $methodName
+	 * @return NULL|\ReflectionMethod
+	 */
+	private function getMethod(string $methodName) {
 		if (!$this->class->hasMethod($methodName)) return null;
 		
 		$method = $this->class->getMethod($methodName);
@@ -139,6 +141,9 @@ class ControllerInterpreter {
 		return $method;
 	}
 	
+	/**
+	 * @param \ReflectionMethod $method
+	 */
 	private function rejectPathAnnos(\ReflectionMethod $method) {
 		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
 		$methodName = $method->getName();
@@ -155,6 +160,9 @@ class ControllerInterpreter {
 		throw $this->createInvalidAnnoException($anno);				
 	}
 	
+	/**
+	 * @param \ReflectionMethod $method
+	 */
 	private function rejectHttpMethodAnnos(\ReflectionMethod $method) {
 		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
 		$methodName = $method->getName();
@@ -175,12 +183,21 @@ class ControllerInterpreter {
 		throw $this->createInvalidAnnoException($anno);
 	}
 	
+	/**
+	 * @param MethodAnnotation $annotation
+	 * @throws ControllerErrorException
+	 */
 	private function createInvalidAnnoException(MethodAnnotation $annotation) {
-		throw new ControllerErrorException('Invalid annotation for method:'
+		return new ControllerErrorException('Invalid annotation for method:'
 				. ReflectionUtils::prettyReflMethName($annotation->getAnnotatedMethod()),
 				$annotation->getFileName(), $annotation->getLine());
 	}
 	
+	/**
+	 * @param \ReflectionMethod $method
+	 * @param mixed $allowedExtensions
+	 * @return boolean
+	 */
 	private function checkSimpleMethod(\ReflectionMethod $method, &$allowedExtensions) {
 		$this->checkAccessabilityMethod($method);
 		
@@ -222,7 +239,11 @@ class ControllerInterpreter {
 				$allowedExtensions);
 	}
 	
-	private function findDoMethod($nameBase) {
+	/**
+	 * @param string $nameBase
+	 * @return \ReflectionMethod|NULL
+	 */
+	private function findDoMethod(string $nameBase) {
 		$methodName = null;
 		switch ($this->invokerFactory->getHttpMethod()) {
 			case Method::GET:
@@ -252,7 +273,6 @@ class ControllerInterpreter {
 		return null;
 	}
 	
-	
 	/**
 	 * @return InvokerInfo
 	 */
@@ -278,6 +298,7 @@ class ControllerInterpreter {
 		$invokerInfo->setNumSinglePathParts($invokerInfo->getNumSinglePathParts() + 1);
 		return $invokerInfo;
 	}
+	
 	/**
 	 * @return InvokerInfo
 	 */
@@ -302,7 +323,12 @@ class ControllerInterpreter {
 		} while (null != ($class = $class->getParentClass()));
 	}
 	
-	private function checkHttpMethod($methodName, AnnotationSet $annotationSet) {
+	/**
+	 * @param string $methodName
+	 * @param AnnotationSet $annotationSet
+	 * @return boolean
+	 */
+	private function checkHttpMethod(string $methodName, AnnotationSet $annotationSet) {
 		$httpMethod = $this->invokerFactory->getHttpMethod();
 		$allAllowed = true;
 		
@@ -330,6 +356,11 @@ class ControllerInterpreter {
 	}
 	
 
+	/**
+	 * @param string $methodName
+	 * @param AnnotationSet $annotationSet
+	 * @return boolean
+	 */
 	private function checkAccept($methodName, AnnotationSet $annotationSet) {
 		$annoConsums = $annotationSet->getMethodAnnotation($methodName, AnnoConsums::class);
 		
@@ -338,6 +369,11 @@ class ControllerInterpreter {
 		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($annoConsums->getMimeTypes());
 	}
 	
+	/**
+	 * @param string $methodName
+	 * @param AnnotationSet $annotationSet
+	 * @return string[]|NULL
+	 */
 	private function findExtensions($methodName, AnnotationSet $annotationSet) {
 		if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
 			return $annoExt->getNames();
@@ -349,8 +385,9 @@ class ControllerInterpreter {
 		
 		return null;
 	}
+	
 	/**
-	 * @param PathMethod $annoPath
+	 * @param AnnoPath $annoPath
 	 * @throws ControllerErrorException
 	 * @return InvokerInfo
 	 */
@@ -371,6 +408,7 @@ class ControllerInterpreter {
 			throw $e;
 		}
 	}
+	
 	/**
 	 * @return InvokerInfo
 	 */

@@ -21,8 +21,6 @@
  */
 namespace n2n\web\ui;
 
-use n2n\web\ui\UiException;
-
 class CouldNotRenderUiComponentException extends UiException {
 	
 }

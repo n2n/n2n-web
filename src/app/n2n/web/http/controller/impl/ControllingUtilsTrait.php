@@ -27,7 +27,6 @@ use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\ui\view\View;
 use n2n\web\dispatch\Dispatchable;
-use n2n\web\http\payload\impl\Redirect;
 use n2n\web\http\NoHttpRefererGivenException;
 use n2n\web\http\controller\Controller;
 use n2n\web\http\controller\ControllingPlan;
@@ -182,8 +181,6 @@ trait ControllingUtilsTrait {
 	 *
 	 * @param string $viewNameExpression
 	 * @param ViewCacheControl $viewCacheControl
-	 * @param HttpCacheControl $httpCacheControl
-	 * @param StaticCacheControl $staticCacheControl
 	 * @return bool
 	 */
 	protected final function forwardCache(string $viewNameExpression, ViewCacheControl $viewCacheControl = null) {
@@ -280,10 +277,10 @@ trait ControllingUtilsTrait {
 	
 	/**
 	 * @param Controller $controller
-	 * @param unknown $pathPartsToShift
+	 * @param int $pathPartsToShift
 	 * @return ControllerContext
 	 */
-	protected final function createDelegateContext(Controller $controller = null, $pathPartsToShift = null) {
+	protected final function createDelegateContext(Controller $controller = null, int $pathPartsToShift = null) {
 		return $this->cu()->createDelegateContext($controller, $pathPartsToShift);
 	}
 	

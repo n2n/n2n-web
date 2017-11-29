@@ -30,7 +30,7 @@ interface UrlComposer {
 	/**
 	 * @param N2nContext $n2nContext
 	 * @param ControllerContext $controllerContext
-	 * @throws UnavailableUrlException
+	 * @throws \n2n\util\uri\UnavailableUrlException
 	 * @return \n2n\util\uri\Url
 	 */
 	public function toUrl(N2nContext $n2nContext, ControllerContext $controllerContext = null, 

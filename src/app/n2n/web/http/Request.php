@@ -24,7 +24,6 @@ namespace n2n\web\http;
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
-use n2n\web\http\AcceptRange;
 
 interface Request {
 	const PROTOCOL_HTTP = 'http';
