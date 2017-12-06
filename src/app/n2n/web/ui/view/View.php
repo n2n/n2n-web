@@ -923,7 +923,19 @@ class ViewPanelNerverEndedException extends UiException {
  */
 return;
 
-$view = new \n2n\web\ui\view\View();
+/**
+ * @var \n2n\web\ui\view\View $view
+ */
+$view /*= new \n2n\web\ui\view\View()*/;
+/**
+ * @var \n2n\web\http\HttpContext $httpContext
+ */
 $httpContext = new \n2n\web\http\HttpContext();
+/**
+ * @var \n2n\web\http\VarsRequest $request
+ */
 $request = new \n2n\web\http\VarsRequest();
+/**
+ * @var \n2n\web\http\Response $response
+ */
 $response = new \n2n\web\http\Response();
