@@ -68,6 +68,9 @@ class PropertyPath implements \IteratorAggregate, \Countable {
 		return end($this->pathParts);
 	}
 
+	/**
+	 * @return PropertyPathPart[]
+	 */
 	public function toArray() {
 		return $this->pathParts;
 	}
