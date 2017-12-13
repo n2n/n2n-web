@@ -1,6 +1,7 @@
 <?php
 namespace n2n\web\dispatch\mag;
 
+use n2n\impl\web\ui\view\html\HtmlElement;
 use n2n\impl\web\ui\view\html\HtmlView;
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\ui\UiComponent;
@@ -20,11 +21,20 @@ interface UiOutfitter {
 	// added from andreas -> @todo nikolai has to check this
 	const NATURE_SELECT = 1024;
 
+	const EL_NATRUE_CONTROL_ADDON_SUFFIX_WRAPPER = 1;
+	const EL_NATURE_CONTROL_ADDON_WRAPPER = 2;
+
 	/**
 	 * @param string $nature
 	 * @return array
 	 */
 	public function buildAttrs(int $nature): array;
+
+	/**
+	 * @param int $elemNature
+	 * @return HtmlElement
+	 */
+	public function buildElement(int $elemNature, array $attrs = null, $contents = null): HtmlElement;
 
 	/**
 	 * @param PropertyPath $propertyPath
