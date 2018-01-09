@@ -431,6 +431,13 @@ class ControllingUtils {
 		
 		$cmdPath = $controllerContext->getCmdPath();
 		$cmdContextPath = $controllerContext->getCmdContextPath();
+		
+		if ($numPathPartsToShift < 0) {
+			$newCmdPath = $cmdContextPath->sub($numPathPartsToShift)->ext($cmdPath);
+			$newCmdContextPath = $cmdContextPath->reduced(abs($numPathPartsToShift));
+			
+			return new ControllerContext($newCmdPath, $newCmdContextPath, $controller);
+		}
 	
 		return new ControllerContext($cmdPath->sub($numPathPartsToShift),
 				$cmdContextPath->ext($cmdPath->sub(0, $numPathPartsToShift)), $controller);
