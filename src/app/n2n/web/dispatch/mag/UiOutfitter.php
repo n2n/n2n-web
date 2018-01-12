@@ -13,10 +13,11 @@ interface UiOutfitter {
 	const NATURE_CHECK_LABEL = 8;
 	const NATURE_TEXT_AREA = 16;
 	const NATURE_MASSIVE_ARRAY_ITEM = 32;
-	const NATURE_MASSIVE_ARRAY = 64;
-	const NATURE_LEGEND = 128;
-	const NATURE_BTN_PRIMARY = 256;
-	const NATURE_BTN_SECONDARY = 512;
+	const NATURE_MASSIVE_ARRAY_ITEM_CONTROL = 64;
+	const NATURE_MASSIVE_ARRAY = 128;
+	const NATURE_LEGEND = 256;
+	const NATURE_BTN_PRIMARY = 512;
+	const NATURE_BTN_SECONDARY = 1024;
 	
 	// added from andreas -> @todo nikolai has to check this
 	const NATURE_SELECT = 1024;
