@@ -26,7 +26,6 @@ use n2n\web\http\controller\ControllerContext;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\web\http\HttpContextNotAvailableException;
-use n2n\util\uri\UnavailableUrlException;
 
 class ContextUrlComposer implements UrlComposer {
 	private $toController;
@@ -36,6 +35,7 @@ class ContextUrlComposer implements UrlComposer {
 	private $fragment;
 	private $ssl;
 	private $subsystem;
+	private $absolute = false;
 
 	public function __construct($toController) {
 		$this->toController = (boolean) $toController;
@@ -115,8 +115,17 @@ class ContextUrlComposer implements UrlComposer {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\nav\UrlComposer::toUrl()
+	 * @param bool $absolute
+	 * @return \n2n\web\http\nav\ContextUrlComposer
+	 */
+	public function absolute(bool $absolute = true) {
+		$this->absolute = $absolute;
+		return $this;
+	}
+	
+	/**
+	 * @param View $view
+	 * @return Url
 	 */
 	public function toUrl(N2nContext $n2nContext, ControllerContext $controllerContext = null, 
 			string &$suggestedLabel = null): Url {
@@ -138,7 +147,7 @@ class ContextUrlComposer implements UrlComposer {
 		}
 
 		try {
-			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem)
+			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem, $this->absolute)
 					->extR($path->ext($this->pathExts), $this->queryExt, $this->fragment);
 		} catch (HttpContextNotAvailableException $e) {
 			throw new UnavailableUrlException(null, null, $e);
