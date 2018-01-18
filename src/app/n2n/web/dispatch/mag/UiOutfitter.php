@@ -35,13 +35,13 @@ interface UiOutfitter {
 	 * @param string $nature
 	 * @return array
 	 */
-	public function buildAttrs(int $nature): array;
+	public function createAttrs(int $nature): array;
 
 	/**
 	 * @param int $elemNature
 	 * @return HtmlElement
 	 */
-	public function buildElement(int $elemNature, array $attrs = null, $contents = null): UiComponent;
+	public function createElement(int $elemNature, array $attrs = null, $contents = null): UiComponent;
 
 	/**
 	 * @param PropertyPath $propertyPath
