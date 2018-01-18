@@ -29,6 +29,10 @@ use n2n\web\dispatch\map\bind\BindingDefinition;
  * @package n2n\web\dispatch\mag
  */
 class MagCollection {
+	const CONTROL_WRAPPER_CLASS = 'mag-collection-control-wrapper';
+	const CONTROL_ADD_CLASS = 'mag-collection-adder';
+	const CONTROL_REMOVE_CLASS = 'mag-collection-remover';
+
 	private $magWrappers = array();
 
 	/**

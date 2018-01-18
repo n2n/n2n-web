@@ -24,6 +24,12 @@ interface UiOutfitter {
 
 	const EL_NATRUE_CONTROL_ADDON_SUFFIX_WRAPPER = 1;
 	const EL_NATURE_CONTROL_ADDON_WRAPPER = 2;
+	const EL_NATURE_CONTROL_ADD = 4;
+	const EL_NATURE_CONTROL_REMOVE = 8;
+	const EL_NATURE_ARRAY_ITEM_CONTROL = 16;
+
+	const ICON_NATURE_ADD = 'fa fa-plus';
+	const ICON_NATURE_REMOVE = 'fa fa-times';
 
 	/**
 	 * @param string $nature
@@ -35,7 +41,7 @@ interface UiOutfitter {
 	 * @param int $elemNature
 	 * @return HtmlElement
 	 */
-	public function buildElement(int $elemNature, array $attrs = null, $contents = null): HtmlElement;
+	public function buildElement(int $elemNature, array $attrs = null, $contents = null): UiComponent;
 
 	/**
 	 * @param PropertyPath $propertyPath
