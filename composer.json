@@ -4,12 +4,12 @@
     "description": "n2n web",
     "keywords": ["n2n","rest","controler","http","form api"],
     "homepage": "http://n2n.rocks/",
-    "license": "GNU LGPL",
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Andreas von Burg",
             "email": "a@von-burg.net",
-            "homepage": "http://www.von-burg.net",
+            "homepage": "https://www.von-burg.net/",
             "role": "Developer"
         }
     ],
