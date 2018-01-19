@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": ">=7.0",
-        "n2n/n2n-context": "master-dev",
-        "n2n/n2n-io": "master-dev",
-        "n2n/n2n-l10n": "master-dev",
-        "n2n/n2n-reflection": "master-dev",
-        "n2n/n2n-util": "master-dev"
+        "n2n/n2n-context": "7.2.x-dev",
+        "n2n/n2n-io": "7.2.x-dev",
+        "n2n/n2n-l10n": "7.2.x-dev",
+        "n2n/n2n-reflection": "7.2.x-dev",
+        "n2n/n2n-util": "7.2.x-dev"
     },
     "autoload": {
         "psr-4": {
