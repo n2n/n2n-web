@@ -101,7 +101,7 @@ class BindingTree {
 			if ($fieldReducedPropertyPathStr == $bdPropertyPathStr) {
 				if (!is_array($bindingDefinition)) {
 					throw new UnresolvablePropertyPathException(
-							'No Binding array defined for property path: ' . (string) $propertyPath);
+							'No binding array defined for property path: ' . (string) $propertyPath);
 				}
 				
 				unset($this->bindingDefinitions[$bdPropertyPathStr][$lastPathPart->getResolvedArrayKey()]);
@@ -116,8 +116,15 @@ class BindingTree {
 		
 		$bindingDefinitions = array();
 		$basePropertyPathStr = (string) $propertyPath;
-		foreach ($this->bindingDefinitions as $propertyPathStr => $bindingDefinition) {
-			if (StringUtils::startsWith($basePropertyPathStr, $propertyPathStr)) {
+		foreach ($this->bindingDefinitions as $propertyPathStr => $bd) {
+			if (!StringUtils::startsWith($basePropertyPathStr, $propertyPathStr)) continue;
+			
+			if (!is_array($bd)) {
+				$bindingDefinitions[] = $bd;
+				continue;
+			}
+			
+			foreach ($bd as $bindingDefinition) {
 				$bindingDefinitions[] = $bindingDefinition;
 			}
 		}
