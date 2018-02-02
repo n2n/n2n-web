@@ -26,6 +26,7 @@ use n2n\web\http\controller\ControllerContext;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\web\http\HttpContextNotAvailableException;
+use n2n\util\uri\UnavailableUrlException;
 
 class ContextUrlComposer implements UrlComposer {
 	private $toController;
