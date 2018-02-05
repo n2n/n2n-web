@@ -18,9 +18,9 @@ interface UiOutfitter {
 	const NATURE_LEGEND = 256;
 	const NATURE_BTN_PRIMARY = 512;
 	const NATURE_BTN_SECONDARY = 1024;
-	
-	// added from andreas -> @todo nikolai has to check this
-	const NATURE_SELECT = 1024;
+	const NATURE_BTN_FULL_WIDTH = 2048;
+	const NATURE_SELECT = 4096;
+	const NATURE_MASSIVE_ARRAY_ITEM_STRUCTURE = 8192;
 
 	const EL_NATRUE_CONTROL_ADDON_SUFFIX_WRAPPER = 1;
 	const EL_NATURE_CONTROL_ADDON_WRAPPER = 2;
