@@ -27,8 +27,11 @@ use n2n\util\uri\Url;
 use n2n\util\uri\Query;
 use n2n\util\uri\Authority;
 use n2n\reflection\ArgUtils;
+use n2n\util\dev\Version;
 
 class VarsRequest implements Request {
+	const PROTOCOL_VERSION_SEPARATOR = '/';
+	
 	private $serverVars;
 	
 	private $method;
@@ -41,6 +44,7 @@ class VarsRequest implements Request {
 	private $availableN2nLocaleAliases = array();
 	private $availableSubsystems = array();
 	private $assetsDirName;
+	private $protocolVersion;
 	
 	public function __construct(array $serverVars, array $getVars, array $postVars, 
 			array $fileVars) {
@@ -142,21 +146,35 @@ class VarsRequest implements Request {
 	public function isSsl() {
 		return $this->requestedUrl->getScheme() == self::PROTOCOL_HTTPS;
 	}
-	/* (non-PHPdoc)
+	
+	/**
+	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getUrl()
 	 */
 	public function getUrl(): Url {
 		return $this->requestedUrl;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getCmdContextPath()
+	 */
 	public function getCmdContextPath(): Path {
 		return $this->cmdContextPath;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getCmdPath()
+	 */
 	public function getCmdPath(): Path {
 		return $this->cmdPath;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getN2nLocale()
+	 */
 	public function getN2nLocale(): N2nLocale {
 		if ($this->n2nLocale === null) {
 			throw new IncompleRequestException('No N2nLocale assigned to request.');
@@ -165,6 +183,10 @@ class VarsRequest implements Request {
 		return $this->n2nLocale;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::setN2nLocale()
+	 */
 	public function setN2nLocale(N2nLocale $n2nLocale) {
 		$this->n2nLocale = $n2nLocale;
 	}
@@ -186,10 +208,18 @@ class VarsRequest implements Request {
 		return N2nLocale::create($n2nLocale)->toHttpId();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getHostUrl()
+	 */
 	public function getHostUrl() {
 		return new Url($this->requestedUrl->getScheme(), $this->requestedUrl->getAuthority());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getProtocol()
+	 */
 	public function getProtocol(): string {
 		if ($this->requestedUrl->hasScheme()) {
 			return $this->requestedUrl->getScheme();
@@ -197,50 +227,96 @@ class VarsRequest implements Request {
 		
 		return self::PROTOCOL_HTTP;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getProtocolVersion()
+	 */
+	public function getProtocolVersion(): Version {
+		if ($this->protocolVersion !== null) {
+			return $this->protocolVersion;
+		}
+		
+		$parts = explode(self::PROTOCOL_VERSION_SEPARATOR, $this->getProtocol(), 2);
+		
+		if (isset($parts[1])) {
+			return $this->protocolVersion = Version::create($parts[1]);
+		}
+		
+		return $this->protocolVersion = new Version([1]);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getHostName()
+	 */
 	public function getHostName(): string {
 		return $this->requestedUrl->getAuthority()->getHost();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getPort()
+	 */
 	public function getPort() {
 		return $this->requestedUrl->getAuthority()->getPort();
 	}
+	
 	/**
-	 * @param string $pathExt
-	 * @param array $queryParams
-	 * @param string $fragment
-	 * @return string
+	 * 
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getContextPath()
 	 */
 	public function getContextPath(): Path {
 		return $this->cmdContextPath;
 	}
+	
+// 	/**
+// 	 * @param string $path
+// 	 * @param string $query
+// 	 * @param string $fragment
+// 	 * @return Url
+// 	 */
+// 	public function extContext($path = null, $query = null, $fragment = null) {
+// 		return $this->cmdContextPath->ext($path)->toUrl($query, $fragment);
+// 	}
+	
 	/**
-	 * @param string $path
-	 * @param string $query
-	 * @param string $fragment
-	 * @return Url
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getPath()
 	 */
-	public function extContext($path = null, $query = null, $fragment = null) {
-		return $this->cmdContextPath->ext($path)->toUrl($query, $fragment);
-	}
-	
-	
 	public function getPath(): Path {
 		return $this->requestedUrl->getPath();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getRelativeUrl()
+	 */
 	public function getRelativeUrl() {
 		return $this->requestedUrl->toRelativeUrl();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getQuery()
+	 */
 	public function getQuery() {
 		return $this->requestedUrl->getQuery();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getPostQuery()
+	 */
 	public function getPostQuery() {
 		return $this->postQuery;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getUploadDefinitions()
+	 */
 	public function getUploadDefinitions() {
 		return $this->uploadDefinitions;
 	}
@@ -252,10 +328,18 @@ class VarsRequest implements Request {
 		return null;
 	}
 		
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getSubsystem()
+	 */
 	public function getSubsystem() {
 		return $this->subsystem;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::setSubsystem()
+	 */
 	public function setSubsystem(Subsystem $subsystem = null) {
 		$this->subsystem = $subsystem;
 	}
@@ -281,6 +365,10 @@ class VarsRequest implements Request {
 	
 	private $acceptRange;
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getAcceptRange()
+	 */
 	public function getAcceptRange(): AcceptRange {
 		if ($this->acceptRange !== null) {
 			return $this->acceptRange;
@@ -340,6 +428,10 @@ class VarsRequest implements Request {
 // 		return $relativeUrl;
 // 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getRemoteIp()
+	 */
 	public function getRemoteIp() {
 		return $this->extractServerVar('REMOTE_ADDR');
 	}
