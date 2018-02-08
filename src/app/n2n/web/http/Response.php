@@ -104,6 +104,7 @@ class Response {
 	private $httpCachingEnabled = true;
 	private $sendEtagAllowed = true;
 	private $sendLastModifiedAllowed = true;
+	private $serverPushAllowed = true;
 	
 	private $outputBuffers;
 	private $bufferedHeaders;
@@ -175,6 +176,24 @@ class Response {
 	 */
 	public function isSendLastModifiedAllowed() {
 		return $this->sendLastModifiedAllowed;
+	}
+	
+	/**
+	 * If false all server push directives mandated be {@see self::serverPush()} will be ignored. This option is 
+	 * usually modified through changes in the app.ini.
+	 *
+	 * @param bool $sendLastModifiedAllowed
+	 */
+	public function setServerPushAllowed(bool $serverPushAllowed) {
+		$this->serverPushAllowed = $serverPushAllowed;
+	}
+	
+	/**
+	 * @see self::setSendLastMoidifiedAllowed()
+	 * @return bool
+	 */
+	public function isServerPushAllowed() {
+		return $this->serverPushAllowed;
 	}
 	
 	/**
@@ -466,6 +485,18 @@ class Response {
 		$this->bufferedResponseCacheControl = $responseCacheControl;
 	}
 	
+	/**
+	 * Server push will be ignored if HTTP version of request is lower than 2 or if sever push is disabled in app.ini
+	 * 
+	 * @param ServerPushDirective $directive
+	 */
+	public function serverPush(ServerPushDirective $directive) {
+		if ($this->request->getProtocolVersion()->getMajorNum() < 2) {
+			return;
+		}
+		
+		$this->setHeader($directive->toHeader());
+	}
 	
 	public function getResponseCacheStore() {
 		return $this->responseCacheStore;
@@ -668,6 +699,13 @@ class Header {
 	 */
 	public function isReplace() {
 		return $this->replace;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function __toString() {
+		return $this->headerStr;
 	}
 }
 

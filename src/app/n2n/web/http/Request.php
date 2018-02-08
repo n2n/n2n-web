@@ -24,6 +24,7 @@ namespace n2n\web\http;
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
+use n2n\util\dev\Version;
 
 interface Request {
 	const PROTOCOL_HTTP = 'http';
@@ -82,6 +83,12 @@ interface Request {
 	 * @return string 
 	 */
 	public function getProtocol(): string;
+	
+	/**
+	 * @return Version
+	 */
+	public function getProtocolVersion(): Version;
+	
 	/**
 	 * @return string 
 	 */
