@@ -21,7 +21,10 @@ interface UiOutfitter {
 	const NATURE_BTN_FULL_WIDTH = 2048;
 	const NATURE_SELECT = 4096;
 	const NATURE_MASSIVE_ARRAY_ITEM_STRUCTURE = 8192;
-
+	const NATURE_CONTROL_GROUP = 16384;
+	const NATURE_CONTROL_GROUP_ADDON = 32768;
+	const NATURE_CONTROL_WRAPPER = 65536;
+	
 	const EL_NATRUE_CONTROL_ADDON_SUFFIX_WRAPPER = 1;
 	const EL_NATURE_CONTROL_ADDON_WRAPPER = 2;
 	const EL_NATURE_CONTROL_ADD = 4;
@@ -42,7 +45,7 @@ interface UiOutfitter {
 	 * @param int $elemNature
 	 * @return HtmlElement
 	 */
-	public function createElement(int $elemNature, array $attrs = null, $contents = null): UiComponent;
+	public function createElement(int $elemNature, array $attrs = null, $contents = ''): UiComponent;
 
 	/**
 	 * @param PropertyPath $propertyPath
