@@ -27,6 +27,7 @@ class Method {
 	const PUT = 4;
 	const DELETE = 8;
 	const HEAD = 16;
+	const OPTIONS = 32;
 	
 	public static function createFromString($str) {
 		switch ($str) {
@@ -50,6 +51,10 @@ class Method {
 			case 'head':
 			case self::HEAD:
 				return self::HEAD;
+			case 'OPTIONS':
+			case 'options':
+			case self::OPTIONS:
+				return self::OPTIONS;
 			default:
 				throw new \InvalidArgumentException('Unknown http method str: ' . $str);
 		}
