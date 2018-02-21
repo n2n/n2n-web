@@ -60,7 +60,7 @@ abstract class PropertyValidatorAdapter implements PropertyValidator {
 			throw new ValidatorInitializationException('Validator ' . get_class($this) 
 					. ' incompatible with type ' . get_class($managedProperty) . ' of property ' 
 					. $managedProperty->getName() . '. Allowed types: ' 
-					. implode(', ', $this->allowedTypeNames));
+					. implode(', ', (array) $this->allowedTypeNames));
 			
 		}
 		
