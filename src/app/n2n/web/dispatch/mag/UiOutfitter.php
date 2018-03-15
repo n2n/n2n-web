@@ -32,6 +32,8 @@ interface UiOutfitter {
 	const EL_NATURE_ARRAY_ITEM_CONTROL = 16;
 	const EL_NATURE_CHECK_WRAPPER = 32;
 	const EL_NATURE_HELP_TEXT = 64;
+	const EL_NATURE_CONTROL_LIST = 128;
+	const EL_NATURE_CONTROL_LIST_ITEM = 256;
 
 	const ICON_NATURE_ADD = 'fa fa-plus';
 	const ICON_NATURE_REMOVE = 'fa fa-times';
