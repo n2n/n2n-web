@@ -145,6 +145,17 @@ class HttpContext {
 	}
 	
 	/**
+	 * @return N2nLocale[]
+	 */
+	public function getAvailableN2nLocales() {
+		$contextN2nLocales = $this->supersystem->getN2nLocales();
+		foreach ($this->getAvailableSubsystems() as $subsystem) {
+			$contextN2nLocales = array_merge($contextN2nLocales, $subsystem->getN2nLocales());
+		}
+		return $contextN2nLocales;
+	}
+	
+	/**
 	 * @return Subsystem[] 
 	 */
 	public function getAvailableSubsystems() {

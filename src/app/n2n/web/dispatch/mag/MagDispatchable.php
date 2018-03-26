@@ -24,5 +24,9 @@ namespace n2n\web\dispatch\mag;
 use n2n\web\dispatch\DynamicDispatchable;
 
 interface MagDispatchable extends DynamicDispatchable {
+	
+	/**
+	 * @return MagCollection
+	 */
 	public function getMagCollection(): MagCollection;
 }
