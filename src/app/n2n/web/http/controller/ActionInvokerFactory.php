@@ -271,6 +271,11 @@ class ActionInvokerFactory {
 }
 
 class InvokerInfo {
+	private $invoker;
+	private $numSinglePathParts;
+	private $queryParams;
+	private $interceptors = array();
+	
 	public function __construct(MagicMethodInvoker $invoker, $numSinglePathParts, array $queryParams) {
 		$this->invoker = $invoker;
 		$this->numSinglePathParts = $numSinglePathParts;
@@ -291,5 +296,19 @@ class InvokerInfo {
 	
 	public function getQueryParams() {
 		return $this->queryParams;
+	}
+	
+	/**
+	 * @param Interceptor[] $interceptors
+	 */
+	public function setInterceptors(array $interceptors) {
+		$this->interceptors = $interceptors;
+	}
+	
+	/**
+	 * @return Interceptor[]
+	 */
+	public function getInterceptors() {
+		return $this->interceptors;
 	}
 }

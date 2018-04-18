@@ -42,23 +42,35 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				$request->getMethod(), $request->getQuery(), $request->getPostQuery(),
 				$request->getAcceptRange(), $this->getN2nContext());
 		$invokerFactory->setConstantValues($controllerContext->getParams());
-		$interpreter = new ControllerInterpreter(new \ReflectionClass($this), $invokerFactory);
+		$interpreter = new ControllerInterpreter(new \ReflectionClass($this), $invokerFactory,
+				new InterceptorFactory($controllerContext->getControllingPlan()->getN2nContext()));
 		
 		$this->resetCacheControl();
 		
+		if (!$this->intercept(...$interpreter->findControllerInterceptors())) {
+			return true;
+		}
+		
 		$catchedStatusException = null;
-
+		
 		try {
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
 			foreach ($prepareInvokers as $prepareInvoker) {
 				$this->cu()->setInvokerInfo($prepareInvoker);
-				$prepareInvoker->getInvoker()->invoke($this);
+				if ($this->intercept(...$prepareInvoker->getInterceptors())) {
+					$prepareInvoker->getInvoker()->invoke($this);
+				} else {
+					return true;
+				}
 			}
 		
 			$invokerInfos = $interpreter->interpret(ControllerInterpreter::DETECT_ALL & ~ ControllerInterpreter::DETECT_PREPARE_METHOD);
 			if (!empty($invokerInfos)) {
 				foreach ($invokerInfos as $invokerInfo) {
 					$this->cu()->setInvokerInfo($invokerInfo);
+					
+					if (!$this->intercept(...$invokerInfo->getInterceptors())) continue;
+					
 					$invokerInfo->getInvoker()->invoke($this);
 				}
 
@@ -77,6 +89,9 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				if (!empty($notFoundInvokers)) {
 					foreach ($notFoundInvokers as $invokerInfo) {
 						$this->cu()->setInvokerInfo($invokerInfo);
+						
+						if (!$this->intercept(...$invokerInfo->getInterceptors())) continue;
+						
 						$invokerInfo->getInvoker()->invoke($this);
 						$catchedStatusException = null;
 					}

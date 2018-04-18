@@ -56,6 +56,9 @@ use n2n\web\http\payload\impl\FilePayload;
 use n2n\io\fs\FsPath;
 use n2n\web\http\payload\impl\FsPathPayload;
 use n2n\web\ui\UiComponent;
+use n2n\reflection\ArgUtils;
+use n2n\web\http\controller\Interceptor;
+use n2n\web\http\controller\InterceptorFactory;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -532,5 +535,35 @@ class ControllingUtils {
 	
 	public function acceptQuality(string $mimeType) {
 		return $this->getRequest()->getAcceptRange()->matchQuality($mimeType);
+	}
+	
+	private $interceptorFactory;
+	
+	/**
+	 * @return \n2n\web\http\controller\InterceptorFactory
+	 */
+	private function getInterceptorFactory() {
+		if ($this->interceptorFactory === null) {
+			$this->interceptorFactory = new InterceptorFactory($this->getN2nContext());
+		}
+		
+		return $this->interceptorFactory;
+	}
+	
+	/**
+	 * @param Interceptor|string ...$interceptors
+	 */
+	public function intercept(...$interceptors) {
+		ArgUtils::valArray($interceptors, ['string', Interceptor::class]);
+		
+		foreach ($interceptors as $interceptor) {
+			if (!($interceptor instanceof Interceptor)) {
+				$interceptor = $this->getInterceptorFactory()->createByLookupId($interceptor);
+			}
+			
+			if (!$interceptor->invoke($this)) return false;
+		}
+		
+		return true;
 	}
 }
