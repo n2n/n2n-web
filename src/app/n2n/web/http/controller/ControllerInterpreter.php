@@ -31,6 +31,9 @@ use n2n\reflection\ReflectionUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
 use n2n\web\http\annotation\AnnoConsums;
+use n2n\web\http\annotation\AnnoIntercept;
+use n2n\reflection\magic\MagicContext;
+use n2n\reflection\magic\MagicObjectUnavailableException;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
@@ -51,15 +54,18 @@ class ControllerInterpreter {
 	
 	private $class;
 	private $invokerFactory;
+	private $interceptorFactory;
 	private $pathPatternCompiler;
 	
 	/**
 	 * @param \ReflectionClass $class
 	 * @param int $detect
 	 */
-	public function __construct(\ReflectionClass $class, ActionInvokerFactory $invokerFactory) {
+	public function __construct(\ReflectionClass $class, ActionInvokerFactory $invokerFactory, 
+			InterceptorFactory $interceptorFactory) {
 		$this->class = $class;
 		$this->invokerFactory = $invokerFactory;
+		$this->interceptorFactory = $interceptorFactory;
 		$this->pathPatternCompiler = new PathPatternCompiler();
 	}
 	/**
@@ -77,25 +83,19 @@ class ControllerInterpreter {
 		if ($detectOptions & self::DETECT_SIMPLE_METHODS
 				&& null !== ($invoker = $this->findSimpleMethod())) {
 			$invokers[] = $invoker;
-			return $invokers;
-		}
-		
-		if ($detectOptions & self::DETECT_PATTERN_METHODS
+		} else if ($detectOptions & self::DETECT_PATTERN_METHODS
 				&& null !== ($invoker = $this->findPatternMethod())) {
 			$invokers[] = $invoker;
-			return $invokers;
-		}
-		
-		if ($detectOptions & self::DETECT_INDEX_METHOD
+		} else if ($detectOptions & self::DETECT_INDEX_METHOD
 				&& null !== ($invoker = $this->findIndexMethod())) {
 			$invokers[] = $invoker;
-			return $invokers;
-		}
-		
-		if ($detectOptions & self::DETECT_NOT_FOUND_METHOD
+		} else if ($detectOptions & self::DETECT_NOT_FOUND_METHOD
 				&& null !== ($invoker = $this->findNotFoundMethod())) {
 			$invokers[] = $invoker;
-			return $invokers;
+		}
+		
+		foreach ($invokers as $invoker) {
+			$invoker->setInterceptors($this->findInterceptors($invoker->getInvoker()->getMethod()));
 		}
 		
 		return $invokers;
@@ -418,4 +418,76 @@ class ControllerInterpreter {
 		}
 		return null;
 	}
+	
+	/**
+	 * @return Interceptor[] 
+	 */
+	function findControllerInterceptors() {
+		$annotationSet = ReflectionContext::getAnnotationSet($this->class);
+		
+		$annoIntercept = $annotationSet->getClassAnnotation(AnnoIntercept::class);
+		
+		if ($annoIntercept === null) return [];
+		
+		return $this->interceptorFactory->createByAnno($annoIntercept);
+	}
+	
+	/**
+	 * @param \ReflectionMethod $method
+	 * @return \n2n\web\http\controller\Interceptor[]
+	 */
+	private function findInterceptors(\ReflectionMethod $method) {
+	    $annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
+	    
+	    $annoIntercept = $annotationSet->getMethodAnnotation($method->getName(), AnnoIntercept::class);
+	    
+	    if ($annoIntercept === null) return [];
+	    
+	    return $this->interceptorFactory->createByAnno($annoIntercept);
+	}
+}
+
+class InterceptorFactory {
+    private $magicContext;
+    
+    function __construct(MagicContext $magicContext) {
+        $this->magicContext = $magicContext;
+    }
+    
+    /**
+     * @param AnnoIntercept $annoIntercept
+     * @throws ControllerErrorException
+     * @return Interceptor[]
+     */
+    function createByAnno(AnnoIntercept $annoIntercept)  {
+        $interceptors = array();
+        foreach ($annoIntercept->getInterceptorLookupIds() as $interceptorLookupId) {
+            $interceptor = null;
+            try {
+                $interceptors[] = $this->createByLookupId($interceptorLookupId);
+            } catch (MagicObjectUnavailableException|InvalidInterceptorException $e) {
+                throw new ControllerErrorException('Invalid interceptor annotated: ' . $interceptorLookupId,
+                        $annoIntercept->getFileName(), $annoIntercept->getLine());
+            }    
+        }
+        return $interceptors;
+    }
+    
+    /**
+     * @param string $lookupId
+     * @return Interceptor
+     */
+    function createByLookupId(string $lookupId) {
+       	$interceptor = $this->magicContext->lookup($lookupId);
+        $this->valInterceptor($interceptor);        
+        return $interceptor;
+    }
+    
+    private function valInterceptor(Interceptor $interceptor) {
+        if ($interceptor instanceof Interceptor) return;
+            
+        throw new InvalidInterceptorException(get_class($interceptor) 
+                . ' can not be used as an Interceptor because it must implement ' 
+                . Interceptor::class);
+    }
 }

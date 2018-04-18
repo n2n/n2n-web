@@ -333,4 +333,8 @@ trait ControllingUtilsTrait {
 	protected final function acceptQuality(string $mimeType) {
 		return $this->cu()->acceptQuality($mimeType);
 	}
+	
+	protected final function intercept(...$interceptors) {
+		return $this->cu()->intercept(...$interceptors);
+	}
 }
