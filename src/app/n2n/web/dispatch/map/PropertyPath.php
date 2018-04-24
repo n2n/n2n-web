@@ -146,7 +146,9 @@ class PropertyPath implements \IteratorAggregate, \Countable {
 	public static function createFromPropertyExpression($propertyExpression): PropertyPath {
 		$expressionParts = array();
 		
-		if ($propertyExpression instanceof PropertyPathPart) {
+		if ($propertyExpression instanceof PropertyPath) {
+			$expressionParts = $propertyExpression->toArray();
+		} else if ($propertyExpression instanceof PropertyPathPart) {
 			$expressionParts[] = $propertyExpression;
 		} else if (is_array($propertyExpression)) {
 			$expressionParts = $propertyExpression;
