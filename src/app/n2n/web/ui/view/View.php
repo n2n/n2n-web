@@ -83,7 +83,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->reset();
 	}
 	
-	public function getParams(): array {
+	public function getParams() {
 		return $this->params;
 	}
 	
@@ -572,6 +572,15 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 	
 	/**
+	 * @param array $params
+	 */
+	public function mergeParams(array $params = array()) {
+		if (empty($params)) return $this->params;
+		
+		return array_merge($this->params, $params);	
+	}
+	
+	/**
 	 * @param boolean 
 	 */
 	public function assert($e) {
@@ -648,9 +657,9 @@ abstract class View extends BufferedPayload implements UiComponent {
 
 	/**
 	 * @param string|View $viewName
-	 * @param mixed $params
+	 * @param array $params
 	 */
-	public function import($viewNameExpression, $params = null, ViewCacheControl $viewCacheControl = null, Module $module = null) {
+	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null, Module $module = null) {
 		$this->out($this->getImport($viewNameExpression, $params, $viewCacheControl, $module));
 	}
 	
@@ -663,11 +672,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$view = null;
 		if ($viewNameExpression instanceof View) {
 			$view = $viewNameExpression;
-			if (!empty($params)) {
-				$view->setParams(array_merge($view->getParams(), $params));
-			}
 		} else {
-			$params = array_merge($this->params, (array) $params);
 			$view = $this->createImportView($viewNameExpression, $params, $viewCacheControl, $module);
 		}
 		$view->setControllerContext($this->controllerContext);
@@ -679,7 +684,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return $view;
 	}
 	
-	protected function createImportView(string $viewNameExpression, $params = null, 
+	protected function createImportView(string $viewNameExpression, array $params = null, 
 			ViewCacheControl $viewCacheControl = null, Module $module = null) {
 				
 		$viewName = $this->resolveViewName($viewNameExpression);
