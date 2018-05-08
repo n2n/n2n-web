@@ -602,7 +602,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string $viewNameExpression
 	 * @param mixed $params
 	 */
-	public function useTemplate(string $viewNameExpression, $params = null) {
+	public function useTemplate(string $viewNameExpression, array $params = null) {
 		$this->ensureContentsAreNotInitialized();
 		
 		$this->templateView = $this->getN2nContext()->lookup(ViewFactory::class)->create(
@@ -659,7 +659,8 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string|View $viewName
 	 * @param array $params
 	 */
-	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null, Module $module = null) {
+	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null, 
+			Module $module = null) {
 		$this->out($this->getImport($viewNameExpression, $params, $viewCacheControl, $module));
 	}
 	
