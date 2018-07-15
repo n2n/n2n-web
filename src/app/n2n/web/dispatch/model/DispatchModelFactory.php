@@ -96,7 +96,7 @@ class DispatchModelFactory {
 				} catch (InvalidPropertyAccessMethodException $e) {
 					throw new DispatchErrorException('Invalid property access method for property: ' 
 									. $class->getName() . '::$' . $name, 
-							$e->getMethod()->getFileName(), $e->getMethod()->getLine());
+							$e->getMethod()->getFileName(), $e->getMethod()->getStartLine());
 				} catch (ReflectionException $e) {
 					throw $this->createDispatchErrorException($e, $annoDispProperties);
 				}
