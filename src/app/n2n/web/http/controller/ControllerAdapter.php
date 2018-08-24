@@ -113,7 +113,3 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		return false;
 	}
 }
-
-class NoHttpRefererGivenException extends \Exception {
-	
-}
