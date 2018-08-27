@@ -29,7 +29,7 @@ use n2n\util\ex\IllegalStateException;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\http\controller\ControllingPlan;
 use n2n\web\http\payload\Payload;
-use n2n\web\http\controller\NoHttpRefererGivenException;
+use n2n\web\http\NoHttpRefererGivenException;
 use n2n\web\http\nav\UrlComposer;
 use n2n\web\http\payload\impl\Redirect;
 use n2n\web\dispatch\DispatchContext;
