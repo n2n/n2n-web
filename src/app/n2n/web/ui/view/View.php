@@ -674,6 +674,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		if ($viewNameExpression instanceof View) {
 			$view = $viewNameExpression;
 		} else {
+			ArgUtils::valType($viewNameExpression, ['string', View::class], 'viewNameExpression');
 			$view = $this->createImportView($viewNameExpression, $params, $viewCacheControl, $module);
 		}
 		$view->setControllerContext($this->controllerContext);
