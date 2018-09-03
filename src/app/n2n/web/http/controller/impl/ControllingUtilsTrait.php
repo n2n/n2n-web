@@ -98,6 +98,14 @@ trait ControllingUtilsTrait {
 	protected final function getControllerContext(): ControllerContext {
 		return $this->cu()->getControllerContext();
 	}
+	
+	/**
+	 * @return \n2n\util\uri\Path
+	 */
+	protected final function getControllerPath() {
+		return $this->cu()->getControllerPath();
+	}
+	
 	/**
 	 * @return ControllingPlan
 	 */

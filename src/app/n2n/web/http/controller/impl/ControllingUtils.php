@@ -126,6 +126,13 @@ class ControllingUtils {
 	}
 	
 	/**
+	 * @return \n2n\util\uri\Path
+	 */
+	public function getControllerPath() {
+		return $this->getHttpContext()->getControllerContextPath($this->getControllerContext());
+	}
+	
+	/**
 	 * @return ControllingPlan
 	 */
 	public function getControllingPlan(): ControllingPlan {
