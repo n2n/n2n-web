@@ -34,17 +34,17 @@ class HttpContext {
 	private $request;
 	private $response;
 	private $session;
-	private $assetsUrl;
+	private $baseAssetsUrl;
 	private $supersystem;
 	private $availableSubsystems;
 	private $n2nContext;
 	
-	public function __construct(Request $request, Response $response, Session $session, Url $assetsUrl, 
+	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
 			Supersystem $supersystem, array $availableSubsystems, N2nContext $n2nContext) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->session = $session;
-		$this->assetsUrl = $assetsUrl;
+		$this->baseAssetsUrl = $baseAssetsUrl;
 		$this->supersystem = $supersystem;
 		$this->availableSubsystems = $availableSubsystems;
 		$this->n2nContext = $n2nContext;
@@ -156,10 +156,24 @@ class HttpContext {
 	}
 	
 	/**
+	 * @return \n2n\web\http\Supersystem
+	 */
+	public function getSupersystem() {
+		return $this->supersystem;
+	}
+	
+	/**
 	 * @return Subsystem[] 
 	 */
 	public function getAvailableSubsystems() {
 		return $this->availableSubsystems;
+	}
+	
+	/**
+	 * @return \n2n\util\uri\Url
+	 */
+	public function getBaseAssetsUrl() {
+		return $this->baseAssetsUrl;
 	}
 	
 	/**
@@ -168,7 +182,7 @@ class HttpContext {
 	 * @return Url
 	 */
 	public function getAssetsUrl(string $moduleNamespace, bool $absolute = false): Url {
-		$assetsUrl = $this->assetsUrl->extR(VarStore::namespaceToDirName($moduleNamespace));
+		$assetsUrl = $this->baseAssetsUrl->extR(VarStore::namespaceToDirName($moduleNamespace));
 		
 		if (!$absolute) {
 			return $assetsUrl;
