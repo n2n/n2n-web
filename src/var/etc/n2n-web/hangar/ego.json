@@ -1,1 +1,5 @@
-{}
+{
+    "templateDefs": [
+        "n2n\\web\\hangar\\WebTemplateDef"
+    ]
+}
