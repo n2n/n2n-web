@@ -11,7 +11,7 @@ use n2n\web\dispatch\mag\MagCollection;
 use n2n\impl\web\dispatch\mag\model\BoolMag;
 use n2n\web\http\orm\ResponseCacheClearer;
 use n2n\persistence\orm\annotation\AnnoEntityListeners;
-use hangar\util\Huo;
+use hangar\api\Huo;
 
 class WebTemplateDef implements HangarTemplateDef {
 
