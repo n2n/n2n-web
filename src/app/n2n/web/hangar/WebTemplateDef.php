@@ -17,7 +17,6 @@ class WebTemplateDef implements HangarTemplateDef {
 
 	const PROP_NAME_APPLY_OBJECT_ADAPTER = 'applyObjectAdapter';
 	const PROP_NAME_ADD_RESPONSE_CACHE_CLEARER = 'addResponseCacheClearer';
-	const PROP_NAME_CHECK_TABLE_NAME = 'checkTableName';
 	
 	public function getName(): string {
 		return 'Common';
