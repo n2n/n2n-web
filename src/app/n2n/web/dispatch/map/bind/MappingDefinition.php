@@ -41,6 +41,9 @@ class MappingDefinition {
 		$this->paramInvestigator = $paramInvestigator;
 	}
 	
+	/**
+	 * @return \n2n\web\dispatch\map\MappingResult
+	 */
 	public function getMappingResult() {
 		return $this->mappingResult;
 	}
