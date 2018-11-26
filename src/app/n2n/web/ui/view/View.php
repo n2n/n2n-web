@@ -36,7 +36,6 @@ use n2n\core\container\N2nContext;
 use n2n\reflection\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
-use n2n\l10n\MessageTranslator;
 use n2n\web\http\UnknownControllerContextException;
 use n2n\l10n\N2nLocale;
 use n2n\web\http\HttpContext;
@@ -767,12 +766,8 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string $translate
 	 * @return \n2n\l10n\Message[]
 	 */
-	public function getMessages($groupName = null, $severity = null, $translate = true) {
-		$messages = $this->getHttpContext()->getMessageContainer()->getAll($groupName, $severity);
-		if (!$translate) return $messages;
-		
-		$messageTranslator = new MessageTranslator($this->moduleNamespace, $this->getHttpContext()->getN2nLocale());
-		return $messageTranslator->translateAll($messages);
+	public function getMessages($groupName = null, $severity = null) {
+		return $this->getHttpContext()->getMessageContainer()->getAll($groupName, $severity);
 	}
 	/**
 	 * @return \n2n\l10n\DynamicTextCollection
