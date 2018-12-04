@@ -26,9 +26,9 @@ use n2n\web\dispatch\map\MappingResult;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\reflection\magic\CanNotFillParameterException;
 use n2n\web\dispatch\DispatchErrorException;
-use n2n\l10n\MessageCode;
 use n2n\l10n\Message;
 use n2n\web\dispatch\map\PropertyPathPart;
+use n2n\l10n\impl\TextCodeMessage;
 
 class ClosureValidator implements Validator {
 	const SINGULAR_DEFAULT_ERROR_TEXT_CODE = 'n2n.model.dispatch.val.ClosureValidator.singular';
@@ -91,7 +91,7 @@ class ClosureValidator implements Validator {
 	}
 	
 	private function createMessage(MappingResult $mappingResult, array $invalidPathParts) {
-		if ($this->errMsg !== null && !($this->errMsg instanceof MessageCode 
+		if ($this->errMsg !== null && !($this->errMsg instanceof TextCodeMessage 
 				&& !array_key_exists(self::FIELD_ARG_KEY, $this->errMsg->getArgs()))) {
 			return $this->errMsg;
 		}
@@ -110,12 +110,12 @@ class ClosureValidator implements Validator {
 		}
 		
 		if (count($invalidPathParts) == 1) {
-			return new MessageCode(self::SINGULAR_DEFAULT_ERROR_TEXT_CODE, 
+			return Message::createCodeArg(self::SINGULAR_DEFAULT_ERROR_TEXT_CODE, 
 					array('field' => current($labels)), Message::SEVERITY_ERROR, 
 					'n2n\impl\web\dispatch');
 		}
 		
-		return new MessageCode(self::PLURAL_DEFAULT_ERROR_TEXT_CODE,
+		return Message::createCodeArg(self::PLURAL_DEFAULT_ERROR_TEXT_CODE,
 				array('field' => implode(', ', $labels)), Message::SEVERITY_ERROR,
 				'n2n\impl\web\dispatch');
 	}

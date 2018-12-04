@@ -27,7 +27,6 @@ use n2n\web\dispatch\property\ManagedProperty;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\dispatch\map\bind\BindingErrors;
 use n2n\web\dispatch\map\PropertyPathPart;
-use n2n\l10n\MessageCode;
 use n2n\l10n\Message;
 
 abstract class SinglePropertyValidator extends PropertyValidatorAdapter {
@@ -106,7 +105,7 @@ abstract class SinglePropertyValidator extends PropertyValidatorAdapter {
 	
 	protected function failedCode($textCode, array $args = null, $module = null, $num = null) {
 		$this->getBindingErrors()->addError($this->getPathPart(), 
-				new MessageCode($textCode, $args, Message::SEVERITY_ERROR, $module, $num));
+				Message::createCodeArg($textCode, $args, Message::SEVERITY_ERROR, $module, $num));
 	}
 	
 	protected abstract function validateProperty($mapValue);

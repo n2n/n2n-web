@@ -24,7 +24,6 @@ namespace n2n\web\dispatch\map\bind;
 use n2n\web\dispatch\map\PropertyPathPart;
 use n2n\l10n\Message;
 use n2n\web\dispatch\map\val\ValidationUtils;
-use n2n\l10n\MessageCode;
 
 class BindingErrors {
 	private $invalidRawValues = array();
@@ -70,7 +69,7 @@ class BindingErrors {
 	}
 	
 	public function addErrorCode($propertyExpression, $errorCode, array $args = null, $moduleNamespace = null) {
-		$this->addError($propertyExpression, new MessageCode($errorCode, $args, 
+		$this->addError($propertyExpression, Message::createCodeArg($errorCode, $args, 
 				Message::SEVERITY_ERROR, $moduleNamespace));
 		
 	}

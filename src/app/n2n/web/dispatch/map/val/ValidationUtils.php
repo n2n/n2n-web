@@ -23,8 +23,8 @@ namespace n2n\web\dispatch\map\val;
 
 use n2n\l10n\Message;
 use n2n\web\dispatch\map\MappingResult;
-use n2n\l10n\MessageCode;
 use n2n\reflection\ArgUtils;
+use n2n\l10n\impl\TextCodeMessage;
 
 class ValidationUtils {
 	const FIELD_ARG_KEY = 'field';
@@ -34,12 +34,12 @@ class ValidationUtils {
 			return $messageExpression;
 		}
 		
-		return new Message($messageExpression);
+		return Message::create($messageExpression);
 	}
 	
 	public static function buildErrorMessage(MappingResult $mappingResult, array $invalidPathParts,	
 			$fallbackTextCode, array $args, $textCodeModuleNs, Message $errorMessage = null) {
-		if ($errorMessage !== null && !($errorMessage instanceof MessageCode
+		if ($errorMessage !== null && !($errorMessage instanceof TextCodeMessage
 				&& !array_key_exists(self::FIELD_ARG_KEY, $errorMessage->getArgs()))) {
 			return $errorMessage;
 		}
@@ -58,7 +58,7 @@ class ValidationUtils {
 		}
 		
 		$args[self::FIELD_ARG_KEY] = $field;
-		return new MessageCode($fallbackTextCode, $args, 
+		return Message::createCodeArg($fallbackTextCode, $args, 
 				Message::SEVERITY_ERROR, $textCodeModuleNs);
 	}
 	
