@@ -21,37 +21,18 @@
  */
 namespace n2n\web\http;
 
-class StatusException extends \RuntimeException {
-	private $status;
-// 	private $attributes;
+class MethodNotAllowedException extends StatusException {
+	private $allowedMethods;
 	
-	public function __construct($status, $message = null, $code = null, \Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-		$this->status = (int) $status;
-// 		$this->attributes = new Attributes();
-	}
-	/**
-	 * 
-	 * @return int
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
-	/**
-	 * 
-	 * @param int $status
-	 */
-	public function setStatus($status) {
-		$this->status = (int) $status;
+	public function __construct(int $allowedMethods, $message = null, $code = null, \Exception $previous =  null) {
+		parent::__construct(Response::STATUS_405_METHOD_NOT_ALLOWED, $message, $code, $previous);
+		
+		$this->allowedMethods = $allowedMethods;
 	}
 	
 	public function prepareResponse(Response $response) {
+		if ($this->allowedMethods > 0) {
+			$response->setHeader('Allow: ' . Method::toString($this->allowedMethods));
+		}
 	}
-// 	/**
-// 	 * 
-// 	 * @return \n2n\util\config\Attributes
-// 	 */
-// 	public function getAttributes() {
-// 		return $this->attributes;
-// 	}
 }

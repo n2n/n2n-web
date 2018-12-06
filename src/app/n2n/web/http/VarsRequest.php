@@ -35,6 +35,8 @@ class VarsRequest implements Request {
 	private $serverVars;
 	
 	private $method;
+	private $origMethodName;
+	private $realMethod;
 	private $requestedUrl;
 	private $cmdContextPath;
 	private $cmdPath;
@@ -124,15 +126,37 @@ class VarsRequest implements Request {
 			$hostName = $this->extractServerVar('SERVER_NAME');	
 		}
 		
-		$this->method = Method::createFromString($this->extractServerVar('REQUEST_METHOD'));
+		$this->origMethodName = mb_strtoupper($this->extractServerVar('REQUEST_METHOD'));
+		try {
+			$this->method = Method::createFromString($this->origMethodName);
+		} catch (\InvalidArgumentException $e) {
+			$this->method = Method::GET;
+		}
+		
 		$this->requestedUrl = new Url($protocol, Authority::create($hostName), 
 				$this->cmdContextPath->ext($this->cmdPath), new Query($getVars));		
 	}	
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getMethod()
+	 */
 	public function getMethod(): int {
 		return $this->method;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getOrigMethodName()
+	 */
+	public function getOrigMethodName(): string {
+		return $this->origMethodName;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getHeader()
+	 */
 	public function getHeader($name) {
 		$varKey = 'HTTP_' . str_replace('-', '_', mb_strtoupper($name));
 		if (isset($this->serverVars[$varKey])) {
