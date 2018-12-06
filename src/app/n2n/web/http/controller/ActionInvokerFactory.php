@@ -120,6 +120,11 @@ class ActionInvokerFactory {
 					$value = new ParamPut($this->query->get($paramName));
 				}
 				return true;
+			case 'n2n\web\http\controller\ParamPatch':
+				if ($this->httpMethod == Method::PATCH && $this->query->contains($paramName)) {
+					$value = new ParamPut($this->query->get($paramName));
+				}
+				return true;
 			case 'n2n\web\http\controller\ParamDelete':
 				if ($this->httpMethod == Method::DELETE && $this->query->contains($paramName)) {
 					$value = new ParamDelete($this->query->get($paramName));
