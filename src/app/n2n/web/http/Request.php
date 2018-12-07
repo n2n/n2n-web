@@ -29,10 +29,16 @@ use n2n\util\dev\Version;
 interface Request {
 	const PROTOCOL_HTTP = 'http';
 	const PROTOCOL_HTTPS = 'https';
+	
 	/**
 	 * @return string 
 	 */
 	public function getMethod(): int;
+	
+	/**
+	 * @return string
+	 */
+	public function getOrigMethodName(): string;
 
 	/**
 	 * @return \n2n\util\uri\Url

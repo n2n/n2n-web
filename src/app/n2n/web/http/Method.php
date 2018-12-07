@@ -26,10 +26,13 @@ class Method {
 	const POST = 2;
 	const PUT = 4;
 	const DELETE = 8;
-	const HEAD = 16;
+	const PATCH = 16;
 	const OPTIONS = 32;
 	
-	public static function createFromString($str) {
+	const HEAD = 64;
+	const TRACE = 128;
+	
+	public static function createFromString($str/*, bool $includeMeta = false*/) {
 		switch ($str) {
 			case 'GET':
 			case 'get':
@@ -43,24 +46,36 @@ class Method {
 			case 'put':
 			case self::PUT:
 				return self::PUT;
+			case 'PATCH':
+			case 'patch':
+			case self::PATCH:
+				return self::PATCH;
 			case 'DELETE':
 			case 'delete':
 			case self::DELETE:
 				return self::DELETE;
-			case 'HEAD':
-			case 'head':
-			case self::HEAD:
-				return self::HEAD;
 			case 'OPTIONS':
 			case 'options':
 			case self::OPTIONS:
 				return self::OPTIONS;
+			case 'HEAD':
+			case 'head':
+			case self::HEAD:
+				if ($includeMeta) return self::HEAD;
+			case 'TRACE':
+			case 'trace':
+			case self::TRACE:
+				if ($includeMeta) return self::TRACE;
 			default:
 				throw new \InvalidArgumentException('Unknown http method str: ' . $str);
 		}
 	}
 	
-	public static function toString($method) {
+	public static function is($str, int $method) {
+		return mb_strtoupper($str) == self::toString($method);
+	}
+	
+	public static function toString(int $method) {
 		$strs = array();
 		if ($method & self::GET) {
 			$strs[] = 'GET';
@@ -71,11 +86,20 @@ class Method {
 		if ($method & self::PUT) {
 			$strs[] = 'PUT';
 		}
+		if ($method & self::PATCH) {
+			$strs[] = 'PATCH';
+		}
 		if ($method & self::DELETE) {
 			$strs[] = 'DELETE';
 		}
+		if ($method & self::OPTIONS) {
+			$strs[] = 'OPTIONS';
+		}
 		if ($method & self::HEAD) {
 			$strs[] = 'HEAD';
+		}
+		if ($method & self::TRACE) {
+			$strs[] = 'TRACE';
 		}
 		return implode(', ', $strs);
 	}
