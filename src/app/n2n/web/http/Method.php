@@ -32,7 +32,7 @@ class Method {
 	const HEAD = 64;
 	const TRACE = 128;
 	
-	public static function createFromString($str/*, bool $includeMeta = false*/) {
+	public static function createFromString($str, bool $includeMeta = false) {
 		switch ($str) {
 			case 'GET':
 			case 'get':
