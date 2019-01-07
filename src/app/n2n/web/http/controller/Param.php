@@ -23,7 +23,7 @@ namespace n2n\web\http\controller;
 
 use n2n\web\http\StatusException;
 use n2n\web\http\Response;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 abstract class Param {
 	private $value;

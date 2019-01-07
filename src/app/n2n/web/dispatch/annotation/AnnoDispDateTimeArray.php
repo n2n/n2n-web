@@ -24,7 +24,7 @@ namespace n2n\web\dispatch\annotation;
 use n2n\l10n\DateTimeFormat;
 use n2n\reflection\annotation\PropertyAnnotation;
 use n2n\reflection\annotation\PropertyAnnotationTrait;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationTrait;

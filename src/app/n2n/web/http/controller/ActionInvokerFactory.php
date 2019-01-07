@@ -27,7 +27,7 @@ use n2n\web\http\path\PathPatternComposeException;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\uri\Path;
-use n2n\reflection\magic\MagicContext;
+use n2n\util\magic\MagicContext;
 use n2n\web\http\Method;
 use n2n\web\http\AcceptRange;
 

@@ -24,7 +24,7 @@ namespace n2n\web\dispatch\map\bind;
 use n2n\web\dispatch\map\val\PropertyValidator;
 use n2n\web\dispatch\map\PropertyPath;
 use n2n\web\dispatch\map\MappingResult;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\web\dispatch\map\val\Validator;
 use n2n\util\col\GenericArrayObject;
 use n2n\web\dispatch\map\val\ClosureValidator;

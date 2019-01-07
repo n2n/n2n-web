@@ -1,7 +1,7 @@
 <?php
 namespace n2n\web\http;
 
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 class ServerPushDirective {
 	const AS_AUDIO = 'audio';

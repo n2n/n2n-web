@@ -22,12 +22,12 @@
 namespace n2n\web\http\nav;
 
 use n2n\web\http\controller\ControllerContext;
-use n2n\reflection\ReflectionUtils;
 use n2n\util\uri\Url;
 use n2n\util\StringUtils;
 use n2n\core\container\N2nContext;
 use n2n\util\uri\Linkable;
 use n2n\util\uri\UnavailableUrlException;
+use n2n\util\type\TypeUtils;
 
 class UrlBuilder {
 
@@ -61,7 +61,7 @@ class UrlBuilder {
 		try {
 			return StringUtils::strOf($arg);
 		} catch (\InvalidArgumentException $e) {
-			throw new \InvalidArgumentException('Invalid url expression: ' . ReflectionUtils::prettyValue($arg), 
+			throw new \InvalidArgumentException('Invalid url expression: ' . TypeUtils::prettyValue($arg), 
 					0, $e);
 		}
 	}
@@ -83,6 +83,6 @@ class UrlBuilder {
 
 		return Url::create($arg);
 		
-// 		throw new \InvalidArgumentException('Invalid url expression: ' . ReflectionUtils::prettyValue($arg));
+// 		throw new \InvalidArgumentException('Invalid url expression: ' . TypeUtils::prettyValue($arg));
 	}
 }

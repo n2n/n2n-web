@@ -22,7 +22,7 @@
 namespace n2n\web\dispatch\map\val;
 
 use n2n\web\dispatch\map\PropertyPathPart;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 abstract class SimplePropertyValidator extends SinglePropertyValidator {
 	private $pathPart;

@@ -23,7 +23,7 @@ namespace n2n\web\dispatch\map\val;
 
 use n2n\l10n\Message;
 use n2n\web\dispatch\map\MappingResult;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\l10n\impl\TextCodeMessage;
 
 class ValidationUtils {

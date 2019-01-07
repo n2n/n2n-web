@@ -30,14 +30,6 @@ interface UiComponent {
 	public function build(BuildContext $buildContext): string;
 }
 
-
-interface BuildContext {
-	/**
-	 * @return \n2n\web\ui\view\View
-	 */
-	public function getView();
-}
-
 class SimpleBuildContext implements BuildContext {
 	private $view;
 	

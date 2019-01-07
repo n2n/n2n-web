@@ -32,8 +32,8 @@ use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
 use n2n\web\http\annotation\AnnoConsums;
 use n2n\web\http\annotation\AnnoIntercept;
-use n2n\reflection\magic\MagicContext;
-use n2n\reflection\magic\MagicObjectUnavailableException;
+use n2n\util\magic\MagicContext;
+use n2n\util\magic\MagicObjectUnavailableException;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
