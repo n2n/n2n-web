@@ -24,7 +24,7 @@ namespace n2n\web\dispatch\property;
 use n2n\web\dispatch\DynamicDispatchable;
 use n2n\reflection\property\AccessProxy;
 use n2n\reflection\property\TypeConstraint;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
 use n2n\reflection\property\PropertyValueTypeMissmatchException;
 use n2n\reflection\ReflectionUtils;

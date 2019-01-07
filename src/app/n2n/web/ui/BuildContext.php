@@ -19,25 +19,11 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http\annotation;
+namespace n2n\web\ui;
 
-use n2n\reflection\annotation\MethodAnnotation;
-use n2n\reflection\annotation\MethodAnnotationTrait;
-use n2n\reflection\annotation\AnnotationTrait;
-use n2n\util\type\ArgUtils;
-
-class AnnoPath implements MethodAnnotation {
-	use MethodAnnotationTrait, AnnotationTrait;
-	
-	protected $method;
-	protected $pattern;
-	
-	public function __construct($pattern) {
-		ArgUtils::valType($pattern, 'scalar');
-		$this->pattern = $pattern;
-	}
-	
-	public function getPattern() {
-		return $this->pattern;
-	}
+interface BuildContext {
+	/**
+	 * @return \n2n\web\ui\view\View
+	 */
+	public function getView();
 }

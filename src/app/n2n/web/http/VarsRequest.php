@@ -26,7 +26,7 @@ use n2n\util\uri\Path;
 use n2n\util\uri\Url;
 use n2n\util\uri\Query;
 use n2n\util\uri\Authority;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
 
 class VarsRequest implements Request {

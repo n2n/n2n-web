@@ -261,7 +261,7 @@ class DispatchTarget {
 // 				if (!$targetItem->hasRegisteredCustomOption($optionName) || !is_scalar($value)) {
 // 					throw new UnexpectedParameterException(
 // 							SysTextUtils::get('n2n_error_model_dispatch_target_unexpected_option',
-// 									array('name' => $optionName, 'value' => ReflectionUtils::getTypeInfo($value))));
+// 									array('name' => $optionName, 'value' => TypeUtils::getTypeInfo($value))));
 // 				}
 // 				$targetItem->setOption($optionName, $value);
 // 				continue;

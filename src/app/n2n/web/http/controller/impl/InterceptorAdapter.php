@@ -4,7 +4,7 @@ namespace n2n\web\http\controller\impl;
 use n2n\web\http\controller\Interceptor;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\magic\MagicMethodInvoker;
-use n2n\reflection\magic\MagicContext;
+use n2n\util\magic\MagicContext;
 use n2n\web\http\controller\ControllerErrorException;
 use n2n\context\Lookupable;
 

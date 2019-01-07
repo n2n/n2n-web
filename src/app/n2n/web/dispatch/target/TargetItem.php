@@ -21,7 +21,7 @@
  */
 namespace n2n\web\dispatch\target;
 
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\web\dispatch\map\PropertyPath;
 
 abstract class TargetItem {

@@ -25,7 +25,7 @@ use n2n\web\http\Response;
 use n2n\io\managed\File;
 use n2n\core\N2nVars;
 use n2n\web\http\payload\ResourcePayload;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\io\IoUtils;
 use n2n\util\ex\NotYetImplementedException;
 

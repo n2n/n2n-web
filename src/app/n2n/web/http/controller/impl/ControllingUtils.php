@@ -37,7 +37,7 @@ use n2n\web\dispatch\Dispatchable;
 use n2n\web\http\ResponseCacheControl;
 use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\ViewFactory;
-use n2n\reflection\CastUtils;
+use n2n\util\type\CastUtils;
 use n2n\web\http\controller\Controller;
 use n2n\core\container\N2nContext;
 use n2n\web\http\Response;
@@ -56,7 +56,7 @@ use n2n\web\http\payload\impl\FilePayload;
 use n2n\io\fs\FsPath;
 use n2n\web\http\payload\impl\FsPathPayload;
 use n2n\web\ui\UiComponent;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 use n2n\web\http\controller\Interceptor;
 use n2n\web\http\controller\InterceptorFactory;
 
@@ -477,7 +477,7 @@ class ControllingUtils {
 	 * @param array $data
 	 * @param bool $includeBuffer
 	 */
-	public function sendJson(array $data, bool $includeBuffer = true) {
+	public function sendJson($data, bool $includeBuffer = true) {
 		$this->send(new JsonPayload($data), $includeBuffer);
 	}
 	

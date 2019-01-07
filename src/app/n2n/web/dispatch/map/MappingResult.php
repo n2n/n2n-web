@@ -23,12 +23,12 @@ namespace n2n\web\dispatch\map;
 
 use n2n\web\dispatch\Dispatchable;
 use n2n\web\dispatch\map\bind\BindingErrors;
-use n2n\reflection\ReflectionUtils;
 use n2n\web\dispatch\model\DispatchModel;
 use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
 use n2n\core\container\N2nContext;
 use n2n\util\col\ArrayUtils;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
+use n2n\util\type\TypeUtils;
 
 class MappingResult {
 	private $dispatchable;
@@ -175,7 +175,7 @@ class MappingResult {
 			}
 		}
 		
-		return ReflectionUtils::prettyName($pathPartExpression);
+		return TypeUtils::prettyName($pathPartExpression);
 	}
 	/**
 	 * 

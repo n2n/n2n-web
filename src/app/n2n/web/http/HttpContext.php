@@ -28,7 +28,7 @@ use n2n\util\uri\Path;
 use n2n\core\VarStore;
 use n2n\util\col\ArrayUtils;
 use n2n\web\http\controller\ControllerContext;
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 class HttpContext {
 	private $request;
