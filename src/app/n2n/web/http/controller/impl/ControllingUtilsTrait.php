@@ -40,6 +40,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\web\http\controller\ControllerErrorException;
 use n2n\core\TypeNotFoundException;
 use n2n\io\managed\File;
+use n2n\web\http\nav\Murl;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -59,48 +60,58 @@ trait ControllingUtilsTrait {
 		return $this->controllingUtils = new ControllingUtils(get_class($this), $controllerContext);
 	}
 	
+	/**
+	 * @return \n2n\web\http\controller\impl\ControllingUtils
+	 */
 	protected final function getControllingUtils() {
 		return $this->cu();
 	}
 	
 	/**
-	 *
-	 * @return string
+	 * @see ControllingUtils::getModuleNamespace()
 	 */
-	protected final function getModuleNamespace(): string {
+	protected final function getModuleNamespace() {
 		return $this->cu()->getModuleNamespace();
 	}
 	
-	protected final function getHttpContext(): HttpContext {
+	/**
+	 * @see ControllingUtils::getHttpContext()
+	 */
+	protected final function getHttpContext() {
 		return $this->cu()->getHttpContext();
 	}
+	
 	/**
-	 * @return \n2n\web\http\Request
+	 * @see ControllingUtils::getRequest()
 	 */
 	protected final function getRequest(): Request {
 		return $this->cu()->getRequest();
 	}
+	
 	/**
-	 * @return \n2n\web\http\Response
+	 * @see ControllingUtils::getResponse()
 	 */
 	protected final function getResponse(): Response {
 		return $this->cu()->getResponse();
 	}
+	
 	/**
-	 * @return \n2n\core\container\N2nContext
+	 * @see ControllingUtils::getN2nContext()
 	 */
 	protected final function getN2nContext(): N2nContext {
 		return $this->cu()->getN2nContext();
 	}
+	
 	/**
-	 * @return ControllerContext
+	 * @see ControllingUtils::getControllerContext()
 	 */
 	protected final function getControllerContext(): ControllerContext {
 		return $this->cu()->getControllerContext();
 	}
 	
+	
 	/**
-	 * @return \n2n\util\uri\Path
+	 * @see ControllingUtils::getControllerPath()
 	 */
 	protected final function getControllerPath() {
 		return $this->cu()->getControllerPath();
@@ -113,25 +124,37 @@ trait ControllingUtilsTrait {
 		return $this->cu()->getControllingPlan();
 	}
 	
+	/**
+	 * @see ControllingUtils::resetCacheControl()
+	 */
 	protected function resetCacheControl() {
 		$this->cu()->resetCacheControl();
 	}
-
+	
+	/**
+	 * @see ControllingUtils::beginTransaction()
+	 */
 	protected final function beginTransaction($readOnly = false) {
 		$this->cu()->beginTransaction($readOnly);
 	}
 	
 	
+	/**
+	 * @see ControllingUtils::commit()
+	 */
 	protected final function commit() {
 		$this->cu()->commit();
 	}
 	
+	/**
+	 * @see ControllingUtils::rollBack()
+	 */
 	protected final function rollBack() {
 		$this->cu()->rollBack();
 	}
+	
 	/**
-	 *
-	 * @param ViewCacheControl $viewCacheControl
+	 * @see ControllingUtils::assignViewCacheControl()
 	 */
 	protected final function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()) {
 		$this->cu()->assignViewCacheControl($cacheInterval, $characteristics);
@@ -237,44 +260,76 @@ trait ControllingUtilsTrait {
 		return $this->cu()->hasDispatch($dispatchable, $methodName);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
 	protected final function refresh(int $httpStatus = null) {
 		$this->cu()->refresh($httpStatus);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
 	protected final function redirect($murl, int $httpStatus = null) {
 		$this->cu()->redirect($murl, $httpStatus);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
 	protected final function getUrlToContext($pathExt = null, array $queries = null,
 			string $fragment = null, bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToContext($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
+	/**
+	 * @see ControllingUtils::hasDispatch()
+	 */
 	protected final function redirectToContext($pathExt = null, array $queries = null, int $httpStatus = null,
 			string $fragment = null, bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToContext($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
 	
+	/**
+	 * @see ControllingUtils::buildUrl()
+	 */
+	protected final function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
+		return $this->cu()->buildUrl($murl, $required, $suggestedLabel);
+	}
+	
+	/**
+	 * @see ControllingUtils::getUrlToController()
+	 */
 	protected final function getUrlToController($pathExt = null, array $queries = null, $controllerContext = null, 
 			string $fragment = null, bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToController($pathExt, $queries, $controllerContext, $fragment, $ssl, $subsystem);
 	}
 	
+	/**
+	 * @see ControllingUtils::redirectToController()
+	 */
 	protected final function redirectToController($pathExt = null, array $queries = null, int $httpStatus = null,
 			$controllerContext = null, string $fragment = null, bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToController($pathExt, $queries, $httpStatus, $controllerContext, $fragment, $ssl, 
 				$subsystem);
 	}
-
+	
+	/**
+	 * @see ControllingUtils::getUrlToPath()
+	 */
 	protected final function getUrlToPath($pathExt = null, array $queries = null, string $fragment = null, 
 			bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToPath($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
+	/**
+	 * @see ControllingUtils::redirectToPath()
+	 */
 	protected final function redirectToPath($pathExt = null, array $queries = null, int $httpStatus = null,
 			$fragment = null, bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToPath($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
+	
 	/**
 	 * @param string $httpStatus
 	 * @throws NoHttpRefererGivenException
@@ -292,56 +347,95 @@ trait ControllingUtilsTrait {
 		return $this->cu()->createDelegateContext($controller, $pathPartsToShift);
 	}
 	
+	/**
+	 * @see ControllingUtils::delegate()
+	 */
 	protected final function delegate(Controller $controller, int $numPathPartsToShift = null, $execute = true,
 			bool $tryIfMain = false) {
 		return $this->cu()->delegate($controller, $numPathPartsToShift, $execute, $tryIfMain);
 	}
 	
+	/**
+	 * @see ControllingUtils::delegateToControllerContext()
+	 */
 	protected final function delegateToControllerContext(ControllerContext $nextControllerContext, $execute = true,
 			bool $tryIfMain = false) {
 		return $this->cu()->delegateToControllerContext($nextControllerContext, $execute, $tryIfMain);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendJson()
+	 */
 	protected final function sendJson(array $data, bool $includeBuffer = true) {
 		$this->cu()->sendJson($data, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendHtml()
+	 */
 	protected final function sendHtml(string $htmlStr, bool $includeBuffer = true) {
 		$this->cu()->sendHtml($htmlStr, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendHtmlUi()
+	 */
 	protected final function sendHtmlUi($uiComponent, bool $includeBuffer = true) {
 		$this->cu()->sendHtmlUi($uiComponent, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendFile()
+	 */
 	protected final function sendFile(File $file, bool $includeBuffer = true) {
 		$this->cu()->sendFile($file, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendFileAttachment()
+	 */
 	protected final function sendFileAttachment(File $file, string $name = null, bool $includeBuffer = true) {
 		$this->cu()->sendFileAttachment($file, $name, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendFsPath()
+	 */
 	protected final function sendFsPath($fsPath, bool $includeBuffer = true) {
 		$this->cu()->sendFsPath($fsPath, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::sendFsPathAttachment()
+	 */
 	protected final function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true) {
 		$this->cu()->sendFsPathAttachment($fsPath, $name, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::send()
+	 */
 	protected final function send(Payload $responseThing, bool $includeBuffer = true) {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	
+	/**
+	 * @see ControllingUtils::accepted()
+	 */
 	protected final function accepted(string ...$mimeTypes) {
 		return $this->cu()->accepted(...$mimeTypes);
 	}
 	
+	/**
+	 * @see ControllingUtils::acceptQuality()
+	 */
 	protected final function acceptQuality(string $mimeType) {
 		return $this->cu()->acceptQuality($mimeType);
 	}
 	
+	/**
+	 * @see ControllingUtils::intercept()
+	 */
 	protected final function intercept(...$interceptors) {
 		return $this->cu()->intercept(...$interceptors);
 	}
