@@ -66,6 +66,14 @@ class UrlBuilder {
 		}
 	}
 
+	/**
+	 * @param string|UrlComposer|Linkable $arg
+	 * @param N2nContext $n2nContext
+	 * @param ControllerContext $controllerContext
+	 * @param string $suggestedLabel
+	 * @throws UnavailableUrlException
+	 * @return Url
+	 */
 	public static function buildUrl($arg, N2nContext $n2nContext = null,
 			ControllerContext $controllerContext = null, string &$suggestedLabel = null): Url {
 		if ($arg === null) {
