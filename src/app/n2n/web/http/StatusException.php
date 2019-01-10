@@ -49,7 +49,7 @@ class StatusException extends \RuntimeException {
 	}
 // 	/**
 // 	 * 
-// 	 * @return \n2n\util\config\Attributes
+// 	 * @return \n2n\config\Attributes
 // 	 */
 // 	public function getAttributes() {
 // 		return $this->attributes;
