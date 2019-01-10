@@ -27,13 +27,13 @@ use n2n\reflection\ReflectionContext;
 use n2n\web\http\path\PathPatternCompileException;
 use n2n\web\http\Method;
 use n2n\web\http\annotation\AnnoPath;
-use n2n\reflection\ReflectionUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationSet;
 use n2n\web\http\annotation\AnnoConsums;
 use n2n\web\http\annotation\AnnoIntercept;
 use n2n\util\magic\MagicContext;
 use n2n\util\magic\MagicObjectUnavailableException;
+use n2n\util\type\TypeUtils;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
@@ -189,7 +189,7 @@ class ControllerInterpreter {
 	 */
 	private function createInvalidAnnoException(MethodAnnotation $annotation) {
 		return new ControllerErrorException('Invalid annotation for method:'
-				. ReflectionUtils::prettyReflMethName($annotation->getAnnotatedMethod()),
+						. TypeUtils::prettyReflMethName($annotation->getAnnotatedMethod()),
 				$annotation->getFileName(), $annotation->getLine());
 	}
 	
