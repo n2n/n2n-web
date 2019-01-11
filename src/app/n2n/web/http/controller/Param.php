@@ -24,6 +24,7 @@ namespace n2n\web\http\controller;
 use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\ArgUtils;
+use n2n\util\StringUtils;
 
 abstract class Param {
 	private $value;
@@ -217,6 +218,20 @@ abstract class Param {
 			}
 		}
 		return $this->value;
+	}
+	
+	/**
+	 * @param int $status
+	 * @param bool $assoc
+	 * @throws StatusException
+	 * @return array|object
+	 */
+	public function parseJsonOrReject(int $status = Response::STATUS_404_NOT_FOUND, bool $assoc = true) {
+		try {
+			return StringUtils::jsonDecode($this->value, $assoc);
+		} catch (\n2n\util\JsonDecodeFailedException $e) {
+			throw new StatusException($status);	
+		}
 	}
 	
 	/**
