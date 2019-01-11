@@ -61,6 +61,7 @@ use n2n\web\http\controller\Interceptor;
 use n2n\web\http\controller\InterceptorFactory;
 use n2n\web\http\nav\UrlBuilder;
 use n2n\util\uri\Linkable;
+use n2n\util\uri\UnavailableUrlException;
 
 class ControllingUtils {
 	private $relatedTypeName;
