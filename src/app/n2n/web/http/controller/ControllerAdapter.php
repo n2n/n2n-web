@@ -38,7 +38,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
-				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), 
+				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), $request,
 				$request->getMethod(), $request->getQuery(), $request->getPostQuery(),
 				$request->getAcceptRange(), $this->getN2nContext());
 		$invokerFactory->setConstantValues($controllerContext->getParams());
