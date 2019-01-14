@@ -133,6 +133,9 @@ class ActionInvokerFactory {
 					$value = new ParamDelete($this->query->get($paramName));
 				}
 				return true;
+			case ParamBody::class:
+				$value = new ParamBody($this->request->getBody());
+				return true;
 			default: 
 				return false;
 		}
