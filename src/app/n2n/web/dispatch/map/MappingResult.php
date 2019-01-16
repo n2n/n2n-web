@@ -24,7 +24,7 @@ namespace n2n\web\dispatch\map;
 use n2n\web\dispatch\Dispatchable;
 use n2n\web\dispatch\map\bind\BindingErrors;
 use n2n\web\dispatch\model\DispatchModel;
-use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
+use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\core\container\N2nContext;
 use n2n\util\col\ArrayUtils;
 use n2n\util\type\ArgUtils;
