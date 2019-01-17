@@ -227,11 +227,11 @@ abstract class Param {
 	 * @throws StatusException
 	 * @return array|object
 	 */
-	public function parseJsonOrReject(int $status = Response::STATUS_404_NOT_FOUND, bool $assoc = true) {
+	public function parseJsonOrReject(int $status = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
 		try {
 			return StringUtils::jsonDecode($this->value, $assoc);
 		} catch (\n2n\util\JsonDecodeFailedException $e) {
-			throw new StatusException($status);	
+			throw new StatusException($status, null, null, $e);	
 		}
 	}
 	
@@ -240,7 +240,7 @@ abstract class Param {
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\Attributes
 	 */
-	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_400_BAD_REQUEST) {
 		return new Attributes($this->parseJsonOrReject($status, true));
 	}
 	
