@@ -25,6 +25,7 @@ use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\ArgUtils;
 use n2n\util\StringUtils;
+use n2n\util\type\attrs\Attributes;
 
 abstract class Param {
 	private $value;
@@ -232,6 +233,15 @@ abstract class Param {
 		} catch (\n2n\util\JsonDecodeFailedException $e) {
 			throw new StatusException($status);	
 		}
+	}
+	
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return \n2n\util\type\attrs\Attributes
+	 */
+	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return new Attributes($this->parseJsonOrReject($status, true));
 	}
 	
 	/**
