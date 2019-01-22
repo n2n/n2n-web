@@ -39,8 +39,6 @@ class PropertyPathPart {
 		$this->array = (boolean) $array;
 		$this->arrayKey = $arrayKey;
 		$this->resolvedArrayKey = $arrayKey;
-		
-		
 	}
 	
 	public static function isNameValid($name) {
