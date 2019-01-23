@@ -145,9 +145,13 @@ class ControllingUtils {
 	/**
 	 * 
 	 */
-	public function reset() {
+	public function reset(bool $commit) {
 		while (null !== ($transaction = array_pop($this->transactions))) {
-			$transaction->commit();
+			if ($commit) {
+				$transaction->commit();
+			} else {
+				$transaction->rollback();
+			}
 		}
 	
 		$this->controllerContext = null;
