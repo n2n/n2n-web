@@ -164,10 +164,14 @@ class VarsRequest implements Request {
 			return $this->serverVars[$varKey];
 		}
 		
+		// function_exists()
+		
 		$requestHeaders = apache_request_headers();
 		if (isset($requestHeaders[$name])) {
 			return trim($requestHeaders[$name]);
 		}
+		
+		// getallheaders()
 		
 		return null;
 	}
