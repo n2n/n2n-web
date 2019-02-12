@@ -28,6 +28,7 @@ use n2n\util\uri\Query;
 use n2n\util\uri\Authority;
 use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
+use n2n\io\IoUtils;
 
 class VarsRequest implements Request {
 	const PROTOCOL_VERSION_SEPARATOR = '/';
@@ -162,6 +163,16 @@ class VarsRequest implements Request {
 		if (isset($this->serverVars[$varKey])) {
 			return $this->serverVars[$varKey];
 		}
+		
+		// function_exists()
+		
+		$requestHeaders = apache_request_headers();
+		if (isset($requestHeaders[$name])) {
+			return trim($requestHeaders[$name]);
+		}
+		
+		// getallheaders()
+		
 		return null;
 	}
 	/**
@@ -459,4 +470,19 @@ class VarsRequest implements Request {
 	public function getRemoteIp() {
 		return $this->extractServerVar('REMOTE_ADDR');
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\web\http\Request::getBody()
+	 */
+	public function getBody(): string {
+		return IoUtils::getContents('php://input');
+	}
 }
+
+// $rawInput = fopen('php://input', 'r');
+// $tempStream = fopen('php://temp', 'r+');
+// stream_copy_to_stream($rawInput, $tempStream);
+// rewind($tempStream);
+
+// return $tempStream;

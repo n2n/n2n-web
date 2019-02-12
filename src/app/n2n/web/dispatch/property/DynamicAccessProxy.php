@@ -23,11 +23,11 @@ namespace n2n\web\dispatch\property;
 
 use n2n\web\dispatch\DynamicDispatchable;
 use n2n\reflection\property\AccessProxy;
-use n2n\reflection\property\TypeConstraint;
+use n2n\util\type\TypeConstraint;
 use n2n\util\type\ArgUtils;
-use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
+use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\reflection\property\PropertyValueTypeMissmatchException;
-use n2n\reflection\ReflectionUtils;
+use n2n\util\type\TypeUtils;
 
 class DynamicAccessProxy implements AccessProxy {
 	private $propertyName;
@@ -76,7 +76,7 @@ class DynamicAccessProxy implements AccessProxy {
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new PropertyValueTypeMissmatchException('Could not pass invalid value for property \''
 						. $this->propertyName . '\' to '
-						. ReflectionUtils::prettyMethName(get_class($object), 'setPropertyValue'), 0, $e);
+						. TypeUtils::prettyMethName(get_class($object), 'setPropertyValue'), 0, $e);
 						
 			}
 		}
@@ -96,14 +96,14 @@ class DynamicAccessProxy implements AccessProxy {
 			$this->constraints->validate($value);
 		} catch (ValueIncompatibleWithConstraintsException $e) {
 			throw new PropertyValueTypeMissmatchException(
-					ReflectionUtils::prettyMethName(get_class($object), 'getPropertyValue') 
+					TypeUtils::prettyMethName(get_class($object), 'getPropertyValue') 
 							. ' returns invalid value for property \'' . $this->propertyName . '\'', 0, $e);
 		}
 		return $value;
 	}
 
 	public function __toString(): string {	
-		return 'AccessProxy [' . ReflectionUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') 
-				. ', ' . ReflectionUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') . ']';
+		return 'AccessProxy [' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') 
+				. ', ' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') . ']';
 	}
 }

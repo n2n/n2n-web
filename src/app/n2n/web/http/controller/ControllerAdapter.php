@@ -38,7 +38,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
-				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), 
+				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), $request,
 				$request->getMethod(), $request->getQuery(), $request->getPostQuery(),
 				$request->getAcceptRange(), $this->getN2nContext());
 		$invokerFactory->setConstantValues($controllerContext->getParams());
@@ -74,7 +74,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 					$invokerInfo->getInvoker()->invoke($this);
 				}
 
-				$this->cu()->reset();
+				$this->cu()->reset(true);
 				return true;
 			}
 		} catch (StatusException $e) {
@@ -96,7 +96,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 						$catchedStatusException = null;
 					}
 					
-					$this->cu()->reset();
+					$this->cu()->reset(true);
 					return true;
 				}
 			} catch (StatusException $e) {
@@ -104,12 +104,14 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 			}
 		}
 		
-		$this->cu()->reset();
+		
 		
 		if ($catchedStatusException !== null) {
+			$this->cu()->reset(false);
 			throw $catchedStatusException;
 		}
 		
+		$this->cu()->reset(true);
 		return false;
 	}
 }

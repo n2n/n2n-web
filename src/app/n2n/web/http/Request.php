@@ -125,6 +125,11 @@ interface Request {
 	 * @return \n2n\util\uri\Query
 	 */
 	public function getPostQuery();
+	
+	/**
+	 * @return string
+	 */
+	public function getBody(): string;
 	/**
 	 * @return UploadDefinition[] 
 	 */

@@ -30,6 +30,7 @@ use n2n\util\uri\Path;
 use n2n\util\magic\MagicContext;
 use n2n\web\http\Method;
 use n2n\web\http\AcceptRange;
+use n2n\web\http\Request;
 
 class ActionInvokerFactory {
 	const PARAM_CMD_CONTEXT_PATH = 'cmdContextPath';
@@ -40,6 +41,7 @@ class ActionInvokerFactory {
 	
 	private $cmdPath;
 	private $cmdContextPath;
+	private $request;
 	private $httpMethod;
 	private $query;
 	private $postQuery;
@@ -47,10 +49,11 @@ class ActionInvokerFactory {
 	private $magicContext;
 	private $constantValues;
 		
-	public function __construct(Path $cmdPath, Path $cmdContextPath, $httpMethod, 
+	public function __construct(Path $cmdPath, Path $cmdContextPath, Request $request, $httpMethod, 
 			Query $query, Query $postQuery, AcceptRange $acceptRange, MagicContext $magicContext = null) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
+		$this->request = $request;
 		$this->httpMethod = $httpMethod;
 		$this->query = $query;
 		$this->postQuery = $postQuery;
@@ -129,6 +132,9 @@ class ActionInvokerFactory {
 				if ($this->httpMethod == Method::DELETE && $this->query->contains($paramName)) {
 					$value = new ParamDelete($this->query->get($paramName));
 				}
+				return true;
+			case ParamBody::class:
+				$value = new ParamBody($this->request->getBody());
 				return true;
 			default: 
 				return false;

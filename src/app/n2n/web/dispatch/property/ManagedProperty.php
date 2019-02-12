@@ -64,7 +64,7 @@ interface ManagedProperty {
 	 */
 	public function resolveMapValue(PropertyPathPart $pathPart, MappingResult $mappingResult, N2nContext $n2nContext);
 	/**
-	 * @return \n2n\reflection\property\TypeConstraint null there are no constriants
+	 * @return \n2n\util\type\TypeConstraint null there are no constriants
 	 */
 	public function getMapTypeConstraint();
 	/**

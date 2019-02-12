@@ -21,37 +21,8 @@
  */
 namespace n2n\web\http;
 
-class StatusException extends \RuntimeException {
-	private $status;
-// 	private $attributes;
-	
-	public function __construct($status, $message = null, $code = null, \Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-		$this->status = (int) $status;
-// 		$this->attributes = new Attributes();
+class UnauthorizedException extends StatusException {
+	public function __construct($message = null, $code = null, \Exception $previous =  null) {
+		parent::__construct(Response::STATUS_401_UNAUTHORIZED, $message, $code, $previous);		
 	}
-	/**
-	 * 
-	 * @return int
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
-	/**
-	 * 
-	 * @param int $status
-	 */
-	public function setStatus($status) {
-		$this->status = (int) $status;
-	}
-	
-	public function prepareResponse(Response $response) {
-	}
-// 	/**
-// 	 * 
-// 	 * @return \n2n\util\type\attrs\Attributes
-// 	 */
-// 	public function getAttributes() {
-// 		return $this->attributes;
-// 	}
 }

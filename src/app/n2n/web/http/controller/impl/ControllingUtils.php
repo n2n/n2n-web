@@ -59,6 +59,9 @@ use n2n\web\ui\UiComponent;
 use n2n\util\type\ArgUtils;
 use n2n\web\http\controller\Interceptor;
 use n2n\web\http\controller\InterceptorFactory;
+use n2n\web\http\nav\UrlBuilder;
+use n2n\util\uri\Linkable;
+use n2n\util\uri\UnavailableUrlException;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -142,9 +145,13 @@ class ControllingUtils {
 	/**
 	 * 
 	 */
-	public function reset() {
+	public function reset(bool $commit) {
 		while (null !== ($transaction = array_pop($this->transactions))) {
-			$transaction->commit();
+			if ($commit) {
+				$transaction->commit();
+			} else {
+				$transaction->rollback();
+			}
 		}
 	
 		$this->controllerContext = null;
@@ -342,14 +349,32 @@ class ControllingUtils {
 		}
 	}
 	
+	/**
+	 * @param string|UrlComposer|Linkable $murl will be the first arg in the call of {@see self::buildUrl()}.
+	 * @param int $httpStatus
+	 */
 	public function redirect($murl, int $httpStatus = null) {
 		$this->assignCacheControls();
 	
-		if ($murl instanceof UrlComposer) {
-			$murl = $murl->toUrl($this->getN2nContext(), $this->controllerContext);
-		}
+		$url = $this->buildUrl($murl);
 	
-		$this->getResponse()->send(new Redirect($murl, $httpStatus));
+		$this->getResponse()->send(new Redirect($url, $httpStatus));
+	}
+	
+	/**
+	 * @param string|UrlComposer|Linkable $murl will be the first arg in the call of {@see UrlBuilder::buildUrl()}.
+	 * @param bool $required
+	 * @param string $suggestedLabel
+	 * @throws UnavailableUrlException
+	 * @return \n2n\util\uri\Url|NULL
+	 */
+	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
+		try {
+			return UrlBuilder::buildUrl($murl, $this->getN2nContext(), $this->controllerContext, $suggestedLabel);
+		} catch (UnavailableUrlException $e) {
+			if ($required) throw $e;
+			return null;
+		}
 	}
 	
 	public function getUrlToContext($pathExt = null, array $queries = null, int $httpStatus = null,

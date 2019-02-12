@@ -19,39 +19,8 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\controller;
 
-class StatusException extends \RuntimeException {
-	private $status;
-// 	private $attributes;
+class ParamBody extends Param {
 	
-	public function __construct($status, $message = null, $code = null, \Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-		$this->status = (int) $status;
-// 		$this->attributes = new Attributes();
-	}
-	/**
-	 * 
-	 * @return int
-	 */
-	public function getStatus() {
-		return $this->status;
-	}
-	/**
-	 * 
-	 * @param int $status
-	 */
-	public function setStatus($status) {
-		$this->status = (int) $status;
-	}
-	
-	public function prepareResponse(Response $response) {
-	}
-// 	/**
-// 	 * 
-// 	 * @return \n2n\util\type\attrs\Attributes
-// 	 */
-// 	public function getAttributes() {
-// 		return $this->attributes;
-// 	}
 }
