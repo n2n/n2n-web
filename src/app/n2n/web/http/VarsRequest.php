@@ -171,9 +171,11 @@ class VarsRequest implements Request {
 			}
 		}
 		
-		$requestHeaders = getallheaders();
-		if (isset($requestHeaders[$name])) {
-			return trim($requestHeaders[$name]);
+		if (function_exists('getallheaders')) {
+			$requestHeaders = getallheaders();
+			if (isset($requestHeaders[$name])) {
+				return trim($requestHeaders[$name]);
+			}
 		}
 		
 		return null;
