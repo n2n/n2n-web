@@ -39,7 +39,11 @@ abstract class SimplePropertyValidator extends SinglePropertyValidator {
 		ArgUtils::valArrayLike($mapValue);
 		foreach ($mapValue as $aKey => $aValue) {
 			$this->pathPart = new PropertyPathPart($managedProperty->getName(), true, $aKey);
-			if ($this->getBindingErrors()->hasErrors($this->pathPart)) continue;
+			
+			if ($this->getBindingErrors()->hasErrors($this->pathPart)) {
+				continue;
+			}
+			
 			$this->validateValue($aValue, $this->pathPart, $this->getBindingErrors());
 			$this->pathPart = null;
 		}
