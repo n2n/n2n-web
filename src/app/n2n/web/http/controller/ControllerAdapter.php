@@ -104,8 +104,6 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 			}
 		}
 		
-		
-		
 		if ($catchedStatusException !== null) {
 			$this->cu()->reset(false);
 			throw $catchedStatusException;
