@@ -31,12 +31,12 @@ use n2n\util\type\TypeUtils;
 
 class DynamicAccessProxy implements AccessProxy {
 	private $propertyName;
-	private $constraints;
+	private $constraint;
 	private $nullReturnAllowed;
 	
 	public function __construct($propertyName) {
 		$this->propertyName = $propertyName;
-		$this->constraints = TypeConstraint::createSimple(null);
+		$this->constraint = TypeConstraint::createSimple(null);
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::getPropertyName()
@@ -47,15 +47,15 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::getConstraint()
 	 */
-	public function getConstraint() {
-		return $this->constraints;
+	public function getConstraint(): TypeConstraint {
+		return $this->constraint;
 	}
 
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setConstraint()
 	 */
 	public function setConstraint(TypeConstraint $constraints) {
-		$this->constraints = $constraints;
+		$this->constraint = $constraints;
 	}
 	
 	public function isNullReturnAllowed() {
@@ -72,7 +72,7 @@ class DynamicAccessProxy implements AccessProxy {
 		ArgUtils::assertTrue($object instanceof DynamicDispatchable);
 		if ($validate) {
 			try {
-				$this->constraints->validate($value);
+				$value = $this->constraint->validate($value);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new PropertyValueTypeMissmatchException('Could not pass invalid value for property \''
 						. $this->propertyName . '\' to '
@@ -93,7 +93,7 @@ class DynamicAccessProxy implements AccessProxy {
 		if ($this->nullReturnAllowed && $value === null) return $value;
 		
 		try {
-			$this->constraints->validate($value);
+			$value = $this->constraint->validate($value);
 		} catch (ValueIncompatibleWithConstraintsException $e) {
 			throw new PropertyValueTypeMissmatchException(
 					TypeUtils::prettyMethName(get_class($object), 'getPropertyValue') 
