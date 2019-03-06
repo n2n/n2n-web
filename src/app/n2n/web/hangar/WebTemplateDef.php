@@ -12,11 +12,15 @@ use n2n\impl\web\dispatch\mag\model\BoolMag;
 use n2n\web\http\orm\ResponseCacheClearer;
 use n2n\persistence\orm\annotation\AnnoEntityListeners;
 use hangar\api\Huo;
+use n2n\impl\web\dispatch\mag\model\group\TogglerMag;
+use n2n\web\dispatch\mag\MagWrapper;
+use n2n\impl\web\dispatch\mag\model\StringMag;
+use n2n\impl\web\dispatch\mag\model\EnumMag;
 
 class WebTemplateDef implements HangarTemplateDef {
-
 	const PROP_NAME_APPLY_OBJECT_ADAPTER = 'applyObjectAdapter';
 	const PROP_NAME_ADD_RESPONSE_CACHE_CLEARER = 'addResponseCacheClearer';
+	const PROP_NAME_ABSTRACT = 'abstract';
 	
 	public function getName(): string {
 		return 'Common';
@@ -31,6 +35,7 @@ class WebTemplateDef implements HangarTemplateDef {
 		}
 		
 		self::applyResponseCacheClearerValue($phpClass, $magDispatchable);
+		self::applyAbstractValue($phpClass, $magDispatchable);
 	}
 	
 	public function createMagDispatchable(): ?MagDispatchable {
@@ -39,8 +44,20 @@ class WebTemplateDef implements HangarTemplateDef {
 		$magCollection->addMag(self::PROP_NAME_APPLY_OBJECT_ADAPTER, 
 				new BoolMag('Apply object adapter', true));
 		self::addResponseCacheClearerMag($magCollection);
+		self::addAbstractMag($magCollection);
 		
 		return new MagForm($magCollection);
+	}
+	
+	public static function addAbstractMag(MagCollection $magCollection) {
+		return $magCollection->addMag(self::PROP_NAME_ABSTRACT,
+				new BoolMag('Abstract', false));
+	}
+	
+	public static function applyAbstractValue(PhpClass $phpClass, MagDispatchable $magDispatchable = null) {
+		if (null === $magDispatchable || !$magDispatchable->getPropertyValue(self::PROP_NAME_ABSTRACT)) return;
+		
+		$phpClass->setAbstract(true);
 	}
 	
 	public static function addResponseCacheClearerMag(MagCollection $magCollection) {
