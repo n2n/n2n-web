@@ -229,7 +229,6 @@ class HttpContext {
 		}
 		
 		return $url;
-		
 	}
 	
 	/**
