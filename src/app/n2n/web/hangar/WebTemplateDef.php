@@ -12,10 +12,6 @@ use n2n\impl\web\dispatch\mag\model\BoolMag;
 use n2n\web\http\orm\ResponseCacheClearer;
 use n2n\persistence\orm\annotation\AnnoEntityListeners;
 use hangar\api\Huo;
-use n2n\impl\web\dispatch\mag\model\group\TogglerMag;
-use n2n\web\dispatch\mag\MagWrapper;
-use n2n\impl\web\dispatch\mag\model\StringMag;
-use n2n\impl\web\dispatch\mag\model\EnumMag;
 
 class WebTemplateDef implements HangarTemplateDef {
 	const PROP_NAME_APPLY_OBJECT_ADAPTER = 'applyObjectAdapter';
