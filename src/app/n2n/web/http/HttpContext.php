@@ -220,8 +220,15 @@ class HttpContext {
 		
 		if ($absolute && $url->isRelative()) {
 			$url = $this->request->getHostUrl()->ext($url);
-		}		
-		return $this->completeSchemaCheck($url, $ssl);
+		}
+		
+		$url = $this->completeSchemaCheck($url, $ssl);
+		
+		if ($absolute && !$url->hasScheme()) {
+			$url = $url->chScheme($this->request->getHostUrl()->getScheme());
+		}
+		
+		return $url;
 		
 	}
 	
