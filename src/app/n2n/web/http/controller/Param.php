@@ -163,7 +163,7 @@ abstract class Param {
 			throw new StatusException($status);
 		}
 	
-		return $this->value;
+		return $values;
 	}
 	
 	
