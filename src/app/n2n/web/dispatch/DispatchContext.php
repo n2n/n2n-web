@@ -51,13 +51,17 @@ class DispatchContext implements ThreadScoped {
 	
 	private $dispatchModelManager;
 	private $dispatchTargetCoder;
+	private $n2nContext;
+	private $analyzed = false;
 	private $dispatchJob;
 	
-	private function _init(WebConfig $webConfig, VarStore $varStore) {
+	private function _init(WebConfig $webConfig, VarStore $varStore, N2nContext $n2nContext) {
 		$this->dispatchModelManager = new DispatchModelManager(new DispatchModelFactory(
 				$webConfig->getDispatchPropertyProviderClassNames()));
 		$this->dispatchTargetCoder = new DispatchTargetCoder($this->createCipher(
 				$webConfig->getDispatchTargetCryptAlgorithm(), $varStore));
+		$this->n2nContext = $n2nContext;
+		$this->analyzed = !$n2nContext->isHttpContextAvailable();
 	}
 	
 
@@ -117,7 +121,10 @@ class DispatchContext implements ThreadScoped {
 	 * @throws CorruptedDispatchException
 	 * @throws IllegalStateException
 	 */
-	public function analyzeRequest(Request $request) {
+	public function analyzeRequest() {
+		$request = $this->n2nContext->getHttpContext()->getRequest();
+		
+		$this->analyzed = true;
 		$extractor = new DispatchTargetExtractor($this->dispatchTargetCoder);
 		$extractor->setUploadDefinitions($request->getUploadDefinitions());
 		
@@ -165,7 +172,15 @@ class DispatchContext implements ThreadScoped {
 		
 // 	}
 
+	private function ensureAnalyzed() {
+		if ($this->analyzed) return;
+		
+		$this->analyzeRequest();
+	}
+	
 	public function hasDispatchJob() {
+		$this->ensureAnalyzed();
+		
 		return $this->dispatchJob !== null;
 	}
 
@@ -173,6 +188,8 @@ class DispatchContext implements ThreadScoped {
 	 * @return \n2n\web\dispatch\map\DispatchJob
 	 */
 	public function getDispatchJob() {
+		$this->ensureAnalyzed();
+		
 		return $this->dispatchJob;
 	}
 	
@@ -184,6 +201,8 @@ class DispatchContext implements ThreadScoped {
 	 * @throws CorruptedDispatchException
 	 */
 	public function dispatch(Dispatchable $dispatchable, $methodName, N2nContext $n2nContext) {
+		$this->ensureAnalyzed();
+		
 		if ($this->dispatchJob === null 
 				|| !$this->dispatchJob->matches($dispatchable, $methodName)) return null;
 				

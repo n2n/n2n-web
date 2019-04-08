@@ -149,4 +149,11 @@ class ControllerContext {
 	public function execute(): bool {
 		return $this->getController()->execute($this);	
 	}
+	
+	/**
+	 * @return \n2n\web\http\controller\ControllerContext
+	 */
+	public function copy() {
+		return new ControllerContext($this->cmdPath, $this->cmdContextPath);
+	}
 }
