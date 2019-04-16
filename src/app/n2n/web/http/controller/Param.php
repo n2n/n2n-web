@@ -26,6 +26,8 @@ use n2n\web\http\Response;
 use n2n\util\type\ArgUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\attrs\Attributes;
+use n2n\util\type\attrs\DataMap;
+use n2n\util\type\attrs\DataSet;
 
 abstract class Param {
 	private $value;
@@ -88,7 +90,17 @@ abstract class Param {
 		throw new StatusException('Param not numeric');
 	}
 	
-	public function toNumericOrReject($status = Response::STATUS_404_NOT_FOUND) {
+	
+	/**
+	 * @param int $status
+	 * @return string
+	 * @deprecated
+	 */
+	public function toNumericOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->toNumeric($status);
+	}
+	
+	public function toNumeric($status = Response::STATUS_404_NOT_FOUND) {
 		$this->rejectIfNotNumeric();
 		
 		return $this->value;
@@ -118,7 +130,20 @@ abstract class Param {
 		return is_scalar($value) && mb_strlen($value) > 0;
 	}
 	
+	/**
+	 * @param int $status
+	 * @return string
+	 * @deprecated
+	 */
 	public function toNotEmptyStringOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->toNotEmptyString($status);
+	}
+	
+	/**
+	 * @param int $status
+	 * @return string
+	 */
+	public function toNotEmptyString(int $status = Response::STATUS_404_NOT_FOUND) {
 		$this->rejectIfNotNotEmptyString($status);
 		
 		return $this->value;
@@ -130,10 +155,25 @@ abstract class Param {
 		}
 		
 		// value could be an array
-		return $this->toNotEmptyStringOrReject($rejectStatus);
+		return $this->toNotEmptyString($rejectStatus);
 	}
 	
-	public function toStringArrayOrReject($status = Response::STATUS_404_NOT_FOUND): array {
+	
+	/**
+	 * @param int $status
+	 * @return array
+	 * @deprecated
+	 */
+	public function toStringArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->toStringArray($status);
+	}
+	
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return array
+	 */
+	public function toStringArray(int $status = Response::STATUS_404_NOT_FOUND) {
 		if (!is_array($this->value)) {
 			throw new StatusException($status);
 		}
@@ -147,7 +187,22 @@ abstract class Param {
 		return $this->value;
 	}
 	
-	public function toIntArrayOrReject($status = Response::STATUS_404_NOT_FOUND): array {
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return array
+	 * @deprecated
+	 */
+	public function toIntArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->toIntArray($status);
+	}
+	
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return array
+	 */
+	public function toIntArray(int $status = Response::STATUS_404_NOT_FOUND) {
 		if (!is_array($this->value)) {
 			throw new StatusException($status);
 		}
@@ -165,10 +220,29 @@ abstract class Param {
 	
 		return $values;
 	}
+
+	/**
+	 * @param string $separator
+	 * @param bool $sorted
+	 * @param int $status
+	 * @throws StatusException
+	 * @return array
+	 * @deprecated
+	 */
+	public function splitToStringArrayOrReject(string $separator = ',', bool $sorted = true,
+			int $status = Response::STATUS_404_NOT_FOUND) {
+		$this->splitToStringArray($separator, $sorted, $status);
+	}
 	
-	
-	
-	public function splitToStringArrayOrReject(string $separator = ',', bool $sorted = true, int $status = Response::STATUS_404_NOT_FOUND) {
+	/**
+	 * @param string $separator
+	 * @param bool $sorted
+	 * @param int $status
+	 * @throws StatusException
+	 * @return array
+	 */
+	public function splitToStringArray(string $separator = ',', bool $sorted = true, 
+			int $status = Response::STATUS_404_NOT_FOUND) {
 		$this->rejectIfNotNotEmptyString();
 		
 		$values = explode($separator, $this->value);
@@ -186,7 +260,19 @@ abstract class Param {
 	}
 	
 	
-	public function splitToIntArrayOrReject(string $separator = '-', bool $sorted = true, int $status = Response::STATUS_404_NOT_FOUND) {
+	/**
+	 * @param string $separator
+	 * @param bool $sorted
+	 * @param int $status
+	 * @deprecated
+	 */
+	public function splitToIntArrayOrReject(string $separator = '-', bool $sorted = true, 
+			int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->splitToIntArray($separator, $sorted, $status);
+	}
+	
+	public function splitToIntArray(string $separator = '-', bool $sorted = true, 
+			int $status = Response::STATUS_404_NOT_FOUND) {
 		$this->rejectIfNotNotEmptyString();
 		
 		$values = array();
@@ -211,7 +297,22 @@ abstract class Param {
 		return $values;
 	}
 	
-	public function toNotEmptyStringArrayOrReject($status = Response::STATUS_404_NOT_FOUND) {
+	
+	/**
+	 * @param int $status
+	 * @return string
+	 * @deprecated
+	 */
+	public function toNotEmptyStringArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
+		return $this->toNotEmptyStringArray($status);
+	}
+	
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return string
+	 */
+	public function toNotEmptyStringArray(int $status = Response::STATUS_404_NOT_FOUND) {
 		$values = $this->toArrayOrReject($status);
 		foreach ($values as $value) {
 			if (!self::valNotEmptyString($value)) {
@@ -226,13 +327,34 @@ abstract class Param {
 	 * @param bool $assoc
 	 * @throws StatusException
 	 * @return array|object
+	 * @deprecated {@see self::parseJson()}
 	 */
 	public function parseJsonOrReject(int $status = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
+		return $this->parseJson($status, $assoc);
+	}
+	
+	/**
+	 * @param int $status
+	 * @param bool $assoc
+	 * @throws StatusException
+	 * @return array|object
+	 */
+	public function parseJson(int $status = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
 		try {
 			return StringUtils::jsonDecode($this->value, $assoc);
 		} catch (\n2n\util\JsonDecodeFailedException $e) {
-			throw new StatusException($status, null, null, $e);	
+			throw new StatusException($status, null, null, $e);
 		}
+	}
+	
+	/**
+	 * @deprecated use {@see self::parseJsonToAttributes()}
+	 * @param int $status
+	 * @throws StatusException
+	 * @return \n2n\util\type\attrs\Attributes
+	 */
+	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_400_BAD_REQUEST) {
+		return new Attributes($this->parseJson($status, true));
 	}
 	
 	/**
@@ -240,8 +362,17 @@ abstract class Param {
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\Attributes
 	 */
-	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_400_BAD_REQUEST) {
-		return new Attributes($this->parseJsonOrReject($status, true));
+	public function parseJsonToDataSet(int $status = Response::STATUS_400_BAD_REQUEST) {
+		return new DataSet($this->parseJson($status, true));
+	}
+	
+	/**
+	 * @param int $status
+	 * @throws StatusException
+	 * @return \n2n\util\type\attrs\DataMap
+	 */
+	public function parseJsonToDataMap(int $status = Response::STATUS_400_BAD_REQUEST) {
+		return new DataMap($this->parseJson($status, true));
 	}
 	
 	/**
