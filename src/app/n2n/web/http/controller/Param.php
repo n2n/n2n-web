@@ -348,7 +348,7 @@ abstract class Param {
 	}
 	
 	/**
-	 * @deprecated use {@see self::parseJsonToAttributes()}
+	 * @deprecated use {@see self::parseJsonToDataSet()}
 	 * @param int $status
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\Attributes
