@@ -1,29 +1,35 @@
 {
-    "name": "n2n/n2n-web",
-    "type": "n2n-module",
-    "description": "n2n web",
-    "keywords": ["n2n","rest","controler","http","form api"],
-    "homepage": "http://n2n.rocks/",
-    "license": "LGPL-3.0-or-later",
     "authors": [
         {
-            "name": "Andreas von Burg",
             "email": "a@von-burg.net",
             "homepage": "https://www.von-burg.net/",
+            "name": "Andreas von Burg",
             "role": "Developer"
         }
     ],
-    "require": {
-        "php": ">=7.0",
-        "n2n/n2n-context": "7.2.x-dev",
-        "n2n/n2n-io": "7.2.x-dev",
-        "n2n/n2n-l10n": "7.2.x-dev",
-        "n2n/n2n-reflection": "7.2.x-dev",
-        "n2n/n2n-util": "7.2.x-dev"
-    },
     "autoload": {
         "psr-4": {
             "n2n\\web\\": "src/app/n2n/web"
         }
-    }
+    },
+    "description": "n2n web",
+    "homepage": "http://n2n.rocks/",
+    "keywords": [
+        "n2n",
+        "rest",
+        "controler",
+        "http",
+        "form api"
+    ],
+    "license": "LGPL-3.0-or-later",
+    "name": "n2n/n2n-web",
+    "require": {
+        "n2n/n2n-context": "^7.2.7",
+        "n2n/n2n-io": "^7.2.7",
+        "n2n/n2n-l10n": "^7.2.7",
+        "n2n/n2n-reflection": "^7.2.7",
+        "n2n/n2n-util": "^7.2.7",
+        "php": ">=7.0"
+    },
+    "type": "n2n-module"
 }
