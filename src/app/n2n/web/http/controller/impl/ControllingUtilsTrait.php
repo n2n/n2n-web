@@ -364,7 +364,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::sendJson()
 	 */
-	protected final function sendJson(array $data, bool $includeBuffer = true) {
+	protected final function sendJson($data, bool $includeBuffer = true) {
 		$this->cu()->sendJson($data, $includeBuffer);
 	}
 	
