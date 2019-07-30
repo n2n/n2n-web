@@ -65,6 +65,15 @@ class DynamicAccessProxy implements AccessProxy {
 	public function setNullReturnAllowed($nullReturnAllowed) {
 		$this->nullReturnAllowed = $nullReturnAllowed;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\reflection\property\AccessProxy::isWritable()
+	 */
+	public function isWritable(): bool {
+		return true;
+	}
+	
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setValue()
 	 */
