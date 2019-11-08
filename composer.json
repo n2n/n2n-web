@@ -2,7 +2,13 @@
     "name": "n2n/n2n-web",
     "type": "n2n-module",
     "description": "n2n web",
-    "keywords": ["n2n","rest","controler","http","form api"],
+    "keywords": [
+        "n2n",
+        "rest",
+        "controler",
+        "http",
+        "form api"
+    ],
     "homepage": "http://n2n.rocks/",
     "license": "LGPL-3.0-or-later",
     "authors": [
@@ -15,11 +21,11 @@
     ],
     "require": {
         "php": ">=7.0",
-        "n2n/n2n-context": "7.2.x-dev",
-        "n2n/n2n-io": "7.2.x-dev",
-        "n2n/n2n-l10n": "7.2.x-dev",
-        "n2n/n2n-reflection": "7.2.x-dev",
-        "n2n/n2n-util": "7.2.x-dev"
+        "n2n/n2n-context": "^7.2.14",
+        "n2n/n2n-io": "^7.2.14",
+        "n2n/n2n-l10n": "^7.2.14",
+        "n2n/n2n-reflection": "^7.2.14",
+        "n2n/n2n-util": "^7.2.14"
     },
     "autoload": {
         "psr-4": {
