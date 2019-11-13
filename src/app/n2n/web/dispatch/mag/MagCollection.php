@@ -111,6 +111,19 @@ class MagCollection {
 		}
 		return $formValues;
 	}
+	
+	/**
+	 * @param string $propertyName
+	 * @param bool $ignoreUnknown
+	 * @return NULL|mixed
+	 */
+	public function readValue(string $propertyName, bool $ignoreUnknown = false) {
+		if ($ignoreUnknown && !$this->containsPropertyName($propertyName)) {
+			return null;
+		}
+		
+		return $this->getMagWrapperByPropertyName($propertyName)->getMag()->getValue();
+	}
 
 	/**
 	 * @param array|null $propertyNames
