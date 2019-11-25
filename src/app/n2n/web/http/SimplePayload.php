@@ -31,6 +31,7 @@ class SimplePayload extends BufferedPayload {
 	 * @param string $contents
 	 */
 	public function __construct($contentType, $contents = '') {
+		$this->contentType = $contentType;
 		$this->setBufferedContents($contents);
 	}
 	/**
