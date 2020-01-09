@@ -62,6 +62,7 @@ use n2n\web\http\controller\InterceptorFactory;
 use n2n\web\http\nav\UrlBuilder;
 use n2n\util\uri\Linkable;
 use n2n\util\uri\UnavailableUrlException;
+use n2n\web\http\payload\impl\XmlPayload;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -504,6 +505,14 @@ class ControllingUtils {
 	 */
 	public function sendJson($data, bool $includeBuffer = true) {
 		$this->send(new JsonPayload($data), $includeBuffer);
+	}
+	
+	/**
+	 * @param array $data
+	 * @param bool $includeBuffer
+	 */
+	public function sendXml($data, bool $includeBuffer = true) {
+		$this->send(new XmlPayload($data), $includeBuffer);
 	}
 	
 	/**

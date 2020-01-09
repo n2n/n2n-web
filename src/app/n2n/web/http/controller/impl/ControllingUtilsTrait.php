@@ -369,6 +369,13 @@ trait ControllingUtilsTrait {
 	}
 	
 	/**
+	 * @see ControllingUtils::sendXml()
+	 */
+	protected final function sendXml($data, bool $includeBuffer = true) {
+		$this->cu()->sendXml($data, $includeBuffer);
+	}
+	
+	/**
 	 * @see ControllingUtils::sendHtml()
 	 */
 	protected final function sendHtml(string $htmlStr, bool $includeBuffer = true) {
