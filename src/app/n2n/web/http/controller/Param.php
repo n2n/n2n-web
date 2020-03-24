@@ -160,6 +160,27 @@ abstract class Param {
 	
 	
 	/**
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return string
+	 */
+	public function toArray(int $rejectStatus = Response::STATUS_404_NOT_FOUND) {
+		if (is_array($this->value)) {
+			return $this->value;
+		}
+		
+		throw new StatusException($rejectStatus, 'Param not array');
+	}
+	
+	/**
+	 * @return mixed
+	 */
+	public function getValue() {
+		return $this->value;
+	}
+	
+	
+	/**
 	 * @param int $status
 	 * @return array
 	 * @deprecated
