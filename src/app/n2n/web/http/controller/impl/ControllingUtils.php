@@ -63,6 +63,9 @@ use n2n\web\http\nav\UrlBuilder;
 use n2n\util\uri\Linkable;
 use n2n\util\uri\UnavailableUrlException;
 use n2n\web\http\payload\impl\XmlPayload;
+use n2n\validation\build\ValidationJob;
+use n2n\validation\err\ValidationException;
+use n2n\web\http\StatusException;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -606,5 +609,21 @@ class ControllingUtils {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Executes a {@see ValidationJob} and automatically converts {@see ValidationException}s to {@see StatusException}s 
+	 * 
+	 * @param ValidationJob $validationJob
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return \n2n\web\http\controller\impl\ValResult
+	 */
+	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+		try {
+			return new ValResult($validationJob->exec(), $this);
+		} catch (ValidationException $e) {
+			throw new StatusException($status, $e->getMessage(), null, $e);
+		}
 	}
 }
