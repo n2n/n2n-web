@@ -42,7 +42,7 @@ class SimpleRequest implements Request {
 	private $cmdContextPath;
 	private $cmdUrl;
 	private $postQuery;
-	private $uploadDefinitions;
+	private $uploadDefinitions = [];
 	private $n2nLocale;
 	private $availableN2nLocaleAliases = array();
 	private $availableSubsystems = array();
@@ -56,10 +56,7 @@ class SimpleRequest implements Request {
 		$this->contextUrl = $contextUrl;
 		$this->cmdUrl = new Url();
 		
-		$this->postQuery = new Query();
-		$this->uploadDefinitions = $this->extractUploadDefinitions($fileVars);
-		
-		$this->initUrl($getVars);
+		$this->postQuery = new Query([]);
 	}
 	
 	function setMethod(int $method) {
@@ -223,7 +220,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getHostName()
 	 */
 	public function getHostName(): string {
-		return $this->requestedUrl->getAuthority()->getHost();
+		return $this->contextUrl->getAuthority()->getHost();
 	}
 	
 	/**
@@ -231,7 +228,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getPort()
 	 */
 	public function getPort() {
-		return $this->requestedUrl->getAuthority()->getPort();
+		return $this->contextUrl->getAuthority()->getPort();
 	}
 	
 	/**
@@ -240,7 +237,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getContextPath()
 	 */
 	public function getContextPath(): Path {
-		return $this->cmdContextPath;
+		return $this->contextUrl->getPath();
 	}
 	
 // 	/**
@@ -258,7 +255,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getPath()
 	 */
 	public function getPath(): Path {
-		return $this->requestedUrl->getPath();
+		return $this->contextUrl->ext($this->cmdUrl->getPath());
 	}
 	
 	/**
@@ -266,7 +263,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getRelativeUrl()
 	 */
 	public function getRelativeUrl() {
-		return $this->requestedUrl->toRelativeUrl();
+		return $this->contextUrl->toRelativeUrl()->ext($this->cmdUrl);
 	}
 	
 	/**
@@ -274,7 +271,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getQuery()
 	 */
 	public function getQuery() {
-		return $this->requestedUrl->getQuery();
+		return $this->cmdUrl->getQuery();
 	}
 	
 	/**
