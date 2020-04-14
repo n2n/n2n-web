@@ -158,7 +158,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getHeader()
 	 */
-	public function getHeader($name) {
+	public function getHeader($name): ?string {
 		$varKey = 'HTTP_' . str_replace('-', '_', mb_strtoupper($name));
 		if (isset($this->serverVars[$varKey])) {
 			return $this->serverVars[$varKey];

@@ -103,4 +103,11 @@ class Method {
 		}
 		return implode(', ', $strs);
 	}
+	
+	/**
+	 * @return string[]
+	 */
+	static function getAll() {
+		return [ self::GET, self::POST, self::PUT, self::DELETE, self::PATCH, self::OPTIONS, self::HEAD, self::TRACE ];
+	}
 }
