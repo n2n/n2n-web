@@ -623,7 +623,7 @@ class ControllingUtils {
 		try {
 			return new ValResult($validationJob->exec(), $this);
 		} catch (ValidationException $e) {
-			throw new StatusException($status, $e->getMessage(), null, $e);
+			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
 }
