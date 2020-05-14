@@ -621,7 +621,7 @@ class ControllingUtils {
 	 */
 	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
 		try {
-			return new ValResult($validationJob->exec(), $this);
+			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
 		} catch (ValidationException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
