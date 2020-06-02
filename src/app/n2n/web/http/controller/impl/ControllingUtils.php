@@ -118,7 +118,7 @@ class ControllingUtils {
 	 * @return \n2n\core\container\N2nContext
 	 */
 	public function getN2nContext(): N2nContext {
-		return $this->controllerContext->getControllingPlan()->getN2nContext();
+		return $this->getControllerContext()->getControllingPlan()->getN2nContext();
 	}
 	
 	/**
@@ -143,7 +143,7 @@ class ControllingUtils {
 	 * @return ControllingPlan
 	 */
 	public function getControllingPlan(): ControllingPlan {
-		return $this->controllerContext->getControllingPlan();
+		return $this->getControllerContext()->getControllingPlan();
 	}
 	
 	/**
@@ -267,7 +267,7 @@ class ControllingUtils {
 		CastUtils::assertTrue($viewFactory instanceof ViewFactory);
 	
 		$view = $viewFactory->create($viewName, $params, $moduleNamespace);
-		$view->setControllerContext($this->controllerContext);
+		$view->setControllerContext($this->getControllerContext());
 	
 		if (null !== $this->viewCacheControl) {
 			$viewFactory->cache($view, $this->viewCacheControl);
@@ -374,7 +374,7 @@ class ControllingUtils {
 	 */
 	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
-			return UrlBuilder::buildUrl($murl, $this->getN2nContext(), $this->controllerContext, $suggestedLabel);
+			return UrlBuilder::buildUrl($murl, $this->getN2nContext(), $this->getControllerContext(), $suggestedLabel);
 		} catch (UnavailableUrlException $e) {
 			if ($required) throw $e;
 			return null;
@@ -401,7 +401,7 @@ class ControllingUtils {
 				$controllerContext = $this->getControllingPlan()->getMainControllerContextByKey((string) $controllerContext);
 			}
 		} else {
-			$controllerContext = $this->controllerContext;
+			$controllerContext = $this->getControllerContext();
 		}
 
 		return Murl::controller($controllerContext)->pathExt($pathExt)
@@ -462,7 +462,7 @@ class ControllingUtils {
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function createDelegateContext(Controller $controller = null, int $numPathPartsToShift = null) {
-		$controllerContext = $this->controllerContext;
+		$controllerContext = $this->getControllerContext();
 	
 		if ($numPathPartsToShift === null) {
 			$numPathPartsToShift = $this->getInvokerInfo()->getNumSinglePathParts();
@@ -489,7 +489,7 @@ class ControllingUtils {
 	
 	public function delegateToControllerContext(ControllerContext $nextControllerContext, bool $execute = true, 
 			bool $try = false) {
-		$plan = $this->controllerContext->getControllingPlan();
+		$plan = $this->getControllerContext()->getControllingPlan();
 	
 		if ($plan->getStatus() == ControllingPlan::STATUS_FILTER) {
 			$plan->addFilter($nextControllerContext, $execute);
@@ -621,7 +621,7 @@ class ControllingUtils {
 	 */
 	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
 		try {
-			return new ValResult($validationJob->exec(), $this);
+			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
 		} catch (ValidationException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}

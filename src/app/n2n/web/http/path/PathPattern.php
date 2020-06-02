@@ -90,7 +90,7 @@ class PathPattern {
 			try {
 				return StringUtils::pregMatch($patternDef['regexPattern'], $pathPart);
 			} catch (RegexSyntaxException $e) {
-				throw new PathPatternComposeException('Error while using regex pattern: ' . $patternDef['regexPattern'], $e);
+				throw new PathPatternComposeException('Error while using regex pattern: ' . $patternDef['regexPattern'], null, $e);
 			}
 		}
 		

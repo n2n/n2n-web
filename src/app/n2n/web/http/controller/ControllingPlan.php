@@ -26,6 +26,7 @@ use n2n\core\container\N2nContext;
 use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
+use n2n\reflection\magic\MagicMethodInvoker;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -41,6 +42,8 @@ class ControllingPlan {
 	private $currentFilterIndex = -1;
 	private $mainControllerContexts = array();
 	private $currentMainIndex = -1; 
+	
+	private $onMainStartClosures = [];
 
 	public function __construct(N2nContext $n2nContext) {
 		$this->n2nContext = $n2nContext;
@@ -137,9 +140,12 @@ class ControllingPlan {
 			$nextFilter->execute();
 		}
 
-		if ($this->status != self::STATUS_FILTER) return;
+		if ($this->status != self::STATUS_FILTER && $this->status != self::STATUS_MAIN) {
+			return;
+		}
 		
 		$this->status = self::STATUS_MAIN;
+		
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->nextMain())) {
 			try {
 				if (!$nextMain->execute()) {
@@ -158,10 +164,15 @@ class ControllingPlan {
 			throw new PageNotFoundException();
 		}
 	}
-	public function executeNextFilter(bool $try = false) {
-		if ($this->status !== self::STATUS_FILTER) {
+	
+	private function ensureFilterable() {
+		if ($this->status !== self::STATUS_FILTER && $this->status !== self::STATUS_READY) {
 			throw new ControllingPlanException('ControllingPlan is not executing filter controllers.');
 		}
+	}
+	
+	public function executeNextFilter(bool $try = false) {
+		$this->ensureFilterable();
 		
 		$nextFilter = $this->nextFilter();
 		if (null === $nextFilter) {
@@ -173,6 +184,16 @@ class ControllingPlan {
 		if ($try) return false;
 		
 		throw new PageNotFoundException();
+	}
+	
+	public function executeToMain() {
+		$this->ensureFilterable();
+		
+		while (null !== ($nextFilter = $this->nextFilter())) {
+			$nextFilter->execute();
+		}
+		
+		$this->status = self::STATUS_MAIN;
 	}
 	
 	public function executeNextMain(bool $try = false) {
