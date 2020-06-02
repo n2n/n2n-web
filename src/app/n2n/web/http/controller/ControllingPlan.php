@@ -140,12 +140,11 @@ class ControllingPlan {
 			$nextFilter->execute();
 		}
 
-		if ($this->status != self::STATUS_FILTER) {
+		if ($this->status != self::STATUS_FILTER && $this->status != self::STATUS_MAIN) {
 			return;
 		}
 		
 		$this->status = self::STATUS_MAIN;
-		$this->triggerMainStartClosures();
 		
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->nextMain())) {
 			try {
@@ -165,19 +164,42 @@ class ControllingPlan {
 			throw new PageNotFoundException();
 		}
 	}
-	public function executeNextFilter(bool $try = false) {
-		if ($this->status !== self::STATUS_FILTER) {
+	
+	private function ensureFilterable() {
+		if ($this->status !== self::STATUS_FILTER && $this->status !== self::STATUS_READY) {
 			throw new ControllingPlanException('ControllingPlan is not executing filter controllers.');
 		}
+	}
+	
+	public function executeNextFilter(bool $try = false) {
+		$this->ensureFilterable();
 		
 		$nextFilter = $this->nextFilter();
 		if (null === $nextFilter) {
 			throw new ControllingPlanException('No filter controller to execute.');
 		}
 		
-		if ($nextFilter->execute()) return true;
+		return $this->executeFilter($nextFilter, $try);
+	}
+	
+	public function executeToMain() {
+		$this->ensureFilterable();
 		
-		if ($try) return false;
+		while (null !== ($nextFilter = $this->nextFilter())) {
+			$this->executeFilter($nextFilter, false);
+		}
+		
+		$this->status = self::STATUS_MAIN;
+	}
+	
+	private function executeFilter(ControllerContext $filter, bool $try) {
+		if ($filter->execute()) {
+			return true;
+		}
+		
+		if ($try) {
+			return false;
+		}
 		
 		throw new PageNotFoundException();
 	}
@@ -288,25 +310,6 @@ class ControllingPlan {
 			if ($mainCc->getName() == $key) {
 				return $mainCc;
 			}
-		}
-	}
-	
-	function onMainStart(\Closure $closure) {
-		$this->onMainStartClosures[spl_object_hash($closure)] = $closure;
-	}
-	
-	function offMainStart(\Closure $closure) {
-		unset($this->onMainStartClosures[spl_object_hash($closure)]);
-	}
-	
-	private function triggerMainStartClosures() {
-		if (empty($this->onMainStartClosures)) {
-			return;
-		}
-		
-		$mmi = new MagicMethodInvoker($this->n2nContext);
-		foreach ($this->onMainStartClosures as $closure) {
-			$mmi->invoke(null, new \ReflectionFunction($closure));
 		}
 	}
 }
