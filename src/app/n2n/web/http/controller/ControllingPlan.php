@@ -26,6 +26,7 @@ use n2n\core\container\N2nContext;
 use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
+use n2n\reflection\magic\MagicMethodInvoker;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -41,6 +42,8 @@ class ControllingPlan {
 	private $currentFilterIndex = -1;
 	private $mainControllerContexts = array();
 	private $currentMainIndex = -1; 
+	
+	private $onMainStartClosures = [];
 
 	public function __construct(N2nContext $n2nContext) {
 		$this->n2nContext = $n2nContext;
@@ -137,9 +140,13 @@ class ControllingPlan {
 			$nextFilter->execute();
 		}
 
-		if ($this->status != self::STATUS_FILTER) return;
+		if ($this->status != self::STATUS_FILTER) {
+			return;
+		}
 		
 		$this->status = self::STATUS_MAIN;
+		$this->triggerMainStartClosures();
+		
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->nextMain())) {
 			try {
 				if (!$nextMain->execute()) {
@@ -281,6 +288,25 @@ class ControllingPlan {
 			if ($mainCc->getName() == $key) {
 				return $mainCc;
 			}
+		}
+	}
+	
+	function onMainStart(\Closure $closure) {
+		$this->onMainStartClosures[spl_object_hash($closure)] = $closure;
+	}
+	
+	function offMainStart(\Closure $closure) {
+		unset($this->onMainStartClosures[spl_object_hash($closure)]);
+	}
+	
+	private function triggerMainStartClosures() {
+		if (empty($this->onMainStartClosures)) {
+			return;
+		}
+		
+		$mmi = new MagicMethodInvoker($this->n2nContext);
+		foreach ($this->onMainStartClosures as $closure) {
+			$mmi->invoke(null, new \ReflectionFunction($closure));
 		}
 	}
 }
