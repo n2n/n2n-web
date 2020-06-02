@@ -118,7 +118,7 @@ class ControllingUtils {
 	 * @return \n2n\core\container\N2nContext
 	 */
 	public function getN2nContext(): N2nContext {
-		return $this->controllerContext->getControllingPlan()->getN2nContext();
+		return $this->getControllerContext()->getControllingPlan()->getN2nContext();
 	}
 	
 	/**
@@ -143,7 +143,7 @@ class ControllingUtils {
 	 * @return ControllingPlan
 	 */
 	public function getControllingPlan(): ControllingPlan {
-		return $this->controllerContext->getControllingPlan();
+		return $this->getControllerContext()->getControllingPlan();
 	}
 	
 	/**

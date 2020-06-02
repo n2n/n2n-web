@@ -196,18 +196,6 @@ class ControllingPlan {
 		$this->status = self::STATUS_MAIN;
 	}
 	
-	private function executeFilter(ControllerContext $filter, bool $try) {
-		if ($filter->execute()) {
-			return true;
-		}
-		
-		if ($try) {
-			return false;
-		}
-		
-		throw new PageNotFoundException();
-	}
-	
 	public function executeNextMain(bool $try = false) {
 		if ($this->status !== self::STATUS_MAIN) {
 			throw new ControllingPlanException('ControllingPlan is not executing main controllers.');
