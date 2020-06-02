@@ -179,14 +179,18 @@ class ControllingPlan {
 			throw new ControllingPlanException('No filter controller to execute.');
 		}
 		
-		return $this->executeFilter($nextFilter, $try);
+		if ($nextFilter->execute()) return true;
+		
+		if ($try) return false;
+		
+		throw new PageNotFoundException();
 	}
 	
 	public function executeToMain() {
 		$this->ensureFilterable();
 		
 		while (null !== ($nextFilter = $this->nextFilter())) {
-			$this->executeFilter($nextFilter, false);
+			$nextFilter->execute();
 		}
 		
 		$this->status = self::STATUS_MAIN;
