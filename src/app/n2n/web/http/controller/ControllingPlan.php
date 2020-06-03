@@ -26,7 +26,6 @@ use n2n\core\container\N2nContext;
 use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
-use n2n\reflection\magic\MagicMethodInvoker;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -186,6 +185,9 @@ class ControllingPlan {
 		throw new PageNotFoundException();
 	}
 	
+	/**
+	 * @return boolean returns false if the ControllingPlan was aborted by a following filter
+	 */
 	public function executeToMain() {
 		$this->ensureFilterable();
 		
@@ -193,7 +195,12 @@ class ControllingPlan {
 			$nextFilter->execute();
 		}
 		
+		if ($this->status !== self::STATUS_FILTER) {
+			return false;
+		}
+		
 		$this->status = self::STATUS_MAIN;
+		return true;
 	}
 	
 	public function executeNextMain(bool $try = false) {
