@@ -113,7 +113,7 @@ class SimpleRequest implements Request {
 	 * @return boolean
 	 */
 	public function isSsl() {
-		return $this->requestedUrl->getScheme() == self::PROTOCOL_HTTPS;
+		return $this->contextUrl->getScheme() == self::PROTOCOL_HTTPS;
 	}
 	
 	/**
@@ -182,7 +182,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getHostUrl()
 	 */
 	public function getHostUrl() {
-		return new Url($this->requestedUrl->getScheme(), $this->requestedUrl->getAuthority());
+		return new Url($this->contextUrl->getScheme(), $this->contextUrl->getAuthority());
 	}
 	
 	/**
@@ -190,8 +190,8 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getProtocol()
 	 */
 	public function getProtocol(): string {
-		if ($this->requestedUrl->hasScheme()) {
-			return $this->requestedUrl->getScheme();
+		if ($this->contextUrl->hasScheme()) {
+			return $this->contextUrl->getScheme();
 		}
 		
 		return self::PROTOCOL_HTTP;
