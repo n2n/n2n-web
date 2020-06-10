@@ -49,6 +49,7 @@ class ControllerInterpreter {
 	const MAGIC_PUT_METHOD_PREFIX = 'putDo';
 	const MAGIC_DELETE_METHOD_PREFIX = 'deleteDo';
 	const MAGIC_POST_METHOD_PREFIX = 'postDo';
+	const MAGIC_OPTIONS_METHOD_PREFIX = 'optionsDo';
 	const INDEX_METHOD_NAME = 'index';
 	const NOT_FOUND_METHOD_NAME = 'notFound';
 	
@@ -257,6 +258,9 @@ class ControllerInterpreter {
 				break;
 			case Method::POST:
 				$methodName = self::MAGIC_POST_METHOD_PREFIX . $nameBase;
+				break;
+			case Method::OPTIONS:
+				$methodName = self::MAGIC_OPTIONS_METHOD_PREFIX . $nameBase;
 				break;
 		}
 		
