@@ -26,7 +26,6 @@ use n2n\core\container\N2nContext;
 use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
-use n2n\reflection\magic\MagicMethodInvoker;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -39,9 +38,11 @@ class ControllingPlan {
 	private $status = self::STATUS_READY;
 	private $n2nLocale;
 	private $filterControllerContexts = array();
-	private $currentFilterIndex = -1;
+	private $nextFilterIndex = 0;
+	private $currentFilterControllerContext = null;
 	private $mainControllerContexts = array();
-	private $currentMainIndex = -1; 
+	private $nextMainIndex = 0; 
+	private $currentMainControllerContext = null;
 	
 	private $onMainStartClosures = [];
 
@@ -68,24 +69,26 @@ class ControllingPlan {
 	public function addFilter(ControllerContext $filterControllerContext, $afterCurrent = false) {
 		$filterControllerContext->setControllingPlan($this);
 		
-		if ($this->currentFilterIndex < 0 || !$afterCurrent) {
+		if (!$afterCurrent || $this->status !== self::STATUS_FILTER 
+				|| !isset($this->filterControllerContexts[$this->nextFilterIndex])) {
 			$this->filterControllerContexts[] = $filterControllerContext;
 			return;
 		}
 		
-		$this->insertControllerContext($this->filterControllerContexts, $this->currentFilterIndex, 
+		$this->insertControllerContext($this->filterControllerContexts, $this->nextFilterIndex, 
 				$filterControllerContext);
 	}
 	
 	public function addMain(ControllerContext $mainControllerContext, $afterCurrent = false) {
 		$mainControllerContext->setControllingPlan($this);
 		
-		if ($this->currentMainIndex < 0 || !$afterCurrent) {
+		if (!$afterCurrent || $this->status !== self::STATUS_MAIN
+				|| !isset($this->mainControllerContexts[$this->nextMainIndex])) {
 			$this->mainControllerContexts[] = $mainControllerContext;
 			return;
 		}
 		
-		$this->insertControllerContext($this->mainControllerContexts, $this->currentMainIndex,
+		$this->insertControllerContext($this->mainControllerContexts, $this->nextMainIndex,
 				$mainControllerContext);
 	}
 	
@@ -100,28 +103,27 @@ class ControllingPlan {
 		$arr[] = $controllerContext;
 	}
 	
+	/**
+	 * @return ControllerContext|null
+	 */
 	private function nextFilter() {
-		$this->currentFilterIndex++;
-		
-		if (isset($this->filterControllerContexts[$this->currentFilterIndex])) {
-			return $this->filterControllerContexts[$this->currentFilterIndex];
+		if (isset($this->filterControllerContexts[$this->nextFilterIndex])) {
+			return $this->currentFilterControllerContext = $this->filterControllerContexts[$this->nextFilterIndex++];
 		}
 		
-		$this->currentFilterIndex--;
+		$this->currentFilterControllerContext = null;
 		return null;
 	}
 	
 	/**
-	 * @return ControllerContext|NULL
+	 * @return ControllerContext|null
 	 */
 	private function nextMain() {
-		$this->currentMainIndex++;
-		
-		if (isset($this->mainControllerContexts[$this->currentMainIndex])) {
-			return $this->mainControllerContexts[$this->currentMainIndex];
+		if (isset($this->mainControllerContexts[$this->nextMainIndex])) {
+			return $this->currentMainControllerContext = $this->mainControllerContexts[$this->nextMainIndex++];
 		}
 
-		$this->currentMainIndex--;
+		$this->currentMainControllerContext = null;
 		return null;
 	}
 	
@@ -135,8 +137,7 @@ class ControllingPlan {
 		}
 		
 		$this->status = self::STATUS_FILTER;
-		while ($this->status == self::STATUS_FILTER 
-				&& null !== ($nextFilter = $this->nextFilter())) {
+		while ($this->status == self::STATUS_FILTER && null !== ($nextFilter = $this->nextFilter())) {
 			$nextFilter->execute();
 		}
 
@@ -186,6 +187,9 @@ class ControllingPlan {
 		throw new PageNotFoundException();
 	}
 	
+	/**
+	 * @return boolean returns false if the ControllingPlan was aborted by a following filter
+	 */
 	public function executeToMain() {
 		$this->ensureFilterable();
 		
@@ -193,7 +197,12 @@ class ControllingPlan {
 			$nextFilter->execute();
 		}
 		
+		if ($this->status !== self::STATUS_FILTER) {
+			return false;
+		}
+		
 		$this->status = self::STATUS_MAIN;
+		return true;
 	}
 	
 	public function executeNextMain(bool $try = false) {
@@ -218,26 +227,24 @@ class ControllingPlan {
 	} 
 	
 	public function hasCurrentFilter() {
-		return $this->status == self::STATUS_FILTER 
-				&& $this->filterControllerContexts[$this->currentFilterIndex];
+		return $this->status == self::STATUS_FILTER && $this->currentFilterControllerContext !== null;
 	}
 	
 	public function getCurrentFilter() {
 		if ($this->hasCurrentFilter()) {
-			return $this->filterControllerContexts[$this->currentFilterIndex];
+			return $this->currentFilterControllerContext;
 		}
 		
 		throw new ControllingPlanException('No filter controller active.');
 	}
 
 	public function hasCurrentMain() {
-		return $this->status == self::STATUS_MAIN
-				&& $this->mainControllerContexts[$this->currentMainIndex];
+		return $this->status == self::STATUS_MAIN && $this->currentMainControllerContext !== null;
 	}
 	
 	public function getCurrentMain() {
 		if ($this->hasCurrentMain()) {
-			return $this->mainControllerContexts[$this->currentMainIndex];
+			return $this->currentMainControllerContext;
 		}
 		
 		throw new ControllingPlanException('No main controller active.');
@@ -286,11 +293,11 @@ class ControllingPlan {
 	}
 	
 	public function skipFilter() {
-		$this->currentFilterIndex = count($this->filterControllerContexts) - 1;
+		$this->nextFilterIndex = count($this->filterControllerContexts);
 	}
 	
 	public function skipMain() {
-		$this->currentMainIndex = count($this->mainControllerContexts) - 1;
+		$this->nextMainIndex = count($this->mainControllerContexts);
 	}
 	
 	public function abort() {
