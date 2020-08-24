@@ -268,7 +268,7 @@ class Response {
 		
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
-			$contents += $outputBuffer->getBufferedContents();
+			$contents .= $outputBuffer->getBufferedContents();
 		}
 		
 		return $contents;

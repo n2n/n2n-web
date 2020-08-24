@@ -32,7 +32,7 @@ class JsonPayload extends BufferedPayload {
 	 * @param array $data
 	 */
 	public function __construct($data = null)  {
-		$this->jsonString = StringUtils::jsonEncode($data);
+		$this->jsonString = StringUtils::jsonEncode($data, JSON_INVALID_UTF8_SUBSTITUTE);
 	}
 	
 	/* (non-PHPdoc)
