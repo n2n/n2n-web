@@ -46,6 +46,10 @@ class UploadDefinition {
 	public function getName() {
 		return $this->name;
 	}
+	
+	function setName(string $name) {
+		$this->name = $name;
+	}
 
 	public function getTmpName() {
 		return $this->tmpName;
