@@ -21,50 +21,8 @@
  */
 namespace n2n\web\http\controller\impl;
 
-use n2n\web\http\controller\ControllerContext;
-use n2n\web\http\controller\ControllingPlanException;
-use n2n\reflection\TypeExpressionResolver;
-use n2n\reflection\ReflectionUtils;
-use n2n\util\ex\IllegalStateException;
-use n2n\web\ui\view\ViewCacheControl;
-use n2n\web\http\controller\ControllingPlan;
-use n2n\web\http\payload\Payload;
-use n2n\web\http\NoHttpRefererGivenException;
-use n2n\web\http\nav\UrlComposer;
-use n2n\web\http\payload\impl\Redirect;
-use n2n\web\dispatch\DispatchContext;
-use n2n\web\dispatch\Dispatchable;
-use n2n\web\http\ResponseCacheControl;
-use n2n\web\http\HttpCacheControl;
-use n2n\web\ui\ViewFactory;
-use n2n\util\type\CastUtils;
-use n2n\web\http\controller\Controller;
-use n2n\core\container\N2nContext;
-use n2n\web\http\Response;
-use n2n\web\http\Request;
-use n2n\web\http\HttpContext;
-use n2n\web\http\controller\InvokerInfo;
-use n2n\web\ui\view\View;
-use n2n\web\http\nav\Murl;
-use n2n\web\http\BadRequestException;
-use n2n\core\container\Transaction;
-use n2n\web\http\payload\impl\JsonPayload;
-use n2n\web\http\payload\impl\HtmlPayload;
-use n2n\web\http\payload\impl\HtmlUiPayload;
-use n2n\io\managed\File;
-use n2n\web\http\payload\impl\FilePayload;
-use n2n\io\fs\FsPath;
-use n2n\web\http\payload\impl\FsPathPayload;
-use n2n\web\ui\UiComponent;
-use n2n\util\type\ArgUtils;
-use n2n\web\http\controller\Interceptor;
-use n2n\web\http\controller\InterceptorFactory;
-use n2n\web\http\nav\UrlBuilder;
-use n2n\util\uri\Linkable;
-use n2n\util\uri\UnavailableUrlException;
-use n2n\web\http\payload\impl\XmlPayload;
-use n2n\validation\build\ValidationResult;
 use n2n\validation\build\ErrorMap;
+use n2n\validation\build\ValidationResult;
 
 class ValResult implements ValidationResult {
 	private $origValidationResult;
