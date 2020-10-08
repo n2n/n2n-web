@@ -28,6 +28,7 @@ use n2n\util\StringUtils;
 use n2n\util\type\attrs\Attributes;
 use n2n\util\type\attrs\DataMap;
 use n2n\util\type\attrs\DataSet;
+use n2n\web\http\controller\impl\HttpData;
 
 abstract class Param {
 	private $value;
@@ -320,80 +321,88 @@ abstract class Param {
 	
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @return string
 	 * @deprecated
 	 */
-	public function toNotEmptyStringArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
-		return $this->toNotEmptyStringArray($status);
+	public function toNotEmptyStringArrayOrReject(int $errStatus = Response::STATUS_404_NOT_FOUND) {
+		return $this->toNotEmptyStringArray($errStatus);
 	}
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @throws StatusException
 	 * @return string
 	 */
-	public function toNotEmptyStringArray(int $status = Response::STATUS_404_NOT_FOUND) {
-		$values = $this->toArrayOrReject($status);
+	public function toNotEmptyStringArray(int $errStatus = Response::STATUS_404_NOT_FOUND) {
+		$values = $this->toArrayOrReject($errStatus);
 		foreach ($values as $value) {
 			if (!self::valNotEmptyString($value)) {
-				throw new StatusException($status);
+				throw new StatusException($errStatus);
 			}
 		}
 		return $this->value;
 	}
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @param bool $assoc
 	 * @throws StatusException
 	 * @return array|object
 	 * @deprecated {@see self::parseJson()}
 	 */
-	public function parseJsonOrReject(int $status = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
-		return $this->parseJson($status, $assoc);
+	public function parseJsonOrReject(int $errStatus = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
+		return $this->parseJson($errStatus, $assoc);
 	}
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @param bool $assoc
 	 * @throws StatusException
 	 * @return array|object
 	 */
-	public function parseJson(int $status = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
+	public function parseJson(int $errStatus = Response::STATUS_400_BAD_REQUEST, bool $assoc = true) {
 		try {
 			return StringUtils::jsonDecode($this->value, $assoc);
 		} catch (\n2n\util\JsonDecodeFailedException $e) {
-			throw new StatusException($status, null, null, $e);
+			throw new StatusException($errStatus, null, null, $e);
 		}
 	}
 	
 	/**
 	 * @deprecated use {@see self::parseJsonToDataSet()}
-	 * @param int $status
+	 * @param int $errStatus
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\Attributes
 	 */
-	public function parseJsonToAttrsOrReject(int $status = Response::STATUS_400_BAD_REQUEST) {
-		return new Attributes($this->parseJson($status, true));
+	public function parseJsonToAttrsOrReject(int $errStatus = Response::STATUS_400_BAD_REQUEST) {
+		return new Attributes($this->parseJson($errStatus, true));
 	}
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\Attributes
 	 */
-	public function parseJsonToDataSet(int $status = Response::STATUS_400_BAD_REQUEST) {
-		return new DataSet($this->parseJson($status, true));
+	public function parseJsonToDataSet(int $errStatus = Response::STATUS_400_BAD_REQUEST) {
+		return new DataSet($this->parseJson($errStatus, true));
 	}
 	
 	/**
-	 * @param int $status
+	 * @param int $errStatus
 	 * @throws StatusException
 	 * @return \n2n\util\type\attrs\DataMap
 	 */
-	public function parseJsonToDataMap(int $status = Response::STATUS_400_BAD_REQUEST) {
-		return new DataMap($this->parseJson($status, true));
+	public function parseJsonToDataMap(int $errStatus = Response::STATUS_400_BAD_REQUEST) {
+		return new DataMap($this->parseJson($errStatus, true));
+	}
+	
+	/**
+	 * @param int $errStatus
+	 * @return HttpData
+	 */
+	function parseJsonToHttpData(int $errStatus = Response::STATUS_400_BAD_REQUEST) {
+		return new HttpData($this->parseJsonToDataMap($errStatus, true), $errStatus);
 	}
 	
 	/**
