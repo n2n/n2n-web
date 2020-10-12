@@ -24,11 +24,10 @@ namespace n2n\web\http\controller\impl;
 use n2n\util\type\TypeConstraint;
 use n2n\web\http\StatusException;
 use n2n\web\http\Response;
-use n2n\util\type\attrs\AttributeReader;
 use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
 
-class HttpData implements AttributeReader {
+class HttpData {
 
 	private $dataMap;
 	private $errStatus;
@@ -224,7 +223,7 @@ class HttpData implements AttributeReader {
 	 */
 	public function reqHttpData($path, bool $nullAllowed = false, int $errStatus = null) {
 		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
-			return new HttpData(new HttpData($array), $errStatus ?? $this->errStatus);
+			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}
 		
 		return null;
