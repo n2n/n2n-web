@@ -448,6 +448,7 @@ trait ControllingUtilsTrait {
 	
 	/**
 	 * @see ControllingUtils::val()
+	 * @return ValResult
 	 */
 	protected final function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
 		return $this->cu()->val($validationJob, $rejectStatus);

@@ -26,10 +26,10 @@ class ControllerDef {
 	private $subsystemName;
 	private $contextPath;
 	
-	public function __construct(string $controllerClassName, $subsystemName, $contextPath) {
-		if (empty($controllerClassName)) {
-			throw new \Exception();
-		}
+	public function __construct(string $controllerClassName, ?string $subsystemName, $contextPath) {
+// 		if (empty($controllerClassName)) {
+// 			throw new \Exception();
+// 		}
 		
 		$this->controllerClassName = $controllerClassName;
 		$this->subsystemName = $subsystemName;

@@ -77,6 +77,15 @@ class ControllerRegistry implements RequestScoped {
 		
 		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales);
 		
+		foreach ($this->webConfig->getPrecacheControllerDefs() as $precacheControllerDef) {
+			if ($precacheControllerDef->getSubsystemName() !== null
+					&& $precacheControllerDef->getSubsystemName() != $subsystemName) {
+				continue;
+			}
+			
+			$controllingPlanFactory->registerPrecacheControllerDef($precacheControllerDef);
+		}
+		
 		foreach ($this->webConfig->getFilterControllerDefs() as $filterControllerDef) {
 			if ($filterControllerDef->getSubsystemName() !== null
 					&& $filterControllerDef->getSubsystemName() != $subsystemName) {
@@ -104,6 +113,8 @@ class ControllingPlanFactory {
 	
 	private $contextN2nLocales;
 	private $pathPatternCompiler;
+	private $precacheControllerDefs = [];
+	private $precachePathPatterns = array();
 	private $filterControllerDefs = array();
 	private $filterPathPatterns = array();
 	private $mainControllerDefs = array();
@@ -125,12 +136,23 @@ class ControllingPlanFactory {
 	public function createControllingPlan(N2nContext $n2nContext, Path $cmdPath): ControllingPlan {
 		$controllingPlan = new ControllingPlan($n2nContext);
 		
-		$this->applyFilters($controllingPlan, $n2nContext, $cmdPath);
-		$this->applyMain($controllingPlan, $n2nContext, $cmdPath);
+		$this->applyPrecaches($controllingPlan, $n2nContext, $cmdPath);
+		
+		$controllingPlan->onPostPrecache(function () use ($controllingPlan, $n2nContext, $cmdPath) {
+			$this->applyFilters($controllingPlan, $n2nContext, $cmdPath);
+			$this->applyMain($controllingPlan, $n2nContext, $cmdPath);
+		});
 	
 		return $controllingPlan;
 	}
-
+	
+	/**
+	 * @param ControllerDef $controllerDef
+	 */
+	public function registerPrecacheControllerDef(ControllerDef $controllerDef) {
+		$this->precacheControllerDefs[] = $controllerDef;
+	}
+	
 	/**
 	 * @param ControllerDef $controllerDef
 	 */
@@ -144,12 +166,38 @@ class ControllingPlanFactory {
 	public function registerMainControllerDef(ControllerDef $controllerDef) {
 		$this->mainControllerDefs[] = $controllerDef;
 	}
+	
 	/**
+	 * @param ControllerDef[] $controllerDefs
 	 * @param ControllingPlan $controllingPlan
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
 	 */
-	private function applyFilters(ControllingPlan $controllingPlan, N2nContext $n2nContext, Path $cmdPath) {
+	private function applyPrecaches($controllingPlan, $n2nContext, $cmdPath) {
+		foreach ($this->precacheControllerDefs as $key => $precacheControllerDef) {
+			if (!isset($this->precachePathPatterns[$key])) {
+				$this->precachePathPatterns[$key] = $this->pathPatternCompiler
+						->compile($precacheControllerDef->getContextPath());
+			}
+			
+			$matchResult = $this->precachePathPatterns[$key]->matchesPath($cmdPath, true);
+			if (null === $matchResult) continue;
+			
+			$controllerContext = new ControllerContext($matchResult->getSurplusPath(),
+					$matchResult->getUsedPath(), $n2nContext->lookup(
+							$precacheControllerDef->getControllerClassName()));
+			$controllerContext->setParams($matchResult->getParamValues());
+			$controllingPlan->addPrecacheFilter($controllerContext);
+		}
+	}
+	
+	/**
+	 * @param ControllerDef[] $controllerDefs
+	 * @param ControllingPlan $controllingPlan
+	 * @param N2nContext $n2nContext
+	 * @param Path $cmdPath
+	 */
+	private function applyFilters($controllingPlan, $n2nContext, $cmdPath) {
 		foreach ($this->filterControllerDefs as $key => $filterControllerDef) {
 			if (!isset($this->filterPathPatterns[$key])) {
 				$this->filterPathPatterns[$key] = $this->pathPatternCompiler
@@ -166,6 +214,7 @@ class ControllingPlanFactory {
 			$controllingPlan->addFilter($controllerContext);
 		}
 	}
+	
 	/**
 	 * @param ControllingPlan $controllingPlan
 	 * @param N2nContext $n2nContext

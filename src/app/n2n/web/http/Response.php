@@ -369,7 +369,10 @@ class Response {
 	 * @return boolean
 	 */
 	public function sendCachedPayload() {
-		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) return false;
+		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) {
+			return false;
+		}
+		
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
 					$this->request->getSubsystemName(), $this->request->getPath());
 		
