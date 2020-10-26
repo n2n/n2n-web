@@ -324,7 +324,7 @@ class ControllingPlan {
 	function executeToMain() {
 		$this->ensureFilterable();
 		
-		while (null !== ($nextFilter = $this->nextFilter())) {
+		while (null !== ($nextFilter = $this->filterQueue->next())) {
 			$nextFilter->execute();
 		}
 		
