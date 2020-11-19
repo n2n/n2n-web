@@ -27,6 +27,7 @@ use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\web\http\HttpContextNotAvailableException;
 use n2n\util\uri\UnavailableUrlException;
+use n2n\web\http\UnknownControllerContextException;
 
 class ContextUrlComposer implements UrlComposer {
 	private $toController;
@@ -142,9 +143,15 @@ class ContextUrlComposer implements UrlComposer {
 			}
 		} else if ($this->controllerContext instanceof ControllerContext) {
 			$path = $this->controllerContext->getCmdContextPath();
+		} else if ($controllerContext !== null) {
+			try {
+				$path = $controllerContext->getControllingPlan()->getByName($this->controllerContext)
+						->getCmdContextPath();
+			} catch (UnknownControllerContextException $e) {
+				throw new UnavailableUrlException(null, null, $e);
+			}
 		} else {
-			$path = $controllerContext->getControllingPlan()->getByName($this->controllerContext)
-					->getCmdContextPath();
+			throw new UnavailableUrlException('No ControllerContext available.');
 		}
 
 		try {
