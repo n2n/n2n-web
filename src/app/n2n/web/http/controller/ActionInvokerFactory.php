@@ -246,7 +246,7 @@ class ActionInvokerFactory {
 				continue;
 			}
 				
-			if (null !== ($paramClass = $parameter->getClass())) {
+			if (null !== ($paramClass = ReflectionUtils::extractParameterClass($parameter))) {
 				$value = null;
 				if ($this->checkForQueryParam($paramName, $paramClass, $value)) {
 					if ($value === null && !$parameter->allowsNull()) {
