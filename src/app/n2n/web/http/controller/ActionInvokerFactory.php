@@ -185,10 +185,12 @@ class ActionInvokerFactory {
 				}
 			}
 			
-			if (!$parameter->isArray()) $numSinglePathParts++;
+			$isArray = ReflectionUtils::isArrayParameter($parameter);
+			
+			if (!$isArray) $numSinglePathParts++;
 		
 			try {
-				$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $parameter->isArray(), $paramName);
+				$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
 			} catch (PathPatternComposeException $e) {
 				throw new ControllerErrorException('Invalid definition of param: ' . $paramName, 
 						$method->getFileName(), $method->getStartLine(), null, null, $e);
@@ -244,7 +246,7 @@ class ActionInvokerFactory {
 				continue;
 			}
 				
-			if (null !== ($paramClass = $parameter->getClass())) {
+			if (null !== ($paramClass = ReflectionUtils::extractParameterClass($parameter))) {
 				$value = null;
 				if ($this->checkForQueryParam($paramName, $paramClass, $value)) {
 					if ($value === null && !$parameter->allowsNull()) {

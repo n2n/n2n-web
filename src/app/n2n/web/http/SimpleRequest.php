@@ -25,10 +25,8 @@ use n2n\l10n\N2nLocale;
 use n2n\util\uri\Path;
 use n2n\util\uri\Url;
 use n2n\util\uri\Query;
-use n2n\util\uri\Authority;
 use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
-use n2n\io\IoUtils;
 use n2n\util\ex\IllegalStateException;
 
 class SimpleRequest implements Request {
@@ -255,7 +253,7 @@ class SimpleRequest implements Request {
 	 * @see \n2n\web\http\Request::getPath()
 	 */
 	public function getPath(): Path {
-		return $this->contextUrl->ext($this->cmdUrl->getPath());
+		return $this->contextUrl->ext($this->cmdUrl->getPath())->getPath();
 	}
 	
 	/**
