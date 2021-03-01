@@ -26,6 +26,7 @@ use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
+use n2n\util\type\attrs\DataSet;
 
 class HttpData {
 
@@ -237,7 +238,7 @@ class HttpData {
 	 */
 	public function optDataSet($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
 		if (null !== ($array = $this->optArray($path, null, $nullAllowed))) {
-			return new HttpData(new HttpData($array), $errStatus ?? $this->errStatus);
+			return new HttpData(new DataSet($array), $errStatus ?? $this->errStatus);
 		}
 		
 		return null;
