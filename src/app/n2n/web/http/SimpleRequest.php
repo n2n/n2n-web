@@ -46,6 +46,7 @@ class SimpleRequest implements Request {
 	private $availableSubsystems = array();
 	private $assetsDirName;
 	private $protocolVersion;
+	private $subsystem;
 	
 	public function __construct(Url $contextUrl) {
 		ArgUtils::assertTrue($contextUrl->getQuery()->isEmpty() && $contextUrl->getFragment() === null,

@@ -52,7 +52,7 @@ class ValResult implements ValidationResult {
 		
 		$this->cu->sendJson([
 			'status' => 'ERR',
-			'errorMap' => $this->getErrorMap()
+			'errorMap' => $this->getErrorMap()->toArray($this->cu->getN2nContext())
 		]);
 		
 		return true;
