@@ -1,29 +1,34 @@
 {
-    "name": "n2n/n2n-web",
-    "type": "n2n-module",
-    "description": "n2n web",
-    "keywords": ["n2n","rest","controler","http","form api"],
-    "homepage": "http://n2n.rocks/",
-    "license": "LGPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Andreas von Burg",
-            "email": "a@von-burg.net",
-            "homepage": "https://www.von-burg.net/",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">=7.0",
-        "n2n/n2n-context": "master-dev",
-        "n2n/n2n-io": "master-dev",
-        "n2n/n2n-l10n": "master-dev",
-        "n2n/n2n-reflection": "master-dev",
-        "n2n/n2n-util": "master-dev"
-    },
-    "autoload": {
-        "psr-4": {
-            "n2n\\web\\": "src/app/n2n/web"
-        }
-    }
+	"name" : "n2n/n2n-web",
+	"type" : "n2n-module",
+	"description" : "n2n web",
+	"keywords" : [
+		"n2n",
+		"rest",
+		"controler",
+		"http",
+		"form api"
+	],
+	"homepage" : "http://n2n.rocks/",
+	"license" : "LGPL-3.0-or-later",
+	"authors" : [{
+			"name" : "Andreas von Burg",
+			"email" : "a@von-burg.net",
+			"homepage" : "https://www.von-burg.net/",
+			"role" : "Developer"
+		}
+	],
+	"require" : {
+		"php" : ">=7.0",
+		"n2n/n2n-context" : "^7.2.33",
+		"n2n/n2n-io" : "^7.2.33",
+		"n2n/n2n-l10n" : "^7.2.33",
+		"n2n/n2n-reflection" : "^7.2.33",
+		"n2n/n2n-util" : "^7.2.33"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"n2n\\web\\" : "src/app/n2n/web"
+		}
+	}
 }
