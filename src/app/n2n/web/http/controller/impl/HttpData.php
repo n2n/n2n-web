@@ -245,6 +245,29 @@ class HttpData {
 	}
 	
 	/**
+	 * @param string $propName
+	 * @param \Closure $closure
+	 * @param array $convertableExcpetionNames
+	 * @return HttpData
+	 */
+	function trySet(string $propName, \Closure $valueCallback, array $convertableExcpetionNames = [\InvalidArgumentException::class]) {
+		try {
+			$this->dataMap->set($propName, $valueCallback());
+		} catch (\Throwable $e) {
+			foreach ($convertableExcpetionNames as $convertableExcpetionName) {
+				if (is_a($e, $convertableExcpetionName)) {
+					throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+				}
+			}
+			
+			throw $e;
+		}
+		
+		return $this;
+	}
+	
+	
+	/**
 	 * 
 	 * @return \n2n\util\type\attrs\DataMap
 	 */
