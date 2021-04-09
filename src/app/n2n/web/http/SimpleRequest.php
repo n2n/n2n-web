@@ -289,6 +289,14 @@ class SimpleRequest implements Request {
 		return $this->uploadDefinitions;
 	}
 	
+	/**
+	 * @param array $uploadDefinitions
+	 */
+	function setUploadDefinitions(array $uploadDefinitions) {
+		ArgUtils::valArray($uploadDefinitions, UploadDefinition::class);
+		$this->uploadDefinitions = $uploadDefinitions;
+	}
+	
 	public function getSubsystemName() {
 		if ($this->subsystem !== null) {
 			return $this->subsystem->getName();
