@@ -65,6 +65,14 @@ class HttpData {
 	}
 	
 	/**
+	 * @param string|AttributePath $path
+	 * @return boolean
+	 */
+	function has($path) {
+		return $this->dataMap->has($path);
+	}
+	
+	/**
 	 * @param string $name
 	 * @param bool $mandatory
 	 * @param mixed $defaultValue
@@ -234,9 +242,9 @@ class HttpData {
 	 * @param string|AttributePath|string[] $path
 	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
-	 * @return \n2n\util\type\attrs\Attributes|null
+	 * @return HttpData|null
 	 */
-	public function optDataSet($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
+	public function optHttpData($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
 		if (null !== ($array = $this->optArray($path, null, $nullAllowed))) {
 			return new HttpData(new DataSet($array), $errStatus ?? $this->errStatus);
 		}
