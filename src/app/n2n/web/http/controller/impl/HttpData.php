@@ -246,7 +246,7 @@ class HttpData {
 	 */
 	public function optHttpData($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
 		if (null !== ($array = $this->optArray($path, null, $nullAllowed))) {
-			return new HttpData(new DataSet($array), $errStatus ?? $this->errStatus);
+			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}
 		
 		return null;
