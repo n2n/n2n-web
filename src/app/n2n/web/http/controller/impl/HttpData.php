@@ -252,6 +252,19 @@ class HttpData {
 		return null;
 	}
 	
+	public function reqHttpDatas($path, bool $nullAllowed = false) {
+		return array_map(fn ($data) => new HttpData($data), $this->reqArray($path, 'array', $nullAllowed));
+	}
+	
+	public function optHttpDatas($path, $defaultValue = [], bool $nullAllowed = false) {
+		$httpDatas = $this->optArray($path, 'array', null, $nullAllowed);
+		if ($httpDatas === null) {
+			return $defaultValue;
+		}
+		
+		return array_map(fn ($data) => new HttpData($data), $httpDatas);
+	}
+	
 	/**
 	 * @param string $propName
 	 * @param \Closure $closure
