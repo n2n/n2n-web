@@ -253,7 +253,8 @@ class HttpData {
 	}
 	
 	public function reqHttpDatas($path, bool $nullAllowed = false) {
-		return array_map(fn ($data) => new HttpData($data), $this->reqArray($path, 'array', $nullAllowed));
+		return array_map(fn ($data) => new HttpData(new DataMap($data)),
+				$this->reqArray($path, 'array', $nullAllowed));
 	}
 	
 	public function optHttpDatas($path, $defaultValue = [], bool $nullAllowed = false) {
@@ -262,7 +263,7 @@ class HttpData {
 			return $defaultValue;
 		}
 		
-		return array_map(fn ($data) => new HttpData($data), $httpDatas);
+		return array_map(fn ($data) => new HttpData(new DataMap($data)), $httpDatas);
 	}
 	
 	/**
