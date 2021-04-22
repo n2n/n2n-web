@@ -106,7 +106,7 @@ class Response {
 	private $sendLastModifiedAllowed = true;
 	private $serverPushAllowed = true;
 	
-	private $outputBuffers;
+	private $outputBuffers = [];
 	private $bufferedHeaders;
 	private $bufferedStatusCode;
 	private $bufferedHttpCacheControl;
@@ -120,17 +120,14 @@ class Response {
 	public function __construct(Request $request) {		
 		$this->request = $request;
 		$this->listeners = array();
-
+		
+		$this->reset();
+		
 		$prevContent = ob_get_contents();
 		if ($prevContent !== false) {
 			@ob_clean();
+			$this->createOutputBuffer()->append($prevContent);
 		}
-		
-		$outputBuffer = $this->createOutputBuffer();
-		$outputBuffer->start();
-		
-		$this->reset();
-		$outputBuffer->append($prevContent);
 	}
 
 	/**
@@ -248,14 +245,7 @@ class Response {
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
-		if ($this->outputBuffers === null) {
-			$this->outputBuffers = array();
-			$outputBuffer = new OutputBuffer();
-		} else {
-			$this->ensureBuffering();
-			$outputBuffer = new OutputBuffer();
-		}
-		
+		$outputBuffer = new OutputBuffer();
 		$this->outputBuffers[] = $outputBuffer; 
 		return $outputBuffer;
 	}
@@ -314,11 +304,13 @@ class Response {
 			$listener->onReset($this);
 		}
 		
-		$this->ensureBuffering();
+// 		$this->ensureBuffering();
 		
 		$this->bufferedStatusCode = self::STATUS_200_OK;
 		$this->bufferedHeaders = array();
-		$this->fetchBufferedOutput(false);
+		if ($this->isBuffering()) {
+			$this->fetchBufferedOutput(false);
+		}
 		$this->bufferedHttpCacheControl = null;
 		$this->bufferedResponseCacheControl = null;
 		$this->sentPayload = null;

@@ -36,6 +36,8 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 	public final function execute(ControllerContext $controllerContext): bool {
 		$this->init($controllerContext);
 		
+		$outputBuffer = $this->getResponse()->createOutputBuffer();
+		
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
 				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), $request,
