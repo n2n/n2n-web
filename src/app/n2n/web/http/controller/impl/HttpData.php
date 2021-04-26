@@ -26,9 +26,9 @@ use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
-use n2n\util\type\attrs\DataSet;
+use n2n\util\type\attrs\AttributeReader;
 
-class HttpData {
+class HttpData implements AttributeReader {
 
 	private $dataMap;
 	private $errStatus;
