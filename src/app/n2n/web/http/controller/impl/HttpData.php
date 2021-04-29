@@ -27,6 +27,7 @@ use n2n\web\http\Response;
 use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
 use n2n\util\type\attrs\AttributeReader;
+use n2n\util\type\attrs\AttributesException;
 
 class HttpData implements AttributeReader {
 
@@ -54,14 +55,26 @@ class HttpData implements AttributeReader {
 	public function isEmpty() {
 		return $this->dataMap->isEmpty();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::containsAttribute()
+	 */
+	function containsAttribute(AttributePath $path): bool {
+		return $this->has($path);
+	}
 		
-	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
+	/**
+	 * <strong>This method throws an {@link AttributesException} instead of a {@link StatusException} to implement
+	 * {@link AttributeReader} correclty.</strong> For safe usage where only {@link StatusException} are desired
+	 * use {@link self::req()} instead.
+	 * 
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
+	 */
+	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			$defaultValue = null) {
-		try {
-			return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+		return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
 	}
 	
 	/**
