@@ -18,6 +18,11 @@
 			"role" : "Developer"
 		}
 	],
+	"minimum-stability" : "dev",
+	"prefer-stable": true,
+	"config" : {
+		"vendor-dir" : "src/vendor"
+	},
 	"require" : {
 		"php" : ">=7.0",
 		"n2n/n2n-context" : "^7.2.33",
@@ -29,6 +34,11 @@
 	"autoload" : {
 		"psr-4" : {
 			"n2n\\web\\" : "src/app/n2n/web"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"n2n\\web\\" : "src/test/n2n/web"
 		}
 	}
 }
