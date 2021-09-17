@@ -44,5 +44,5 @@ class AnnoIntercept implements ClassAnnotation, MethodAnnotation {
      */
     function getInterceptorLookupIds() {
         return $this->interceptorLookupIds;
-    }   
+    }
 }
