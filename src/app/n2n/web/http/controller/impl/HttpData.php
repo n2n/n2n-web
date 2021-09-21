@@ -215,7 +215,7 @@ class HttpData implements AttributeReader {
 	
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
 		try {
-			return $this->dataMap->optEnum($path, $allowedValues, false, $defaultValue, $nullAllowed);
+			return $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed);
 		} catch (\n2n\util\type\attrs\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
