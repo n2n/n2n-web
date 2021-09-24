@@ -148,7 +148,7 @@ class ContextUrlComposer implements UrlComposer {
 				$path = $controllerContext->getControllingPlan()->getByName($this->controllerContext)
 						->getCmdContextPath();
 			} catch (UnknownControllerContextException $e) {
-				throw new UnavailableUrlException(null, null, $e);
+				throw new UnavailableUrlException(true, null, null, $e);
 			}
 		} else {
 			throw new UnavailableUrlException('No ControllerContext available.');
