@@ -19,7 +19,7 @@
 		}
 	],
 	"minimum-stability" : "dev",
-	"prefer-stable": true,
+	"prefer-stable" : true,
 	"config" : {
 		"vendor-dir" : "src/vendor"
 	},
@@ -40,5 +40,8 @@
 		"psr-4" : {
 			"n2n\\web\\" : "src/test/n2n/web"
 		}
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^9.5"
 	}
 }
