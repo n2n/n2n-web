@@ -26,9 +26,10 @@ use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
-use n2n\util\type\attrs\DataSet;
+use n2n\util\type\attrs\AttributeReader;
+use n2n\util\type\attrs\AttributesException;
 
-class HttpData {
+class HttpData implements AttributeReader {
 
 	private $dataMap;
 	private $errStatus;
@@ -54,14 +55,26 @@ class HttpData {
 	public function isEmpty() {
 		return $this->dataMap->isEmpty();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::containsAttribute()
+	 */
+	function containsAttribute(AttributePath $path): bool {
+		return $this->has($path);
+	}
 		
-	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
+	/**
+	 * <strong>This method throws an {@link AttributesException} instead of a {@link StatusException} to implement
+	 * {@link AttributeReader} correclty.</strong> For safe usage where only {@link StatusException} are desired
+	 * use {@link self::req()} instead.
+	 * 
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
+	 */
+	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			$defaultValue = null) {
-		try {
-			return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+		return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
 	}
 	
 	/**
@@ -194,7 +207,7 @@ class HttpData {
 	
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
 		try {
-			return $this->dataMap->getEnum($path, $allowedValues);
+			return $this->dataMap->reqEnum($path, $allowedValues);
 		} catch (\n2n\util\type\attrs\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
@@ -202,7 +215,7 @@ class HttpData {
 	
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
 		try {
-			return $this->dataMap->getEnum($path, $allowedValues, false, $defaultValue, $nullAllowed);
+			return $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed);
 		} catch (\n2n\util\type\attrs\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
