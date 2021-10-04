@@ -26,6 +26,8 @@ use n2n\core\container\N2nContext;
 use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
+use n2n\web\http\HttpContext;
+use n2n\util\type\ArgUtils;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -34,22 +36,15 @@ class ControllingPlan {
 	const STATUS_MAIN = 'main';
 	const STATUS_EXECUTED = 'executed';
 	const STATUS_ABORTED = 'aborted';
+	const STATUS_ERROR = 'error';
 			
-	private $n2nContext;
+	private HttpContext $httpContext;
 	private $status = self::STATUS_READY;
 	private $n2nLocale;
 	private $precacheQueue;
 	private $responseCachePrevented = false;
 	private $filterQueue;
 	private $mainQueue;
-// 	private $precacheFilterControllerContexts = array();
-// 	private $nextPrecacheFilterIndex = 0;
-// 	private $filterControllerContexts = array();
-// 	private $nextFilterIndex = 0;
-// 	private $currentFilterControllerContext = null;
-// 	private $mainControllerContexts = array();
-// 	private $nextMainIndex = 0; 
-// 	private $currentMainControllerContext = null;
 	
 	private $onPostPrecacheClosures = [];
 	private $onMainStartClosures = [];
@@ -57,18 +52,18 @@ class ControllingPlan {
 	/**
 	 * @param N2nContext $n2nContext
 	 */
-	function __construct(N2nContext $n2nContext) {
-		$this->n2nContext = $n2nContext;
+	function __construct(HttpContext $httpContext) {
+		$this->httpContext = $httpContext;
 		$this->precacheQueue = new ControllerContextQueue();
 		$this->filterQueue = new ControllerContextQueue();
 		$this->mainQueue = new ControllerContextQueue();
 	}
 	
 	/**
-	 * @return \n2n\core\container\N2nContext
+	 * @return \n2n\web\http\HttpContext
 	 */
-	function getN2nContext() {
-		return $this->n2nContext;
+	function getHttpContext() {
+		return $this->httpContext;
 	}
 	
 	/**
@@ -199,17 +194,18 @@ class ControllingPlan {
 // 	}
 	
 	/**
+	 * @returns ExecutionResult
 	 * @throws ControllingPlanException
 	 * @throws PageNotFoundException
 	 * @throws StatusException
 	 */
-	public function execute() {
+	public function execute(): ExecutionResult {
 		if ($this->status !== self::STATUS_READY) {
 			throw new ControllingPlanException('ControllingPlan already executed.');
 		}
 		
 		if ($this->n2nLocale !== null) {
-			$this->n2nContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
+			$this->httpContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
 		}
 		
 		$this->status = self::STATUS_PRECACHE;
@@ -219,11 +215,11 @@ class ControllingPlan {
 		
 		// return when aborted
 		if ($this->status != self::STATUS_PRECACHE && $this->status != self::STATUS_FILTER) {
-			return;
+			return new ExecutionResult(null);
 		}
 		
-		if (!$this->responseCachePrevented && $this->n2nContext->getHttpContext()->getResponse()->sendCachedPayload()) {
-			return;
+		if (!$this->responseCachePrevented && $this->httpContext->getHttpContext()->getResponse()->sendCachedPayload()) {
+			return new ExecutionResult(null);
 		}
 		
 		$this->triggerPostPrecache();
@@ -235,19 +231,18 @@ class ControllingPlan {
 
 		// return when aborted
 		if ($this->status != self::STATUS_FILTER && $this->status != self::STATUS_MAIN) {
-			return;
+			return new ExecutionResult(null);
 		}
 		
 		$this->status = self::STATUS_MAIN;
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->mainQueue->next())) {
 			try {
 				if (!$nextMain->execute()) {
-					throw new PageNotFoundException('No matching method found in Controller ' 
-							. get_class($nextMain->getController()));
+					return $this->handleStatusException(new PageNotFoundException('No matching method found in Controller ' 
+							. get_class($nextMain->getController())));
 				}
 			} catch (StatusException $e) {
-				$this->status = self::STATUS_ABORTED;
-				throw $e;
+				return $this->handleStatusException($e);
 			}
 		}
 		
@@ -257,6 +252,17 @@ class ControllingPlan {
 			throw new PageNotFoundException();
 		}
 	}
+	
+	private function handleStatusException(StatusException $e) {
+		$this->status = self::STATUS_ERROR;
+		
+		$view = $this->httpContext->getViewFactory()->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
+		$this->httpContext->getResponse()->send($view);
+		
+		return new ExecutionResult($e);
+	}
+	
+
 	
 	/**
 	 * @throws ControllingPlanException
@@ -653,5 +659,24 @@ class ControllerContextQueue {
 	
 	function isEmpty() {
 		return empty($this->controllerContexts);
+	}
+}
+
+class ExecutionResult {
+	private $e;
+	
+	function __construct(?StatusException $e) {
+		$this->e = $e;			
+	}
+	
+	function isSuccessful() {
+		return $this->e === null;
+	}
+	
+	/**
+	 * @return \n2n\web\http\StatusException|null
+	 */
+	function getStatusException() {
+		return $this->e;
 	}
 }

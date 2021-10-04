@@ -30,17 +30,16 @@ use n2n\context\RequestScoped;
 use n2n\core\config\WebConfig;
 use n2n\web\http\UnknownSubsystemException;
 use n2n\context\LookupFailedException;
+use n2n\web\http\HttpContext;
 
 class ControllerRegistry implements RequestScoped {
-	private $webConfig;
-	private $n2nContext;
+	private $httpContext;
 	
 	/**
 	 * 
 	 */
-	private function _init(WebConfig $webConfig, N2nContext $n2nContext) {
-		$this->webConfig = $webConfig;
-		$this->n2nContext = $n2nContext;
+	private function _init(HttpContext $httpContext) {
+		$this->httpContext = $httpContext;
 	}
 	
 	
@@ -60,12 +59,12 @@ class ControllerRegistry implements RequestScoped {
 	 */
 	public function createControllingPlan(Path $cmdPath, string $subsystemName = null) {
 		$contextN2nLocales = new \ArrayObject();
-		foreach ($this->webConfig->getSupersystem()->getN2nLocales() as $n2nLocale) {
+		foreach ($this->httpContext->getSupersystem()->getN2nLocales() as $n2nLocale) {
 			$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;	
 		}
 		
 		if ($subsystemName !== null) {
-			$subsystems = $this->webConfig->getSubsystems();
+			$subsystems = $this->httpContext->getSubsystems();
 			if (!isset($subsystems[$subsystemName])) {
 				throw new UnknownSubsystemException('Unknown subystem name: ' . $subsystemName);
 			}
@@ -104,7 +103,7 @@ class ControllerRegistry implements RequestScoped {
 			$controllingPlanFactory->registerMainControllerDef($mainControllerDef);
 		}
 		
-		return $controllingPlanFactory->createControllingPlan($this->n2nContext, $cmdPath);
+		return $controllingPlanFactory->createControllingPlan($this->httpContext, $cmdPath);
 	}
 }
 

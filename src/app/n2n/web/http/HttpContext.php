@@ -29,25 +29,38 @@ use n2n\core\VarStore;
 use n2n\util\col\ArrayUtils;
 use n2n\web\http\controller\ControllerContext;
 use n2n\util\type\ArgUtils;
+use n2n\util\magic\MagicContext;
+use n2n\web\ui\ViewFactory;
 
 class HttpContext {
+	
 	private $request;
 	private $response;
 	private $session;
 	private $baseAssetsUrl;
 	private $supersystem;
-	private $availableSubsystems;
-	private $n2nContext;
+	private $subsystems;
+	private $viewFactory;
+	private $magicContext;
+	
+	
+	const DEFAULT_STATUS_VIEW = 'n2n\\web\\view\\status.html';
+	
+	private $errorStatusViewNames = [];
+	private $errorStatusDefaultViewName = null;
+	private $errorStatusException = null;
 	
 	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
-			Supersystem $supersystem, array $availableSubsystems, N2nContext $n2nContext) {
+			Supersystem $supersystem, array $subsystems, ViewFactory $viewFactory, MagicContext $magicContext) {
+		ArgUtils::valArray($subsystems, Subsystem::class);
 		$this->request = $request;
 		$this->response = $response;
 		$this->session = $session;
 		$this->baseAssetsUrl = $baseAssetsUrl;
 		$this->supersystem = $supersystem;
-		$this->availableSubsystems = $availableSubsystems;
-		$this->n2nContext = $n2nContext;
+		$this->subsystems = $subsystems;
+		$this->viewFactory = $viewFactory;
+		$this->magicContext = $magicContext;
 	}
 	
 	/**
@@ -69,6 +82,10 @@ class HttpContext {
 	 */
 	public function getSession(): Session {
 		return $this->session;
+	}
+	
+	function getViewFactory() {
+		return $this->viewFactory;
 	}
 	
 	/**
@@ -163,10 +180,18 @@ class HttpContext {
 	}
 	
 	/**
+	 * @return Subsystem[]
+	 */
+	function getSubsystems() {
+		return $this->subsystems;
+	}
+	
+	/**
 	 * @return Subsystem[] 
+	 * @deprecated use {@link self::getSubsystems()}
 	 */
 	public function getAvailableSubsystems() {
-		return $this->availableSubsystems;
+		return $this->subsystems;
 	}
 	
 	/**
@@ -282,17 +307,54 @@ class HttpContext {
 	 * @throws UnknownSubsystemException
 	 */
 	public function getAvailableSubsystemByName($name) {
-		if (isset($this->availableSubsystems[$name])) {
-			return $this->availableSubsystems[$name];
+		if (isset($this->subsystems[$name])) {
+			return $this->subsystems[$name];
 		}
 		
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
 	}
 	
 	/**
-	 * @return N2nContext
+	 * @return MagicContext
 	 */
-	public function getN2nContext(): N2nContext {
-		return $this->n2nContext;
+	public function getMagicContext(): MagicContext {
+		return $this->magicContext;
+	}
+	
+	/**
+	 * @return string[]
+	 */
+	function getErrorStatusViewNames() {
+		return $this->errorStatusViewNames;
+	}
+	
+	/**
+	 * @param string[] $errorStatusViewNames
+	 */
+	function setErrorStatusViewNames(array $errorStatusViewNames) {
+		ArgUtils::valArray($errorStatusViewNames, 'string');
+		$this->errorStatusViewNames = $errorStatusViewNames;
+	}
+	
+	/**
+	 * @param string|null $errorStatusDefaultViewName
+	 */
+	function setErrorStatusDefaultViewName(?string $errorStatusDefaultViewName) {
+		$this->errorStatusDefaultViewName = $errorStatusDefaultViewName;
+	}
+	
+	/**
+	 * @return string|null
+	 */
+	function getErrorStatusDefaultViewName() {
+		return $this->errorStatusDefaultViewName;
+	}
+	
+	/**
+	 * @param int $httpStatus
+	 * @return string
+	 */
+	function determineErrorStatusViewName(int $httpStatus) {
+		return $this->errorStatusViewNames[$httpStatus] ?? $this->errorStatusDefaultViewName ?? self::DEFAULT_STATUS_VIEW;
 	}
 }

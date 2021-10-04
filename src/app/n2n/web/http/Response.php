@@ -105,7 +105,9 @@ class Response {
 	private $sendEtagAllowed = true;
 	private $sendLastModifiedAllowed = true;
 	private $serverPushAllowed = true;
-	
+	/**
+	 * @var OutputBuffer[]
+	 */
 	private $outputBuffers = [];
 	private $bufferedHeaders;
 	private $bufferedStatusCode;
@@ -122,12 +124,6 @@ class Response {
 		$this->listeners = array();
 		
 		$this->reset();
-		
-		$prevContent = ob_get_contents();
-		if ($prevContent !== false) {
-			@ob_clean();
-			$this->createOutputBuffer()->append($prevContent);
-		}
 	}
 
 	/**
@@ -229,7 +225,7 @@ class Response {
 	 * @return bool
 	 */
 	public function isBuffering() {
-		return (bool) sizeof($this->outputBuffers);
+		return !empty($this->outputBuffers) && $this->outputBuffers[0]->isBuffering();
 	}
 	
 	/**
@@ -238,15 +234,39 @@ class Response {
 	private function ensureBuffering() {
 		if ($this->isBuffering()) return;
 		
-		throw new IllegalStateException('Response buffer is closed');
+		throw new IllegalStateException('Response buffer is closed.');
+	}
+	
+	function createBaseOutputBuffer(bool $prevCapture = true) {
+		if (!empty($this->outputBuffers)) {
+			throw new IllegalStateException('Main OutputBuffer already exists.');
+		}
+		
+		$prevContent = $this->fetchBufferedOutput(true) . ob_get_contents();
+		if ($prevContent !== false) {
+			@ob_clean();
+		}
+		
+		$outputBuffer = $this->pushNewOutputBuffer();
+		if ($prevContent !== false) {
+			$outputBuffer->append($prevContent);
+		}
+		
+		return $outputBuffer;
 	}
 	
 	/**
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
+		$this->ensureBuffering();
+		
+		return $this->pushNewOutputBuffer();	
+	}
+		
+	private function pushNewOutputBuffer() {
 		$outputBuffer = new OutputBuffer();
-		$this->outputBuffers[] = $outputBuffer; 
+		$this->outputBuffers[] = $outputBuffer;
 		return $outputBuffer;
 	}
 	
@@ -321,7 +341,7 @@ class Response {
 	 * @param string $etag
 	 * @param \DateTime $lastModified
 	 */
-	private function notModified($etag, \DateTime $lastModified = null) {
+	private function notModified(?string $etag, \DateTime $lastModified = null) {
 		if ($this->bufferedStatusCode !== self::STATUS_200_OK) return false;
 		
 		$etagNotModified = null;
