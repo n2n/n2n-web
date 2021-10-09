@@ -36,7 +36,7 @@ use n2n\web\dispatch\model\DispatchModelFactory;
 use n2n\core\VarStore;
 use n2n\util\crypt\EncryptionDescriptor;
 use n2n\core\N2N;
-use n2n\io\IoUtils;
+use n2n\util\io\IoUtils;
 use n2n\util\crypt\Cipher;
 
 class DispatchContext implements ThreadScoped {

@@ -25,7 +25,7 @@ use n2n\l10n\DynamicTextCollection;
 use n2n\l10n\DateTimeFormat;
 use n2n\l10n\L10nUtils;
 use n2n\web\http\controller\ControllerContext;
-use n2n\io\ob\OutputBuffer;
+use n2n\util\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\web\ui\UiComponent;
 use n2n\web\ui\UiException;

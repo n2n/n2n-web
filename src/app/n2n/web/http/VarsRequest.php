@@ -28,7 +28,7 @@ use n2n\util\uri\Query;
 use n2n\util\uri\Authority;
 use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
-use n2n\io\IoUtils;
+use n2n\util\io\IoUtils;
 
 class VarsRequest implements Request {
 	const PROTOCOL_VERSION_SEPARATOR = '/';
@@ -49,6 +49,8 @@ class VarsRequest implements Request {
 	private $assetsDirName;
 	private $protocolVersion;
 	
+	private StatusException $prevStatusException = null;
+	
 	public function __construct(array $serverVars, array $getVars, array $postVars, 
 			array $fileVars) {
 		$this->serverVars = $serverVars;
@@ -56,7 +58,10 @@ class VarsRequest implements Request {
 		$this->uploadDefinitions = $this->extractUploadDefinitions($fileVars);
 		
 		$this->initUrl($getVars);
+
 	}
+	
+	
 	
 	private function extractServerVar($name) {
 		if (isset($this->serverVars[$name])) {

@@ -22,7 +22,7 @@
 namespace n2n\web\http;
 
 use n2n\l10n\Message;
-use n2n\io\IoUtils;
+use n2n\util\io\IoUtils;
 
 class UploadDefinition {
 	private $errorNo;

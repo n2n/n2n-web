@@ -25,11 +25,10 @@
 	},
 	"require" : {
 		"php" : ">=7.0",
-		"n2n/n2n-context" : "^7.2.33",
-		"n2n/n2n-io" : "^7.2.33",
-		"n2n/n2n-l10n" : "^7.2.33",
-		"n2n/n2n-reflection" : "^7.2.33",
-		"n2n/n2n-util" : "^7.2.33"
+		"n2n/n2n-context" : "dev-develop",
+		"n2n/n2n-l10n" : "dev-develop",
+		"n2n/n2n-reflection" : "dev-develop",
+		"n2n/n2n-util" : "dev-develop"
 	},
 	"autoload" : {
 		"psr-4" : {

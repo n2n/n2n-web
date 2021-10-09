@@ -22,38 +22,37 @@
 namespace n2n\web\http\payload\impl;
 
 use n2n\web\http\Response;
-use n2n\io\managed\File;
-use n2n\core\N2nVars;
 use n2n\web\http\payload\ResourcePayload;
 use n2n\util\type\ArgUtils;
-use n2n\io\IoUtils;
+use n2n\util\io\IoUtils;
 use n2n\util\ex\NotYetImplementedException;
+use n2n\util\io\Downloadable;
 
 class FilePayload extends ResourcePayload {
-	private $file;
+	private $downloadable;
 	private $attachment;
 	private $attachmentName;
 	
-	public function __construct(File $file, bool $attachment = false, string $attachmentName = null) {
+	public function __construct(Downloadable $downlodable, bool $attachment = false, string $attachmentName = null) {
 		ArgUtils::valScalar($attachment, true, 'attachment');
-		$this->file = $file;
+		$this->downloadable = $downlodable;
 		$this->attachment = $attachment;
 		$this->attachmentName = $attachmentName;
 	}
 	
 	public function prepareForResponse(Response $response) {
-		$mimeType = N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->file->getOriginalExtension());
+		$mimeType = $this->downloadable->getMimeType(); // N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->downloadable->getOriginalExtension());
 		
-		if (isset($mimeType)) {
+// 		if (isset($mimeType)) {
 			$response->setHeader('Content-Type: ' . $mimeType);
-		} else {
-			$response->setHeader('Content-Type: application/octet-stream');
-		}
+// 		} else {
+// 			$response->setHeader('Content-Type: application/octet-stream');
+// 		}
 		
-		$response->setHeader('Content-Length: ' . $this->file->getFileSource()->getSize());
+		$response->setHeader('Content-Length: ' . $this->downloadable->getSize());
 		
 		if ($this->attachment) {
-			$attachmentName = $this->attachmentName ?? $this->file->getOriginalName();
+			$attachmentName = $this->attachmentName ?? $this->downloadable->getName();
 			if (IoUtils::hasSpecialChars($attachmentName)) {
 				throw new NotYetImplementedException('RFC-2231 encoding not yet implemented');
 			}
@@ -63,21 +62,18 @@ class FilePayload extends ResourcePayload {
 	}
 	
 	public function toKownPayloadString(): string {
-		return $this->file->getOriginalName() . ' (' . $this->file->getFileSource()->__toString() . ')';
+		return $this->downloadable->getName() . ' (' . $this->downloadable->__toString() . ')';
 	}
 	
 	public function responseOut() {
-		echo $this->file->getFileSource()->out();
+		echo $this->downloadable->out();
 	}
 	
-	/* (non-PHPdoc)
-	 * @see n2n\web\http.ResourcePayload::getEtag()
-	 */
 	public function getEtag() {
-		return $this->file->getFileSource()->buildHash();
+		return $this->downloadable->buildHash();
 	}
 	
 	public function getLastModified() {
-		return $this->file->getFileSource()->getLastModified();
+		return $this->downloadable->getLastModified();
 	}
 }

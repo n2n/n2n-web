@@ -21,9 +21,9 @@
  */
 namespace n2n\web\http;
 
-use n2n\util\StringUtils;
+use n2n\context\config\LookupSession;
 
-interface Session {
+interface Session extends LookupSession {
 
 	/**
 	 * 

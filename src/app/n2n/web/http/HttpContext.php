@@ -21,7 +21,6 @@
  */
 namespace n2n\web\http;
 
-use n2n\core\container\N2nContext;
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
@@ -49,6 +48,7 @@ class HttpContext {
 	private $errorStatusViewNames = [];
 	private $errorStatusDefaultViewName = null;
 	private $errorStatusException = null;
+	private $prevStatusException = null;
 	
 	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
 			Supersystem $supersystem, array $subsystems, ViewFactory $viewFactory, MagicContext $magicContext) {
@@ -356,5 +356,19 @@ class HttpContext {
 	 */
 	function determineErrorStatusViewName(int $httpStatus) {
 		return $this->errorStatusViewNames[$httpStatus] ?? $this->errorStatusDefaultViewName ?? self::DEFAULT_STATUS_VIEW;
+	}
+	
+	/**
+	 * @param StatusException|null $prevStatusException
+	 */
+	function setPrevStatusException(?StatusException $prevStatusException) {
+		$this->prevStatusException = $prevStatusException;
+	}
+	
+	/**
+	 * @return StatusException
+	 */
+	function getPrevStatusException() {
+		return $this->prevStatusException;
 	}
 }

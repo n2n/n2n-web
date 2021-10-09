@@ -27,7 +27,6 @@ use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
 use n2n\web\http\HttpContext;
-use n2n\util\type\ArgUtils;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -207,19 +206,42 @@ class ControllingPlan {
 		if ($this->n2nLocale !== null) {
 			$this->httpContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
 		}
+
+		$baseOutputBuffer = $this->httpContext->getResponse()->createBaseOutputBuffer(true);
 		
+		try {
+			$this->workOffQueues();
+		} catch (StatusException $e) {
+			$this->status = self::STATUS_ERROR;
+			$this->sendStatusView($e);
+			return new ExecutionResult($e);
+		} catch (\Throwable $e) {
+			$this->status = self::STATUS_ERROR;
+			throw $e;
+		} finally {
+			$baseOutputBuffer->end();
+		}
+		
+		return new ExecutionResult(null);
+	}
+	
+	private function workOffQueues() {
 		$this->status = self::STATUS_PRECACHE;
 		while ($this->status == self::STATUS_PRECACHE && null !== ($nextPrecache = $this->precacheQueue->next())) {
-			$nextPrecache->execute();
+			$nextPrecache->execute(); 
 		}
 		
 		// return when aborted
 		if ($this->status != self::STATUS_PRECACHE && $this->status != self::STATUS_FILTER) {
-			return new ExecutionResult(null);
+			return;
+		}
+		
+		if (null !== ($prevStatusException = $this->httpContext->getPrevStatusException())) {
+		    throw $prevStatusException;
 		}
 		
 		if (!$this->responseCachePrevented && $this->httpContext->getHttpContext()->getResponse()->sendCachedPayload()) {
-			return new ExecutionResult(null);
+			return;
 		}
 		
 		$this->triggerPostPrecache();
@@ -228,38 +250,32 @@ class ControllingPlan {
 		while ($this->status == self::STATUS_FILTER && null !== ($nextFilter = $this->filterQueue->next())) {
 			$nextFilter->execute();
 		}
-
+		
 		// return when aborted
 		if ($this->status != self::STATUS_FILTER && $this->status != self::STATUS_MAIN) {
-			return new ExecutionResult(null);
+			return;
 		}
 		
 		$this->status = self::STATUS_MAIN;
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->mainQueue->next())) {
-			try {
-				if (!$nextMain->execute()) {
-					return $this->handleStatusException(new PageNotFoundException('No matching method found in Controller ' 
-							. get_class($nextMain->getController())));
-				}
-			} catch (StatusException $e) {
-				return $this->handleStatusException($e);
+			if (!$nextMain->execute()) {
+				throw new PageNotFoundException('No matching method found in Controller '
+						. get_class($nextMain->getController()));
 			}
 		}
-		
-		$this->status = self::STATUS_EXECUTED;
 		
 		if ($this->mainQueue->isEmpty()) {
 			throw new PageNotFoundException();
 		}
+		
+		$this->status = self::STATUS_EXECUTED;
 	}
 	
-	private function handleStatusException(StatusException $e) {
-		$this->status = self::STATUS_ERROR;
-		
+	private function sendStatusView(StatusException $e) {
 		$view = $this->httpContext->getViewFactory()->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
-		$this->httpContext->getResponse()->send($view);
-		
-		return new ExecutionResult($e);
+	    $response = $this->httpContext->getResponse();
+	    $e->prepareResponse($response);
+		$response->send($view);
 	}
 	
 

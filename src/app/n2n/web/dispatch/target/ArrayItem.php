@@ -39,10 +39,8 @@ class ArrayItem extends TargetItem {
 	public function containsPropertyItemKey($key) {
 		return isset($this->propertyItems[$key]);
 	}
-	/**
-	 * (non-PHPdoc)
-	 * @see n2n\context\dispatch\target.ArrayTargetItem::getField($key)
-	 */
+
+	
 	public function getPropertyItem($key) {
 		if ($this->containsPropertyItemKey($key)) {
 			return $this->propertyItems[$key];	
@@ -50,10 +48,8 @@ class ArrayItem extends TargetItem {
 	
 		return $this->createPropertyItem($key);
 	}
-	/**
-	 * (non-PHPdoc)
-	 * @see n2n\context\dispatch\target.BranchTargetItem::getFields()
-	 */
+
+	
 	public function getPropertyItems() {
 		return $this->propertyItems;
 	}

@@ -1,7 +1,7 @@
 <?php
 namespace n2n\web\http\payload\impl;
 
-use n2n\io\fs\FsPath;
+use n2n\util\io\fs\FsPath;
 
 class FsPathPayload extends FilePayload {
 	

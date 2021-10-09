@@ -53,7 +53,7 @@ use n2n\web\http\payload\impl\HtmlPayload;
 use n2n\web\http\payload\impl\HtmlUiPayload;
 use n2n\io\managed\File;
 use n2n\web\http\payload\impl\FilePayload;
-use n2n\io\fs\FsPath;
+use n2n\util\io\fs\FsPath;
 use n2n\web\http\payload\impl\FsPathPayload;
 use n2n\web\ui\UiComponent;
 use n2n\util\type\ArgUtils;
