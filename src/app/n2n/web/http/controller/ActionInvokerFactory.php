@@ -141,6 +141,13 @@ class ActionInvokerFactory {
 		}
 	}
 	
+	/**
+	 * @param \ReflectionMethod $method
+	 * @param Path $cmdParamPath
+	 * @param array $allowedExtensions
+	 * @throws ControllerErrorException
+	 * @return NULL|\n2n\web\http\controller\InvokerInfo
+	 */
 	public function createFullMagic(\ReflectionMethod $method, Path $cmdParamPath, array $allowedExtensions = null) {
 		$pathPattern = new PathPattern();
 		
@@ -289,7 +296,7 @@ class InvokerInfo {
 	private $queryParams;
 	private $interceptors = array();
 	
-	public function __construct(MagicMethodInvoker $invoker, $numSinglePathParts, array $queryParams) {
+	public function __construct(MagicMethodInvoker $invoker, int $numSinglePathParts, array $queryParams) {
 		$this->invoker = $invoker;
 		$this->numSinglePathParts = $numSinglePathParts;
 		$this->queryParams = $queryParams;

@@ -50,19 +50,19 @@ class PathPattern {
 		$this->patternDefs[] = $customDef;
 	}
 	
-	public function addConstant($constant, $required, $multiple, $paramName = null) {
+	public function addConstant($constant, bool $required, $multiple, $paramName = null) {
 		$this->addPatternDef(array('constant' => (string) $constant), $required, $multiple, $paramName);
 	}
 	
-	public function addWhitechar($required, $multiple, $paramName = null) {
+	public function addWhitechar(bool $required, $multiple, $paramName = null) {
 		$this->addPatternDef(array('whitechar' => '*'), $required, $multiple, $paramName);
 	}
 	
-	public function addRegex($pattern, $required, $multiple, $paramName = null) {
+	public function addRegex($pattern, bool $required, $multiple, $paramName = null) {
 		$this->addPatternDef(array('regexPattern' => $pattern), $required, $multiple, $paramName);
 	}
 	
-	public function addPlaceholder($name, PlaceholderValidator $validator, $required, $multiple, 
+	public function addPlaceholder($name, PlaceholderValidator $validator, bool $required, $multiple, 
 			$paramName = null) {
 		$this->addPatternDef(array('placeholder' => $name, 'validator' => $validator), 
 				$required, $multiple, $paramName);
