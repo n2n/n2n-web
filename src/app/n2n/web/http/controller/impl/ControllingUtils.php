@@ -39,7 +39,6 @@ use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\ViewFactory;
 use n2n\util\type\CastUtils;
 use n2n\web\http\controller\Controller;
-use n2n\core\container\N2nContext;
 use n2n\web\http\Response;
 use n2n\web\http\Request;
 use n2n\web\http\HttpContext;
@@ -47,11 +46,9 @@ use n2n\web\http\controller\InvokerInfo;
 use n2n\web\ui\view\View;
 use n2n\web\http\nav\Murl;
 use n2n\web\http\BadRequestException;
-use n2n\core\container\Transaction;
 use n2n\web\http\payload\impl\JsonPayload;
 use n2n\web\http\payload\impl\HtmlPayload;
 use n2n\web\http\payload\impl\HtmlUiPayload;
-use n2n\io\managed\File;
 use n2n\web\http\payload\impl\FilePayload;
 use n2n\util\io\fs\FsPath;
 use n2n\web\http\payload\impl\FsPathPayload;
@@ -63,9 +60,8 @@ use n2n\web\http\nav\UrlBuilder;
 use n2n\util\uri\Linkable;
 use n2n\util\uri\UnavailableUrlException;
 use n2n\web\http\payload\impl\XmlPayload;
-use n2n\validation\build\ValidationJob;
-use n2n\validation\err\ValidationException;
 use n2n\web\http\StatusException;
+use n2n\core\container\N2nContext;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -118,7 +114,7 @@ class ControllingUtils {
 	 * @return \n2n\core\container\N2nContext
 	 */
 	public function getN2nContext(): N2nContext {
-		return $this->getControllerContext()->getControllingPlan()->getN2nContext();
+		return $this->getControllerContext()->getControllingPlan()->getHttpContext()->getN2nContext();
 	}
 	
 	/**

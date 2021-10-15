@@ -24,6 +24,8 @@ namespace n2n\web\http\path;
 use n2n\util\StringUtils;
 use n2n\util\RegexSyntaxException;
 use n2n\util\uri\Path;
+use n2n\util\type\Constraint;
+use n2n\util\type\TypeConstraint;
 
 class PathPattern {	
 	private $extensionIncluded = true;
@@ -50,19 +52,23 @@ class PathPattern {
 		$this->patternDefs[] = $customDef;
 	}
 	
-	public function addConstant($constant, bool $required, $multiple, $paramName = null) {
-		$this->addPatternDef(array('constant' => (string) $constant), $required, $multiple, $paramName);
+	public function addConstant(string $constant, bool $required, bool $multiple, string $paramName = null) {
+		$this->addPatternDef(array('constant' => $constant), $required, $multiple, $paramName);
 	}
 	
-	public function addWhitechar(bool $required, $multiple, $paramName = null) {
+	public function addTypeConstraint(bool $required, TypeConstraint $typeConstraint, bool $multiple, string $paramName = null) {
+		$this->addPatternDef(array('typeConstraint' => $typeConstraint), $required, $multiple, $paramName);
+	}
+	
+	public function addWhitechar(bool $required, bool $multiple, string $paramName = null) {
 		$this->addPatternDef(array('whitechar' => '*'), $required, $multiple, $paramName);
 	}
 	
-	public function addRegex($pattern, bool $required, $multiple, $paramName = null) {
+	public function addRegex(string $pattern, bool $required, bool $multiple, string $paramName = null) {
 		$this->addPatternDef(array('regexPattern' => $pattern), $required, $multiple, $paramName);
 	}
 	
-	public function addPlaceholder($name, PlaceholderValidator $validator, bool $required, $multiple, 
+	public function addPlaceholder($name, PlaceholderValidator $validator, bool $required, bool $multiple, 
 			$paramName = null) {
 		$this->addPatternDef(array('placeholder' => $name, 'validator' => $validator), 
 				$required, $multiple, $paramName);
@@ -92,6 +98,10 @@ class PathPattern {
 			} catch (RegexSyntaxException $e) {
 				throw new PathPatternComposeException('Error while using regex pattern: ' . $patternDef['regexPattern'], null, $e);
 			}
+		}
+		
+		if (isset($patternDef['typeConstraint'])) {
+			return $patternDef['typeConstraint']->isValueValid($pathPart);
 		}
 		
 		// whitechar

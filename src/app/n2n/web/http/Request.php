@@ -25,6 +25,7 @@ use n2n\l10n\N2nLocale;
 use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\util\dev\Version;
+use n2n\util\uri\Query;
 
 interface Request {
 	const PROTOCOL_HTTP = 'http';
@@ -64,12 +65,12 @@ interface Request {
 	/**
 	 * @return \n2n\web\http\Subsystem
 	 */
-	public function getSubsystem();
+	public function getSubsystem(): ?Subsystem;
 	
 	/**
 	 * @param Subsystem $subsystem
 	 */
-	public function setSubsystem(Subsystem $subsystem = null);
+	public function setSubsystem(?Subsystem $subsystem);
 	
 	/**
 	 * @return N2nLocale 
@@ -84,7 +85,7 @@ interface Request {
 	/**
 	 * @return \n2n\util\uri\Url
 	 */
-	public function getHostUrl();
+	public function getHostUrl(): Url;
 	/**
 	 * @return string 
 	 */
@@ -102,7 +103,7 @@ interface Request {
 	/**
 	 * @return int 
 	 */
-	public function getPort();
+	public function getPort(): int;
 	/**
 	 *
 	 * @return \n2n\util\uri\Path
@@ -116,15 +117,15 @@ interface Request {
 	/**
 	 * @return \n2n\util\uri\Url
 	 */
-	public function getRelativeUrl();
+	public function getRelativeUrl(): Url;
 	/**
 	 * @return \n2n\util\uri\Query
 	 */
-	public function getQuery();
+	public function getQuery(): Query;
 	/**
 	 * @return \n2n\util\uri\Query
 	 */
-	public function getPostQuery();
+	public function getPostQuery(): Query;
 	
 	/**
 	 * @return string
@@ -133,12 +134,12 @@ interface Request {
 	/**
 	 * @return UploadDefinition[] 
 	 */
-	public function getUploadDefinitions();
+	public function getUploadDefinitions(): array;
 		
 	/**
 	 * @return string 
 	 */
-	public function getRemoteIp();
+	public function getRemoteIp(): string;
 	
 	/**
 	 * @return AcceptRange

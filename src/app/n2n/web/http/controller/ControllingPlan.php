@@ -27,6 +27,7 @@ use n2n\web\http\PageNotFoundException;
 use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
 use n2n\web\http\HttpContext;
+use n2n\web\ui\ViewFactory;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -240,7 +241,7 @@ class ControllingPlan {
 		    throw $prevStatusException;
 		}
 		
-		if (!$this->responseCachePrevented && $this->httpContext->getHttpContext()->getResponse()->sendCachedPayload()) {
+		if (!$this->responseCachePrevented && $this->httpContext->getResponse()->sendCachedPayload()) {
 			return;
 		}
 		
@@ -272,7 +273,8 @@ class ControllingPlan {
 	}
 	
 	private function sendStatusView(StatusException $e) {
-		$view = $this->httpContext->getViewFactory()->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
+		$view = $this->httpContext->getN2nContext()->lookup(ViewFactory::class)
+				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
 	    $response = $this->httpContext->getResponse();
 	    $e->prepareResponse($response);
 		$response->send($view);

@@ -31,6 +31,7 @@ use n2n\util\magic\MagicContext;
 use n2n\web\http\Method;
 use n2n\web\http\AcceptRange;
 use n2n\web\http\Request;
+use n2n\util\type\TypeConstraints;
 
 class ActionInvokerFactory {
 	const PARAM_CMD_CONTEXT_PATH = 'cmdContextPath';
@@ -197,7 +198,15 @@ class ActionInvokerFactory {
 			if (!$isArray) $numSinglePathParts++;
 		
 			try {
-				$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
+				if (!$parameter->hasType())	{
+					$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
+				} else {
+					$pathPattern->addTypeConstraint(!$parameter->isDefaultValueAvailable(), 
+							TypeConstraints::type($parameter->getType(), true), $isArray, 
+							$paramName);
+				}
+
+				
 			} catch (PathPatternComposeException $e) {
 				throw new ControllerErrorException('Invalid definition of param: ' . $paramName, 
 						$method->getFileName(), $method->getStartLine(), null, null, $e);

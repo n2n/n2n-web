@@ -45,7 +45,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				$request->getAcceptRange(), $this->getN2nContext());
 		$invokerFactory->setConstantValues($controllerContext->getParams());
 		$interpreter = new ControllerInterpreter(new \ReflectionClass($this), $invokerFactory,
-				new InterceptorFactory($controllerContext->getControllingPlan()->getN2nContext()));
+				new InterceptorFactory($controllerContext->getControllingPlan()->getHttpContext()->getN2nContext()));
 		
 		$this->resetCacheControl();
 		
@@ -54,7 +54,6 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		}
 		
 		$catchedStatusException = null;
-		
 		try {
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
 			foreach ($prepareInvokers as $prepareInvoker) {

@@ -180,7 +180,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getHostUrl()
 	 */
-	public function getHostUrl() {
+	public function getHostUrl(): Url {
 		return new Url($this->contextUrl->getScheme(), $this->contextUrl->getAuthority());
 	}
 	
@@ -226,7 +226,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getPort()
 	 */
-	public function getPort() {
+	public function getPort(): int {
 		return $this->contextUrl->getAuthority()->getPort();
 	}
 	
@@ -261,7 +261,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getRelativeUrl()
 	 */
-	public function getRelativeUrl() {
+	public function getRelativeUrl(): Url {
 		return $this->contextUrl->toRelativeUrl()->ext($this->cmdUrl);
 	}
 	
@@ -269,7 +269,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getQuery()
 	 */
-	public function getQuery() {
+	public function getQuery(): Query {
 		return $this->cmdUrl->getQuery();
 	}
 	
@@ -277,7 +277,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getPostQuery()
 	 */
-	public function getPostQuery() {
+	public function getPostQuery(): Query {
 		return $this->postQuery;
 	}
 	
@@ -285,7 +285,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getUploadDefinitions()
 	 */
-	public function getUploadDefinitions() {
+	public function getUploadDefinitions(): array {
 		return $this->uploadDefinitions;
 	}
 	
@@ -308,7 +308,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getSubsystem()
 	 */
-	public function getSubsystem() {
+	public function getSubsystem(): ?Subsystem {
 		return $this->subsystem;
 	}
 	
@@ -316,7 +316,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::setSubsystem()
 	 */
-	public function setSubsystem(Subsystem $subsystem = null) {
+	public function setSubsystem(?Subsystem $subsystem) {
 		$this->subsystem = $subsystem;
 	}
 	

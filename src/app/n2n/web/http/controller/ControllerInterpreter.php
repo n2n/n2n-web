@@ -295,7 +295,7 @@ class ControllerInterpreter {
 
 		$allowedExtensions = null;
 		if (!$this->checkSimpleMethod($method, $allowedExtensions)) return null;
-
+		
 		$invokerInfo = $this->invokerFactory->createFullMagic($method, new Path($paramCmdPathParts), $allowedExtensions);
 		if ($invokerInfo === null) return null;
 		

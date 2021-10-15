@@ -30,6 +30,7 @@ use n2n\web\http\controller\ControllerContext;
 use n2n\util\type\ArgUtils;
 use n2n\util\magic\MagicContext;
 use n2n\web\ui\ViewFactory;
+use n2n\core\container\N2nContext;
 
 class HttpContext {
 	
@@ -40,7 +41,7 @@ class HttpContext {
 	private $supersystem;
 	private $subsystems;
 	private $viewFactory;
-	private $magicContext;
+	private $n2nContext;
 	
 	
 	const DEFAULT_STATUS_VIEW = 'n2n\\web\\view\\status.html';
@@ -51,7 +52,7 @@ class HttpContext {
 	private $prevStatusException = null;
 	
 	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
-			Supersystem $supersystem, array $subsystems, ViewFactory $viewFactory, MagicContext $magicContext) {
+			Supersystem $supersystem, array $subsystems, N2nContext $n2nContext) {
 		ArgUtils::valArray($subsystems, Subsystem::class);
 		$this->request = $request;
 		$this->response = $response;
@@ -59,8 +60,7 @@ class HttpContext {
 		$this->baseAssetsUrl = $baseAssetsUrl;
 		$this->supersystem = $supersystem;
 		$this->subsystems = $subsystems;
-		$this->viewFactory = $viewFactory;
-		$this->magicContext = $magicContext;
+		$this->n2nContext = $n2nContext;
 	}
 	
 	/**
@@ -315,10 +315,10 @@ class HttpContext {
 	}
 	
 	/**
-	 * @return MagicContext
+	 * @return N2nContext
 	 */
-	public function getMagicContext(): MagicContext {
-		return $this->magicContext;
+	public function getN2nContext() {
+		return $this->n2nContext;
 	}
 	
 	/**

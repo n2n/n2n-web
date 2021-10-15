@@ -242,7 +242,7 @@ class Response {
 			throw new IllegalStateException('Main OutputBuffer already exists.');
 		}
 		
-		$prevContent = $this->fetchBufferedOutput(true) . ob_get_contents();
+		$prevContent = ob_get_contents();
 		if ($prevContent !== false) {
 			@ob_clean();
 		}
@@ -724,14 +724,14 @@ class Header {
 	}
 }
 
-class HttpHeadersAlreadySentException extends N2nErrorException {
+class HttpHeadersAlreadySentException extends \ErrorException {
 	
 }
 
-class ResponseBufferIsClosed extends N2nRuntimeException {
+class ResponseBufferIsClosed extends HttpRuntimeException {
 	
 }
 
-class PayloadAlreadySentException extends N2nRuntimeException {
+class PayloadAlreadySentException extends HttpRuntimeException {
 	
 }

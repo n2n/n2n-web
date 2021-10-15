@@ -346,7 +346,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getQuery()
 	 */
-	public function getQuery() {
+	public function getQuery(): Query {
 		return $this->requestedUrl->getQuery();
 	}
 	
@@ -354,7 +354,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getPostQuery()
 	 */
-	public function getPostQuery() {
+	public function getPostQuery(): Query {
 		return $this->postQuery;
 	}
 	

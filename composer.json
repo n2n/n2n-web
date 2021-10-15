@@ -25,6 +25,7 @@
 	},
 	"require" : {
 		"php" : ">=7.0",
+		"n2n/n2n" : "dev-develop",
 		"n2n/n2n-context" : "dev-develop",
 		"n2n/n2n-l10n" : "dev-develop",
 		"n2n/n2n-reflection" : "dev-develop",

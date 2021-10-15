@@ -42,7 +42,7 @@ class ViewFactory implements ThreadScoped {
 	private $viewClasses = array();
 	private $viewCacheStore;
 	private $viewCachingEnabled = true;
-	private static $creationListeners = array();
+// 	private static $creationListeners = array();
 	
 	private function _init(N2nContext $n2nContext, WebConfig $webConfig, ViewCacheStore $viewCacheStore) {
 		$this->n2nContext = $n2nContext;
@@ -244,3 +244,5 @@ class InvalidViewNameException extends UiException {
 class ViewTypeNotAvailableException extends UiException {
 	
 }
+
+
