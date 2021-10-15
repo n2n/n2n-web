@@ -29,12 +29,26 @@ class ControllingPlanTest extends TestCase {
 				$n2nContext);	
 	}
 	
-	function testSomething() {
+	function testInt() {
 		$contorllingPlan = new ControllingPlan($this->httpContext);
-		$contorllingPlan->addMain(new ControllerContext(new Path(['int', '2']), new Path(['context']), new CommonControllerMock()));
+		
+		$controller = new CommonControllerMock();
+		$contorllingPlan->addMain(new ControllerContext(new Path(['int', '2']), new Path(['context']), $controller));
 		
 		$result = $contorllingPlan->execute();
 		$this->assertNotNull($result);
+		$this->assertTrue($controller->num === 2);
+	}
+	
+	function testStringInt() {
+		$contorllingPlan = new ControllingPlan($this->httpContext);
+		
+		$controller = new CommonControllerMock();
+		$contorllingPlan->addMain(new ControllerContext(new Path(['stringint', '2']), new Path(['context']), $controller));
+		
+		$result = $contorllingPlan->execute();
+		$this->assertNotNull($result);
+		$this->assertTrue($controller->num === '2');
 	}
 	
 	
