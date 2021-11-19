@@ -49,7 +49,7 @@ class VarsRequest implements Request {
 	private $assetsDirName;
 	private $protocolVersion;
 	
-	private StatusException $prevStatusException = null;
+	private ?StatusException $prevStatusException = null;
 	
 	public function __construct(array $serverVars, array $getVars, array $postVars, 
 			array $fileVars) {
@@ -60,8 +60,6 @@ class VarsRequest implements Request {
 		$this->initUrl($getVars);
 
 	}
-	
-	
 	
 	private function extractServerVar($name) {
 		if (isset($this->serverVars[$name])) {
@@ -257,7 +255,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getHostUrl()
 	 */
-	public function getHostUrl() {
+	public function getHostUrl(): Url {
 		return new Url($this->requestedUrl->getScheme(), $this->requestedUrl->getAuthority());
 	}
 	
@@ -303,7 +301,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getPort()
 	 */
-	public function getPort() {
+	public function getPort(): int {
 		return $this->requestedUrl->getAuthority()->getPort();
 	}
 	
@@ -338,7 +336,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getRelativeUrl()
 	 */
-	public function getRelativeUrl() {
+	public function getRelativeUrl(): Url {
 		return $this->requestedUrl->toRelativeUrl();
 	}
 	
@@ -362,7 +360,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getUploadDefinitions()
 	 */
-	public function getUploadDefinitions() {
+	public function getUploadDefinitions(): array {
 		return $this->uploadDefinitions;
 	}
 	
@@ -377,7 +375,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getSubsystem()
 	 */
-	public function getSubsystem() {
+	public function getSubsystem(): ?Subsystem {
 		return $this->subsystem;
 	}
 	
@@ -385,7 +383,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::setSubsystem()
 	 */
-	public function setSubsystem(Subsystem $subsystem = null) {
+	public function setSubsystem(?Subsystem $subsystem) {
 		$this->subsystem = $subsystem;
 	}
 	
@@ -477,7 +475,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getRemoteIp()
 	 */
-	public function getRemoteIp() {
+	public function getRemoteIp(): string {
 		return $this->extractServerVar('REMOTE_ADDR');
 	}
 	
