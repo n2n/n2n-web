@@ -145,9 +145,9 @@ class ViewFactory implements ThreadScoped {
 		if ($params !== null) {
 			$view->setParams($params);
 		}
-		foreach (self::$creationListeners as $listener) {
-			$listener($view);
-		}
+//		foreach (self::$creationListeners as $listener) {
+//			$listener($view);
+//		}
 		
 		return $view;
 	}

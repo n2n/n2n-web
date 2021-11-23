@@ -109,12 +109,13 @@ class Response {
 	 * @var OutputBuffer[]
 	 */
 	private $outputBuffers = [];
-	private $bufferedHeaders;
-	private $bufferedStatusCode;
-	private $bufferedHttpCacheControl;
-	private $bufferedResponseCacheControl;
+	private $headers;
+	private $statusCode;
+	private ?HttpCacheControl $httpCacheControl;
+	private ?ResponseCacheControl $responseCacheControl;
 	private $responseCacheStore;
 	private $sentPayload;
+    private string $bufferedContents = '';
 	
 	/**
 	 * @param Request $request
@@ -236,31 +237,24 @@ class Response {
 		
 		throw new IllegalStateException('Response buffer is closed.');
 	}
-	
-	function createBaseOutputBuffer(bool $prevCapture = true) {
-		if (!empty($this->outputBuffers)) {
-			throw new IllegalStateException('Main OutputBuffer already exists.');
-		}
-		
-		$prevContent = ob_get_contents();
-		if ($prevContent !== false) {
-			@ob_clean();
-		}
-		
-		$outputBuffer = $this->pushNewOutputBuffer();
-		if ($prevContent !== false) {
-			$outputBuffer->append($prevContent);
-		}
-		
-		return $outputBuffer;
-	}
+
+    function capturePrevBuffer() {
+        if (!empty($this->outputBuffers)) {
+            throw new IllegalStateException('OutputBuffer already exists.');
+        }
+
+        $prevContent = ob_get_contents();
+        if ($prevContent !== false) {
+            @ob_clean();
+        }
+
+        $this->bufferedContents .= $prevContent;
+    }
 	
 	/**
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
-		$this->ensureBuffering();
-		
 		return $this->pushNewOutputBuffer();	
 	}
 		
@@ -289,8 +283,6 @@ class Response {
 	 * @return string
 	 */
 	public function fetchBufferedOutput($closeBaseBuffer = false) {
-		$this->ensureBuffering();
-		
 		$contents = '';
 		
 		$outputBuffer = null;
@@ -326,14 +318,15 @@ class Response {
 		
 // 		$this->ensureBuffering();
 		
-		$this->bufferedStatusCode = self::STATUS_200_OK;
-		$this->bufferedHeaders = array();
+		$this->statusCode = self::STATUS_200_OK;
+		$this->headers = array();
 		if ($this->isBuffering()) {
 			$this->fetchBufferedOutput(false);
 		}
-		$this->bufferedHttpCacheControl = null;
+		$this->httpCacheControl = null;
 		$this->bufferedResponseCacheControl = null;
 		$this->sentPayload = null;
+        $this->bufferedContents = '';
 	}
 	
 	/**
@@ -342,7 +335,7 @@ class Response {
 	 * @param \DateTime $lastModified
 	 */
 	private function notModified(?string $etag, \DateTime $lastModified = null) {
-		if ($this->bufferedStatusCode !== self::STATUS_200_OK) return false;
+		if ($this->statusCode !== self::STATUS_200_OK) return false;
 		
 		$etagNotModified = null;
 		if ($this->sendEtagAllowed && $etag !== null) {
@@ -423,11 +416,28 @@ class Response {
 		foreach ($this->listeners as $listener) {
 			$listener->onFlush($this);
 		}
-		
-		if (!$this->isBuffering()) return;
-		
-		$contents = $this->fetchBufferedOutput(false);
-		
+
+        $contents = $this->fetchBufferedOutput(true);
+
+        if ($this->sentPayload !== null && !$this->sentPayload->isBufferable()) {
+            if ($this->bufferedResponseCacheControl !== null) {
+                throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
+            }
+
+            if (!strlen($bufferdContents) && $this->notModified($payload->getEtag(), $payload->getLastModified())) {
+                $this->flushHeaders();
+                $this->closeBuffer();
+                return;
+            }
+            $this->flushHeaders();
+            echo $this->bufferedContents;
+            $payload->responseOut();
+            echo $contents;
+            return;
+        }
+
+        $this->bufferedContents .= $contents;
+
 		if ($this->bufferedResponseCacheControl !== null && $this->responseCacheStore !== null) {
 			$expireDate = new \DateTime();
 			$expireDate->add($this->bufferedResponseCacheControl->getCacheInterval());
@@ -435,19 +445,17 @@ class Response {
 					$this->request->getSubsystemName(), $this->request->getPath(),
 					$this->buildQueryParamsCharacteristic(),
 					$this->bufferedResponseCacheControl->getCharacteristics(),
-					new ResponseCacheItem($contents, $this->bufferedStatusCode, 
-							$this->bufferedHeaders, $this->bufferedHttpCacheControl, $expireDate));
+					new ResponseCacheItem($this->bufferedContents, $this->statusCode,
+							$this->headers, $this->httpCacheControl, $expireDate));
 		}
 		
-		if ($this->notModified(HashUtils::base36md5Hash($contents, 26))) {
+		if ($this->notModified(HashUtils::base36md5Hash($this->bufferedContents, 26))) {
 			$this->flushHeaders();
-			$this->closeBuffer();
 			return;
 		}
 		
 		$this->flushHeaders();
-		$this->closeBuffer();
-		echo $contents;
+		echo $this->bufferedContents;
 	}
 	/**
 	 * 
@@ -462,19 +470,17 @@ class Response {
 	 * @param int $code
 	 */
 	public function setStatus($code) {
-		if ($this->bufferedStatusCode != $code) {
+		if ($this->statusCode != $code) {
 			foreach ($this->listeners as $listener) {
 				$listener->onReset($this);
 			}
 		}
-		
-		$this->ensureBuffering();
-		
-		$this->bufferedStatusCode = $code;
+
+		$this->statusCode = $code;
 	}
 	
 	public function getStatus() {
-		return $this->bufferedStatusCode;
+		return $this->statusCode;
 	}
 	/**
 	 * 
@@ -482,18 +488,16 @@ class Response {
 	 * @param string $replace
 	 */
 	public function setHeader($header, $replace = true) {
-		$this->ensureBuffering();
-	
 		if ($header instanceof Header) {
-			$this->bufferedHeaders[] = $header;
+			$this->headers[] = $header;
 			return;
 		}
 		
-		$this->bufferedHeaders[] = new Header($header, $replace);
+		$this->headers[] = new Header($header, $replace);
 	}
 	
 	public function setHttpCacheControl(HttpCacheControl $httpCacheControl = null) {
-		$this->bufferedHttpCacheControl = $httpCacheControl;
+		$this->httpCacheControl = $httpCacheControl;
 	}
 	
 	public function setResponseCacheControl(ResponseCacheControl $responseCacheControl = null) {
@@ -532,61 +536,52 @@ class Response {
 					0, E_USER_ERROR, $file, $line);
 		}
 		
-		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->bufferedStatusCode);
+		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
 		
-		if ($this->bufferedHttpCacheControl !== null && $this->httpCachingEnabled) {
-			$this->bufferedHttpCacheControl->applyHeaders($this);
+		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
+			$this->httpCacheControl->applyHeaders($this);
 		} else {
 			$httpCacheControl = new HttpCacheControl();
 			$httpCacheControl->applyHeaders($this);
 		}
 		
-		while (!is_null($header = array_pop($this->bufferedHeaders))) {
+		while (!is_null($header = array_pop($this->headers))) {
 			header($header->getHeaderStr(), $header->isReplace());
 		}
 	}
 	/**
 	 * 
-	 * @param Payload $thing
+	 * @param Payload $payload
 	 * @param HttpCacheControl $httpCacheControl
 	 * @param bool $includeBuffer
 	 * @throws PayloadAlreadySentException
 	 */
-	public function send(Payload $thing, bool $includeBuffer = true) {
+	public function send(Payload $payload, bool $includeBuffer = true) {
 		foreach ($this->listeners as $listener) {
-			$listener->onSend($thing, $this);
+			$listener->onSend($payload, $this);
 		}
-		
-		$this->ensureBuffering();
+
 		if (null !== $this->sentPayload) {
 			throw new MalformedResponseException('Payload already sent: ' 
 					. $this->sentPayload->toKownPayloadString(), 0, null, 1);
 		}
-		$this->sentPayload = $thing;
+		$this->sentPayload = $payload;
 
-		$thing->prepareForResponse($this);
+		$payload->prepareForResponse($this);
 		$bufferdContents = '';
-		if ($includeBuffer) { 
+		if ($includeBuffer) {
 			$bufferdContents = $this->fetchBufferedOutput(false);
 		}
 		
-		if ($thing->isBufferable()) {
-			echo $bufferdContents;
-			echo $thing->getBufferedContents();
+		if ($payload->isBufferable()) {
+            if (!$this->isBuffering()) {
+                $this->bufferedContents .= $bufferdContents . $payload->getBufferedContents();
+            } else {
+                echo $bufferdContents;
+                echo $payload->getBufferedContents();
+            }
 		} else {
-			if ($this->bufferedResponseCacheControl !== null) {
-				throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
-			}
-			
-			if (!strlen($bufferdContents) && $this->notModified($thing->getEtag(), $thing->getLastModified())) {
-				$this->flushHeaders();
-				$this->closeBuffer();
-				return;
-			} 
-			$this->flushHeaders();
-			$this->closeBuffer();
-			echo $bufferdContents;
-			$thing->responseOut();
+            $this->bufferedContents .= $bufferdContents;
 		}
 	}
 	
