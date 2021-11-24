@@ -23,17 +23,17 @@ namespace n2n\web\http;
 
 use n2n\l10n\N2nLocale;
 use n2n\l10n\UnknownN2nLocaleException;
+use n2n\util\type\ArgUtils;
 
 class Supersystem {
-	private $n2nLocales = array();
-	private $assetsUrl;
-	
-	public function __construct(array $n2nLocales) {
+	private $n2nLocales = [];
+
+	/**
+	 * @param string $name
+	 * @param N2nLocale[] $matchers
+	 */
+	public function __construct(private string $name, array $n2nLocales = []) {
 		$this->setN2nLocales($n2nLocales);
-	}
-	
-	public function addN2nLocale(N2nLocale $n2nLocale) {
-		$this->n2nLocales[$n2nLocale->getId()] = $n2nLocale;
 	}
 	
 	/**
@@ -41,21 +41,6 @@ class Supersystem {
 	 */
 	public function getN2nLocales() {
 		return $this->n2nLocales;
-	}
-	
-	public function setN2nLocales(array $n2nLocales) {
-		$this->n2nLocales = array();
-		foreach ($n2nLocales as $n2nLocale) {
-			$this->addN2nLocale($n2nLocale);
-		}
-	}
-	
-	/**
-	 * @param string $id
-	 * @return bool
-	 */
-	public function containsN2nLocaleId(string $id) {
-		return isset($this->n2nLocales[$id]);
 	}
 	
 	/**
@@ -69,5 +54,32 @@ class Supersystem {
 		}
 		
 		throw new UnknownN2nLocaleException('No N2nLocale found with id: ' . $id);
+	}
+
+	/**
+	 * @param N2nLocale[] $n2nLocales
+	 */
+	function setN2nLocales(array $n2nLocales) {
+		ArgUtils::valArray($n2nLocales, N2nLocale::class);
+
+		$this->n2nLocales = array();
+		foreach ($n2nLocales as $n2nLocale) {
+			$this->addN2nLocale($n2nLocale);
+		}
+	}
+
+	/**
+	 * @param N2nLocale $n2nLocale
+	 */
+	function addN2nLocale(N2nLocale $n2nLocale) {
+		$this->n2nLocales[$n2nLocale->getId()] = $n2nLocale;
+	}
+
+	/**
+	 * @param string $id
+	 * @return bool
+	 */
+	function containsN2nLocaleId(string $id) {
+		return isset($this->n2nLocales[$id]);
 	}
 }

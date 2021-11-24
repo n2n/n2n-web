@@ -21,28 +21,99 @@
  */
 namespace n2n\web\http;
 
-class Subsystem extends Supersystem {
-	private $name;
-	private $hostName;
-	private $contextPath;
-	private $n2nLocales = array();
-	
-	public function __construct($name, $hostName, $contextPath, array $n2nLocales) {
-		parent::__construct($n2nLocales);
-		$this->name = $name;
-		$this->hostName = $hostName;
-		$this->contextPath = $contextPath;
+use n2n\util\type\ArgUtils;
+use n2n\util\ex\IllegalStateException;
+use n2n\l10n\N2nLocale;
+use n2n\util\col\ArrayUtils;
+
+class Subsystem {
+	/**
+	 * @var SubsystemMatcher[]
+	 */
+	private array $matchers;
+
+	public function __construct(private string $name, array $matchers = []) {
+		$this->setMatchers($matchers);
 	}
-	
+
+	/**
+	 * @return string
+	 */
 	public function getName() {
 		return $this->name;
 	}
-	
-	public function getHostName() {
-		return $this->hostName;
+
+	/**
+	 * @return SubsystemMatcher[]
+	 */
+	function getMatchers() {
+		return $this->matchers;
 	}
-	
+
+	function setMatchers(array $matchers) {
+		ArgUtils::valArray($matchers, SubsystemMatcher::class);
+		$this->matches = $matchers;
+	}
+
+	/**
+	 * @deprecated
+	 * @return mixed
+	 */
+	public function getHostName() {
+		IllegalStateException::assertTrue(count($this->matchers) === 1, 'Multiple matchers.');
+		return current($this->matchers)->getHostName();
+	}
+
+	/**
+	 * @deprecated
+	 * @return ?string
+	 */
 	public function getContextPath() {
-		return $this->contextPath;
+		IllegalStateException::assertTrue(count($this->matchers) === 1, 'Multiple matchers.');
+		return current($this->matchers)->getContextPath();
+	}
+
+	/**
+	 * @return N2nLocale[]
+	 */
+	function getN2nLocales()  {
+		$n2nLocales = [];
+		foreach ($this->matchers as $matcher) {
+			$n2nLocales = array_merge($n2nLocales, $matcher->getN2nLocales());
+		}
+		return $n2nLocales;
+	}
+
+	function getMatcherByN2nLocale(N2nLocale $n2NLocale) {
+		foreach ($this->matchers as $matcher) {
+			if ($matcher->containsN2nLocaleId($n2NLocale->getId())) {
+				return $matcher;
+			}
+		}
+
+		throw new UnknownSubsystemException('Subsystem contains no SubsystemMatcher with locale: ' . $n2NLocale);
+	}
+
+	/**
+	 * @param N2nLocale $n2NLocale
+	 * @return SubsystemMatcher|null
+	 */
+	function findBestMatcherByN2nLocale(N2nLocale $n2NLocale) {
+		if (count($this->matchers) === 1) {
+			return ArrayUtils::current($this->matchers);
+		}
+
+		$fallbackMatcher = null;
+		foreach ($this->matchers as $matcher) {
+			if ($matcher->containsN2nLocaleId($n2NLocale->getId())) {
+				return $matcher;
+			}
+
+			if ($fallbackMatcher === null || $matcher->containsLanguageId($n2NLocale->getLanguageId())) {
+				$fallbackMatcher = $matcher;
+			}
+		}
+
+		return $fallbackMatcher;
 	}
 }

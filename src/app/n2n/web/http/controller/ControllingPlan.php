@@ -208,8 +208,6 @@ class ControllingPlan {
 			$this->httpContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
 		}
 
-		$baseOutputBuffer = $this->httpContext->getResponse()->createBaseOutputBuffer(true);
-		
 		try {
 			$this->workOffQueues();
 		} catch (StatusException $e) {

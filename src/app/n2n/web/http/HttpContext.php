@@ -223,24 +223,37 @@ class HttpContext {
 	public function getControllerContextPath(ControllerContext $controllerContext): Path {
 		return $this->request->getContextPath()->ext($controllerContext->getCmdContextPath());
 	}
-	
+
+	/**
+	 * @param Subsystem|string $subsystem
+	 *
+	 */
+	public function determineSubsystemMatcher(Subsystem|string $subsystem, N2nLocale $n2NLocale = null) {
+		if (is_string($subsystem)) {
+			$subsystem = $this->getSubsystemByName($subsystem);
+		}
+
+		return $subsystem->findBestMatcherByN2nLocale($n2NLocale ?? $this->n2nContext->getN2nLocale());
+	}
+
 	/**
 	 * @param bool $ssl
-	 * @param mixed $subsystem name or instance of {@link \n2n\web\http\Subsystem}
+	 * @param Subsystem|SubsystemMatcher|string $subsystem
 	 * @return \n2n\util\uri\Url
 	 */
-	public function buildContextUrl(bool $ssl = null, $subsystem = null, bool $absolute = false): Url {
+	public function buildContextUrl(bool $ssl = null, Subsystem|SubsystemMatcher|string $subsystem = null, bool $absolute = false): Url {
 		$url = null;
 		
-		if ($subsystem === null) {
-			$url = $this->request->getContextPath()->toUrl();
-		} else {
-			if (!($subsystem instanceof Subsystem)) {
-				ArgUtils::valType($subsystem, array('string', 'Subsystem'), true, 'subsystem');
-				$subsystem = $this->getAvailableSubsystemByName($subsystem);
+		if ($subsystem !== null) {
+			if ($subsystem instanceof SubsystemMatcher) {
+				$url = $this->buildSubsystemUrl($subsystem);
+			} elseif (null !== ($subsystemMatcher = self::determineSubsystemMatcher($subsystem))) {
+				$url = $this->buildSubsystemUrl($subsystemMatcher);
 			}
-		
-			$url = $this->buildSubsystemUrl($subsystem);
+		}
+
+		if ($url === null) {
+			$url = $this->request->getContextPath()->toUrl();
 		}
 		
 		if ($absolute && $url->isRelative()) {
@@ -283,16 +296,16 @@ class HttpContext {
 	 * @param Subsystem $subsystem
 	 * @return \n2n\util\uri\Url
 	 */
-	private function buildSubsystemUrl(Subsystem $subsystem) {
+	private function buildSubsystemUrl(SubsystemMatcher $subsystemMatcher) {
 		$url = new Url();
-		
-		if (null !== ($subsystemHostName = $subsystem->getHostName())) {
+
+		if (null !== ($subsystemHostName = $subsystemMatcher->getHostName())) {
 			if ($this->request->getHostName() != $subsystemHostName) {
 				$url = $url->chHost($subsystemHostName);
 			}
 		}
 	
-		if (null !== ($contextPath = $subsystem->getContextPath())) {
+		if (null !== ($contextPath = $subsystemMatcher->getContextPath())) {
 			$url = $url->chPath($contextPath);
 		} else {
 			$url = $url->chPath($this->request->getContextPath());
@@ -305,12 +318,26 @@ class HttpContext {
 	 * @param string $name
 	 * @return \n2n\web\http\Subsystem
 	 * @throws UnknownSubsystemException
+	 * @deprecated {@link self::getSubsystemByName()}
 	 */
 	public function getAvailableSubsystemByName($name) {
 		if (isset($this->subsystems[$name])) {
 			return $this->subsystems[$name];
 		}
-		
+
+		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
+	}
+
+	/**
+	 * @param string $name
+	 * @return \n2n\web\http\Subsystem
+	 * @throws UnknownSubsystemException
+	 */
+	public function getSubsystemByName($name) {
+		if (isset($this->subsystems[$name])) {
+			return $this->subsystems[$name];
+		}
+
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
 	}
 	
