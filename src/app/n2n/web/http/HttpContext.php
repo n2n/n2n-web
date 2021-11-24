@@ -53,13 +53,12 @@ class HttpContext {
 	
 	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
 			Supersystem $supersystem, array $subsystems, N2nContext $n2nContext) {
-		ArgUtils::valArray($subsystems, Subsystem::class);
 		$this->request = $request;
 		$this->response = $response;
 		$this->session = $session;
 		$this->baseAssetsUrl = $baseAssetsUrl;
 		$this->supersystem = $supersystem;
-		$this->subsystems = $subsystems;
+		$this->setSubsystems($subsystems);
 		$this->n2nContext = $n2nContext;
 	}
 	
@@ -184,6 +183,19 @@ class HttpContext {
 	 */
 	function getSubsystems() {
 		return $this->subsystems;
+	}
+
+	/**
+	 * @param Subsystem[] $subsystems
+	 * @return HttpContext
+	 */
+	function setSubsystems(array $subsystems) {
+		ArgUtils::valArray($subsystems, Subsystem::class);
+		$this->subsystems = [];
+		foreach ($subsystems as $subsystem) {
+			$this->subsystems[$subsystem->getName()] = $subsystem;
+		}
+		return $this;
 	}
 	
 	/**

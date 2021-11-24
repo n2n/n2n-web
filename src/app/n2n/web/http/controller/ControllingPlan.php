@@ -192,7 +192,7 @@ class ControllingPlan {
 // 		$this->currentMainControllerContext = null;
 // 		return null;
 // 	}
-	
+
 	/**
 	 * @returns ExecutionResult
 	 * @throws ControllingPlanException
@@ -217,8 +217,6 @@ class ControllingPlan {
 		} catch (\Throwable $e) {
 			$this->status = self::STATUS_ERROR;
 			throw $e;
-		} finally {
-			$baseOutputBuffer->end();
 		}
 		
 		return new ExecutionResult(null);

@@ -29,10 +29,9 @@ class Supersystem {
 	private $n2nLocales = [];
 
 	/**
-	 * @param string $name
 	 * @param N2nLocale[] $matchers
 	 */
-	public function __construct(private string $name, array $n2nLocales = []) {
+	public function __construct(array $n2nLocales = []) {
 		$this->setN2nLocales($n2nLocales);
 	}
 	

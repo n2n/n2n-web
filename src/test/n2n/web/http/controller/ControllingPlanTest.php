@@ -50,6 +50,4 @@ class ControllingPlanTest extends TestCase {
 		$this->assertNotNull($result);
 		$this->assertTrue($controller->num === '2');
 	}
-	
-	
 }

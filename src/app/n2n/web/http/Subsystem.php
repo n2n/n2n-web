@@ -52,7 +52,7 @@ class Subsystem {
 
 	function setMatchers(array $matchers) {
 		ArgUtils::valArray($matchers, SubsystemMatcher::class);
-		$this->matches = $matchers;
+		$this->matchers = $matchers;
 	}
 
 	/**

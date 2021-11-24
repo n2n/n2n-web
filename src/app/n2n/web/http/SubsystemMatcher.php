@@ -4,6 +4,7 @@ namespace n2n\web\http;
 
 use n2n\util\type\ArgUtils;
 use n2n\core\N2nLocaleNotFoundException;
+use n2n\l10n\N2nLocale;
 
 class SubsystemMatcher {
 	private array $n2nLocales;

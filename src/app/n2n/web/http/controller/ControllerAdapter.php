@@ -35,9 +35,9 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 	 */
 	public final function execute(ControllerContext $controllerContext): bool {
 		$this->init($controllerContext);
-		
-		$outputBuffer = $this->getResponse()->createBaseOutputBuffer();
-		
+
+		$outputBuffer = $this->getResponse()->createOutputBuffer();
+
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
 				$controllerContext->getCmdPath(), $controllerContext->getCmdContextPath(), $request,
@@ -50,10 +50,11 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		$this->resetCacheControl();
 		
 		if (!$this->intercept(...$interpreter->findControllerInterceptors())) {
+			$outputBuffer->end();
 			return true;
 		}
 		
-		$catchedStatusException = null;
+		$caughtStatusException = null;
 		try {
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
 			foreach ($prepareInvokers as $prepareInvoker) {
@@ -61,6 +62,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				if ($this->intercept(...$prepareInvoker->getInterceptors())) {
 					$prepareInvoker->getInvoker()->invoke($this);
 				} else {
+					$outputBuffer->end();
 					return true;
 				}
 			}
@@ -76,14 +78,15 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				}
 
 				$this->cu()->reset(true);
+				$outputBuffer->end();
 				return true;
 			}
 		} catch (StatusException $e) {
-			$catchedStatusException = $e;
+			$caughtStatusException = $e;
 		}
 		
-		if (empty($invokerInfos) || ($catchedStatusException !== null 
-				&& $catchedStatusException->getStatus() == Response::STATUS_404_NOT_FOUND)) {
+		if (empty($invokerInfos) || ($caughtStatusException !== null
+				&& $caughtStatusException->getStatus() == Response::STATUS_404_NOT_FOUND)) {
 			try {
 				$notFoundInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_NOT_FOUND_METHOD);
 				
@@ -94,23 +97,26 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 						if (!$this->intercept(...$invokerInfo->getInterceptors())) continue;
 						
 						$invokerInfo->getInvoker()->invoke($this);
-						$catchedStatusException = null;
+						$caughtStatusException = null;
 					}
 					
 					$this->cu()->reset(true);
+					$outputBuffer->end();
 					return true;
 				}
 			} catch (StatusException $e) {
-				$catchedStatusException = $e;
+				$caughtStatusException = $e;
 			}
 		}
 		
-		if ($catchedStatusException !== null) {
+		if ($caughtStatusException !== null) {
 			$this->cu()->reset(false);
-			throw $catchedStatusException;
+			$outputBuffer->end();
+			throw $caughtStatusException;
 		}
 		
 		$this->cu()->reset(true);
+		$outputBuffer->end();
 		return false;
 	}
 }

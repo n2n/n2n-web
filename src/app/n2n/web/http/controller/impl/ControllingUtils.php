@@ -93,7 +93,7 @@ class ControllingUtils {
 	}
 	
 	public function getHttpContext(): HttpContext {
-		return $this->getN2nContext()->getHttpContext();
+		return $this->getControllerContext()->getControllingPlan()->getHttpContext();
 	}
 	
 	/**
