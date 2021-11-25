@@ -39,7 +39,7 @@ class Subsystem {
 	/**
 	 * @return string
 	 */
-	public function getName() {
+	function getName() {
 		return $this->name;
 	}
 
@@ -52,7 +52,10 @@ class Subsystem {
 
 	function setMatchers(array $matchers) {
 		ArgUtils::valArray($matchers, SubsystemMatcher::class);
-		$this->matchers = $matchers;
+		$this->matchers = [];
+		foreach ($matchers as $matcher) {
+			$this->matchers[$matcher->getName()] = $matcher;
+		}
 	}
 
 	/**
@@ -66,7 +69,7 @@ class Subsystem {
 
 	/**
 	 * @deprecated
-	 * @return ?string
+	 * @return string|null
 	 */
 	public function getContextPath() {
 		IllegalStateException::assertTrue(count($this->matchers) === 1, 'Multiple matchers.');
