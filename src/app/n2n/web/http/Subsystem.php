@@ -58,6 +58,10 @@ class Subsystem {
 		}
 	}
 
+	function addMatcher(SubsystemMatcher $matcher) {
+		$this->matchers[$matcher->getName()] = $matcher;
+	}
+
 	/**
 	 * @deprecated
 	 * @return mixed
