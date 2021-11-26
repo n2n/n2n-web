@@ -30,7 +30,7 @@ class Subsystem {
 	/**
 	 * @var SubsystemRule[]
 	 */
-	private array $rules;
+	private array $rules = [];
 
 	public function __construct(private string $name) {
 	}
@@ -61,7 +61,7 @@ class Subsystem {
 			throw new DuplicateElementException('Subsystem rule with name already exists: ' . $name);
 		}
 
-		$rules->rules[$name] = new SubsystemRule($this, $name, $hostName, $contextPath, $n2nLocales);
+		$this->rules[$name] = new SubsystemRule($this, $name, $hostName, $contextPath, $n2nLocales);
 		return $this;
 	}
 
@@ -80,6 +80,17 @@ class Subsystem {
 	function removeRuleByName(string $name) {
 		unset($this->rules[$name]);
 		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	function getRuleByName(string $name) {
+		if ($this->rules[$name]) {
+			return $this->rules[$name];
+		}
+
+		return new UnknownSubsystemException('Subsystem contains no rule with name: ' + $name);
 	}
 
 	/**

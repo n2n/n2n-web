@@ -239,43 +239,43 @@ class VarsRequest implements Request {
 
 		return $n2nLocale;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::getN2nLocale()
-	 */
-	public function getN2nLocale(): N2nLocale {
-		if ($this->n2nLocale === null) {
-			throw new IncompleRequestException('No N2nLocale assigned to request.');
-		}
-		
-		return $this->n2nLocale;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::setN2nLocale()
-	 */
-	public function setN2nLocale(N2nLocale $n2nLocale) {
-		$this->n2nLocale = $n2nLocale;
-	}
-	
-	public function setAvailableN2nLocaleAliases(array $availableN2nLocaleAliases) {
-		ArgUtils::valArray($availableN2nLocaleAliases, 'scalar');
-		$this->availableN2nLocaleAliases = $availableN2nLocaleAliases;
-	}
-	
-	public function getAvailableN2nLocaleAliases() {
-		return $this->availableN2nLocaleAliases;
-	}
-	
-	public function getN2nLocaleAlias($n2nLocale) {
-		if (isset($this->availableN2nLocaleAliases[(string) $n2nLocale])) {
-			return $this->availableN2nLocaleAliases[(string) $n2nLocale];
-		}
-		
-		return N2nLocale::create($n2nLocale)->toHttpId();
-	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::getN2nLocale()
+//	 */
+//	public function getN2nLocale(): N2nLocale {
+//		if ($this->n2nLocale === null) {
+//			throw new IncompleRequestException('No N2nLocale assigned to request.');
+//		}
+//
+//		return $this->n2nLocale;
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::setN2nLocale()
+//	 */
+//	public function setN2nLocale(N2nLocale $n2nLocale) {
+//		$this->n2nLocale = $n2nLocale;
+//	}
+//
+//	public function setAvailableN2nLocaleAliases(array $availableN2nLocaleAliases) {
+//		ArgUtils::valArray($availableN2nLocaleAliases, 'scalar');
+//		$this->availableN2nLocaleAliases = $availableN2nLocaleAliases;
+//	}
+//
+//	public function getAvailableN2nLocaleAliases() {
+//		return $this->availableN2nLocaleAliases;
+//	}
+//
+//	public function getN2nLocaleAlias($n2nLocale) {
+//		if (isset($this->availableN2nLocaleAliases[(string) $n2nLocale])) {
+//			return $this->availableN2nLocaleAliases[(string) $n2nLocale];
+//		}
+//
+//		return N2nLocale::create($n2nLocale)->toHttpId();
+//	}
 	
 	/**
 	 * {@inheritDoc}
@@ -390,28 +390,28 @@ class VarsRequest implements Request {
 		return $this->uploadDefinitions;
 	}
 	
-	public function getSubsystemName() {
-		if ($this->subsystem !== null) {
-			return $this->subsystem->getName();
-		}
-		return null;
-	}
-		
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::getSubsystem()
-	 */
-	public function getSubsystem(): ?Subsystem {
-		return $this->subsystem;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::setSubsystem()
-	 */
-	public function setSubsystem(?Subsystem $subsystem) {
-		$this->subsystem = $subsystem;
-	}
+//	public function getSubsystemName() {
+//		if ($this->subsystem !== null) {
+//			return $this->subsystem->getName();
+//		}
+//		return null;
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::getSubsystem()
+//	 */
+//	public function getSubsystem(): ?Subsystem {
+//		return $this->subsystem;
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::setSubsystem()
+//	 */
+//	public function setSubsystem(?Subsystem $subsystem) {
+//		$this->subsystem = $subsystem;
+//	}
 	
 	public function setAvailableSubsystems(array $subsystems) {
 		$this->availableSubsystems = array();

@@ -39,6 +39,9 @@ class HttpContext {
 	private $session;
 	private $baseAssetsUrl;
 	private $supersystem;
+	/**
+	 * @var Subsystem[]
+	 */
 	private $subsystems;
 	private $viewFactory;
 	private $n2nContext;
@@ -143,8 +146,8 @@ class HttpContext {
 			return true;
 		}
 		
-		$subsystem = $this->request->getSubsystem();
-		if ($subsystem !== null && $subsystem->containsN2nLocaleId($n2nLocaleId)) {
+		$subsystemRule = $this->getActiveSubsystemRule();
+		if ($subsystemRule !== null && $subsystemRule->containsN2nLocaleId($n2nLocaleId)) {
 			return true;
 		}
 		
@@ -156,9 +159,8 @@ class HttpContext {
 	 */
 	public function getContextN2nLocales(): array {
 		$contextN2nLocales = $this->supersystem->getN2nLocales();
-		$subsystem = $this->request->getSubsystem();
-		if ($subsystem !== null) {
-			return array_merge($contextN2nLocales, $subsystem->getN2nLocales());
+		if ($this->activeSubsystemRule !== null) {
+			return array_merge($contextN2nLocales, $this->activeSubsystemRule->getN2nLocales());
 		}
 		return $contextN2nLocales;
 	}
@@ -376,6 +378,19 @@ class HttpContext {
 		}
 
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
+	}
+
+
+	function getSubsystemRuleByName(string $subsystemRuleName) {
+		$subsystemRules = [];
+
+		foreach ($this->subsystems as $subsystem) {
+			if ($subsystem->containsRuleName($subsystemRuleName)) {
+				$subsystemRules[] = $subsystem->getRuleByName($subsystemRuleName);
+			}
+		}
+
+		return $subsystemRules;
 	}
 
 	/**

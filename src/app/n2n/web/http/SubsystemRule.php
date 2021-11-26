@@ -18,6 +18,13 @@ class SubsystemRule {
 	}
 
 	/**
+	 * @return Subsystem
+	 */
+	function getSubsystem() {
+		return $this->subsystem;
+	}
+
+	/**
 	 * @return string
 	 */
 	function getName() {

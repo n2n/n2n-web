@@ -31,14 +31,17 @@ use n2n\core\config\WebConfig;
 use n2n\web\http\UnknownSubsystemException;
 use n2n\context\LookupFailedException;
 use n2n\web\http\HttpContext;
+use n2n\web\http\SubsystemRule;
 
 class ControllerRegistry implements RequestScoped {
-	private $httpContext;
-	
+	private $webConfig;
+	private $n2nContext;
+
 	/**
-	 * 
+	 *
 	 */
-	private function _init(HttpContext $httpContext) {
+	private function _init(WebConfig $webConfig, HttpContext $httpContext) {
+		$this->webConfig = $webConfig;
 		$this->httpContext = $httpContext;
 	}
 	
@@ -54,31 +57,27 @@ class ControllerRegistry implements RequestScoped {
 	/**
 	 * @param N2nContext $n2nContext
 	 * @param Path $cmdPath
-	 * @param string $subsystemName
+	 * @param string $subsystemRuleName
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
-	public function createControllingPlan(Path $cmdPath, string $subsystemName = null) {
+	public function createControllingPlan(Path $cmdPath, SubsystemRule $subsystemRule = null) {
 		$contextN2nLocales = new \ArrayObject();
 		foreach ($this->httpContext->getSupersystem()->getN2nLocales() as $n2nLocale) {
 			$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;	
 		}
 		
-		if ($subsystemName !== null) {
-			$subsystems = $this->httpContext->getSubsystems();
-			if (!isset($subsystems[$subsystemName])) {
-				throw new UnknownSubsystemException('Unknown subystem name: ' . $subsystemName);
-			}
-			
-			foreach ($subsystems[$subsystemName]->getN2nLocales() as $n2nLocale) {
+		if ($subsystemRule !== null) {
+			foreach ($subsystemRule->getN2nLocales() as $n2nLocale) {
 				$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;
 			}
 		}
 		
 		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales);
-		
+
+		$subsystemRuleName = $subsystemRule?->getName();
+		$subsystemName = $subsystemRule?->getSubsystem()->getName();
 		foreach ($this->webConfig->getPrecacheControllerDefs() as $precacheControllerDef) {
-			if ($precacheControllerDef->getSubsystemName() !== null
-					&& $precacheControllerDef->getSubsystemName() != $subsystemName) {
+			if (!$precacheControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}
 			
@@ -86,8 +85,7 @@ class ControllerRegistry implements RequestScoped {
 		}
 		
 		foreach ($this->webConfig->getFilterControllerDefs() as $filterControllerDef) {
-			if ($filterControllerDef->getSubsystemName() !== null
-					&& $filterControllerDef->getSubsystemName() != $subsystemName) {
+			if (!$filterControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}
 
@@ -95,11 +93,10 @@ class ControllerRegistry implements RequestScoped {
 		}
 		
 		foreach ($this->webConfig->getMainControllerDefs() as $mainControllerDef) {
-			if ($mainControllerDef->getSubsystemName() !== null
-					&& $mainControllerDef->getSubsystemName() !== $subsystemName) {
+			if (!$mainControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}
-			
+
 			$controllingPlanFactory->registerMainControllerDef($mainControllerDef);
 		}
 		
@@ -132,9 +129,11 @@ class ControllingPlanFactory {
 	 * @param string $subsystemName
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
-	public function createControllingPlan(N2nContext $n2nContext, Path $cmdPath): ControllingPlan {
-		$controllingPlan = new ControllingPlan($n2nContext);
-		
+	public function createControllingPlan(HttpContext $httpContext, Path $cmdPath): ControllingPlan {
+		$controllingPlan = new ControllingPlan($httpContext);
+
+		$n2nContext = $httpContext->getN2nContext();
+
 		$this->applyPrecaches($controllingPlan, $n2nContext, $cmdPath);
 		
 		$controllingPlan->onPostPrecache(function () use ($controllingPlan, $n2nContext, $cmdPath) {
