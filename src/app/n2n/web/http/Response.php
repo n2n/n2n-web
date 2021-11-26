@@ -28,6 +28,7 @@ use n2n\util\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
+use function n2n\util\col\ArrayUtils;
 
 /**
  * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
@@ -255,8 +256,20 @@ class Response {
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
+		$this->removeEndedBuffers();
 		return $this->pushNewOutputBuffer();	
 	}
+
+	function removeEndedBuffers() {
+		while (false !== ($outputBuffer = end($this->outputBuffers))) {
+			if ($outputBuffer->isBuffering()) {
+				return;
+			}
+			$outputBuffer->seal();
+			array_pop($this->outputBuffers);
+		}
+	}
+
 		
 	private function pushNewOutputBuffer() {
 		$outputBuffer = new OutputBuffer();

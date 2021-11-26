@@ -26,6 +26,8 @@ use n2n\web\http\Response;
 use n2n\reflection\ObjectAdapter;
 use n2n\web\http\controller\impl\ControllingUtilsTrait;
 use n2n\context\Lookupable;
+use n2n\util\io\ob\OutputBuffer;
+use n2n\reflection\ReflectionUtils;
 
 abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lookupable {
 	use ControllingUtilsTrait;
@@ -36,7 +38,10 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 	public final function execute(ControllerContext $controllerContext): bool {
 		$this->init($controllerContext);
 
+		var_dump(ob_get_level());
+
 		$outputBuffer = $this->getResponse()->createOutputBuffer();
+		$outputBuffer->start();
 
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
@@ -53,7 +58,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 			$outputBuffer->end();
 			return true;
 		}
-		
+
 		$caughtStatusException = null;
 		try {
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
@@ -66,14 +71,14 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 					return true;
 				}
 			}
-		
+
 			$invokerInfos = $interpreter->interpret(ControllerInterpreter::DETECT_ALL & ~ ControllerInterpreter::DETECT_PREPARE_METHOD);
 			if (!empty($invokerInfos)) {
 				foreach ($invokerInfos as $invokerInfo) {
 					$this->cu()->setInvokerInfo($invokerInfo);
 					
 					if (!$this->intercept(...$invokerInfo->getInterceptors())) continue;
-					
+
 					$invokerInfo->getInvoker()->invoke($this);
 				}
 
@@ -108,13 +113,13 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				$caughtStatusException = $e;
 			}
 		}
-		
+
 		if ($caughtStatusException !== null) {
 			$this->cu()->reset(false);
 			$outputBuffer->end();
 			throw $caughtStatusException;
 		}
-		
+
 		$this->cu()->reset(true);
 		$outputBuffer->end();
 		return false;

@@ -206,7 +206,7 @@ class ControllingPlan {
 		}
 		
 		if ($this->n2nLocale !== null) {
-			$this->httpContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
+			$this->getHttpContext()->getN2nContext()->setN2nLocale($this->n2nLocale);
 		}
 
 		try {
