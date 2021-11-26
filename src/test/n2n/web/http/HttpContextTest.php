@@ -21,28 +21,28 @@ class HttpContextTest extends TestCase  {
 				new Supersystem([new N2nLocale('de_CH')]),
 				[
 					new Subsystem('stusch', [
-						new SubsystemMatcher('stusch-de', 'de.stusch.ch', null, [new N2nLocale('de_CH')])
+						new SubsystemRule('stusch-de', 'de.stusch.ch', null, [new N2nLocale('de_CH')])
 					]),
 					new Subsystem('holeradio', [
-						new SubsystemMatcher('holeradio-de', 'de.holeradio.ch', null, [new N2nLocale('de_CH')]),
-						new SubsystemMatcher('holeradio-it', 'it.holeradio.ch', null,
+						new SubsystemRule('holeradio-de', 'de.holeradio.ch', null, [new N2nLocale('de_CH')]),
+						new SubsystemRule('holeradio-it', 'it.holeradio.ch', null,
 								[new N2nLocale('it_CH'), new N2nLocale('rm_CH')])
 					])
 				],
 				$n2nContext);
 	}
 
-	function testDetermineSubsystemMatcher() {
+	function testDetermineSubsystemRule() {
 		$this->assertEquals('holeradio-de',
-				$this->httpContext->determineSubsystemMatcher('holeradio', new N2nLocale('de_CH'))->getName());
+				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('de_CH'))->getName());
 
 		$this->assertEquals('holeradio-it',
-				$this->httpContext->determineSubsystemMatcher('holeradio', new N2nLocale('it'))->getName());
+				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('it'))->getName());
 
 		$this->assertEquals('holeradio-it',
-				$this->httpContext->determineSubsystemMatcher('holeradio', new N2nLocale('rm_CH'))->getName());
+				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('rm_CH'))->getName());
 
 		$this->assertEquals('holeradio-de',
-				$this->httpContext->determineSubsystemMatcher('holeradio', new N2nLocale('fr_CH'))->getName());
+				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('fr_CH'))->getName());
 	}
 }

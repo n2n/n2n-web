@@ -213,7 +213,33 @@ class VarsRequest implements Request {
 	public function getCmdPath(): Path {
 		return $this->cmdPath;
 	}
-	
+
+	public function detectBestN2nLocale(array $n2nLocales): N2nLocale {
+		ArgUtils::valArray($n2nLocales, N2nLocale::class);
+
+		$n2nLocale = null;
+		if (!empty($n2nLocales)) {
+			$n2nLocale = reset($n2nLocales);
+		} else {
+			$n2nLocale = N2nLocale::getDefault();
+		}
+
+		if (!isset($this->serverVars['HTTP_ACCEPT_LANGUAGE'])) {
+			return $n2nLocale;
+		}
+
+		if (null !== ($n2nLocaleId = N2nLocale::acceptFromHttp($this->serverVars['HTTP_ACCEPT_LANGUAGE']))) {
+			if (isset($n2nLocales[$n2nLocaleId])) {
+				return $n2nLocales[$n2nLocaleId];
+			}
+
+			$n2nLocaleId = \Locale::lookup(array_keys($n2nLocales), $n2nLocaleId);
+			if ($n2nLocaleId) return $n2nLocales[$n2nLocaleId];
+		}
+
+		return $n2nLocale;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getN2nLocale()

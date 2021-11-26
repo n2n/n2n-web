@@ -22,18 +22,9 @@
 namespace n2n\web\http\controller;
 
 class ControllerDef {
-	private $controllerClassName;
-	private $subsystemName;
-	private $contextPath;
-	
-	public function __construct(string $controllerClassName, ?string $subsystemName, $contextPath) {
-// 		if (empty($controllerClassName)) {
-// 			throw new \Exception();
-// 		}
-		
-		$this->controllerClassName = $controllerClassName;
-		$this->subsystemName = $subsystemName;
-		$this->contextPath = $contextPath;
+
+	public function __construct(private string $controllerClassName, private ?string $subsystemRuleName,
+			private string $contextPath) {
 	}
 	
 	public function getControllerClassName() {
