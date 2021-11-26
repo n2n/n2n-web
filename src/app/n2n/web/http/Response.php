@@ -379,11 +379,11 @@ class Response {
 		}
 		
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath());
+					$this->request->getHostName(), $this->request->getPath());
 		
 		if ($responseCacheItem === null) {
 			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath(),
+					$this->request->getHostName(), $this->request->getPath(),
 					$this->request->getQuery()->toArray());
 		}
 		
@@ -442,7 +442,7 @@ class Response {
 			$expireDate = new \DateTime();
 			$expireDate->add($this->bufferedResponseCacheControl->getCacheInterval());
 			$this->responseCacheStore->store($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath(),
+					$this->request->getHostName(), $this->request->getPath(),
 					$this->buildQueryParamsCharacteristic(),
 					$this->bufferedResponseCacheControl->getCharacteristics(),
 					new ResponseCacheItem($this->bufferedContents, $this->statusCode,
