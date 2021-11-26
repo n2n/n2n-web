@@ -28,6 +28,7 @@ use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
 use n2n\web\http\HttpContext;
 use n2n\web\ui\ViewFactory;
+use n2n\core\err\ThrowableModel;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -270,13 +271,12 @@ class ControllingPlan {
 	
 	private function sendStatusView(StatusException $e) {
 		$view = $this->httpContext->getN2nContext()->lookup(ViewFactory::class)
-				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
+				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()),
+						['throwableModel' => new ThrowableModel($e)]);
 	    $response = $this->httpContext->getResponse();
 	    $e->prepareResponse($response);
 		$response->send($view);
 	}
-	
-
 	
 	/**
 	 * @throws ControllingPlanException
