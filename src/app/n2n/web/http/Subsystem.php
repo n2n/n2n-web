@@ -111,7 +111,7 @@ class Subsystem {
 		return $n2nLocales;
 	}
 
-	function getMatcherByN2nLocale(N2nLocale $n2NLocale) {
+	function getRuleByN2nLocale(N2nLocale $n2NLocale) {
 		foreach ($this->rules as $matcher) {
 			if ($matcher->containsN2nLocaleId($n2NLocale->getId())) {
 				return $matcher;
