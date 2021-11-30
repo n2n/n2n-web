@@ -95,11 +95,21 @@ class Subsystem {
 
 	/**
 	 * @deprecated
-	 * @return mixed
+	 * @return string|null
 	 */
 	public function getHostName() {
-		IllegalStateException::assertTrue(count($this->rules) === 1, 'Multiple rules.');
-		return current($this->rules)->getHostName();
+		$hostNames = [];
+		foreach ($this->rules as $rule) {
+			if (null !== ($hostName = $rule->getHostName())) {
+				$hostNames[] = $hostName;
+			}
+		}
+
+		if (empty($hostNames)) {
+			return null;
+		}
+
+		return implode('|', array_unique($hostNames));
 	}
 
 	/**
@@ -107,8 +117,18 @@ class Subsystem {
 	 * @return string|null
 	 */
 	public function getContextPath() {
-		IllegalStateException::assertTrue(count($this->rules) === 1, 'Multiple rules.');
-		return current($this->rules)->getContextPath();
+		$contextPaths = [];
+		foreach ($this->rules as $rule) {
+			if (null !== ($contextPath = $rule->getContextPath())) {
+				$contextPaths[] = $contextPath;
+			}
+		}
+
+		if (empty($contextPaths)) {
+			return null;
+		}
+
+		return implode('|', array_unique($contextPaths));
 	}
 
 	/**
