@@ -43,7 +43,6 @@ class HttpContext {
 	 * @var Subsystem[]
 	 */
 	private $subsystems;
-	private $viewFactory;
 	private $n2nContext;
 	private ?SubsystemRule $activeSubsystemRule;
 	
@@ -87,10 +86,6 @@ class HttpContext {
 	 */
 	public function getSession(): Session {
 		return $this->session;
-	}
-	
-	function getViewFactory() {
-		return $this->viewFactory;
 	}
 	
 	/**
@@ -299,7 +294,7 @@ class HttpContext {
 		if ($subsystem !== null) {
 			if ($subsystem instanceof SubsystemRule) {
 				$url = $this->buildSubsystemUrl($subsystem);
-			} elseif (null !== ($subsystemRule = self::determineSubsystemRule($subsystem))) {
+			} elseif (null !== ($subsystemRule = self::findBestSubsystemRuleBySubsystemAndN2nLocale($subsystem, $this->getN2nLocale()))) {
 				$url = $this->buildSubsystemUrl($subsystemRule);
 			}
 		}
@@ -330,18 +325,18 @@ class HttpContext {
 		if ($ssl === null) return $url;
 	
 		if ($ssl) {
-			if ((!$url->hasScheme() && $this->isSsl()) || $url->getScheme() == self::PROTOCOL_HTTPS) {
+			if ((!$url->hasScheme() && $this->request->isSsl()) || $url->getScheme() == Request::PROTOCOL_HTTPS) {
 				return $url;
 			}
 				
-			return $url->chScheme(self::PROTOCOL_HTTPS);
+			return $url->chScheme(Request::PROTOCOL_HTTPS);
 		}
 	
-		if ((!$url->hasScheme() && !$this->isSsl()) || $url->getScheme() == self::PROTOCOL_HTTP) {
+		if ((!$url->hasScheme() && !$this->request->isSsl()) || $url->getScheme() == Request::PROTOCOL_HTTP) {
 			return $url;
 		}
 			
-		return $url->chScheme(self::PROTOCOL_HTTP);
+		return $url->chScheme(Request::PROTOCOL_HTTP);
 	}
 	
 	/**
