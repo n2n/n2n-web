@@ -228,12 +228,12 @@ class ControllingPlan {
 		while ($this->status == self::STATUS_PRECACHE && null !== ($nextPrecache = $this->precacheQueue->next())) {
 			$nextPrecache->execute(); 
 		}
-		
+
 		// return when aborted
 		if ($this->status != self::STATUS_PRECACHE && $this->status != self::STATUS_FILTER) {
 			return;
 		}
-		
+
 		if (null !== ($prevStatusException = $this->httpContext->getPrevStatusException())) {
 		    throw $prevStatusException;
 		}
@@ -241,7 +241,7 @@ class ControllingPlan {
 		if (!$this->responseCachePrevented && $this->httpContext->getResponse()->sendCachedPayload()) {
 			return;
 		}
-		
+
 		$this->triggerPostPrecache();
 		
 		$this->status = self::STATUS_FILTER;
@@ -261,7 +261,7 @@ class ControllingPlan {
 						. get_class($nextMain->getController()));
 			}
 		}
-		
+
 		if ($this->mainQueue->isEmpty()) {
 			throw new PageNotFoundException();
 		}

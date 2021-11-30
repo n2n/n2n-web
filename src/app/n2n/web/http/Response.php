@@ -29,6 +29,8 @@ use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
 use function n2n\util\col\ArrayUtils;
+use n2n\reflection\ReflectionUtils;
+use n2n\util\type\ArgUtils;
 
 /**
  * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
@@ -281,7 +283,7 @@ class Response {
 	 * @return string
 	 */
 	public function getBufferedOutput() {
-		$contents = '';
+		$contents = $this->bufferedContents;
 		
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
@@ -290,6 +292,15 @@ class Response {
 		
 		return $contents;
 	}
+
+	function addBufferecContent(string $content) {
+		if ($this->isBuffering()) {
+			echo $content;
+		} else {
+			$this->bufferedContents .= $content;
+		}
+	}
+
 	/**
 	 * 
 	 * @param bool $closeBaseBuffer

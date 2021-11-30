@@ -48,7 +48,7 @@ class HttpContext {
 	private ?SubsystemRule $activeSubsystemRule;
 	
 	
-	const DEFAULT_STATUS_VIEW = 'n2n\\web\\view\\http\\status.html';
+	const DEFAULT_STATUS_VIEW = 'n2n\\web\\http\\view\\status.html';
 	
 	private $errorStatusViewNames = [];
 	private $errorStatusDefaultViewName = null;
