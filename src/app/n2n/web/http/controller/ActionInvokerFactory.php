@@ -91,11 +91,11 @@ class ActionInvokerFactory {
 			case self::PARAM_CMD_CONTEXT_PATH:
 				return $this->cmdContextPath;
 			case self::PARAM_CMD_CONTEXT_PATH_PARTS:
-				return $this->cmdContextPath->toArray();
+				return $this->cmdContextPath->getPathParts();
 			case self::PARAM_CMD_PATH:
 				return $this->cmdPath;
 			case self::PARAM_CMD_PATH_PARTS:
-				return $this->cmdPath->toArray();
+				return $this->cmdPath->getPathParts();
 			default:
 				return null;
 		}
@@ -202,7 +202,7 @@ class ActionInvokerFactory {
 					$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
 				} else {
 					$pathPattern->addTypeConstraint(!$parameter->isDefaultValueAvailable(), 
-							TypeConstraints::type($parameter->getType(), true), $isArray, 
+							TypeConstraints::type($parameter->getType(), true), false,
 							$paramName);
 				}
 
