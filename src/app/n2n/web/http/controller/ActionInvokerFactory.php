@@ -198,7 +198,7 @@ class ActionInvokerFactory {
 			if (!$isArray) $numSinglePathParts++;
 		
 			try {
-				if (!$parameter->hasType())	{
+				if ($isArray || !$parameter->hasType())	{
 					$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
 				} else {
 					$pathPattern->addTypeConstraint(!$parameter->isDefaultValueAvailable(), 
