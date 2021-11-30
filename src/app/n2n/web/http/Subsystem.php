@@ -28,12 +28,11 @@ use n2n\util\col\ArrayUtils;
 
 class Subsystem {
 	/**
-	 * @var SubsystemMatcher[]
+	 * @var SubsystemRule[]
 	 */
-	private array $matchers;
+	private array $rules = [];
 
-	public function __construct(private string $name, array $matchers = []) {
-		$this->setMatchers($matchers);
+	public function __construct(private string $name) {
 	}
 
 	/**
@@ -44,18 +43,54 @@ class Subsystem {
 	}
 
 	/**
-	 * @return SubsystemMatcher[]
+	 * @return SubsystemRule[]
 	 */
-	function getMatchers() {
-		return $this->matchers;
+	function getRules() {
+		return $this->rules;
 	}
 
-	function setMatchers(array $matchers) {
-		ArgUtils::valArray($matchers, SubsystemMatcher::class);
-		$this->matchers = [];
-		foreach ($matchers as $matcher) {
-			$this->matchers[$matcher->getName()] = $matcher;
+	/**
+	 * @param string $name
+	 * @param string|null $hostName
+	 * @param string|null $contextPath
+	 * @param array $n2nLocales
+	 * @return Subsystem
+	 */
+	function createRule(string $name, ?string $hostName, ?string $contextPath, array $n2nLocales) {
+		if (isset($this->rules[$name])) {
+			throw new DuplicateElementException('Subsystem rule with name already exists: ' . $name);
 		}
+
+		$this->rules[$name] = new SubsystemRule($this, $name, $hostName, $contextPath, $n2nLocales);
+		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	function containsRuleName(string $name) {
+		return isset($this->rules[$name]);
+	}
+
+	/**
+	 * @param string $name
+	 * @return Subsystem
+	 */
+	function removeRuleByName(string $name) {
+		unset($this->rules[$name]);
+		return $this;
+	}
+
+	/**
+	 * @param string $name
+	 */
+	function getRuleByName(string $name) {
+		if ($this->rules[$name]) {
+			return $this->rules[$name];
+		}
+
+		return new UnknownSubsystemException('Subsystem contains no rule with name: ' + $name);
 	}
 
 	/**
@@ -63,8 +98,8 @@ class Subsystem {
 	 * @return mixed
 	 */
 	public function getHostName() {
-		IllegalStateException::assertTrue(count($this->matchers) === 1, 'Multiple matchers.');
-		return current($this->matchers)->getHostName();
+		IllegalStateException::assertTrue(count($this->rules) === 1, 'Multiple rules.');
+		return current($this->rules)->getHostName();
 	}
 
 	/**
@@ -72,8 +107,8 @@ class Subsystem {
 	 * @return string|null
 	 */
 	public function getContextPath() {
-		IllegalStateException::assertTrue(count($this->matchers) === 1, 'Multiple matchers.');
-		return current($this->matchers)->getContextPath();
+		IllegalStateException::assertTrue(count($this->rules) === 1, 'Multiple rules.');
+		return current($this->rules)->getContextPath();
 	}
 
 	/**
@@ -81,42 +116,42 @@ class Subsystem {
 	 */
 	function getN2nLocales()  {
 		$n2nLocales = [];
-		foreach ($this->matchers as $matcher) {
+		foreach ($this->rules as $matcher) {
 			$n2nLocales = array_merge($n2nLocales, $matcher->getN2nLocales());
 		}
 		return $n2nLocales;
 	}
 
-	function getMatcherByN2nLocale(N2nLocale $n2NLocale) {
-		foreach ($this->matchers as $matcher) {
+	function getRuleByN2nLocale(N2nLocale $n2NLocale) {
+		foreach ($this->rules as $matcher) {
 			if ($matcher->containsN2nLocaleId($n2NLocale->getId())) {
 				return $matcher;
 			}
 		}
 
-		throw new UnknownSubsystemException('Subsystem contains no SubsystemMatcher with locale: ' . $n2NLocale);
+		throw new UnknownSubsystemException('Subsystem contains no SubsystemRule with locale: ' . $n2NLocale);
 	}
 
 	/**
 	 * @param N2nLocale $n2NLocale
-	 * @return SubsystemMatcher|null
+	 * @return SubsystemRule|null
 	 */
-	function findBestMatcherByN2nLocale(N2nLocale $n2NLocale) {
-		if (count($this->matchers) === 1) {
-			return ArrayUtils::current($this->matchers);
+	function findBestRuleByN2nLocale(N2nLocale $n2NLocale) {
+		if (count($this->rules) === 1) {
+			return ArrayUtils::current($this->rules);
 		}
 
-		$fallbackMatcher = null;
-		foreach ($this->matchers as $matcher) {
-			if ($matcher->containsN2nLocaleId($n2NLocale->getId())) {
-				return $matcher;
+		$fallbackRule = null;
+		foreach ($this->rules as $rule) {
+			if ($rule->containsN2nLocaleId($n2NLocale->getId())) {
+				return $rule;
 			}
 
-			if ($fallbackMatcher === null || $matcher->containsLanguageId($n2NLocale->getLanguageId())) {
-				$fallbackMatcher = $matcher;
+			if ($fallbackRule === null || $rule->containsLanguageId($n2NLocale->getLanguageId())) {
+				$fallbackRule = $rule;
 			}
 		}
 
-		return $fallbackMatcher;
+		return $fallbackRule;
 	}
 }

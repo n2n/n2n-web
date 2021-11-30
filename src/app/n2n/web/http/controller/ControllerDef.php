@@ -21,31 +21,49 @@
  */
 namespace n2n\web\http\controller;
 
+use n2n\web\http\SubsystemRule;
+
 class ControllerDef {
-	private $controllerClassName;
-	private $subsystemName;
-	private $contextPath;
-	
-	public function __construct(string $controllerClassName, ?string $subsystemName, $contextPath) {
-// 		if (empty($controllerClassName)) {
-// 			throw new \Exception();
-// 		}
-		
-		$this->controllerClassName = $controllerClassName;
-		$this->subsystemName = $subsystemName;
-		$this->contextPath = $contextPath;
+
+	public function __construct(private string $controllerClassName, private ?string $subsystemName,
+			private ?string $subsystemRuleName, private string $contextPath) {
 	}
-	
+
+	/**
+	 * @return string
+	 */
 	public function getControllerClassName() {
 		return $this->controllerClassName;
 	}
-	
+
+	/**
+	 * @return string|null
+	 */
 	public function getSubsystemName() {
 		return $this->subsystemName;
 	}
-	
+
+	/**
+	 * @return string|null
+	 */
+	function getSubsystemRuleName() {
+		return $this->subsystemRuleName ;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function getContextPath() {
 		return $this->contextPath;
 	}
-	
+
+	/**
+	 * @param string|null $subsystemName
+	 * @param string|null $subsystemRuleName
+	 * @return bool
+	 */
+	function acceptableBy(?string $subsystemName, ?string $subsystemRuleName) {
+		return ($this->subsystemName === null || $this->subsystemName === $subsystemName)
+				&& ($this->subsystemRuleName === null || $this->subsystemRuleName === $subsystemRuleName);
+	}
 }

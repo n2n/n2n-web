@@ -26,17 +26,40 @@ use n2n\web\http\Response;
 use n2n\reflection\ObjectAdapter;
 use n2n\web\http\controller\impl\ControllingUtilsTrait;
 use n2n\context\Lookupable;
+use n2n\util\io\ob\OutputBuffer;
+use n2n\reflection\ReflectionUtils;
 
 abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lookupable {
 	use ControllingUtilsTrait;
-	
+
+	/**
+	 * @return OutputBuffer
+	 * @throws \n2n\util\io\ob\OutputBufferDisturbedException
+	 */
+	private function startBuffer(ControllerContext $controllerContext) {
+		$this->init($controllerContext);
+
+		$outputBuffer = $this->getResponse()->createOutputBuffer();
+		$outputBuffer->start();
+		return $outputBuffer;
+	}
+
+	/**
+	 * @param OutputBuffer $outputBuffer
+	 */
+	private function endBuffer(OutputBuffer $outputBuffer, bool $commit) {
+		$outputBuffer->end();
+		$outputBuffer->seal();
+		$this->getResponse()->addBufferecContent($outputBuffer->getBufferedContents());
+
+		$this->cu()->reset($commit);
+	}
+
 	/* (non-PHPdoc)
 	 * @see \n2n\web\http\controller\Controller::execute()
 	 */
 	public final function execute(ControllerContext $controllerContext): bool {
-		$this->init($controllerContext);
-
-		$outputBuffer = $this->getResponse()->createOutputBuffer();
+		$outputBuffer = $this->startBuffer($controllerContext);
 
 		$request = $this->getRequest();
 		$invokerFactory = new ActionInvokerFactory(
@@ -50,10 +73,10 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 		$this->resetCacheControl();
 		
 		if (!$this->intercept(...$interpreter->findControllerInterceptors())) {
-			$outputBuffer->end();
+			$this->endBuffer($outputBuffer, true);
 			return true;
 		}
-		
+
 		$caughtStatusException = null;
 		try {
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
@@ -62,23 +85,22 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				if ($this->intercept(...$prepareInvoker->getInterceptors())) {
 					$prepareInvoker->getInvoker()->invoke($this);
 				} else {
-					$outputBuffer->end();
+					$this->endBuffer($outputBuffer, true);
 					return true;
 				}
 			}
-		
+
 			$invokerInfos = $interpreter->interpret(ControllerInterpreter::DETECT_ALL & ~ ControllerInterpreter::DETECT_PREPARE_METHOD);
 			if (!empty($invokerInfos)) {
 				foreach ($invokerInfos as $invokerInfo) {
 					$this->cu()->setInvokerInfo($invokerInfo);
 					
 					if (!$this->intercept(...$invokerInfo->getInterceptors())) continue;
-					
+
 					$invokerInfo->getInvoker()->invoke($this);
 				}
 
-				$this->cu()->reset(true);
-				$outputBuffer->end();
+				$this->endBuffer($outputBuffer, true);
 				return true;
 			}
 		} catch (StatusException $e) {
@@ -99,24 +121,21 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 						$invokerInfo->getInvoker()->invoke($this);
 						$caughtStatusException = null;
 					}
-					
-					$this->cu()->reset(true);
-					$outputBuffer->end();
+
+					$this->endBuffer($outputBuffer, true);
 					return true;
 				}
 			} catch (StatusException $e) {
 				$caughtStatusException = $e;
 			}
 		}
-		
+
 		if ($caughtStatusException !== null) {
-			$this->cu()->reset(false);
-			$outputBuffer->end();
+			$this->endBuffer($outputBuffer, true);
 			throw $caughtStatusException;
 		}
-		
-		$this->cu()->reset(true);
-		$outputBuffer->end();
+
+		$this->endBuffer($outputBuffer, true);
 		return false;
 	}
 }

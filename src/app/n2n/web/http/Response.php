@@ -28,6 +28,9 @@ use n2n\util\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
+use function n2n\util\col\ArrayUtils;
+use n2n\reflection\ReflectionUtils;
+use n2n\util\type\ArgUtils;
 
 /**
  * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
@@ -255,8 +258,20 @@ class Response {
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
+		$this->removeEndedBuffers();
 		return $this->pushNewOutputBuffer();	
 	}
+
+	function removeEndedBuffers() {
+		while (false !== ($outputBuffer = end($this->outputBuffers))) {
+			if ($outputBuffer->isBuffering()) {
+				return;
+			}
+			$outputBuffer->seal();
+			array_pop($this->outputBuffers);
+		}
+	}
+
 		
 	private function pushNewOutputBuffer() {
 		$outputBuffer = new OutputBuffer();
@@ -268,7 +283,7 @@ class Response {
 	 * @return string
 	 */
 	public function getBufferedOutput() {
-		$contents = '';
+		$contents = $this->bufferedContents;
 		
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
@@ -277,6 +292,15 @@ class Response {
 		
 		return $contents;
 	}
+
+	function addBufferecContent(string $content) {
+		if ($this->isBuffering()) {
+			echo $content;
+		} else {
+			$this->bufferedContents .= $content;
+		}
+	}
+
 	/**
 	 * 
 	 * @param bool $closeBaseBuffer
@@ -379,11 +403,11 @@ class Response {
 		}
 		
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath());
+					$this->request->getHostName(), $this->request->getPath());
 		
 		if ($responseCacheItem === null) {
 			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath(),
+					$this->request->getHostName(), $this->request->getPath(),
 					$this->request->getQuery()->toArray());
 		}
 		
@@ -442,7 +466,7 @@ class Response {
 			$expireDate = new \DateTime();
 			$expireDate->add($this->bufferedResponseCacheControl->getCacheInterval());
 			$this->responseCacheStore->store($this->request->getMethod(), 
-					$this->request->getSubsystemName(), $this->request->getPath(),
+					$this->request->getHostName(), $this->request->getPath(),
 					$this->buildQueryParamsCharacteristic(),
 					$this->bufferedResponseCacheControl->getCharacteristics(),
 					new ResponseCacheItem($this->bufferedContents, $this->statusCode,

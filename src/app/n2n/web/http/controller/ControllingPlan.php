@@ -28,6 +28,7 @@ use n2n\web\http\StatusException;
 use n2n\web\http\UnknownControllerContextException;
 use n2n\web\http\HttpContext;
 use n2n\web\ui\ViewFactory;
+use n2n\core\err\ThrowableModel;
 
 class ControllingPlan {
 	const STATUS_READY = 'ready';
@@ -205,7 +206,7 @@ class ControllingPlan {
 		}
 		
 		if ($this->n2nLocale !== null) {
-			$this->httpContext->getHttpContext()->getRequest()->setN2nLocale($this->n2nLocale);
+			$this->getHttpContext()->getN2nContext()->setN2nLocale($this->n2nLocale);
 		}
 
 		try {
@@ -227,12 +228,12 @@ class ControllingPlan {
 		while ($this->status == self::STATUS_PRECACHE && null !== ($nextPrecache = $this->precacheQueue->next())) {
 			$nextPrecache->execute(); 
 		}
-		
+
 		// return when aborted
 		if ($this->status != self::STATUS_PRECACHE && $this->status != self::STATUS_FILTER) {
 			return;
 		}
-		
+
 		if (null !== ($prevStatusException = $this->httpContext->getPrevStatusException())) {
 		    throw $prevStatusException;
 		}
@@ -240,7 +241,7 @@ class ControllingPlan {
 		if (!$this->responseCachePrevented && $this->httpContext->getResponse()->sendCachedPayload()) {
 			return;
 		}
-		
+
 		$this->triggerPostPrecache();
 		
 		$this->status = self::STATUS_FILTER;
@@ -260,7 +261,7 @@ class ControllingPlan {
 						. get_class($nextMain->getController()));
 			}
 		}
-		
+
 		if ($this->mainQueue->isEmpty()) {
 			throw new PageNotFoundException();
 		}
@@ -270,13 +271,12 @@ class ControllingPlan {
 	
 	private function sendStatusView(StatusException $e) {
 		$view = $this->httpContext->getN2nContext()->lookup(ViewFactory::class)
-				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()));
+				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()),
+						['throwableModel' => new ThrowableModel($e)]);
 	    $response = $this->httpContext->getResponse();
 	    $e->prepareResponse($response);
 		$response->send($view);
 	}
-	
-
 	
 	/**
 	 * @throws ControllingPlanException

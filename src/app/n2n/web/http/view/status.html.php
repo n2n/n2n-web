@@ -41,5 +41,12 @@
 	</head>
 	<body>
 		<h1><?php $html->esc($title) ?></h1>
+
+		<?php if (\n2n\core\N2N::isDevelopmentModeOn()): ?>
+			<section>
+				<?php $view->import('\n2n\core\view\errorpages\inc\statusDevContent.html',
+						array('throwableModel' => $throwableModel)) ?>
+			</section>
+		<?php endif ?>
 	</body>
 </html>

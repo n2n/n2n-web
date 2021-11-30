@@ -41,12 +41,12 @@ class ResponseCacheStore implements ThreadScoped {
 		$transactionManager->registerResource($this->responseCacheActionQueue);
 	}
 	
-	private function buildResponseCharacteristics(int $method, string $subsystemName = null, Path $path, 
+	private function buildResponseCharacteristics(int $method, string $hostName, Path $path,
 			array $queryParams = null) {
 		if ($queryParams !== null) {
 			ksort($queryParams);
 		}
-		return array('method' => $method, 'subsystemName' => $subsystemName, 'path' => $path->__toString(), 
+		return array('method' => $method, 'hostName' => $hostName, 'path' => $path->__toString(), 
 				'query' => $queryParams);
 	}
 	
@@ -57,19 +57,19 @@ class ResponseCacheStore implements ThreadScoped {
 		return $responseCharacteristics;
 	}
 	
-	public function store(int $method, string $subsystemName = null, Path $path, array $queryParams = null, 
+	public function store(int $method, string $hostName, Path $path, array $queryParams = null,
 			array $characteristics, ResponseCacheItem $item) {
-		$responseCharacteristics = $this->buildResponseCharacteristics($method, $subsystemName, $path, $queryParams);
+		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$this->cacheStore->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
 		$this->cacheStore->store(self::INDEX_NAME, 
 				$this->buildIndexCharacteristics($responseCharacteristics, $characteristics), 
 				$responseCharacteristics);
 	}
 	
-	public function get(int $method, string $subsystemName = null, Path $path, array $queryParams = null, 
+	public function get(int $method, string $hostName, Path $path, array $queryParams = null,
 			\DateTime $now = null) {
 		$cacheItem = $this->cacheStore->get(self::RESPONSE_NAME, 
-				$this->buildResponseCharacteristics($method, $subsystemName, $path, $queryParams));
+				$this->buildResponseCharacteristics($method, $hostName, $path, $queryParams));
 		if ($cacheItem === null) return null;
 		
 		if ($now === null) {
@@ -86,10 +86,10 @@ class ResponseCacheStore implements ThreadScoped {
 		return $data;
 	}
 	
-	public function remove(int $method, string $subsystemName = null, Path $path, array $queryParams = null) {
+	public function remove(int $method, string $hostName, Path $path, array $queryParams = null) {
 		if ($this->responseCacheActionQueue->isSealed()) return;
 		
-		$responseCharacteristics = $this->buildResponseCharacteristics($method, $subsystemName, $path, $queryParams);
+		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
 		
 		$that = $this;
@@ -100,9 +100,9 @@ class ResponseCacheStore implements ThreadScoped {
 		});
 	}
 	
-// 	public function removeByFilter(string $method, string $subsystemName = null, Path $path, array $queryParams = null,
+// 	public function removeByFilter(string $method, string $hostName, Path $path, array $queryParams = null,
 // 			array $characteristicNeedles) {
-// 		$this->cacheStore->removeAll(self::RESPONSE_NAME, $this->buildResponseCharacteristics($method, $subsystemName, $path, $queryParams, 
+// 		$this->cacheStore->removeAll(self::RESPONSE_NAME, $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams, 
 // 				$characteristicNeedles));
 // 	}
 	

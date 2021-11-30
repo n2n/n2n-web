@@ -61,27 +61,33 @@ interface Request {
 	 * @return \n2n\util\uri\Path 
 	 */
 	public function getCmdPath(): Path;
-	
+
+//	/**
+//	 * @return \n2n\web\http\Subsystem
+//	 */
+//	public function getSubsystem(): ?Subsystem;
+//
+//	/**
+//	 * @param Subsystem $subsystem
+//	 */
+//	public function setSubsystem(?Subsystem $subsystem);
+//
+//	/**
+//	 * @return N2nLocale
+//	 */
+//	public function getN2nLocale(): N2nLocale;
+//
+//	/**
+//	 * @param N2nLocale $n2nLocale
+//	 */
+//	public function setN2nLocale(N2nLocale $n2nLocale);
+
 	/**
-	 * @return \n2n\web\http\Subsystem
+	 * @param N2nLocale[] $n2nLocales
+	 * @return N2nLocale
 	 */
-	public function getSubsystem(): ?Subsystem;
-	
-	/**
-	 * @param Subsystem $subsystem
-	 */
-	public function setSubsystem(?Subsystem $subsystem);
-	
-	/**
-	 * @return N2nLocale 
-	 */
-	public function getN2nLocale(): N2nLocale;
-	
-	/**
-	 * @param N2nLocale $n2nLocale
-	 */
-	public function setN2nLocale(N2nLocale $n2nLocale);
-	
+	public function detectBestN2nLocale(array $n2nLocales): N2nLocale;
+
 	/**
 	 * @return \n2n\util\uri\Url
 	 */

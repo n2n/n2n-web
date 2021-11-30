@@ -39,12 +39,16 @@ class HttpContext {
 	private $session;
 	private $baseAssetsUrl;
 	private $supersystem;
+	/**
+	 * @var Subsystem[]
+	 */
 	private $subsystems;
 	private $viewFactory;
 	private $n2nContext;
+	private ?SubsystemRule $activeSubsystemRule;
 	
 	
-	const DEFAULT_STATUS_VIEW = 'n2n\\web\\view\\status.html';
+	const DEFAULT_STATUS_VIEW = 'n2n\\web\\http\\view\\status.html';
 	
 	private $errorStatusViewNames = [];
 	private $errorStatusDefaultViewName = null;
@@ -60,6 +64,8 @@ class HttpContext {
 		$this->supersystem = $supersystem;
 		$this->setSubsystems($subsystems);
 		$this->n2nContext = $n2nContext;
+
+		$this->activeSubsystemRule = $this->determineSubsystemRule($request->getHostName(), $request->getContextPath());
 	}
 	
 	/**
@@ -99,7 +105,7 @@ class HttpContext {
 	 * @return \n2n\l10n\N2nLocale
 	 */
 	public function getN2nLocale() {
-		return $this->request->getN2nLocale();
+		return $this->n2nContext->getN2nLocale();
 	}
 	
 	/**
@@ -140,8 +146,8 @@ class HttpContext {
 			return true;
 		}
 		
-		$subsystem = $this->request->getSubsystem();
-		if ($subsystem !== null && $subsystem->containsN2nLocaleId($n2nLocaleId)) {
+		$subsystemRule = $this->getActiveSubsystemRule();
+		if ($subsystemRule !== null && $subsystemRule->containsN2nLocaleId($n2nLocaleId)) {
 			return true;
 		}
 		
@@ -153,9 +159,8 @@ class HttpContext {
 	 */
 	public function getContextN2nLocales(): array {
 		$contextN2nLocales = $this->supersystem->getN2nLocales();
-		$subsystem = $this->request->getSubsystem();
-		if ($subsystem !== null) {
-			return array_merge($contextN2nLocales, $subsystem->getN2nLocales());
+		if ($this->activeSubsystemRule !== null) {
+			return array_merge($contextN2nLocales, $this->activeSubsystemRule->getN2nLocales());
 		}
 		return $contextN2nLocales;
 	}
@@ -170,7 +175,14 @@ class HttpContext {
 		}
 		return $contextN2nLocales;
 	}
-	
+
+	/**
+	 * @return SubsystemRule
+	 */
+	function getActiveSubsystemRule() {
+		return $this->activeSubsystemRule;
+	}
+
 	/**
 	 * @return \n2n\web\http\Supersystem
 	 */
@@ -237,30 +249,58 @@ class HttpContext {
 	}
 
 	/**
-	 * @param Subsystem|string $subsystem
 	 *
+	 * @param Subsystem|string $subsystem
+	 * @param N2nLocale|null $n2nLocale
+	 * @return SubsystemRule|null
 	 */
-	public function determineSubsystemMatcher(Subsystem|string $subsystem, N2nLocale $n2NLocale = null) {
+	public function findBestSubsystemRuleBySubsystemAndN2nLocale(Subsystem|string $subsystem, N2nLocale $n2nLocale = null) {
 		if (is_string($subsystem)) {
 			$subsystem = $this->getSubsystemByName($subsystem);
 		}
 
-		return $subsystem->findBestMatcherByN2nLocale($n2NLocale ?? $this->n2nContext->getN2nLocale());
+		return $subsystem->findBestRuleByN2nLocale($n2nLocale ?? $this->getN2nLocale());
+	}
+
+	/**
+	 * @param string $hostName
+	 * @param Path $contextPath
+	 * @return SubsystemRule|null
+	 */
+	public function determineSubsystemRule(string $hostName, Path $contextPath) {
+		foreach ($this->subsystems as $subsystem) {
+			foreach ($subsystem->getRules() as $subsystemRule) {
+				$ruleHostName = $subsystemRule->getHostName();
+				$ruleContextPath = $subsystemRule->getContextPath();
+
+				if ($ruleHostName !== null && $ruleHostName === $hostName) {
+					continue;
+				}
+
+				if ($ruleContextPath !== null && !$contextPath->equals($ruleContextPath)) {
+					continue;
+				}
+
+				return $subsystemRule;
+			}
+		}
+
+		return null;
 	}
 
 	/**
 	 * @param bool $ssl
-	 * @param Subsystem|SubsystemMatcher|string $subsystem
+	 * @param Subsystem|SubsystemRule|string $subsystem
 	 * @return \n2n\util\uri\Url
 	 */
-	public function buildContextUrl(bool $ssl = null, Subsystem|SubsystemMatcher|string $subsystem = null, bool $absolute = false): Url {
+	public function buildContextUrl(bool $ssl = null, Subsystem|SubsystemRule|string $subsystem = null, bool $absolute = false): Url {
 		$url = null;
 		
 		if ($subsystem !== null) {
-			if ($subsystem instanceof SubsystemMatcher) {
+			if ($subsystem instanceof SubsystemRule) {
 				$url = $this->buildSubsystemUrl($subsystem);
-			} elseif (null !== ($subsystemMatcher = self::determineSubsystemMatcher($subsystem))) {
-				$url = $this->buildSubsystemUrl($subsystemMatcher);
+			} elseif (null !== ($subsystemRule = self::determineSubsystemRule($subsystem))) {
+				$url = $this->buildSubsystemUrl($subsystemRule);
 			}
 		}
 
@@ -308,16 +348,16 @@ class HttpContext {
 	 * @param Subsystem $subsystem
 	 * @return \n2n\util\uri\Url
 	 */
-	private function buildSubsystemUrl(SubsystemMatcher $subsystemMatcher) {
+	private function buildSubsystemUrl(SubsystemRule $subsystemRule) {
 		$url = new Url();
 
-		if (null !== ($subsystemHostName = $subsystemMatcher->getHostName())) {
+		if (null !== ($subsystemHostName = $subsystemRule->getHostName())) {
 			if ($this->request->getHostName() != $subsystemHostName) {
 				$url = $url->chHost($subsystemHostName);
 			}
 		}
 	
-		if (null !== ($contextPath = $subsystemMatcher->getContextPath())) {
+		if (null !== ($contextPath = $subsystemRule->getContextPath())) {
 			$url = $url->chPath($contextPath);
 		} else {
 			$url = $url->chPath($this->request->getContextPath());
@@ -338,6 +378,19 @@ class HttpContext {
 		}
 
 		throw new UnknownSubsystemException('Unknown subsystem name: ' . $name);
+	}
+
+
+	function getSubsystemRuleByName(string $subsystemRuleName) {
+		$subsystemRules = [];
+
+		foreach ($this->subsystems as $subsystem) {
+			if ($subsystem->containsRuleName($subsystemRuleName)) {
+				$subsystemRules[] = $subsystem->getRuleByName($subsystemRuleName);
+			}
+		}
+
+		return $subsystemRules;
 	}
 
 	/**
@@ -409,5 +462,17 @@ class HttpContext {
 	 */
 	function getPrevStatusException() {
 		return $this->prevStatusException;
+	}
+
+	/**
+	 * @return N2nLocale
+	 */
+	function determineBestN2nLocale() {
+		$n2nLocales = $this->supersystem->getN2nLocales();
+		if ($this->activeSubsystemRule !== null) {
+			$n2nLocales = array_merge($n2nLocales, $this->activeSubsystemRule->getN2nLocales());
+		}
+
+		return $this->request->detectBestN2nLocale($n2nLocales);
 	}
 }

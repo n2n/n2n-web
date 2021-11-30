@@ -6,15 +6,22 @@ use n2n\util\type\ArgUtils;
 use n2n\core\N2nLocaleNotFoundException;
 use n2n\l10n\N2nLocale;
 
-class SubsystemMatcher {
+class SubsystemRule {
 	private array $n2nLocales;
 
-	public function __construct(private string $name, private ?string $hostName, private ?string $contextPath,
-			array $n2nLocales) {
+	public function __construct(private Subsystem $subsystem, private string $name, private ?string $hostName, private
+			?string $contextPath, array $n2nLocales) {
 		$this->name = $name;
 		$this->hostName = $hostName;
 		$this->contextPath = $contextPath;
 		$this->setN2nLocales($n2nLocales);
+	}
+
+	/**
+	 * @return Subsystem
+	 */
+	function getSubsystem() {
+		return $this->subsystem;
 	}
 
 	/**
