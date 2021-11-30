@@ -49,8 +49,9 @@ class SimpleRequest implements Request {
 	private $subsystem;
 	
 	public function __construct(Url $contextUrl) {
-		ArgUtils::assertTrue($contextUrl->getQuery()->isEmpty() && $contextUrl->getFragment() === null,
-				'Context url can not have a query or fragment.');
+		ArgUtils::assertTrue($contextUrl->getAuthority()->getHost()  !== null && $contextUrl->getQuery()->isEmpty()
+						&& $contextUrl->getFragment() === null,
+				'Context url can not have a query or fragment and must have a host.');
 		$this->method = Method::GET;
 		$this->contextUrl = $contextUrl;
 		$this->cmdUrl = new Url();
@@ -386,6 +387,26 @@ class SimpleRequest implements Request {
 	 */
 	function setBody(?string $body) {
 		$this->body = $body;
+	}
+
+	private $bestN2nLocale = null;
+
+	/**
+	 * @param N2nLocale|null $n2NLocale
+	 */
+	function setBestN2nLocale(?N2nLocale  $n2NLocale) {
+		$this->bestN2nLocale = $n2NLocale;
+	}
+
+	/**
+	 * @return N2nLocale|null
+	 */
+	function getBestN2nLocale() {
+		return $this->bestN2nLocale;
+	}
+
+	public function detectBestN2nLocale(array $n2nLocales): N2nLocale {
+		return $this->bestN2nLocale ?? N2nLocale::getDefault();
 	}
 }
 

@@ -24,7 +24,6 @@
 		"vendor-dir" : "src/vendor"
 	},
 	"require" : {
-		"php" : ">=7.0",
 		"n2n/n2n" : "^7.3",
 		"n2n/n2n-context" : "^7.3",
 		"n2n/n2n-l10n" : "^7.3",

@@ -12,7 +12,7 @@ class HttpContextTest extends TestCase  {
 	private HttpContext $httpContext;
 
 	function setUp(): void {
-		$request = new SimpleRequest(Url::create(['context']));
+		$request = new SimpleRequest(Url::create('https://www.holeradio.ch/context'));
 		$response = new Response($request);
 
 		$n2nContext = $this->getMockBuilder(N2nContext::class)->getMock();
@@ -20,29 +20,27 @@ class HttpContextTest extends TestCase  {
 		$this->httpContext = new HttpContext($request, $response, new SimpleSession(), Url::create(['assets']),
 				new Supersystem([new N2nLocale('de_CH')]),
 				[
-					new Subsystem('stusch', [
-						new SubsystemRule('stusch-de', 'de.stusch.ch', null, [new N2nLocale('de_CH')])
-					]),
-					new Subsystem('holeradio', [
-						new SubsystemRule('holeradio-de', 'de.holeradio.ch', null, [new N2nLocale('de_CH')]),
-						new SubsystemRule('holeradio-it', 'it.holeradio.ch', null,
-								[new N2nLocale('it_CH'), new N2nLocale('rm_CH')])
-					])
+					(new Subsystem('stusch'))
+							->createRule('stusch-de', 'de.stusch.ch', null, [new N2nLocale('de_CH')]),
+					(new Subsystem('holeradio'))
+							->createRule('holeradio-de', 'de.holeradio.ch', null, [new N2nLocale('de_CH')])
+							->createRule('holeradio-it', 'it.holeradio.ch', null,
+									[new N2nLocale('it_CH'), new N2nLocale('rm_CH')])
 				],
 				$n2nContext);
 	}
 
-	function testDetermineSubsystemRule() {
+	function testFindBestSubsystemRuleBySubsystemAndN2nLocale() {
 		$this->assertEquals('holeradio-de',
-				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('de_CH'))->getName());
+				$this->httpContext->findBestSubsystemRuleBySubsystemAndN2nLocale('holeradio', new N2nLocale('de_CH'))->getName());
 
 		$this->assertEquals('holeradio-it',
-				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('it'))->getName());
+				$this->httpContext->findBestSubsystemRuleBySubsystemAndN2nLocale('holeradio', new N2nLocale('it'))->getName());
 
 		$this->assertEquals('holeradio-it',
-				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('rm_CH'))->getName());
+				$this->httpContext->findBestSubsystemRuleBySubsystemAndN2nLocale('holeradio', new N2nLocale('rm_CH'))->getName());
 
 		$this->assertEquals('holeradio-de',
-				$this->httpContext->determineSubsystemRule('holeradio', new N2nLocale('fr_CH'))->getName());
+				$this->httpContext->findBestSubsystemRuleBySubsystemAndN2nLocale('holeradio', new N2nLocale('fr_CH'))->getName());
 	}
 }

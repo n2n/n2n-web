@@ -19,7 +19,7 @@ class ControllingPlanTest extends TestCase {
 	private $httpContext;
 	
 	function setUp(): void {
-		$request = new SimpleRequest(Url::create(['context']));
+		$request = new SimpleRequest(Url::create('https://www.holeradio.ch/context'));
 		$response = new Response($request);
 		
 		$n2nContext = $this->getMockBuilder(N2nContext::class)->getMock();

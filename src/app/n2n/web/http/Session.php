@@ -44,7 +44,7 @@ interface Session extends LookupSession {
 	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function set(string $module, string $key, $value);
+	public function set(string $module, string $key, mixed $value);
 	
 	/**
 	 * 
