@@ -26,8 +26,10 @@ use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\AnnotationTrait;
 use n2n\reflection\annotation\ClassAnnotation;
 use n2n\reflection\annotation\ClassAnnotationTrait;
+use n2n\reflection\attribute\legacy\LegacyAnnotation;
+use n2n\web\http\attribute\Intercept;
 
-class AnnoIntercept implements ClassAnnotation, MethodAnnotation {
+class AnnoIntercept implements ClassAnnotation, MethodAnnotation, LegacyAnnotation {
     use ClassAnnotationTrait, MethodAnnotationTrait, AnnotationTrait;
     
     private $interceptorLookupIds;
@@ -45,4 +47,12 @@ class AnnoIntercept implements ClassAnnotation, MethodAnnotation {
     function getInterceptorLookupIds() {
         return $this->interceptorLookupIds;
     }
+
+	public function getAttributeName(): string {
+		return Intercept::class;
+	}
+
+	public function toAttributeInstance() {
+		return new Intercept(...$this->interceptorLookupIds);
+	}
 }
