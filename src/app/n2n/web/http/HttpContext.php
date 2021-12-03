@@ -268,7 +268,7 @@ class HttpContext {
 				$ruleHostName = $subsystemRule->getHostName();
 				$ruleContextPath = $subsystemRule->getContextPath();
 
-				if ($ruleHostName !== null && $ruleHostName === $hostName) {
+				if ($ruleHostName !== null && $ruleHostName !== $hostName) {
 					continue;
 				}
 
