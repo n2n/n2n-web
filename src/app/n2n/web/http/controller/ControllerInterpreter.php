@@ -34,14 +34,9 @@ use n2n\web\http\path\PathPatternCompiler;
 use n2n\reflection\ReflectionContext;
 use n2n\web\http\path\PathPatternCompileException;
 use n2n\web\http\Method;
-use n2n\web\http\annotation\AnnoPath;
-use n2n\reflection\annotation\MethodAnnotation;
-use n2n\reflection\annotation\AnnotationSet;
-use n2n\web\http\annotation\AnnoConsums;
-use n2n\web\http\annotation\AnnoIntercept;
-use n2n\util\magic\MagicContext;
-use n2n\util\magic\MagicObjectUnavailableException;
 use n2n\util\type\TypeUtils;
+use n2n\reflection\attribute\AttributeSet;
+use n2n\reflection\attribute\MethodAttribute;
 
 class ControllerInterpreter {
 	const DETECT_INDEX_METHOD = 1;
@@ -60,17 +55,17 @@ class ControllerInterpreter {
 	const MAGIC_OPTIONS_METHOD_PREFIX = 'optionsDo';
 	const INDEX_METHOD_NAME = 'index';
 	const NOT_FOUND_METHOD_NAME = 'notFound';
-	
+
 	private $class;
 	private $invokerFactory;
 	private $interceptorFactory;
 	private $pathPatternCompiler;
-	
+
 	/**
 	 * @param \ReflectionClass $class
 	 * @param int $detect
 	 */
-	public function __construct(\ReflectionClass $class, ActionInvokerFactory $invokerFactory, 
+	public function __construct(\ReflectionClass $class, ActionInvokerFactory $invokerFactory,
 			InterceptorFactory $interceptorFactory) {
 		$this->class = $class;
 		$this->invokerFactory = $invokerFactory;
@@ -83,12 +78,12 @@ class ControllerInterpreter {
 	 */
 	public function interpret(int $detectOptions = self::DETECT_ALL) {
 		$invokers = array();
-		
+
 		if ($detectOptions & self::DETECT_PREPARE_METHOD
 				&& null !== ($invoker = $this->findPrepareMethod())) {
 			$invokers[] = $invoker;
 		}
-		
+
 		if ($detectOptions & self::DETECT_SIMPLE_METHODS
 				&& null !== ($invoker = $this->findSimpleMethod())) {
 			$invokers[] = $invoker;
@@ -102,11 +97,11 @@ class ControllerInterpreter {
 				&& null !== ($invoker = $this->findNotFoundMethod())) {
 			$invokers[] = $invoker;
 		}
-		
+
 		foreach ($invokers as $invoker) {
-			$invoker->setInterceptors($this->findAnnoInterceptors($invoker->getInvoker()->getMethod()));
+			$invoker->setInterceptors($this->findInterceptors($invoker->getInvoker()->getMethod()));
 		}
-		
+
 		return $invokers;
 	}
 
@@ -118,104 +113,90 @@ class ControllerInterpreter {
 
 		$invokerInfo = $this->invokerFactory->createFullMagic($method, $this->invokerFactory->getCmdPath());
 		if ($invokerInfo === null) return null;
-	
+
 		return $invokerInfo;
 	}
-	
+
 	/**
 	 * @param \ReflectionMethod $method
 	 * @throws ControllerErrorException
 	 */
 	private function checkAccessabilityMethod(\ReflectionMethod $method) {
 		if ($method->isPublic()) return;
-		
-		throw new ControllerErrorException('Method must be public: ' 
-						. $method->getDeclaringClass()->getName() . '::' . $method->getName() . '()',
+
+		throw new ControllerErrorException('Method must be public: '
+				. $method->getDeclaringClass()->getName() . '::' . $method->getName() . '()',
 				$method->getFileName(), $method->getStartLine());
 	}
-	
+
 	/**
 	 * @param string $methodName
 	 * @return NULL|\ReflectionMethod
 	 */
 	private function getMethod(string $methodName) {
 		if (!$this->class->hasMethod($methodName)) return null;
-		
+
 		$method = $this->class->getMethod($methodName);
 		$this->checkAccessabilityMethod($method);
-		
-		$this->rejectPathAnnos($method);
-		$this->rejectHttpMethodAnnos($method);
-		
+
+		$this->rejectPathAttrs($method);
+		$this->rejectHttpMethodAttrs($method);
+
 		return $method;
 	}
-	
+
 	/**
 	 * @param \ReflectionMethod $method
 	 */
-	private function rejectPathAnnos(\ReflectionMethod $method) {
-		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
-		$methodName = $method->getName();
+	private function rejectPathAttrs(\ReflectionMethod $method) {
+		$attributeSet = ReflectionContext::getAttributeSet($method->getDeclaringClass());
 
-		$anno = null;
 		$attr = null;
-		if (null !== ($annoPath = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPath'))) {
-			$anno = $annoPath;
-		} else if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
-			$anno = $annoExt;
-		} else if (null !== ($attrPath = AttributeUtils::get($method, Path::class))) {
+		$methodName = $method->getName();
+		if (null !== ($attrPath = $attributeSet->getMethodAttribute($methodName, Path::class))) {
 			$attr = $attrPath;
-		} else if (null !== ($attrExt = AttributeUtils::get($method, Ext::class))) {
+		} else if (null !== ($attrExt = $attributeSet->getMethodAttribute($methodName, Ext::class))) {
 			$attr = $attrExt;
 		}
-		
-		if ($anno === null && $attr === null) return;
-		
-		throw $this->createInvalidAnnoException($method);
+
+		if ($attr === null) return;
+
+		throw $this->createInvalidAttrException($method);
 	}
-	
+
 	/**
 	 * @param \ReflectionMethod $method
 	 */
-	private function rejectHttpMethodAnnos(\ReflectionMethod $method) {
-		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
+	private function rejectHttpMethodAttrs(\ReflectionMethod $method) {
+		$attributeSet = ReflectionContext::getAttributeSet($method->getDeclaringClass());
 		$methodName = $method->getName();
-		
-		$anno = null;
+
 		$attr = null;
-		if (null !== ($annoGet = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoGet'))) {
-			$anno = $annoGet;
-		} else if (null !== ($annoPut = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPut'))) {
-			$anno = $annoPut;
-		} else if (null !== ($annoPost = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPost'))) {
-			$anno = $annoPost;
-		} else if (null !== ($annoDelete = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoDelete'))) {
-			$anno = $annoDelete;
-		} else if (null !== ($attrGet = AttributeUtils::get($method, Get::class))) {
+		if (null !== ($attrGet = $attributeSet->getMethodAttribute($methodName, Get::class))) {
 			$attr = $attrGet;
-		} else if (null !== ($attrPut = AttributeUtils::get($method, Put::class))) {
+		} else if (null !== ($attrPut = $attributeSet->getMethodAttribute($methodName, Put::class))) {
 			$attr = $attrPut;
-		} else if (null !== ($attrPost = AttributeUtils::get($method, Post::class))) {
+		} else if (null !== ($attrPost = $attributeSet->getMethodAttribute($methodName, Post::class))) {
 			$attr = $attrPost;
-		} else if (null !== ($attrDelete = AttributeUtils::get($method, Delete::class))) {
+		} else if (null !== ($attrDelete = $attributeSet->getMethodAttribute($methodName, Delete::class))) {
 			$attr = $attrDelete;
 		}
-		
-		if ($anno === null && $attr === null) return;
-		
-		throw $this->createInvalidAnnoException($method);
+
+		if ($attr === null) return;
+
+		throw $this->createInvalidAttrException($method);
 	}
 
 	/**
 	 * @param \ReflectionMethod $method
 	 * @return ControllerErrorException
 	 */
-	private function createInvalidAnnoException(ReflectionMethod $method) {
-		return new ControllerErrorException('Invalid annotation for method:'
-						. TypeUtils::prettyReflMethName($method),
+	private function createInvalidAttrException(\ReflectionMethod $method) {
+		return new ControllerErrorException('Invalid attribute for method:'
+				. TypeUtils::prettyReflMethName($method),
 				$method->getFileName(), $method->getStartLine());
 	}
-	
+
 	/**
 	 * @param \ReflectionMethod $method
 	 * @param mixed $allowedExtensions
@@ -223,24 +204,19 @@ class ControllerInterpreter {
 	 */
 	private function checkSimpleMethod(\ReflectionMethod $method, &$allowedExtensions) {
 		$this->checkAccessabilityMethod($method);
-		
-		$annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
-		if ($annotationSet->isEmpty()) return true; 
-		
-		if (!$this->checkHttpMethod($method, $annotationSet)
-				|| !$this->checkAccept($method, $annotationSet)) return false;
-		
-		if (null !== $annotationSet->getMethodAnnotation($method->getName(),
-				'n2n\web\http\annotation\AnnoPath')) {
+
+		$attributeSet = ReflectionContext::getAttributeSet($method->getDeclaringClass());
+
+		if (!$this->checkHttpMethod($method, $attributeSet) || !$this->checkAccept($method, $attributeSet)) {
 			return false;
 		}
 
-		if (AttributeUtils::exist($method, Path::class)) {
+		if ($attributeSet->hasMethodAttribute($method, Path::class)) {
 			return false;
 		}
 
-		$allowedExtensions = $this->findExtensions($method, $annotationSet);
-		
+		$allowedExtensions = $this->findExtensions($method, $attributeSet);
+
 		return true;
 	}
 	/**
@@ -257,15 +233,15 @@ class ControllerInterpreter {
 	 */
 	private function findIndexMethod() {
 		if (!$this->class->hasMethod(self::INDEX_METHOD_NAME)) return null;
-		
+
 		$method = $this->class->getMethod(self::INDEX_METHOD_NAME);
 		$allowedExtensions = null;
 		if (!$this->checkSimpleMethod($method, $allowedExtensions)) return null;
-		
+
 		return $this->invokerFactory->createFullMagic($method, $this->invokerFactory->getCmdPath(),
 				$allowedExtensions);
 	}
-	
+
 	/**
 	 * @param string $nameBase
 	 * @return \ReflectionMethod|NULL
@@ -289,33 +265,33 @@ class ControllerInterpreter {
 				$methodName = self::MAGIC_OPTIONS_METHOD_PREFIX . $nameBase;
 				break;
 		}
-		
+
 		if ($this->class->hasMethod($methodName)) {
 			$method = $this->class->getMethod($methodName);
-			$this->rejectHttpMethodAnnos($method);
+			$this->rejectHttpMethodAttrs($method);
 			return $method;
 		}
 
 		if ($this->class->hasMethod(self::MAGIC_METHOD_PERFIX . $nameBase)) {
 			return $this->class->getMethod(self::MAGIC_METHOD_PERFIX . $nameBase);
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * @return InvokerInfo
 	 */
 	private function findSimpleMethod() {
 		$cmdPath = $this->invokerFactory->getCmdPath();
 		if ($cmdPath->isEmpty()) return null;
-		
+
 		$cmdPathParts = $cmdPath->getPathParts();
-		
+
 		$paramCmdPathParts = $cmdPathParts;
 		$firstPathPart = (string) array_shift($paramCmdPathParts);
 		if (preg_match('/[A-Z]/', $firstPathPart)) return null;
-		
+
 		$method = $this->findDoMethod($firstPathPart);
 		if ($method === null) return null;
 
@@ -326,84 +302,56 @@ class ControllerInterpreter {
 				$allowedExtensions);
 
 		if ($invokerInfo === null) return null;
-		
+
 		$invokerInfo->setNumSinglePathParts($invokerInfo->getNumSinglePathParts() + 1);
 		return $invokerInfo;
 	}
-	
+
 	/**
 	 * @return InvokerInfo
 	 */
 	private function findPatternMethod() {
 		$class = $this->class;
 		do {
-			$annotationSet = ReflectionContext::getAnnotationSet($class);
-
-			foreach (AttributeUtils::getMethodAttributes($class, Path::class) as $methodName => $reflectionPath) {
-				$method = $class->getMethod($methodName);
-				$attrPath = $reflectionPath->newInstance();
-
-				if ($attrPath->getPattern() === null
-						|| !$this->checkAccept($method, $annotationSet)
-						|| !$this->checkHttpMethod($method, $annotationSet)) {
+			$attributeSet = ReflectionContext::getAttributeSet($class);
+			foreach ($attributeSet->getMethodAttributesByName(Path::class) as $methodName => $pathAttr) {
+				if ($pathAttr->getInstance()->getPattern() === null
+						|| !$this->checkHttpMethod($methodName, $attributeSet)
+						|| !$this->checkAccept($methodName, $attributeSet)) {
 					continue;
 				}
 
-				$allowedExtensions = $this->findExtensions($method, $annotationSet);
-				if (null !== ($invoker = $this->analyzeAttrPattern($attrPath, $method, $allowedExtensions))) {
-					return $invoker;
-				}
-			}
-
-			foreach ($annotationSet->getMethodAnnotationsByName('n2n\web\http\annotation\AnnoPath') as $annoPath) {
-				$method = $annoPath->getAnnotatedMethod();
-				$methodName = $method->getName();
-
-				if ($annoPath->getPattern() === null
-						|| !$this->checkAttrHttpMethod($method)
-						|| !$this->checkAttrAccept($method)
-						|| !$this->checkAnnoHttpMethod($methodName, $annotationSet)
-						|| !$this->checkAnnoAccept($methodName, $annotationSet)) {
-					continue;
-				}
-
-				$allowedExtensions = $this->findExtensions($method, $annotationSet);
-				if (null !== ($invoker = $this->analyzeAnnoPattern($annoPath, $allowedExtensions))) {
+				$allowedExtensions = $this->findExtensions($methodName, $attributeSet);
+				if (null !== ($invoker = $this->analyzePattern($pathAttr, $class->getMethod($methodName),
+								$allowedExtensions))) {
 					return $invoker;
 				}
 			}
 		} while (null != ($class = $class->getParentClass()));
+
+		return null;
 	}
 
-	private function checkHttpMethod(\ReflectionMethod $method, AnnotationSet $annotationSet) {
-		return $this->checkAttrHttpMethod($method) && $this->checkAnnoHttpMethod($method->getName(), $annotationSet);
-	}
-
-	/**
-	 * @param string $methodName
-	 * @param AnnotationSet $annotationSet
-	 * @return boolean
-	 */
-	private function checkAttrHttpMethod(\ReflectionFunctionAbstract $method) {
+	private function checkHttpMethod(string $methodName, AttributeSet $attributeSet) {
 		$httpMethod = $this->invokerFactory->getHttpMethod();
 		$allAllowed = true;
 
-		if (AttributeUtils::exist($method, Get::class)) {
+		if ($attributeSet->hasMethodAttribute($methodName, Get::class)) {
 			if ($httpMethod == Method::GET) return true;
 			$allAllowed = false;
 		}
 
-		if (AttributeUtils::exist($method, Put::class)) {
+		if ($attributeSet->hasMethodAttribute($methodName, Put::class)) {
 			if ($httpMethod == Method::PUT) return true;
 			$allAllowed = false;
 		}
 
-		if (AttributeUtils::exist($method, Post::class)) {
+		if ($attributeSet->hasMethodAttribute($methodName, Post::class)) {
 			if ($httpMethod == Method::POST) return true;
 			$allAllowed = false;
 		}
 
-		if (AttributeUtils::exist($method, Delete::class)) {
+		if ($attributeSet->hasMethodAttribute($methodName, Delete::class)) {
 			if ($httpMethod == Method::DELETE) return true;
 			$allAllowed = false;
 		}
@@ -411,109 +359,41 @@ class ControllerInterpreter {
 		return $allAllowed;
 	}
 
-	/**
-	 * @param string $methodName
-	 * @param AnnotationSet $annotationSet
-	 * @return boolean
-	 */
-	private function checkAnnoHttpMethod(string $methodName, AnnotationSet $annotationSet) {
-		$httpMethod = $this->invokerFactory->getHttpMethod();
-		$allAllowed = true;
-		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoGet')) {
-			if ($httpMethod == Method::GET) return true;
-			$allAllowed = false;
-		}
-		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPut')) {
-			if ($httpMethod == Method::PUT) return true;
-			$allAllowed = false;
-		}
-		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoPost')) {
-			if ($httpMethod == Method::POST) return true;
-			$allAllowed = false;
-		}
-		
-		if (null !== $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoDelete')) {
-			if ($httpMethod == Method::DELETE) return true;
-			$allAllowed = false;
-		}
-		
-		return $allAllowed;
-	}
+	private function checkAccept(string $methodName, AttributeSet $attributeSet) {
+		$attrConsums = $attributeSet->getMethodAttribute($methodName, Consums::class);
 
-	private function checkAccept(\ReflectionMethod $method, AnnotationSet $annotationSet) {
-		return $this->checkAttrAccept($method) && $this->checkAnnoAccept($method->getName(), $annotationSet);
-	}
+		if (null === $attrConsums) return true;
 
-	private function checkAttrAccept(\ReflectionMethod $method) {
-		$annoConsums = AttributeUtils::newInstance($method, Consums::class);
-
-		if (null === $annoConsums) return true;
-
-		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($annoConsums->getMimeTypes());
+		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($attrConsums->getInstance()->getMimeTypes());
 	}
 
 	/**
 	 * @param string $methodName
-	 * @param AnnotationSet $annotationSet
-	 * @return boolean
-	 */
-	private function checkAnnoAccept($methodName, AnnotationSet $annotationSet) {
-		$annoConsums = $annotationSet->getMethodAnnotation($methodName, AnnoConsums::class);
-		
-		if (null === $annoConsums) return true;
-		
-		return null !== $this->invokerFactory->getAcceptRange()->bestMatch($annoConsums->getMimeTypes());
-	}
-
-	private function findExtensions(\ReflectionMethod $method, AnnotationSet $annotationSet) {
-		return $this->findAttrExtensions($method) ?? $this->findAnnoExtensions($method->getName(), $annotationSet);
-	}
-
-	/**
-	 * @param string $methodName
-	 * @param AnnotationSet $annotationSet
+	 * @param AttributeSet $attributeSet
 	 * @return string[]|NULL
 	 */
-	private function findAttrExtensions(\ReflectionMethod $method) {
-		if (null !== ($annoExt = AttributeUtils::newInstance($method, Ext::class))) {
-			return $annoExt->getNames();
+	private function findExtensions(string $methodName, AttributeSet $attributeSet) {
+		if (null !== ($attrExt = $attributeSet->getMethodAttribute($methodName, Ext::class))) {
+			return $attrExt->getInstance()->getNames();
 		}
 
-		if (null !== ($annoExt = AttributeUtils::newInstance($this->class, Ext::class))) {
-			return $annoExt->getNames();
+		if (null !== ($attrExt = $attributeSet->getClassAttribute(Ext::class))) {
+			return $attrExt->getInstance()->getNames();
 		}
 
 		return null;
 	}
 
 	/**
-	 * @param string $methodName
-	 * @param AnnotationSet $annotationSet
-	 * @return string[]|NULL
-	 */
-	private function findAnnoExtensions($methodName, AnnotationSet $annotationSet) {
-		if (null !== ($annoExt = $annotationSet->getMethodAnnotation($methodName, 'n2n\web\http\annotation\AnnoExt'))) {
-			return $annoExt->getNames();
-		}
-		
-		if (null !== ($annoExt = $annotationSet->getClassAnnotation('n2n\web\http\annotation\AnnoExt'))) {
-			return $annoExt->getNames();
-		}
-		
-		return null;
-	}
-
-	/**
-	 * @param n2n\web\http\attribute\Path $annoPath
+	 * @param Path $path
+	 * @param \ReflectionMethod $method
+	 * @param array|null $allowedExtensions
+	 * @return InvokerInfo|null
 	 * @throws ControllerErrorException
-	 * @return InvokerInfo
 	 */
-	private function analyzeAttrPattern(Path $path, \ReflectionMethod $method, array $allowedExtensions = null) {
+	private function analyzePattern(MethodAttribute $pathAttribute, \ReflectionMethod $method, array $allowedExtensions = null) {
 		try {
-			$pathPattern = $this->pathPatternCompiler->compile($path->getPattern());
+			$pathPattern = $this->pathPatternCompiler->compile($pathAttribute->getInstance()->getPattern());
 			if (null !== $allowedExtensions) {
 				$pathPattern->setExtensionIncluded(false);
 				$pathPattern->setAllowedExtensions($allowedExtensions);
@@ -521,34 +401,10 @@ class ControllerInterpreter {
 
 			return $this->invokerFactory->createSemiMagic($method, $pathPattern);
 		} catch (PathPatternCompileException $e) {
-			throw new ControllerErrorException('Invalid pattern annotated',
-				$method->getFileName(), $method->getStartLine());
+			throw new ControllerErrorException('Invalid pattern', $method->getFileName(),
+					AttributeUtils::extractMethodAttributeLine($pathAttribute->getAttribute(), $method));
 		} catch (ControllerErrorException $e) {
-			$e->addAdditionalError($method->getFileName(), $method->getStartLine());
-			throw $e;
-		}
-	}
-
-	/**
-	 * @param AnnoPath $annoPath
-	 * @param array|null $allowedExtensions
-	 * @return InvokerInfo|null
-	 * @throws ControllerErrorException
-	 */
-	private function analyzeAnnoPattern(AnnoPath $annoPath, array $allowedExtensions = null) {
-		try {
-			$pathPattern = $this->pathPatternCompiler->compile($annoPath->getPattern());
-			if (null !== $allowedExtensions) {
-				$pathPattern->setExtensionIncluded(false);
-				$pathPattern->setAllowedExtensions($allowedExtensions);
-			}
-			
-			return $this->invokerFactory->createSemiMagic($annoPath->getAnnotatedMethod(), $pathPattern);
-		} catch (PathPatternCompileException $e) {
-			throw new ControllerErrorException('Invalid pattern annotated', 
-					$annoPath->getFileName(), $annoPath->getLine());
-		} catch (ControllerErrorException $e) {
-			$e->addAdditionalError($annoPath->getFileName(), $annoPath->getLine());
+			$e->addAdditionalError($pathAttribute->getFile(), $pathAttribute->getLine());
 			throw $e;
 		}
 	}
@@ -564,14 +420,7 @@ class ControllerInterpreter {
 	}
 
 	function findControllerInterceptors() {
-		return $this->findAttrControllerInterceptors() ?? $this->findAnnoControllerInterceptors();
-	}
-
-	/**
-	 * @return Interceptor[]
-	 */
-	function findAttrControllerInterceptors() {
-		$attrIntercept = AttributeUtils::get($this->class, Intercept::class);
+		$attrIntercept = ReflectionContext::getAttributeSet($this->class);
 
 		if ($attrIntercept === null) return [];
 
@@ -579,87 +428,16 @@ class ControllerInterpreter {
 	}
 
 	/**
-	 * @return Interceptor[] 
-	 */
-	function findAnnoControllerInterceptors() {
-		$annotationSet = ReflectionContext::getAnnotationSet($this->class);
-		
-		$annoIntercept = $annotationSet->getClassAnnotation(AnnoIntercept::class);
-		
-		if ($annoIntercept === null) return [];
-		
-		return $this->interceptorFactory->createByAnno($annoIntercept);
-	}
-	
-	/**
 	 * @param \ReflectionMethod $method
 	 * @return \n2n\web\http\controller\Interceptor[]
 	 */
-	private function findAnnoInterceptors(\ReflectionMethod $method) {
-	    $annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
-	    
-	    $annoIntercept = $annotationSet->getMethodAnnotation($method->getName(), AnnoIntercept::class);
-	    
-	    if ($annoIntercept === null) return [];
-	    
-	    return $this->interceptorFactory->createByAnno($annoIntercept);
+	private function findInterceptors(\ReflectionMethod|\ReflectionFunctionAbstract $method) {
+		$attributeSet = ReflectionContext::getAttributeSet($method->getDeclaringClass());
+
+		$attr = $attributeSet->getMethodAttribute($method->getName(), Intercept::class);
+
+		if ($attr === null) return [];
+
+		return $this->interceptorFactory->createByAttr($attr->getInstance(), $method->getDeclaringClass());
 	}
-}
-
-class InterceptorFactory {
-    private $magicContext;
-    
-    function __construct(MagicContext $magicContext) {
-        $this->magicContext = $magicContext;
-    }
-    
-    /**
-     * @param AnnoIntercept $annoIntercept
-     * @throws ControllerErrorException
-     * @return Interceptor[]
-     */
-    function createByAnno(AnnoIntercept $annoIntercept)  {
-        $interceptors = array();
-        foreach ($annoIntercept->getInterceptorLookupIds() as $interceptorLookupId) {
-            try {
-                $interceptors[] = $this->createByLookupId($interceptorLookupId);
-            } catch (MagicObjectUnavailableException|InvalidInterceptorException $e) {
-                throw new ControllerErrorException('Invalid interceptor annotated: ' . $interceptorLookupId,
-                        $annoIntercept->getFileName(), $annoIntercept->getLine());
-            }    
-        }
-        return $interceptors;
-    }
-
-	function createByAttr(Intercept $attrIntercept, \ReflectionClass $class) {
-		$interceptors = array();
-		foreach ($attrIntercept->getInterceptorLookupIds() as $interceptorLookupId) {
-			$interceptor = null;
-			try {
-				$interceptors[] = $this->createByLookupId($interceptorLookupId);
-			} catch (MagicObjectUnavailableException|InvalidInterceptorException $e) {
-				throw new ControllerErrorException('Invalid interceptor annotated: ' . $interceptorLookupId,
-						$class->getFileName(), $class->getStartLine());
-			}
-		}
-		return $interceptors;
-	}
-
-    /**
-     * @param string $lookupId
-     * @return Interceptor
-     */
-    function createByLookupId(string $lookupId) {
-       	$interceptor = $this->magicContext->lookup($lookupId);
-        $this->valInterceptor($interceptor);        
-        return $interceptor;
-    }
-    
-    private function valInterceptor(Interceptor $interceptor) {
-        if ($interceptor instanceof Interceptor) return;
-            
-        throw new InvalidInterceptorException(get_class($interceptor) 
-                . ' can not be used as an Interceptor because it must implement ' 
-                . Interceptor::class);
-    }
 }
