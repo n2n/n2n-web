@@ -119,6 +119,8 @@ class Response {
 	private $responseCacheStore;
 	private $sentPayload;
     private string $bufferedContents = '';
+
+	private bool $flushed = false;
 	
 	/**
 	 * @param Request $request
@@ -206,6 +208,8 @@ class Response {
 	 * @param bool $httpCachingEnabled
 	 */
 	public function setResponseCachingEnabled(bool $responseCachingEnabled) {
+		$this->ensureNotFlushed();
+
 		$this->responseCachingEnabled = $responseCachingEnabled;
 	}
 	
@@ -222,6 +226,8 @@ class Response {
 	 * @param bool $httpCachingEnabled
 	 */
 	public function setHttpCachingEnabled(bool $httpCachingEnabled) {
+		$this->ensureNotFlushed();
+
 		$this->httpCachingEnabled = $httpCachingEnabled;
 	}
 	
@@ -242,6 +248,8 @@ class Response {
 	}
 
     function capturePrevBuffer() {
+		$this->ensureNotFlushed();
+
         if (!empty($this->outputBuffers)) {
             throw new IllegalStateException('OutputBuffer already exists.');
         }
@@ -258,6 +266,8 @@ class Response {
 	 * @return OutputBuffer
 	 */
 	public function createOutputBuffer() {
+		$this->ensureNotFlushed();
+
 		$this->removeEndedBuffers();
 		return $this->pushNewOutputBuffer();	
 	}
@@ -294,6 +304,8 @@ class Response {
 	}
 
 	function addBufferecContent(string $content) {
+		$this->ensureNotFlushed();
+
 		if ($this->isBuffering()) {
 			echo $content;
 		} else {
@@ -338,6 +350,8 @@ class Response {
 	 * 
 	 */
 	public function reset() {
+		$this->ensureNotFlushed();
+
 		foreach ($this->listeners as $listener) {
 			$listener->onReset($this);
 		}
@@ -400,6 +414,8 @@ class Response {
 	 * @return boolean
 	 */
 	public function sendCachedPayload() {
+		$this->ensureNotFlushed();
+
 		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) {
 			return false;
 		}
@@ -434,11 +450,25 @@ class Response {
 		}
 		return $characteristic;
 	}
-	
+
+	function isFlushed() {
+		return $this->flushed;
+	}
+
+	private function ensureNotFlushed() {
+		if (!$this->isFlushed()) return;
+
+		throw new IllegalStateException('Response is already flushed.');
+	}
+
 	/**
 	 * 
 	 */
 	public function flush() {
+		$this->ensureNotFlushed();
+
+		$this->flushed = true;
+
 		foreach ($this->listeners as $listener) {
 			$listener->onFlush($this);
 		}
@@ -558,7 +588,7 @@ class Response {
 		$file = null; 
 		$line = null;
 		if (headers_sent($file, $line)) {
-			throw new \ErrorException('Response sent outside of n2n context', 
+			throw new \ErrorException('Response sent outside of n2n context',
 					0, E_USER_ERROR, $file, $line);
 		}
 		
