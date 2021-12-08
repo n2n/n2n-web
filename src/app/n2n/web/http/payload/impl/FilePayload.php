@@ -27,6 +27,7 @@ use n2n\util\type\ArgUtils;
 use n2n\util\io\IoUtils;
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\io\Downloadable;
+use n2n\core\N2nVars;
 
 class FilePayload extends ResourcePayload {
 	private $downloadable;
@@ -41,8 +42,9 @@ class FilePayload extends ResourcePayload {
 	}
 	
 	public function prepareForResponse(Response $response) {
-		$mimeType = $this->downloadable->getMimeType(); // N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->downloadable->getOriginalExtension());
-		
+		$mimeType = N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->downloadable->getName());
+		// $this->downloadable->getMimeType()
+
 // 		if (isset($mimeType)) {
 			$response->setHeader('Content-Type: ' . $mimeType);
 // 		} else {
