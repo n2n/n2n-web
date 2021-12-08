@@ -114,8 +114,8 @@ class Response {
 	private $outputBuffers = [];
 	private $headers;
 	private $statusCode;
-	private ?HttpCacheControl $httpCacheControl;
-	private ?ResponseCacheControl $responseCacheControl;
+	private ?HttpCacheControl $httpCacheControl = null;
+	private ?ResponseCacheControl $responseCacheControl = null;
 	private $responseCacheStore;
 	private $sentPayload;
     private string $bufferedContents = '';
