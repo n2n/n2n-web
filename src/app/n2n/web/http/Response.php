@@ -28,7 +28,7 @@ use n2n\util\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
-use function n2n\util\col\ArrayUtils;
+use n2n\util\col\ArrayUtils;
 use n2n\reflection\ReflectionUtils;
 use n2n\util\type\ArgUtils;
 
@@ -326,8 +326,10 @@ class Response {
 				$outputBuffer->seal();
 			}
 		}
-				
-		$outputBuffer->clean();
+
+		if ($outputBuffer !== null) {
+			$outputBuffer->clean();
+		}
 
 		return $contents;
 	}
@@ -444,18 +446,18 @@ class Response {
         $contents = $this->fetchBufferedOutput(true);
 
         if ($this->sentPayload !== null && !$this->sentPayload->isBufferable()) {
-            if ($this->bufferedResponseCacheControl !== null) {
+            if ($this->responseCacheControl !== null) {
                 throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
             }
 
-            if (!strlen($bufferdContents) && $this->notModified($payload->getEtag(), $payload->getLastModified())) {
+            if (!strlen($contents) && $this->notModified($this->sentPayload->getEtag(), $this->sentPayload->getLastModified())) {
                 $this->flushHeaders();
                 $this->closeBuffer();
                 return;
             }
             $this->flushHeaders();
             echo $this->bufferedContents;
-            $payload->responseOut();
+			$this->sentPayload->responseOut();
             echo $contents;
             return;
         }
@@ -525,7 +527,7 @@ class Response {
 	}
 	
 	public function setResponseCacheControl(ResponseCacheControl $responseCacheControl = null) {
-		$this->bufferedResponseCacheControl = $responseCacheControl;
+		$this->responseCacheControl = $responseCacheControl;
 	}
 	
 	/**
