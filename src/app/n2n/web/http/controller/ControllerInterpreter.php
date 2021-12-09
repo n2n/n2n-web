@@ -204,18 +204,18 @@ class ControllerInterpreter {
 	 */
 	private function checkSimpleMethod(\ReflectionMethod $method, &$allowedExtensions) {
 		$this->checkAccessabilityMethod($method);
+		$methodName = $method->getName();
 
 		$attributeSet = ReflectionContext::getAttributeSet($method->getDeclaringClass());
-
-		if (!$this->checkHttpMethod($method, $attributeSet) || !$this->checkAccept($method, $attributeSet)) {
+		if (!$this->checkHttpMethod($methodName, $attributeSet) || !$this->checkAccept($methodName, $attributeSet)) {
 			return false;
 		}
 
-		if ($attributeSet->hasMethodAttribute($method, Path::class)) {
+		if ($attributeSet->hasMethodAttribute($methodName, Path::class)) {
 			return false;
 		}
 
-		$allowedExtensions = $this->findExtensions($method, $attributeSet);
+		$allowedExtensions = $this->findExtensions($methodName, $attributeSet);
 
 		return true;
 	}
@@ -284,6 +284,7 @@ class ControllerInterpreter {
 	 */
 	private function findSimpleMethod() {
 		$cmdPath = $this->invokerFactory->getCmdPath();
+
 		if ($cmdPath->isEmpty()) return null;
 
 		$cmdPathParts = $cmdPath->getPathParts();
@@ -291,11 +292,10 @@ class ControllerInterpreter {
 		$paramCmdPathParts = $cmdPathParts;
 		$firstPathPart = (string) array_shift($paramCmdPathParts);
 		if (preg_match('/[A-Z]/', $firstPathPart)) return null;
-
 		$method = $this->findDoMethod($firstPathPart);
 		if ($method === null) return null;
-
 		$allowedExtensions = null;
+
 		if (!$this->checkSimpleMethod($method, $allowedExtensions)) return null;
 
 		$invokerInfo = $this->invokerFactory->createFullMagic($method, new \n2n\util\uri\Path($paramCmdPathParts),

@@ -5,40 +5,32 @@ use n2n\web\http\mock\ControllerInterpreterTestMock;
 use PHPUnit\Framework\TestCase;
 use n2n\web\http\SimpleRequest;
 use n2n\util\uri\Url;
-use n2n\web\http\Response;
-use n2n\core\container\N2nContext;
-use n2n\web\http\HttpContext;
-use n2n\web\http\SimpleSession;
-use n2n\web\http\Supersystem;
-use n2n\l10n\N2nLocale;
 use n2n\util\magic\SimpleMagicContext;
+use n2n\web\http\Method;
+use n2n\web\http\AcceptRange;
+use n2n\web\http\AcceptMimeType;
 
 class ControllerInterpreterTest extends TestCase {
 	private ControllerInterpreter $controllerInterpreter;
 
 	protected function setUp(): void {
-		$request = new SimpleRequest(Url::create(['context']));
-		$response = new Response($request);
 
-		$n2nContext = $this->getMockBuilder(N2nContext::class)->getMock();
-
-		$httpContext = new HttpContext($request, $response, new SimpleSession(), Url::create(['assets']),
-				new Supersystem([new N2nLocale('de_CH')]), [], $n2nContext);
-
-		$invokerFactory = new ActionInvokerFactory(
-				$request->getCmdPath(), $request->getCmdContextPath(), $request,
-				$request->getMethod(), $request->getQuery(), $request->getPostQuery(),
-				$request->getAcceptRange(), $n2nContext);
-
-		$interceptor = new InterceptorFactory(new SimpleMagicContext());
-		$this->controllerInterpreter = new ControllerInterpreter(new \ReflectionClass(
-				ControllerInterpreterTestMock::class), $invokerFactory, $interceptor);
 	}
 
 	public function testAnnoConsums() {
-		$invokerInfo = $this->controllerInterpreter->interpretCustom('getDoConsumsJson');
+		$controllerInterpreter = $this->prepareControllerInterpreter('consumsJson', Method::POST, 'consumsjson', '{}',
+				[new AcceptMimeType('text', 'json')]);
+
+
+		$invokerInfo = current($controllerInterpreter->interpret());
 		$this->assertTrue($invokerInfo instanceof InvokerInfo);
-		$this->assertTrue(false);
+	}
+
+	public function testAnnoConsumsWrongMime() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('consumsJson', Method::POST, 'consumsjson', '{}',
+				[]);
+
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoDelete() {
@@ -99,5 +91,22 @@ class ControllerInterpreterTest extends TestCase {
 
 	public function testPut() {
 
+	}
+
+	private function prepareControllerInterpreter(string $urlPathPart, int $method, string $cmdPathPart, string $body, array $acceptMimeTypes) {
+		$request = new SimpleRequest(Url::create([$urlPathPart]));
+		$request->setMethod($method);
+		$request->setCmdUrl(Url::create([$cmdPathPart]));
+		$request->setBody($body);
+
+		$invokerFactory = new ActionInvokerFactory(
+				$request->getCmdPath(), $request->getCmdContextPath(), $request,
+				$request->getMethod(), $request->getQuery(), $request->getPostQuery(),
+				new AcceptRange($acceptMimeTypes));
+
+		$invokerFactory->setConstantValues([]);
+		$interceptor = new InterceptorFactory(new SimpleMagicContext());
+		return new ControllerInterpreter(new \ReflectionClass(
+				ControllerInterpreterTestMock::class), $invokerFactory, $interceptor);
 	}
 }

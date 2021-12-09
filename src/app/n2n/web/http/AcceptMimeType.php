@@ -65,7 +65,6 @@ class AcceptMimeType {
 	
 	public function matches($mimeType) { 
 		$mimeTypeParts = self::parseMimeTypeParts($mimeType);
-		
 		if ($mimeTypeParts[0] != self::WILDCARD && $this->type !== null
 				&& $mimeTypeParts[0] != $this->type) {
 			return false;

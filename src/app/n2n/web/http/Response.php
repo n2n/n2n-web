@@ -24,7 +24,7 @@ namespace n2n\web\http;
 use n2n\core\N2nErrorException;
 use n2n\util\HashUtils;
 use n2n\core\N2nRuntimeException;
-use n2n\io\ob\OutputBuffer;
+use n2n\util\io\ob\OutputBuffer;
 use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
