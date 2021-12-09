@@ -33,15 +33,55 @@ class ControllerInterpreterTest extends TestCase {
 		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
+	public function testAnnoGet() {
+
+	}
+
+	public function testAnnoPost() {
+
+	}
+
 	public function testAnnoDelete() {
 
 	}
 
-	public function testAnnoExt() {
+	public function testAnnoPut() {
 
 	}
 
-	public function testAnnoGet() {
+	public function testAnnoGetAttributeNotAllowed() {
+		$this->expectException(ControllerErrorException::class);
+		$controllerInterpreter = $this->prepareControllerInterpreter('test', Method::GET, 'test', '{}',
+				[]);
+
+		$controllerInterpreter->interpret();
+	}
+
+	public function testAnnoPostAttributeNotAllowed() {
+		$this->expectException(ControllerErrorException::class);
+		$controllerInterpreter = $this->prepareControllerInterpreter('test', Method::POST, 'test', '{}',
+				[]);
+
+		$controllerInterpreter->interpret();
+	}
+
+	public function testAnnoDeleteAttributeNotAllowed() {
+		$this->expectException(ControllerErrorException::class);
+		$controllerInterpreter = $this->prepareControllerInterpreter('test', Method::DELETE, 'test', '{}',
+				[]);
+
+		$controllerInterpreter->interpret();
+	}
+
+	public function testAnnoPutAttributeNotAllowed() {
+		$this->expectException(ControllerErrorException::class);
+		$controllerInterpreter = $this->prepareControllerInterpreter('test', Method::PUT, 'test', '{}',
+				[]);
+
+		$controllerInterpreter->interpret();
+	}
+
+	public function testAnnoExt() {
 
 	}
 
@@ -50,14 +90,6 @@ class ControllerInterpreterTest extends TestCase {
 	}
 
 	public function testAnnoPath() {
-
-	}
-
-	public function testAnnoPost() {
-
-	}
-
-	public function testAnnoPut() {
 
 	}
 
