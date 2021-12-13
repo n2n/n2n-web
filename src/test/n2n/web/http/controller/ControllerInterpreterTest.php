@@ -34,19 +34,47 @@ class ControllerInterpreterTest extends TestCase {
 	}
 
 	public function testAnnoGet() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('get', Method::GET, 'get', '{}',
+				[]);
 
+		$this->assertNotEmpty($controllerInterpreter->interpret());
+
+		$controllerInterpreter = $this->prepareControllerInterpreter('get', Method::POST, 'get', '{}',
+				[]);
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoPost() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('post', Method::POST, 'post', '{}',
+				[]);
 
+		$this->assertNotEmpty($controllerInterpreter->interpret());
+
+		$controllerInterpreter = $this->prepareControllerInterpreter('post', Method::GET, 'post', '{}',
+				[]);
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoDelete() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('put', Method::PUT, 'put', '{}',
+				[]);
 
+		$this->assertNotEmpty($controllerInterpreter->interpret());
+
+		$controllerInterpreter = $this->prepareControllerInterpreter('put', Method::POST, 'put', '{}',
+				[]);
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoPut() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('delete', Method::DELETE, 'delete', '{}',
+				[]);
 
+		$this->assertNotEmpty($controllerInterpreter->interpret());
+
+		$controllerInterpreter = $this->prepareControllerInterpreter('delete', Method::POST, 'delete', '{}',
+				[]);
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoGetAttributeNotAllowed() {
@@ -82,7 +110,11 @@ class ControllerInterpreterTest extends TestCase {
 	}
 
 	public function testAnnoExt() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('1.txt', Method::GET, '1.txt', '{}',
+				[]);
 
+		$controllerInterpreter->interpret();
+		$this->assertNotEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testAnnoIntercept() {
@@ -90,7 +122,14 @@ class ControllerInterpreterTest extends TestCase {
 	}
 
 	public function testAnnoPath() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('1.txt', Method::GET, '1.txt', '{}',
+				[]);
 
+		$controllerInterpreter->interpret();
+		$this->assertNotEmpty($controllerInterpreter->interpret());
+
+		$controllerInterpreter = $this->prepareControllerInterpreter('asdf.txt', Method::GET, 'asdf.txt', '{}', []);
+		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
 	public function testConsums() {
