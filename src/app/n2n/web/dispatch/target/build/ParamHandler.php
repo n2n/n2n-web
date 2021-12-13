@@ -97,11 +97,13 @@ class ParamHandler {
 	
 	/**
 	 * @param array $params
-	 * @return string
+	 * @return array
 	 * @throws \InvalidArgumentException
 	 */
 	public static function extractPropertyTargetCodes(array $params) {
-		if (!isset($params[self::TYPE_PROPERTY_TARGET])) return array();
+		if (!isset($params[self::TYPE_PROPERTY_TARGET])) {
+			return array();
+		}
 		
 		ArgUtils::valArrayLike($params[self::TYPE_PROPERTY_TARGET], 'scalar');
 		
@@ -152,19 +154,19 @@ class ParamHandler {
 		return new ParamInvestigator($propertyValues, $propertyUploadDefinitions, $attrs);
 	}
 	
-	public static function extract(array $params) {
-		$results = array();
-		foreach ($params as $name => $value) {
-			if (StringUtils::startsWith(self::TYPE_PROPERTY, $name)) {
-				array_merge($results, self::buildResults(PropertyPath::create(array(new PropertyPathPart()))));
-				continue;
-			} 
-			
-			if (StringUtils::startsWith(self::TYPE_ATTR, $name)) {
-				
-			}
-		}	
-	}
+//	public static function extract(array $params) {
+//		$results = array();
+//		foreach ($params as $name => $value) {
+//			if (StringUtils::startsWith(self::TYPE_PROPERTY, $name)) {
+//				array_merge($results, self::buildResults(PropertyPath::create(array(new PropertyPathPart()))));
+//				continue;
+//			}
+//
+//			if (StringUtils::startsWith(self::TYPE_ATTR, $name)) {
+//
+//			}
+//		}
+//	}
 	
 // 	public static function buildResults(PropertyPath $propertyPath, $value) {
 		

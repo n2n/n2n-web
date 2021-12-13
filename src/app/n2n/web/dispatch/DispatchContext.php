@@ -38,6 +38,7 @@ use n2n\util\crypt\EncryptionDescriptor;
 use n2n\core\N2N;
 use n2n\util\io\IoUtils;
 use n2n\util\crypt\Cipher;
+use n2n\util\StringUtils;
 
 class DispatchContext implements ThreadScoped {
 	const PARAM_DISPATCH_TARGET = '__DISPATCHTARGET';
@@ -63,7 +64,6 @@ class DispatchContext implements ThreadScoped {
 		$this->n2nContext = $n2nContext;
 		$this->analyzed = !$n2nContext->isHttpContextAvailable();
 	}
-	
 
 	private function createCipher($algorithm, VarStore $varStore) {
 		if ($algorithm === null) return null;
@@ -132,10 +132,10 @@ class DispatchContext implements ThreadScoped {
 			case Method::GET:
 			case Method::PUT:
 			case Method::DELETE:
-				$extractor->setParams($request->getQuery()->toArray());
+				$extractor->setParams(StringUtils::convertNonPrintables($request->getQuery()->toArray()));
 				break;
 			case Method::POST:
-				$extractor->setParams($request->getPostQuery()->toArray());
+				$extractor->setParams(StringUtils::convertNonPrintables($request->getPostQuery()->toArray()));
 				break;
 		}
 		

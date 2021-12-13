@@ -40,6 +40,7 @@ use n2n\web\http\controller\ControllerErrorException;
 use n2n\core\TypeNotFoundException;
 use n2n\io\managed\File;
 use n2n\validation\build\ValidationJob;
+use n2n\util\io\Downloadable;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -393,14 +394,14 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::sendFile()
 	 */
-	protected final function sendFile(File $file, bool $includeBuffer = true) {
+	protected final function sendFile(Downloadable $file, bool $includeBuffer = true) {
 		$this->cu()->sendFile($file, $includeBuffer);
 	}
 	
 	/**
 	 * @see ControllingUtils::sendFileAttachment()
 	 */
-	protected final function sendFileAttachment(File $file, string $name = null, bool $includeBuffer = true) {
+	protected final function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true) {
 		$this->cu()->sendFileAttachment($file, $name, $includeBuffer);
 	}
 	
