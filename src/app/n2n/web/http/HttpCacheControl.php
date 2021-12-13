@@ -63,10 +63,12 @@ class HttpCacheControl {
 			} else {
 // 				$directives[] = 'max-age=0';
 				$directives[] = self::DIRECTIVE_NO_CACHE;
-// 				$directives[] = self::DIRECTIVE_MUST_REVALIDATE;
-// 				$directives[] = self::DIRECTIVE_PRIVATE;
+				$directives[] = self::DIRECTIVE_NO_STORE;
+ 				$directives[] = self::DIRECTIVE_MUST_REVALIDATE;
+ 				$directives[] = self::DIRECTIVE_PRIVATE;
 			}
 			$response->setHeader('Pragma: no-cache');
+			$response->setHeader('Expires: 0');
 		} else {
 			$date = new \DateTime();
 			$date->setTimezone(new \DateTimeZone('GMT'));
@@ -77,6 +79,7 @@ class HttpCacheControl {
 			$date->add($this->maxAge);
 			// RFC1123 with GMT
 			$response->setHeader('Expires: ' . $date->format('D, d M Y H:i:s') . ' GMT');
+			$response->removeHeader('Pragma');
 			$directives[] = 'max-age=' . ($date->getTimestamp() - $nowTs); 
 			
 			if ($this->directives !== null) {

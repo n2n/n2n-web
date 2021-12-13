@@ -33,7 +33,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\type\ArgUtils;
 
 /**
- * Assembles the http response and gives you diffrent tools to modify it according to your wishes. 
+ * Assembles the http response and gives you different tools to modify it according to your wishes.
  * n2n creates an object of this class in its initialization phase lets you access it over the {@see HttpContext}.
  */
 class Response {
@@ -112,6 +112,9 @@ class Response {
 	 * @var OutputBuffer[]
 	 */
 	private $outputBuffers = [];
+	/**
+	 * @var HeaderJob[]
+	 */
 	private $headers;
 	private $statusCode;
 	private ?HttpCacheControl $httpCacheControl = null;
@@ -204,8 +207,8 @@ class Response {
 	}
 	
 	/**
-	 * If false response cache configurations assigned over {@see self::setHttpCacheControl()} will be ignored.
-	 * @param bool $httpCachingEnabled
+	 * If false response cache configurations assigned over {@see self::setResponseCacheControl()} will be ignored.
+	 * @param bool $responseCachingEnabled
 	 */
 	public function setResponseCachingEnabled(bool $responseCachingEnabled) {
 		$this->ensureNotFlushed();
@@ -230,7 +233,7 @@ class Response {
 
 		$this->httpCachingEnabled = $httpCachingEnabled;
 	}
-	
+
 	/**
 	 * @return bool
 	 */
@@ -485,6 +488,7 @@ class Response {
                 $this->closeBuffer();
                 return;
             }
+
             $this->flushHeaders();
             echo $this->bufferedContents;
 			$this->sentPayload->responseOut();
@@ -509,7 +513,7 @@ class Response {
 			$this->flushHeaders();
 			return;
 		}
-		
+
 		$this->flushHeaders();
 		echo $this->bufferedContents;
 	}
@@ -541,23 +545,37 @@ class Response {
 	/**
 	 * 
 	 * @param string $header
-	 * @param string $replace
+	 * @param bool $replace
 	 */
-	public function setHeader($header, $replace = true) {
-		if ($header instanceof Header) {
-			$this->headers[] = $header;
-			return;
-		}
+	public function setHeader(string $header, bool $replace = true) {
+//		if ($header instanceof Header) {
+//			$this->headers[] = $header;
+//			return;
+//		}
 		
-		$this->headers[] = new Header($header, $replace);
+		$this->headers[] = new ApplyHeaderJob($header, $replace);
+	}
+
+	function removeHeader(string $name) {
+		$this->headers[] = new RemoveHeaderJob($name);
 	}
 	
 	public function setHttpCacheControl(HttpCacheControl $httpCacheControl = null) {
+		$this->ensureNotFlushed();
 		$this->httpCacheControl = $httpCacheControl;
 	}
-	
+
+	public function getHttpCacheControl() {
+		return $this->httpCacheControl;
+	}
+
 	public function setResponseCacheControl(ResponseCacheControl $responseCacheControl = null) {
+		$this->ensureNotFlushed();
 		$this->responseCacheControl = $responseCacheControl;
+	}
+
+	public function getResponseCacheControl() {
+		return $this->responseCacheControl;
 	}
 	
 	/**
@@ -592,17 +610,14 @@ class Response {
 					0, E_USER_ERROR, $file, $line);
 		}
 		
-		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
-		
+//		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
+
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
-		} else {
-			$httpCacheControl = new HttpCacheControl();
-			$httpCacheControl->applyHeaders($this);
 		}
 		
-		while (!is_null($header = array_pop($this->headers))) {
-			header($header->getHeaderStr(), $header->isReplace());
+		while (!is_null($header = array_shift($this->headers))) {
+			$header->flush();
 		}
 	}
 	/**
@@ -735,7 +750,15 @@ class Response {
 	}
 }
 
-class Header {
+interface HeaderJob {
+	function flush(): void;
+
+	function __toString(): string;
+}
+
+
+
+class ApplyHeaderJob implements HeaderJob {
 	private $headerStr;
 	private $replace; 
 	/**
@@ -770,8 +793,26 @@ class Header {
 	/**
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString(): string {
 		return $this->headerStr;
+	}
+
+	function flush(): void {
+		header($this->getHeaderStr(), $this->isReplace());
+	}
+}
+
+class RemoveHeaderJob implements HeaderJob {
+
+	function __construct(private string $name) {
+	}
+
+	function __toString(): string {
+		return 'remove: ' . $this->name;
+	}
+
+	function flush(): void {
+		header_remove($this->name);
 	}
 }
 
