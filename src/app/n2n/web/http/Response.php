@@ -610,7 +610,8 @@ class Response {
 					0, E_USER_ERROR, $file, $line);
 		}
 		
-//		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
+		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
+//		http_response_code($this->statusCode);
 
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
