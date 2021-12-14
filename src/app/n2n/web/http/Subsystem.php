@@ -25,6 +25,7 @@ use n2n\util\type\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\l10n\N2nLocale;
 use n2n\util\col\ArrayUtils;
+use n2n\util\ex\DuplicateElementException;
 
 class Subsystem {
 	/**
@@ -90,7 +91,7 @@ class Subsystem {
 			return $this->rules[$name];
 		}
 
-		return new UnknownSubsystemException('Subsystem contains no rule with name: ' + $name);
+		return new UnknownSubsystemException('Subsystem contains no rule with name: ' . $name);
 	}
 
 	/**
@@ -140,6 +141,20 @@ class Subsystem {
 			$n2nLocales = array_merge($n2nLocales, $matcher->getN2nLocales());
 		}
 		return $n2nLocales;
+	}
+
+	/**
+	 * @param string $id
+	 * @return bool
+	 */
+	function containsN2nLocaleId(string $id) {
+		foreach ($this->rules as $rule) {
+			if ($rule->containsN2nLocaleId($id)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	function getRuleByN2nLocale(N2nLocale $n2NLocale) {
