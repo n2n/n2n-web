@@ -31,6 +31,8 @@ class MethodNotAllowedException extends StatusException {
 	}
 	
 	public function prepareResponse(Response $response) {
+		parent::prepareResponse($response);
+
 		if ($this->allowedMethods > 0) {
 			$response->setHeader('Allow: ' . Method::toString($this->allowedMethods));
 		}

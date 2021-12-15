@@ -46,6 +46,7 @@ class StatusException extends \RuntimeException {
 	}
 	
 	public function prepareResponse(Response $response) {
+		$response->setStatus($this->status);
 	}
 // 	/**
 // 	 * 
