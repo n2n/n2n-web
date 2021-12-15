@@ -31,14 +31,14 @@ use n2n\util\type\attrs\DataSet;
 use n2n\web\http\controller\impl\HttpData;
 
 abstract class Param {
-	private $value;
+	private string|array $value;
+
 	/**
 	 * 
-	 * @param string $value
+	 * @param string|array $rawValue
 	 */
-	public function __construct($value) {
-		ArgUtils::assertTrue($value !== null);
-		$this->value = $value;
+	public function __construct(private string|array $rawValue) {
+		$this->value = StringUtils::convertNonPrintables($rawValue);
 	}
 	
 	public function toInt() {
@@ -253,7 +253,7 @@ abstract class Param {
 	 */
 	public function splitToStringArrayOrReject(string $separator = ',', bool $sorted = true,
 			int $status = Response::STATUS_404_NOT_FOUND) {
-		$this->splitToStringArray($separator, $sorted, $status);
+		return $this->splitToStringArray($separator, $sorted, $status);
 	}
 	
 	/**
@@ -335,7 +335,7 @@ abstract class Param {
 	 * @return string
 	 */
 	public function toNotEmptyStringArray(int $errStatus = Response::STATUS_404_NOT_FOUND) {
-		$values = $this->toArrayOrReject($errStatus);
+		$values = $this->toArray($errStatus);
 		foreach ($values as $value) {
 			if (!self::valNotEmptyString($value)) {
 				throw new StatusException($errStatus);
@@ -382,7 +382,7 @@ abstract class Param {
 	/**
 	 * @param int $errStatus
 	 * @throws StatusException
-	 * @return \n2n\util\type\attrs\Attributes
+	 * @return DataSet
 	 */
 	public function parseJsonToDataSet(int $errStatus = Response::STATUS_400_BAD_REQUEST) {
 		return new DataSet($this->parseJson($errStatus, true));
@@ -411,5 +411,9 @@ abstract class Param {
 	 */
 	public function __toString(): string {
 		return $this->value;
+	}
+
+	function getRawValue() {
+		return $this->rawValue;
 	}
 }

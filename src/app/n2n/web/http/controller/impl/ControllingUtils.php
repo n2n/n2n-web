@@ -62,6 +62,7 @@ use n2n\util\uri\UnavailableUrlException;
 use n2n\web\http\payload\impl\XmlPayload;
 use n2n\web\http\StatusException;
 use n2n\core\container\N2nContext;
+use n2n\util\io\Downloadable;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -534,7 +535,7 @@ class ControllingUtils {
 	 * @param File $file
 	 * @param bool $includeBuffer
 	 */
-	public function sendFile(File $file, bool $includeBuffer = true) {
+	public function sendFile(Downloadable $file, bool $includeBuffer = true) {
 		$this->send(new FilePayload($file), $includeBuffer);
 	}
 	
@@ -543,7 +544,7 @@ class ControllingUtils {
 	 * @param string $name
 	 * @param bool $includeBuffer
 	 */
-	public function sendFileAttachment(File $file, string $name = null, bool $includeBuffer = true) {
+	public function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true) {
 		$this->send(new FilePayload($file, true, $name), $includeBuffer);
 	}
 	

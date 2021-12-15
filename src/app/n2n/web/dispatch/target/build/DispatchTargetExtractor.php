@@ -37,7 +37,7 @@ class DispatchTargetExtractor {
 	private $executedMethodName;
 	
 	public function __construct(DispatchTargetCoder $coder) { 
-		$this->coder = $coder;	
+		$this->coder = $coder;
 	}
 	
 	public function setParams(array $params) {
@@ -66,7 +66,7 @@ class DispatchTargetExtractor {
 	
 	public function extractDispatchTarget() {
 		$code = ParamHandler::extractDispatchTargetCode($this->params);
-		if ($code === null) return;
+		if ($code === null) return null;
 		
 		$props = $this->coder->decode($code);
 		if (!isset($props[Prop::KEY_DISPATCH_CLASS_NAME]) || !is_string($props[Prop::KEY_DISPATCH_CLASS_NAME])) {
@@ -148,7 +148,7 @@ class DispatchTargetExtractor {
 			$propertyPathStr = $this->extractScalar(Prop::KEY_PROPERTY_PATH, $props);
 			$propertyPath = PropertyPath::createFromPropertyExpression($propertyPathStr);
 		} catch (InvalidPropertyExpressionException $e) {
-			throw $this->createException('Invalid property path given.', 0, $e);
+			throw $this->createException('Invalid property path given.', $e);
 		}
 		
 		$targetItem = null;
