@@ -42,8 +42,8 @@ class FilePayload extends ResourcePayload {
 	}
 	
 	public function prepareForResponse(Response $response) {
-		$mimeType = N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->downloadable->getName());
-		// $this->downloadable->getMimeType()
+		$mimeType = N2nVars::getMimeTypeDetector()->getMimeTypeByExtension($this->downloadable->getName())
+				?? $this->downloadable->getMimeType();
 
 // 		if (isset($mimeType)) {
 			$response->setHeader('Content-Type: ' . $mimeType);
