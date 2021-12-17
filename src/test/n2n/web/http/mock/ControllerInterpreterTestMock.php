@@ -11,6 +11,7 @@ use n2n\web\http\attribute\Put;
 use n2n\web\http\attribute\Ext;
 use n2n\web\http\controller\ControllerAdapter;
 use n2n\web\http\attribute\Path;
+use n2n\web\http\attribute\Intercept;
 
 class ControllerInterpreterTestMock extends ControllerAdapter {
 	#[Consums('text/json')]
@@ -53,6 +54,7 @@ class ControllerInterpreterTestMock extends ControllerAdapter {
 	public function deleteTest() {
 	}
 
+	#[Path('/intercept'), Intercept(InterceptorMock::class)]
 	public function interceptTest() {
 
 	}

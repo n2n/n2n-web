@@ -26,7 +26,7 @@ class LegacyControllerInterpreterTestMock extends ControllerAdapter {
 		$ai->m('postTest', new AnnoPath('/post'), new AnnoPost());
 		$ai->m('putTest', new AnnoPath('/put'), new AnnoPut());
 		$ai->m('deleteTest', new AnnoPath('/delete'),  new AnnoDelete());
-		$ai->m('interceptTest',  new AnnoIntercept());
+		$ai->m('getDoIntercept', new AnnoIntercept(InterceptorMock::class));
 	}
 
 	public function postDoConsumsJson(ParamBody $json) {
@@ -59,7 +59,7 @@ class LegacyControllerInterpreterTestMock extends ControllerAdapter {
 	public function deleteTest() {
 	}
 
-	public function interceptTest() {
+	public function getDointercept() {
 
 	}
 }

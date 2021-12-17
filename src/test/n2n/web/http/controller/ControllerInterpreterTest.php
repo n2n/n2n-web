@@ -10,6 +10,7 @@ use n2n\web\http\Method;
 use n2n\web\http\AcceptRange;
 use n2n\web\http\AcceptMimeType;
 use n2n\web\http\mock\ControllerInterpreterTestMock;
+use n2n\web\http\mock\InterceptorMock;
 
 class ControllerInterpreterTest extends TestCase {
 
@@ -113,9 +114,13 @@ class ControllerInterpreterTest extends TestCase {
 		$this->assertNotEmpty($controllerInterpreter->interpret());
 	}
 
-//	public function testAnnoIntercept() {
-//		// @todo test Intercept annotation
-//	}
+	public function testAnnoIntercept() {
+		$controllerInterpreter = $this->prepareLegacyControllerInterpreter('intercept', Method::GET, 'intercept', '{}',
+				[]);
+
+		$interpretation = $controllerInterpreter->interpret();
+		$this->assertNotEmpty(current($interpretation)->getInterceptors());
+	}
 
 	public function testAnnoPath() {
 		$controllerInterpreter = $this->prepareLegacyControllerInterpreter('1.txt', Method::GET, '1.txt', '{}',
@@ -158,8 +163,6 @@ class ControllerInterpreterTest extends TestCase {
 	public function testExt() {
 		$controllerInterpreter = $this->prepareLegacyControllerInterpreter('1.txt', Method::GET, '1.txt', '{}',
 				[]);
-
-		$controllerInterpreter->interpret();
 		$this->assertNotEmpty($controllerInterpreter->interpret());
 	}
 
@@ -174,9 +177,13 @@ class ControllerInterpreterTest extends TestCase {
 		$this->assertEmpty($controllerInterpreter->interpret());
 	}
 
-//	public function testIntercept() {
-//		// @todo test Intercept attribute
-//	}
+	public function testIntercept() {
+		$controllerInterpreter = $this->prepareControllerInterpreter('intercept', Method::GET, 'intercept', '{}',
+				[]);
+
+		$interpretation = $controllerInterpreter->interpret();
+		$this->assertNotEmpty(current($interpretation)->getInterceptors());
+	}
 
 	public function testPath() {
 		$controllerInterpreter = $this->prepareLegacyControllerInterpreter('1.txt', Method::GET, '1.txt', '{}',
@@ -223,7 +230,13 @@ class ControllerInterpreterTest extends TestCase {
 				new AcceptRange($acceptMimeTypes));
 
 		$invokerFactory->setConstantValues([]);
-		$interceptor = new InterceptorFactory(new SimpleMagicContext());
+
+		$simpleMagicContextMock = $stub = $this->createPartialMock(SimpleMagicContext::class, array('lookup'));
+		$stub->expects($this->any())
+				->method('lookup')
+				->willReturn(new InterceptorMock());
+
+		$interceptor = new InterceptorFactory($simpleMagicContextMock);
 		return new ControllerInterpreter(new \ReflectionClass(
 				LegacyControllerInterpreterTestMock::class), $invokerFactory, $interceptor);
 	}
@@ -240,7 +253,13 @@ class ControllerInterpreterTest extends TestCase {
 				new AcceptRange($acceptMimeTypes));
 
 		$invokerFactory->setConstantValues([]);
-		$interceptor = new InterceptorFactory(new SimpleMagicContext());
+
+		$simpleMagicContextMock = $stub = $this->createPartialMock(SimpleMagicContext::class, array('lookup'));
+		$stub->expects($this->any())
+				->method('lookup')
+				->willReturn(new InterceptorMock());
+
+		$interceptor = new InterceptorFactory($simpleMagicContextMock);
 		return new ControllerInterpreter(new \ReflectionClass(
 				ControllerInterpreterTestMock::class), $invokerFactory, $interceptor);
 	}
