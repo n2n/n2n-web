@@ -111,12 +111,7 @@ class VarsRequest implements Request {
 	}
 	
 	private function initUrl(array $getVars) {
-		$requestUrl = null;
-		if (isset($this->serverVars['HTTP_X_REWRITE_URL'])) {
-			$requestUrl = $this->serverVars['HTTP_X_REWRITE_URL'];
-		} else {
-			$requestUrl = $this->extractServerVar('REQUEST_URI');
-		}
+		$requestUrl = $this->serverVars['HTTP_X_REWRITE_URL'] ?? $this->extractServerVar('REQUEST_URI');
 		
 		$queryLength = mb_strlen($this->extractServerVar('QUERY_STRING'));
 		if ($queryLength > 0) $requestUrl = mb_substr($requestUrl, 0, -($queryLength + 1));
