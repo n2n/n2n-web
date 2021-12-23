@@ -31,6 +31,8 @@ use n2n\web\http\payload\Payload;
 use n2n\util\col\ArrayUtils;
 use n2n\reflection\ReflectionUtils;
 use n2n\util\type\ArgUtils;
+use Psr\Http\Message\ResponseInterface;
+use n2n\web\http\payload\impl\PsrResponsePayload;
 
 /**
  * Assembles the http response and gives you different tools to modify it according to your wishes.
@@ -628,7 +630,11 @@ class Response {
 	 * @param bool $includeBuffer
 	 * @throws PayloadAlreadySentException
 	 */
-	public function send(Payload $payload, bool $includeBuffer = true) {
+	public function send(Payload|ResponseInterface $payload, bool $includeBuffer = true) {
+		if ($payload instanceof ResponseInterface) {
+			$payload = new PsrResponsePayload($payload);
+		}
+
 		foreach ($this->listeners as $listener) {
 			$listener->onSend($payload, $this);
 		}

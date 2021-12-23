@@ -50,7 +50,7 @@ interface Request {
 	 * @param string $name
 	 * @return string header, null if header not available
 	 */
-	public function getHeader($name): ?string;
+	public function getHeader(string $name): ?string;
 	
 	/**
 	 * @return \n2n\util\uri\Path

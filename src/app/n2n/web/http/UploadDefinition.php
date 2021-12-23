@@ -23,6 +23,10 @@ namespace n2n\web\http;
 
 use n2n\l10n\Message;
 use n2n\util\io\IoUtils;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
 
 class UploadDefinition {
 	private $errorNo;
@@ -100,12 +104,17 @@ class UploadDefinition {
 			case UPLOAD_ERR_NO_FILE:
 			case UPLOAD_ERR_PARTIAL:
 				return Message::createCodeArg(self::INCOMPLETE_ERROR_CODE, 
-						array('file_name' => $uploadDefinition->getName()),
+						array('file_name' => $this->getName()),
 						'n2n\web\http');
 						
 			default: 
 				return null;
 		}	
 		
+	}
+
+	function toPsr(UploadedFileFactoryInterface $uploadedFileFactory, StreamFactoryInterface $streamFactory): UploadedFileInterface {
+		return $uploadedFileFactory->createUploadedFile($streamFactory->createStreamFromFile($this->getTmpName()),
+				$this->getSize(), $this->getErrorNo(), $this->getName(), $this->getType());
 	}
 }

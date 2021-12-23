@@ -48,7 +48,7 @@ interface Payload {
 	 * 
 	 * @param Response $response
 	 */
-	public function prepareForResponse(Response $response);
+	public function prepareForResponse(Response $response): void;
 	
 	/**
 	 * Returns a string which describes this object. This string is mainly used to be displayed in error messages.
@@ -97,7 +97,7 @@ interface Payload {
 	 * @return string
 	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
-	public function responseOut();
+	public function responseOut(): void;
 	
 	/**
 	 * <p>
@@ -119,7 +119,7 @@ interface Payload {
 	 * @return string|null
 	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
-	public function getEtag();
+	public function getEtag(): ?string;
 	
 	/**
 	 * <p>Can be used as alternative to calculating an etag. Similar to etag the returned DateTime will be used to 
@@ -137,5 +137,5 @@ interface Payload {
 	 * used to determine if status code has bee.
 	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
-	public function getLastModified();
+	public function getLastModified(): ?\DateTime;
 }

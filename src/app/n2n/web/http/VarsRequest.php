@@ -30,6 +30,10 @@ use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
 use n2n\util\io\IoUtils;
 use n2n\util\ex\UnsupportedOperationException;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class VarsRequest implements Request {
 	const PROTOCOL_VERSION_SEPARATOR = '/';
@@ -162,7 +166,7 @@ class VarsRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getHeader()
 	 */
-	public function getHeader($name): ?string {
+	public function getHeader(string $name): ?string {
 		$varKey = 'HTTP_' . str_replace('-', '_', mb_strtoupper($name));
 		if (isset($this->serverVars[$varKey])) {
 			return $this->serverVars[$varKey];
@@ -521,6 +525,29 @@ class VarsRequest implements Request {
 	 */
 	public function getBody(): string {
 		return IoUtils::getContents('php://input');
+	}
+
+	/**
+	 * @param ServerRequestFactoryInterface $factory
+	 * @param UploadedFileFactoryInterface|null $uploadedFileFactory null if you wish to leave out the uploaded files
+	 * @param StreamFactoryInterface|null $streamFactory  null if you wish to leave out the uploaded files
+	 * @return ServerRequestInterface
+	 */
+	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface  $uploadedFileFactory = null,
+			StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
+		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(),
+				$this->serverVars);
+
+		$uploadedFiles = [];
+		if ($uploadedFileFactory !== null && $streamFactory !== null) {
+			foreach ($this->getUploadDefinitions() as $uploadDefinition) {
+				$uploadedFiles[] = $uploadDefinition->toPsr($uploadedFileFactory, $streamFactory);
+			}
+		}
+
+		$request->withUploadedFiles($uploadedFiles);
+
+		return $request;
 	}
 }
 

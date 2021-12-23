@@ -47,6 +47,7 @@ class SimpleRequest implements Request {
 	private $assetsDirName;
 	private $protocolVersion;
 	private $subsystem;
+	private $remoteIp;
 	
 	public function __construct(Url $contextUrl) {
 		ArgUtils::assertTrue($contextUrl->getAuthority()->getHost()  !== null && $contextUrl->getQuery()->isEmpty()
@@ -85,6 +86,10 @@ class SimpleRequest implements Request {
 	public function getOrigMethodName(): string {
 		return $this->origMethodName ?? Method::toString($this->method);
 	}
+
+	function setOrigMethodName(?string $origMethodName) {
+		$this->origMethodName = $origMethodName;
+	}
 	
 	/**
 	 * 
@@ -106,7 +111,7 @@ class SimpleRequest implements Request {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\Request::getHeader()
 	 */
-	public function getHeader($name): ?string {
+	public function getHeader(string $name): ?string {
 		return $this->headers[$name] ?? null;
 	}
 	/**
@@ -367,7 +372,7 @@ class SimpleRequest implements Request {
 	}
 	
 	function setRemoteIp(string $remoteIp) {
-		return $this->remoteIp;
+		$this->remoteIp = $remoteIp;
 	}
 	
 	/**
