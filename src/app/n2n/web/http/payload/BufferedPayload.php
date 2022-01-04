@@ -48,7 +48,7 @@ abstract class BufferedPayload implements Payload {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\payload\Payload::responseOut()
 	 */
-	public function responseOut() {
+	public function responseOut(): void {
 		$this->fail();
 	}
 
