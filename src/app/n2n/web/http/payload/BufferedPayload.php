@@ -56,7 +56,7 @@ abstract class BufferedPayload implements Payload {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\payload\Payload::getEtag()
 	 */
-	public function getEtag() {
+	public function getEtag(): ?string {
 		$this->fail();
 	}
 
@@ -64,7 +64,7 @@ abstract class BufferedPayload implements Payload {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\payload\Payload::getLastModified()
 	 */
-	public function getLastModified() {
+	public function getLastModified(): ?\DateTime {
 		$this->fail();
 	}
 }
