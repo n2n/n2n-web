@@ -41,6 +41,7 @@ use n2n\core\TypeNotFoundException;
 use n2n\io\managed\File;
 use n2n\validation\build\ValidationJob;
 use n2n\util\io\Downloadable;
+use Psr\Http\Message\ResponseInterface;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -422,7 +423,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::send()
 	 */
-	protected final function send(Payload $responseThing, bool $includeBuffer = true) {
+	protected final function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true) {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
 	
