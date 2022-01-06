@@ -26,6 +26,10 @@ use n2n\util\uri\Url;
 use n2n\util\uri\Path;
 use n2n\util\dev\Version;
 use n2n\util\uri\Query;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface Request {
 	const PROTOCOL_HTTP = 'http';
@@ -151,4 +155,13 @@ interface Request {
 	 * @return AcceptRange
 	 */
 	public function getAcceptRange(): AcceptRange;
+
+	/**
+	 * @param ServerRequestFactoryInterface $factory
+	 * @param UploadedFileFactoryInterface|null $uploadedFileFactory
+	 * @param StreamFactoryInterface|null $streamFactory
+	 * @return ServerRequestInterface
+	 */
+	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface  $uploadedFileFactory = null,
+			StreamFactoryInterface $streamFactory = null): ServerRequestInterface;
 }
