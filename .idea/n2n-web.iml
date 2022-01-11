@@ -51,6 +51,8 @@
       <excludeFolder url="file://$MODULE_DIR$/src/vendor/phar-io/manifest" />
       <excludeFolder url="file://$MODULE_DIR$/src/vendor/phar-io/version" />
       <excludeFolder url="file://$MODULE_DIR$/src/vendor/doctrine/instantiator" />
+      <excludeFolder url="file://$MODULE_DIR$/src/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/src/vendor/psr/http-factory" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

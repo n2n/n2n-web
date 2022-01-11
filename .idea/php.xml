@@ -46,6 +46,8 @@
       <path value="$PROJECT_DIR$/src/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/src/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/src/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/src/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/src/vendor/psr/http-factory" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />

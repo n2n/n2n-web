@@ -41,7 +41,7 @@ class FilePayload extends ResourcePayload {
 		$this->attachmentName = $attachmentName;
 	}
 	
-	public function prepareForResponse(Response $response) {
+	public function prepareForResponse(Response $response): void {
 		$mimeType = N2nVars::getMimeTypeDetector()->getMimeTypeByExtension(pathinfo($this->downloadable->getName(), PATHINFO_EXTENSION))
 				?? $this->downloadable->getMimeType() ?? 'application/octet-stream';
 
@@ -67,15 +67,15 @@ class FilePayload extends ResourcePayload {
 		return $this->downloadable->getName() . ' (' . $this->downloadable->__toString() . ')';
 	}
 	
-	public function responseOut() {
+	public function responseOut(): void {
 		echo $this->downloadable->out();
 	}
 	
-	public function getEtag() {
+	public function getEtag(): ?string {
 		return $this->downloadable->buildHash();
 	}
 	
-	public function getLastModified() {
+	public function getLastModified(): ?\DateTime {
 		return $this->downloadable->getLastModified();
 	}
 }
