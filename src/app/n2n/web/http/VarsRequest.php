@@ -533,6 +533,10 @@ class VarsRequest implements Request {
 		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(),
 				$this->serverVars);
 
+		if (empty($request->getQueryParams())) {
+			$request = $request->withQueryParams($this->getQuery()->toArray());
+		}
+
 		$uploadedFiles = [];
 		if ($uploadedFileFactory !== null && $streamFactory !== null) {
 			foreach ($this->getUploadDefinitions() as $uploadDefinition) {

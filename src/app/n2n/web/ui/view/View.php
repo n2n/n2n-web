@@ -469,7 +469,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * (non-PHPdoc)
 	 * @see n2n\web\http.Payload::prepareForResponse()
 	 */
-	public function prepareForResponse(Response $response) {
+	public function prepareForResponse(Response $response): void {
 		$response->setHeader('Content-Type: ' . $this->getContentType());
 
 		if (!$this->isInitialized()) {

@@ -28,11 +28,15 @@ use n2n\util\uri\Query;
 use n2n\util\type\ArgUtils;
 use n2n\util\dev\Version;
 use n2n\util\ex\IllegalStateException;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\UploadedFileFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class SimpleRequest implements Request {
 	const PROTOCOL_VERSION_SEPARATOR = '/';
 	
-	private $serverVars;
+//	private $serverVars;
 	
 	private $method;
 	private $origMethodName;
@@ -412,6 +416,28 @@ class SimpleRequest implements Request {
 
 	public function detectBestN2nLocale(array $n2nLocales): N2nLocale {
 		return $this->bestN2nLocale ?? N2nLocale::getDefault();
+	}
+
+	/**
+	 * @param ServerRequestFactoryInterface $factory
+	 * @param UploadedFileFactoryInterface|null $uploadedFileFactory
+	 * @param StreamFactoryInterface|null $streamFactory
+	 * @return ServerRequestInterface
+	 */
+	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface $uploadedFileFactory = null,
+			StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
+		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(), []);
+
+		$uploadedFiles = [];
+		if ($uploadedFileFactory !== null && $streamFactory !== null) {
+			foreach ($this->getUploadDefinitions() as $uploadDefinition) {
+				$uploadedFiles[] = $uploadDefinition->toPsr($uploadedFileFactory, $streamFactory);
+			}
+		}
+
+		$request->withUploadedFiles($uploadedFiles);
+
+		return $request;
 	}
 }
 

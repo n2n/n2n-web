@@ -213,7 +213,6 @@ class ControllingPlan {
 			$this->workOffQueues();
 		} catch (StatusException $e) {
 			$this->status = self::STATUS_ERROR;
-			$this->sendStatusView($e);
 			return new ExecutionResult($e);
 		} catch (\Throwable $e) {
 			$this->status = self::STATUS_ERROR;
@@ -269,7 +268,7 @@ class ControllingPlan {
 		$this->status = self::STATUS_EXECUTED;
 	}
 	
-	private function sendStatusView(StatusException $e) {
+	function sendStatusView(StatusException $e) {
 		$view = $this->httpContext->getN2nContext()->lookup(ViewFactory::class)
 				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()),
 						['throwableModel' => new ThrowableModel($e)]);

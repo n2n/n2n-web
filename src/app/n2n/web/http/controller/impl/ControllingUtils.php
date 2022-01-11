@@ -63,6 +63,7 @@ use n2n\web\http\payload\impl\XmlPayload;
 use n2n\web\http\StatusException;
 use n2n\core\container\N2nContext;
 use n2n\util\io\Downloadable;
+use Psr\Http\Message\ResponseInterface;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -565,7 +566,7 @@ class ControllingUtils {
 		$this->send(new FsPathPayload(FsPath::create($fsPath), true, $name), $includeBuffer);
 	}
 	
-	public function send(Payload $responseThing, bool $includeBuffer = true) {
+	public function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true) {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
 	}
