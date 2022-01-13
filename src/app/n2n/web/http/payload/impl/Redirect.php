@@ -49,7 +49,7 @@ class Redirect extends BufferedPayload {
 	 * (non-PHPdoc)
 	 * @see n2n\web\http.Payload::prepareForResponse()
 	 */
-	public function prepareForResponse(Response $response) {
+	public function prepareForResponse(Response $response): void {
 		$response->setStatus($this->httpStatus);
 		$response->setHeader('Content-Type: text/html; charset=' . N2N::CHARSET);
 		$response->setHeader('Location: ' . $this->httpLocation);
