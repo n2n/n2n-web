@@ -9,7 +9,7 @@
 		"http",
 		"form api"
 	],
-	"homepage" : "http://n2n.rocks/",
+	"homepage" : "https://n2n.rocks/",
 	"license" : "LGPL-3.0-or-later",
 	"authors" : [{
 			"name" : "Andreas von Burg",

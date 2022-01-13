@@ -65,7 +65,7 @@ class ResponseCacheItem extends BufferedPayload {
 	/* (non-PHPdoc)
 	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
 	 */
-	public function prepareForResponse(\n2n\web\http\Response $response) {
+	public function prepareForResponse(\n2n\web\http\Response $response): void {
 		$response->setStatus($this->statusCode);
 		foreach ($this->headers as $header) {
 			$response->setHeader($header);

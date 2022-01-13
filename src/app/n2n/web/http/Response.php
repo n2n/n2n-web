@@ -33,6 +33,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\type\ArgUtils;
 use Psr\Http\Message\ResponseInterface;
 use n2n\web\http\payload\impl\PsrResponsePayload;
+use DateTimeInterface;
 
 /**
  * Assembles the http response and gives you different tools to modify it according to your wishes.
@@ -408,7 +409,7 @@ class Response {
 			$ifModifiedSinceStr = $this->request->getHeader('If-Modified-Since');
 			if (null !== $ifModifiedSinceStr
 					&& $ifModifiedSince = \DateTime::createFromFormat(
-							\DateTime::RFC1123, $ifModifiedSinceStr)) {
+							DateTimeInterface::RFC1123, $ifModifiedSinceStr)) {
 				$lastModifiedNotModified = $ifModifiedSince >= $lastModified;
 			}
 		}

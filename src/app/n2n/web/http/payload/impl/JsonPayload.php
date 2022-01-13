@@ -45,7 +45,7 @@ class JsonPayload extends BufferedPayload {
 	/* (non-PHPdoc)
 	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
 	 */
-	public function prepareForResponse(Response $response) {
+	public function prepareForResponse(Response $response): void {
 		$response->setHeader('Content-Type: application/json');
 	}
 	

@@ -45,7 +45,7 @@ class HtmlUiPayload extends BufferedPayload {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
 	 */
-	public function prepareForResponse(Response $response) {
+	public function prepareForResponse(Response $response): void {
 		$response->setHeader('Content-Type: text/html; charset=utf-8');
 	}
 	
