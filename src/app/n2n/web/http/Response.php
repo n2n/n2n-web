@@ -123,7 +123,7 @@ class Response {
 	private ?ResponseCacheControl $responseCacheControl = null;
 	private $responseCacheStore;
 	private $sentPayload;
-    private string $bufferedContents = '';
+    private string $bodyContents = '';
 
 	private bool $flushed = false;
 	
@@ -298,7 +298,7 @@ class Response {
 	 * @return string
 	 */
 	public function getBufferedOutput() {
-		$contents = $this->bufferedContents;
+		$contents = '';
 		
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
@@ -308,13 +308,21 @@ class Response {
 		return $contents;
 	}
 
-	function addBufferecContent(string $content) {
+	function addContent(string $content) {
 		$this->ensureNotFlushed();
 
 		if ($this->isBuffering()) {
 			echo $content;
 		} else {
 			$this->bufferedContents .= $content;
+		}
+	}
+
+	function cleanBufferedOutput() {
+		foreach ($this->outputBuffers as $outputBuffer) {
+			if (!$outputBuffer->isBuffering()) continue;
+
+			$outputBuffer->clean();
 		}
 	}
 
@@ -646,16 +654,15 @@ class Response {
 		$this->sentPayload = $payload;
 
 		$payload->prepareForResponse($this);
-		$bufferdContents = '';
-		if ($includeBuffer) {
-			$bufferdContents = $this->fetchBufferedOutput(false);
-		}
-		
+
 		if ($payload->isBufferable()) {
             if (!$this->isBuffering()) {
-                $this->bufferedContents .= $bufferdContents . $payload->getBufferedContents();
+                $this->bufferedContents .= $payload->getBufferedContents();
             } else {
-                echo $bufferdContents;
+				if (!$includeBuffer) {
+					$this->cleanBufferedOutput();;
+				}
+
                 echo $payload->getBufferedContents();
             }
 		} else {

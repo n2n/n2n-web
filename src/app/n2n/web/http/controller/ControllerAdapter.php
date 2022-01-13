@@ -50,7 +50,7 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 	private function endBuffer(OutputBuffer $outputBuffer, bool $commit) {
 		$outputBuffer->end();
 		$outputBuffer->seal();
-		$this->getResponse()->addBufferecContent($outputBuffer->getBufferedContents());
+		$this->getResponse()->addContent($outputBuffer->getBufferedContents());
 
 		$this->cu()->reset($commit);
 	}
