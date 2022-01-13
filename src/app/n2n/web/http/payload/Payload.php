@@ -22,6 +22,8 @@
 namespace n2n\web\http\payload;
 
 use n2n\web\http\Response;
+use n2n\util\ex\IllegalStateException;
+use DateTime;
 
 /**
  * <p>A response object represents content which can be sent over {@see Response::send()} to the client. This could be a 
@@ -78,7 +80,7 @@ interface Payload {
 	/**
 	 * Returns the buffered content of this response object. See {@see self::isBufferable()} for more information.
 	 * @return string
-	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns false.
+	 * @throws IllegalStateException if {@see self::isBufferable()} returns false.
 	 */
 	public function getBufferedContents(): string;
 	
@@ -94,8 +96,8 @@ interface Payload {
 	 *	</pre>
 	 * </p>
 	 * 
-	 * @return string
-	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
+	 * @return void
+	 * @throws IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
 	public function responseOut(): void;
 	
@@ -117,7 +119,7 @@ interface Payload {
 	 * </p>
 	 * 
 	 * @return string|null
-	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
+	 * @throws IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
 	public function getEtag(): ?string;
 	
@@ -133,9 +135,9 @@ interface Payload {
 	 * 	if the response object has changed. So this method will not be called.
 	 * </p> 
 	 * 
-	 * @return \DateTime|null The last time this response object has been changed or null if the DateTime shall not be
+	 * @return DateTime|null The last time this response object has been changed or null if the DateTime shall not be
 	 * used to determine if status code has bee.
-	 * @throws \n2n\util\ex\IllegalStateException if {@see self::isBufferable()} returns true.
+	 * @throws IllegalStateException if {@see self::isBufferable()} returns true.
 	 */
-	public function getLastModified(): ?\DateTime;
+	public function getLastModified(): ?DateTime;
 }

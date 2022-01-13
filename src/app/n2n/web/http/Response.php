@@ -264,7 +264,7 @@ class Response {
             @ob_clean();
         }
 
-        $this->bufferedContents .= $prevContent;
+        $this->bodyContents .= $prevContent;
     }
 	
 	/**
@@ -314,7 +314,7 @@ class Response {
 		if ($this->isBuffering()) {
 			echo $content;
 		} else {
-			$this->bufferedContents .= $content;
+			$this->bodyContents .= $content;
 		}
 	}
 
@@ -379,7 +379,7 @@ class Response {
 		$this->httpCacheControl = null;
 		$this->bufferedResponseCacheControl = null;
 		$this->sentPayload = null;
-        $this->bufferedContents = '';
+        $this->bodyContents = '';
 	}
 	
 	/**
@@ -500,13 +500,13 @@ class Response {
             }
 
             $this->flushHeaders();
-            echo $this->bufferedContents;
+            echo $this->bodyContents;
 			$this->sentPayload->responseOut();
             echo $contents;
             return;
         }
 
-        $this->bufferedContents .= $contents;
+        $this->bodyContents .= $contents;
 
 		if ($this->bufferedResponseCacheControl !== null && $this->responseCacheStore !== null) {
 			$expireDate = new \DateTime();
@@ -515,17 +515,17 @@ class Response {
 					$this->request->getHostName(), $this->request->getPath(),
 					$this->buildQueryParamsCharacteristic(),
 					$this->bufferedResponseCacheControl->getCharacteristics(),
-					new ResponseCacheItem($this->bufferedContents, $this->statusCode,
+					new ResponseCacheItem($this->bodyContents, $this->statusCode,
 							$this->headers, $this->httpCacheControl, $expireDate));
 		}
 		
-		if ($this->notModified(HashUtils::base36md5Hash($this->bufferedContents, 26))) {
+		if ($this->notModified(HashUtils::base36md5Hash($this->bodyContents, 26))) {
 			$this->flushHeaders();
 			return;
 		}
 
 		$this->flushHeaders();
-		echo $this->bufferedContents;
+		echo $this->bodyContents;
 	}
 	/**
 	 * 
@@ -657,7 +657,7 @@ class Response {
 
 		if ($payload->isBufferable()) {
             if (!$this->isBuffering()) {
-                $this->bufferedContents .= $payload->getBufferedContents();
+                $this->bodyContents .= $payload->getBufferedContents();
             } else {
 				if (!$includeBuffer) {
 					$this->cleanBufferedOutput();;
@@ -665,8 +665,6 @@ class Response {
 
                 echo $payload->getBufferedContents();
             }
-		} else {
-            $this->bufferedContents .= $bufferdContents;
 		}
 	}
 	
