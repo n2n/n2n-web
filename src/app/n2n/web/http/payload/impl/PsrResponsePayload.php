@@ -41,11 +41,11 @@ class PsrResponsePayload implements Payload {
 	}
 
 	public function getBufferedContents(): string {
-		return $this->responseInterface->getBody()->getContents();
+		return (string) $this->responseInterface->getBody();
 	}
 
 	public function responseOut(): void {
-		echo $this->responseInterface->getBody()->getContents();
+		echo (string) $this->responseInterface->getBody();
 	}
 
 	public function getEtag(): ?string {
