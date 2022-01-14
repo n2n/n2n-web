@@ -536,6 +536,11 @@ class VarsRequest implements Request {
 		if (empty($request->getQueryParams())) {
 			$request = $request->withQueryParams($this->getQuery()->toArray());
 		}
+		
+		$postQuery = $this->getPostQuery();
+		if (!$postQuery->isEmpty()) {
+			$request = $request->withParsedBody($postQuery->toArray());
+		}
 
 		$uploadedFiles = [];
 		if ($uploadedFileFactory !== null && $streamFactory !== null) {
