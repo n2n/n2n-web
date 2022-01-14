@@ -179,6 +179,15 @@ class HttpContext {
 	}
 
 	/**
+	 * @param SubsystemRule|null $activeSubsystemRule
+	 * @return $this
+	 */
+	function setActiveSubsystemRule(?SubsystemRule $activeSubsystemRule) {
+		$this->activeSubsystemRule = $activeSubsystemRule;
+		return $this;
+	}
+
+	/**
 	 * @return \n2n\web\http\Supersystem
 	 */
 	public function getSupersystem() {

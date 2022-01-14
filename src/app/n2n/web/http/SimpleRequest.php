@@ -307,47 +307,47 @@ class SimpleRequest implements Request {
 		$this->uploadDefinitions = $uploadDefinitions;
 	}
 	
-	public function getSubsystemName() {
-		if ($this->subsystem !== null) {
-			return $this->subsystem->getName();
-		}
-		return null;
-	}
-		
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::getSubsystem()
-	 */
-	public function getSubsystem(): ?Subsystem {
-		return $this->subsystem;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * @see \n2n\web\http\Request::setSubsystem()
-	 */
-	public function setSubsystem(?Subsystem $subsystem) {
-		$this->subsystem = $subsystem;
-	}
-	
-	public function setAvailableSubsystems(array $subsystems) {
-		$this->availableSubsystems = array();
-		foreach ($subsystems as $subsystem) {
-			$this->availableSubsystems[$subsystem->getName()] = $subsystem;
-		}
-	}
-	
-	function getAvailableSubsystems() {
-		return $this->availableSubsystems;
-	}
-	
-	function getAvailableSubsystemByName($name) {
-		if (isset($this->availableSubsystems[$name])) {
-			return $this->availableSubsystems[$name];
-		}
-		
-		throw new UnknownSubsystemException('Unknown subystem name: ' . $name);
-	}
+//	public function getSubsystemName() {
+//		if ($this->subsystem !== null) {
+//			return $this->subsystem->getName();
+//		}
+//		return null;
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::getSubsystem()
+//	 */
+//	public function getSubsystem(): ?Subsystem {
+//		return $this->subsystem;
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 * @see \n2n\web\http\Request::setSubsystem()
+//	 */
+//	public function setSubsystem(?Subsystem $subsystem) {
+//		$this->subsystem = $subsystem;
+//	}
+//
+//	public function setAvailableSubsystems(array $subsystems) {
+//		$this->availableSubsystems = array();
+//		foreach ($subsystems as $subsystem) {
+//			$this->availableSubsystems[$subsystem->getName()] = $subsystem;
+//		}
+//	}
+//
+//	function getAvailableSubsystems() {
+//		return $this->availableSubsystems;
+//	}
+//
+//	function getAvailableSubsystemByName($name) {
+//		if (isset($this->availableSubsystems[$name])) {
+//			return $this->availableSubsystems[$name];
+//		}
+//
+//		throw new UnknownSubsystemException('Unknown subystem name: ' . $name);
+//	}
 	
 	private $acceptRange;
 	
