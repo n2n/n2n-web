@@ -44,11 +44,25 @@ abstract class Param {
 	public function toInt() {
 		return (int) $this->value;
 	}
-	
+
+	/**
+	 * @return bool
+	 * @deprecated use {@link self::toBoolOrReject()}
+	 */
 	public function toBool() {
 		return !empty($this->value);
 	}
-	
+
+	public function toBoolOrReject(string $trueStr = '1', string $falseStr = '0',
+			int $status = Response::STATUS_404_NOT_FOUND) {
+		try {
+			ArgUtils::valEnum($this->rawValue, [$trueStr, $falseStr]);
+			return $this->rawValue === $trueStr;
+		} catch (InvalidArgumentException $e) {
+			throw new StatusException($status, $e->getMessage(), null, $e);
+		}
+	}
+
 	public function toIntOrReject($status = Response::STATUS_404_NOT_FOUND) {
 		if (false !== ($value = filter_var($this->value, FILTER_VALIDATE_INT))) {
 			return $value;
@@ -139,7 +153,21 @@ abstract class Param {
 	public function toNotEmptyStringOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
 		return $this->toNotEmptyString($status);
 	}
-	
+
+	/**
+	 * @param string[] $options
+	 * @param int $rejectStatus
+	 * @return string
+	 */
+	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): string {
+		try {
+			ArgUtils::valEnum($this->rawValue, $options);
+			return $this->rawValue;
+		} catch (\InvalidArgumentException $e) {
+			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+		}
+	}
+
 	/**
 	 * @param int $status
 	 * @return string
@@ -191,18 +219,18 @@ abstract class Param {
 	}
 	
 	/**
-	 * @param int $status
-	 * @throws StatusException
+	 * @param int $rejectStatus
 	 * @return array
+	 *@throws StatusException
 	 */
-	public function toStringArray(int $status = Response::STATUS_404_NOT_FOUND) {
+	public function toStringArray(int $rejectStatus = Response::STATUS_404_NOT_FOUND) {
 		if (!is_array($this->value)) {
-			throw new StatusException($status);
+			throw new StatusException($rejectStatus);
 		}
 
 		foreach ($this->value as $fieldValue) {
 			if (!is_string($fieldValue)) {
-				throw new StatusException($status);
+				throw new StatusException($rejectStatus);
 			}
 		}
 		
