@@ -34,11 +34,17 @@ class ResponseCacheStore implements ThreadScoped {
 	
 	private $cacheStore;
 	private $responseCacheActionQueue;
+	private TransactionManager $tm;
 	
 	private function _init(AppCache $appCache, TransactionManager $transactionManager) {
 		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class);
 		$this->responseCacheActionQueue = new ResponseCacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
+		$this->tm = $transactionManager;
+	}
+
+	private function _terminate() {
+		$this->tm->unregisterResource($this->responseCacheActionQueue);
 	}
 	
 	private function buildResponseCharacteristics(int $method, string $hostName, Path $path,
