@@ -151,14 +151,14 @@ class ContextUrlComposer implements UrlComposer {
 				throw new UnavailableUrlException(true, null, null, $e);
 			}
 		} else {
-			throw new UnavailableUrlException('No ControllerContext available.');
+			throw new UnavailableUrlException(true,'No ControllerContext available.');
 		}
 
 		try {
 			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem, $this->absolute)
 					->extR($path->ext($this->pathExts), $this->queryExt, $this->fragment);
 		} catch (HttpContextNotAvailableException $e) {
-			throw new UnavailableUrlException(null, null, $e);
+			throw new UnavailableUrlException(true,null, null, $e);
 		}
 	}
 }
