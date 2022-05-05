@@ -186,7 +186,7 @@ class HttpData implements AttributeReader {
 			return $this->req($path, TypeConstraint::createSimple('int', $nullAllowed));
 		}
 		
-		if (null !== ($value = $this->reqNumeric($path))) {
+		if (null !== ($value = $this->reqNumeric($path, $nullAllowed))) {
 			return (int) $value;
 		}
 		
