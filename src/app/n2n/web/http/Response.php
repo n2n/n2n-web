@@ -50,9 +50,9 @@ class Response {
 	const STATUS_204_NO_CONTENT = 204;
 	const STATUS_205_RESET_CONTENT = 205;
 	const STATUS_206_PARTIAL_CONTENT = 206;
-	const STATUS_207_MULTI_STATUS = 207; 
-	const STATUS_208_ALREADY_REPORTED = 208; 
-	const STATUS_226_IM_USED = 226; 
+	const STATUS_207_MULTI_STATUS = 207;
+	const STATUS_208_ALREADY_REPORTED = 208;
+	const STATUS_226_IM_USED = 226;
 	const STATUS_300_MULTIPLE_CHOICES = 300;
 	const STATUS_301_MOVED_PERMANENTLY = 301;
 	const STATUS_302_FOUND = 302;
@@ -103,7 +103,7 @@ class Response {
 	const STATUS_509_BANDWIDTH_LIMIT_EXCEEDED = 509;
 	const STATUS_510_NOT_EXTENDED = 510;
 	const STATUS_511_NETWORK_AUTHENTICATION_REQUIRED = 511;
-	
+
 	private $listeners = array();
 	private $request;
 	private $responseCachingEnabled = true;
@@ -124,17 +124,17 @@ class Response {
 	private ?ResponseCacheControl $responseCacheControl = null;
 	private $responseCacheStore;
 	private $sentPayload;
-    private string $bodyContents = '';
+	private string $bodyContents = '';
 
 	private bool $flushed = false;
-	
+
 	/**
 	 * @param Request $request
 	 */
-	public function __construct(Request $request) {		
+	public function __construct(Request $request) {
 		$this->request = $request;
 		$this->listeners = array();
-		
+
 		$this->reset();
 	}
 
@@ -144,16 +144,16 @@ class Response {
 	public function getRequest() {
 		return $this->request;
 	}
-	
+
 	/**
-	 * If true the response will use {@link https://en.wikipedia.org/wiki/HTTP_ETag etags} to determine if 
+	 * If true the response will use {@link https://en.wikipedia.org/wiki/HTTP_ETag etags} to determine if
 	 * the response was modified since last request and send 304 Not Modified http status to reduce traffic if not.
 	 * @param bool $sendEtagAllowed
 	 */
 	public function setSendEtagAllowed(bool $sendEtagAllowed) {
 		$this->sendEtagAllowed = $sendEtagAllowed;
 	}
-	
+
 	/**
 	 * @see self::setSendEtagAllowed()
 	 * @return bool
@@ -161,20 +161,20 @@ class Response {
 	public function isSendEtagAllowed() {
 		return $this->sendEtagAllowed;
 	}
-	
+
 	/**
-	 * If last modified DateTime is provided by the sent {@see Payload} it will be used to determine if 
+	 * If last modified DateTime is provided by the sent {@see Payload} it will be used to determine if
 	 * the response was modified since last request and send 304 Not Modified http status to reduce traffic if not.
-	 * 
+	 *
 	 * @see self::send()
 	 * @see Payload::getLastModified()
-	 *  
+	 *
 	 * @param bool $sendLastModifiedAllowed
 	 */
 	public function setSendLastModifiedAllowed(bool $sendLastModifiedAllowed) {
 		$this->sendLastModifiedAllowed = $sendLastModifiedAllowed;
 	}
-	
+
 	/**
 	 * @see self::setSendLastMoidifiedAllowed()
 	 * @return bool
@@ -182,9 +182,9 @@ class Response {
 	public function isSendLastModifiedAllowed() {
 		return $this->sendLastModifiedAllowed;
 	}
-	
+
 	/**
-	 * If false all server push directives mandated be {@see self::serverPush()} will be ignored. This option is 
+	 * If false all server push directives mandated be {@see self::serverPush()} will be ignored. This option is
 	 * usually modified through changes in the app.ini.
 	 *
 	 * @param bool $sendLastModifiedAllowed
@@ -192,7 +192,7 @@ class Response {
 	public function setServerPushAllowed(bool $serverPushAllowed) {
 		$this->serverPushAllowed = $serverPushAllowed;
 	}
-	
+
 	/**
 	 * @see self::setSendLastMoidifiedAllowed()
 	 * @return bool
@@ -200,7 +200,7 @@ class Response {
 	public function isServerPushAllowed() {
 		return $this->serverPushAllowed;
 	}
-	
+
 	/**
 	 * @see self::setResponseCachingEnabled()
 	 * @return bool
@@ -208,7 +208,7 @@ class Response {
 	public function isResponseCachingEnabled() {
 		return $this->responseCachingEnabled;
 	}
-	
+
 	/**
 	 * If false response cache configurations assigned over {@see self::setResponseCacheControl()} will be ignored.
 	 * @param bool $responseCachingEnabled
@@ -218,7 +218,7 @@ class Response {
 
 		$this->responseCachingEnabled = $responseCachingEnabled;
 	}
-	
+
 	/**
 	 * @see self::setResponseCachingEnabled()
 	 * @return bool
@@ -226,7 +226,7 @@ class Response {
 	public function isHttpCachingEnabled() {
 		return $this->httpCachingEnabled;
 	}
-	
+
 	/**
 	 * If false http cache configurations assigned over {@see self::setHttpCacheControl()} will be ignored.
 	 * @param bool $httpCachingEnabled
@@ -243,31 +243,31 @@ class Response {
 	public function isBuffering() {
 		return !empty($this->outputBuffers) && $this->outputBuffers[0]->isBuffering();
 	}
-	
+
 	/**
 	 * @throws ResponseBufferIsClosed
 	 */
 	private function ensureBuffering() {
 		if ($this->isBuffering()) return;
-		
+
 		throw new IllegalStateException('Response buffer is closed.');
 	}
 
-    function capturePrevBuffer() {
+	function capturePrevBuffer() {
 		$this->ensureNotFlushed();
 
-        if (!empty($this->outputBuffers)) {
-            throw new IllegalStateException('OutputBuffer already exists.');
-        }
+		if (!empty($this->outputBuffers)) {
+			throw new IllegalStateException('OutputBuffer already exists.');
+		}
 
-        $prevContent = ob_get_contents();
-        if ($prevContent !== false) {
-            @ob_clean();
-        }
+		$prevContent = ob_get_contents();
+		if ($prevContent !== false) {
+			@ob_clean();
+		}
 
-        $this->bodyContents .= $prevContent;
-    }
-	
+		$this->bodyContents .= $prevContent;
+	}
+
 	/**
 	 * @return OutputBuffer
 	 */
@@ -275,7 +275,7 @@ class Response {
 		$this->ensureNotFlushed();
 
 		$this->removeEndedBuffers();
-		return $this->pushNewOutputBuffer();	
+		return $this->pushNewOutputBuffer();
 	}
 
 	function removeEndedBuffers() {
@@ -288,24 +288,23 @@ class Response {
 		}
 	}
 
-		
 	private function pushNewOutputBuffer() {
 		$outputBuffer = new OutputBuffer();
 		$this->outputBuffers[] = $outputBuffer;
 		return $outputBuffer;
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getBufferedOutput() {
 		$contents = '';
-		
+
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
 			$contents .= $outputBuffer->getBufferedContents();
 		}
-		
+
 		return $contents;
 	}
 
@@ -328,13 +327,13 @@ class Response {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bool $closeBaseBuffer
 	 * @return string
 	 */
 	public function fetchBufferedOutput($closeBaseBuffer = false) {
 		$contents = '';
-		
+
 		$outputBuffer = null;
 		$num = sizeof($this->outputBuffers);
 		for ($i = 1; $i <= $num; $i++) {
@@ -343,11 +342,11 @@ class Response {
 			} else {
 				$outputBuffer = current($this->outputBuffers);
 			}
-			
+
 			if ($outputBuffer->isBuffering()) {
 				$contents = $outputBuffer->getBufferedContents() . $contents;
 			}
-			
+
 			if ($i < $num || $closeBaseBuffer) {
 				$outputBuffer->seal();
 			}
@@ -359,9 +358,9 @@ class Response {
 
 		return $contents;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function reset() {
 		$this->ensureNotFlushed();
@@ -369,43 +368,43 @@ class Response {
 		foreach ($this->listeners as $listener) {
 			$listener->onReset($this);
 		}
-		
+
 // 		$this->ensureBuffering();
-		
+
 		$this->statusCode = self::STATUS_200_OK;
 		$this->headers = array();
 		if ($this->isBuffering()) {
 			$this->fetchBufferedOutput(false);
 		}
 		$this->httpCacheControl = null;
-		$this->bufferedResponseCacheControl = null;
+		$this->responseCacheControl = null;
 		$this->sentPayload = null;
-        $this->bodyContents = '';
+		$this->bodyContents = '';
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $etag
 	 * @param \DateTime $lastModified
 	 */
 	private function notModified(?string $etag, \DateTime $lastModified = null) {
 		if ($this->statusCode !== self::STATUS_200_OK) return false;
-		
+
 		$etagNotModified = null;
 		if ($this->sendEtagAllowed && $etag !== null) {
 			$this->setHeader('Etag: "' . $etag . '"');
-		
+
 			if (null !== ($ifNoneMatch = $this->request->getHeader('If-None-Match'))) {
 				$etagNotModified = '"' . $etag . '"' ==  $ifNoneMatch;
 			}
 		}
-		
+
 		$lastModifiedNotModified = null;
 		if ($this->sendLastModifiedAllowed && $lastModified !== null) {
 			$lastModified->setTimezone(new \DateTimeZone('GMT'));
 			// RFC1123 with GMT
 			$this->setHeader('Last-Modified: ' . $lastModified->format('D, d M Y H:i:s') . ' GMT');
-			
+
 			$ifModifiedSinceStr = $this->request->getHeader('If-Modified-Since');
 			if (null !== $ifModifiedSinceStr
 					&& $ifModifiedSince = \DateTime::createFromFormat(
@@ -413,18 +412,18 @@ class Response {
 				$lastModifiedNotModified = $ifModifiedSince >= $lastModified;
 			}
 		}
-		
-		if (($etagNotModified !== null || $lastModifiedNotModified !== null) 
+
+		if (($etagNotModified !== null || $lastModifiedNotModified !== null)
 				&& $etagNotModified !== false && $lastModifiedNotModified !== false) {
 			$this->setStatus(self::STATUS_304_NOT_MODIFIED);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function sendCachedPayload() {
@@ -433,29 +432,29 @@ class Response {
 		if ($this->responseCacheStore === null || !$this->responseCachingEnabled) {
 			return false;
 		}
-		
-		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
-					$this->request->getHostName(), $this->request->getPath());
-		
+
+		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
+				$this->request->getHostName(), $this->request->getPath());
+
 		if ($responseCacheItem === null) {
-			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(), 
+			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
 					$this->request->getHostName(), $this->request->getPath(),
 					$this->request->getQuery()->toArray());
 		}
-		
+
 		if ($responseCacheItem === null) return false;
-	
+
 		$this->send($responseCacheItem);
 		return true;
 	}
-	
+
 	/**
 	 * @return array|null
 	 */
 	public function buildQueryParamsCharacteristic() {
-		$paramNames = $this->bufferedResponseCacheControl->getIncludedQueryParamNames();
+		$paramNames = $this->responseCacheControl->getIncludedQueryParamNames();
 		if (null === $paramNames) return null;
-		
+
 		$queryParams = $this->request->getQuery()->toArray();
 		$characteristic = array();
 		foreach ($paramNames as $paramName) {
@@ -476,7 +475,7 @@ class Response {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function flush() {
 		$this->ensureNotFlushed();
@@ -487,39 +486,39 @@ class Response {
 			$listener->onFlush($this);
 		}
 
-        $contents = $this->fetchBufferedOutput(true);
+		$contents = $this->fetchBufferedOutput(true);
 
-        if ($this->sentPayload !== null && !$this->sentPayload->isBufferable()) {
-            if ($this->responseCacheControl !== null) {
-                throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
-            }
+		if ($this->sentPayload !== null && !$this->sentPayload->isBufferable()) {
+			if ($this->responseCacheControl !== null) {
+				throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
+			}
 
-            if (!strlen($contents) && $this->notModified($this->sentPayload->getEtag(), $this->sentPayload->getLastModified())) {
-                $this->flushHeaders();
-                $this->closeBuffer();
-                return;
-            }
+			if (!strlen($contents) && $this->notModified($this->sentPayload->getEtag(), $this->sentPayload->getLastModified())) {
+				$this->flushHeaders();
+				$this->closeBuffer();
+				return;
+			}
 
-            $this->flushHeaders();
-            echo $this->bodyContents;
+			$this->flushHeaders();
+			echo $this->bodyContents;
 			$this->sentPayload->responseOut();
-            echo $contents;
-            return;
-        }
+			echo $contents;
+			return;
+		}
 
-        $this->bodyContents .= $contents;
+		$this->bodyContents .= $contents;
 
-		if ($this->bufferedResponseCacheControl !== null && $this->responseCacheStore !== null) {
+		if ($this->responseCacheControl !== null && $this->responseCacheStore !== null) {
 			$expireDate = new \DateTime();
-			$expireDate->add($this->bufferedResponseCacheControl->getCacheInterval());
-			$this->responseCacheStore->store($this->request->getMethod(), 
+			$expireDate->add($this->responseCacheControl->getCacheInterval());
+			$this->responseCacheStore->store($this->request->getMethod(),
 					$this->request->getHostName(), $this->request->getPath(),
 					$this->buildQueryParamsCharacteristic(),
-					$this->bufferedResponseCacheControl->getCharacteristics(),
+					$this->responseCacheControl->getCharacteristics(),
 					new ResponseCacheItem($this->bodyContents, $this->statusCode,
 							$this->headers, $this->httpCacheControl, $expireDate));
 		}
-		
+
 		if ($this->notModified(HashUtils::base36md5Hash($this->bodyContents, 26))) {
 			$this->flushHeaders();
 			return;
@@ -529,7 +528,7 @@ class Response {
 		echo $this->bodyContents;
 	}
 	/**
-	 * 
+	 *
 	 */
 	public function closeBuffer() {
 		while (null != ($outputBuffer = array_pop($this->outputBuffers))) {
@@ -537,7 +536,7 @@ class Response {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param int $code
 	 */
 	public function setStatus($code) {
@@ -549,12 +548,12 @@ class Response {
 
 		$this->statusCode = $code;
 	}
-	
+
 	public function getStatus() {
 		return $this->statusCode;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $header
 	 * @param bool $replace
 	 */
@@ -563,14 +562,14 @@ class Response {
 //			$this->headers[] = $header;
 //			return;
 //		}
-		
+
 		$this->headers[] = new ApplyHeaderJob($header, $replace);
 	}
 
 	function removeHeader(string $name) {
 		$this->headers[] = new RemoveHeaderJob($name);
 	}
-	
+
 	public function setHttpCacheControl(HttpCacheControl $httpCacheControl = null) {
 		$this->ensureNotFlushed();
 		$this->httpCacheControl = $httpCacheControl;
@@ -588,52 +587,52 @@ class Response {
 	public function getResponseCacheControl() {
 		return $this->responseCacheControl;
 	}
-	
+
 	/**
 	 * Server push will be ignored if HTTP version of request is lower than 2 or if sever push is disabled in app.ini
-	 * 
+	 *
 	 * @param ServerPushDirective $directive
 	 */
 	public function serverPush(ServerPushDirective $directive) {
 		if ($this->request->getProtocolVersion()->getMajorNum() < 2) {
 			return;
 		}
-		
+
 		$this->setHeader($directive->toHeader());
 	}
-	
+
 	public function getResponseCacheStore() {
 		return $this->responseCacheStore;
 	}
-	
+
 	public function setResponseCacheStore(ResponseCacheStore $responseCacheStore = null) {
 		$this->responseCacheStore = $responseCacheStore;
 	}
 	/**
-	 * 
+	 *
 	 * @throws HttpHeadersAlreadySentException
-	 */	
+	 */
 	private function flushHeaders() {
-		$file = null; 
+		$file = null;
 		$line = null;
 		if (headers_sent($file, $line)) {
 			throw new \ErrorException('Response sent outside of n2n context',
 					0, E_USER_ERROR, $file, $line);
 		}
-		
+
 		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
 //		http_response_code($this->statusCode);
 
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
 		}
-		
+
 		while (!is_null($header = array_shift($this->headers))) {
 			$header->flush();
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param Payload $payload
 	 * @param HttpCacheControl $httpCacheControl
 	 * @param bool $includeBuffer
@@ -649,7 +648,7 @@ class Response {
 		}
 
 		if (null !== $this->sentPayload) {
-			throw new MalformedResponseException('Payload already sent: ' 
+			throw new MalformedResponseException('Payload already sent: '
 					. $this->sentPayload->toKownPayloadString(), 0, null, 1);
 		}
 		$this->sentPayload = $payload;
@@ -657,79 +656,79 @@ class Response {
 		$payload->prepareForResponse($this);
 
 		if ($payload->isBufferable()) {
-            if (!$this->isBuffering()) {
-                $this->bodyContents .= $payload->getBufferedContents();
-            } else {
+			if (!$this->isBuffering()) {
+				$this->bodyContents .= $payload->getBufferedContents();
+			} else {
 				if (!$includeBuffer) {
-					$this->cleanBufferedOutput();;
+					$this->cleanBufferedOutput();
 				}
 
-                echo $payload->getBufferedContents();
-            }
+				echo $payload->getBufferedContents();
+			}
 		}
 	}
-	
+
 	public function hasSentPayload() {
 		return $this->sentPayload !== null;
 	}
-	
+
 	public function getSentPayload() {
 		return $this->sentPayload;
 	}
-	
+
 	public function registerListener(ResponseListener $listener) {
 		$this->listeners[spl_object_hash($listener)] = $listener;
 	}
-	
+
 	public function unregisterListener(ResponseListener $listener) {
 		unset($this->listeners[spl_object_hash($listener)]);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param int $code
 	 * @throws \InvalidArgumentException
 	 * @return int
 	 */
 	public static function textOfStatusCode($code, bool $required = false) {
 		switch ((int) $code) {
-			case self::STATUS_100_CONTINUE: return 'Continue'; 
-			case self::STATUS_101_SWITCHING_PROTOCOLS: return 'Switching Protocols'; 
+			case self::STATUS_100_CONTINUE: return 'Continue';
+			case self::STATUS_101_SWITCHING_PROTOCOLS: return 'Switching Protocols';
 			case self::STATUS_102_PROCESSING: return 'Processing';
-			case self::STATUS_200_OK: return 'OK'; 
-			case self::STATUS_201_CREATED: return 'Created'; 
-			case self::STATUS_202_ACCEPTED: return 'Accepted'; 
-			case self::STATUS_203_NON_AUTHORITATIVE_INFORMATION: return 'Non-Authoritative Information'; 
-			case self::STATUS_204_NO_CONTENT: return 'No Content'; 
-			case self::STATUS_205_RESET_CONTENT: return 'Reset Content'; 
-			case self::STATUS_206_PARTIAL_CONTENT: return 'Partial Content'; 
-			case self::STATUS_207_MULTI_STATUS: return 'Multi-Status'; 
-			case self::STATUS_208_ALREADY_REPORTED: return 'Already Reported'; 
-			case self::STATUS_226_IM_USED: return 'IM Used'; 
-			case self::STATUS_300_MULTIPLE_CHOICES: return 'Multiple Choices'; 
-			case self::STATUS_301_MOVED_PERMANENTLY: return 'Moved Permanently'; 
-			case self::STATUS_302_FOUND: return 'Found'; 
-			case self::STATUS_303_SEE_OTHER: return 'See Other'; 
-			case self::STATUS_304_NOT_MODIFIED: return 'Not Modified'; 
-			case self::STATUS_305_USE_PROXY: return 'Use Proxy';  
-			case self::STATUS_307_TEMPORARY_REDIRECT: return 'Temporary Redirect'; 
-			case self::STATUS_308_PERMANENT_REDIRECT: return 'Permanent Redirect'; 
-			case self::STATUS_400_BAD_REQUEST: return 'Bad Request'; 
-			case self::STATUS_401_UNAUTHORIZED: return 'Unauthorized'; 
-			case self::STATUS_402_PAYMENT_REQUIRED: return 'Payment Required'; 
-			case self::STATUS_403_FORBIDDEN: return 'Forbidden'; 
-			case self::STATUS_404_NOT_FOUND: return 'Not Found'; 
-			case self::STATUS_405_METHOD_NOT_ALLOWED: return 'Method Not Allowed'; 
-			case self::STATUS_406_NOT_ACCEPTABLE: return 'Not Acceptable'; 
-			case self::STATUS_407_PROXY_AUTHENTICATION_REQUIRED: return 'Proxy Authentication Required'; 
-			case self::STATUS_408_REQUEST_TIMEOUT: return 'Request Timeout'; 
-			case self::STATUS_409_CONFLICT: return 'Conflict'; 
-			case self::STATUS_410_GONE: return 'Gone'; 
-			case self::STATUS_411_LENGTH_REQUIRED: return 'Length Required'; 
-			case self::STATUS_412_PRECONDITION_FAILED: return 'Precondition Failed'; 
-			case self::STATUS_413_REQUEST_ENTITY_TOO_LARGE: return 'Request Entity Too Large'; 
-			case self::STATUS_414_REQUEST_URI_TOO_LONG: return 'Request-URI Too Large'; 
-			case self::STATUS_415_UNSUPPORTED_MEDIA_TYPE: return 'Unsupported Media Type'; 
+			case self::STATUS_200_OK: return 'OK';
+			case self::STATUS_201_CREATED: return 'Created';
+			case self::STATUS_202_ACCEPTED: return 'Accepted';
+			case self::STATUS_203_NON_AUTHORITATIVE_INFORMATION: return 'Non-Authoritative Information';
+			case self::STATUS_204_NO_CONTENT: return 'No Content';
+			case self::STATUS_205_RESET_CONTENT: return 'Reset Content';
+			case self::STATUS_206_PARTIAL_CONTENT: return 'Partial Content';
+			case self::STATUS_207_MULTI_STATUS: return 'Multi-Status';
+			case self::STATUS_208_ALREADY_REPORTED: return 'Already Reported';
+			case self::STATUS_226_IM_USED: return 'IM Used';
+			case self::STATUS_300_MULTIPLE_CHOICES: return 'Multiple Choices';
+			case self::STATUS_301_MOVED_PERMANENTLY: return 'Moved Permanently';
+			case self::STATUS_302_FOUND: return 'Found';
+			case self::STATUS_303_SEE_OTHER: return 'See Other';
+			case self::STATUS_304_NOT_MODIFIED: return 'Not Modified';
+			case self::STATUS_305_USE_PROXY: return 'Use Proxy';
+			case self::STATUS_307_TEMPORARY_REDIRECT: return 'Temporary Redirect';
+			case self::STATUS_308_PERMANENT_REDIRECT: return 'Permanent Redirect';
+			case self::STATUS_400_BAD_REQUEST: return 'Bad Request';
+			case self::STATUS_401_UNAUTHORIZED: return 'Unauthorized';
+			case self::STATUS_402_PAYMENT_REQUIRED: return 'Payment Required';
+			case self::STATUS_403_FORBIDDEN: return 'Forbidden';
+			case self::STATUS_404_NOT_FOUND: return 'Not Found';
+			case self::STATUS_405_METHOD_NOT_ALLOWED: return 'Method Not Allowed';
+			case self::STATUS_406_NOT_ACCEPTABLE: return 'Not Acceptable';
+			case self::STATUS_407_PROXY_AUTHENTICATION_REQUIRED: return 'Proxy Authentication Required';
+			case self::STATUS_408_REQUEST_TIMEOUT: return 'Request Timeout';
+			case self::STATUS_409_CONFLICT: return 'Conflict';
+			case self::STATUS_410_GONE: return 'Gone';
+			case self::STATUS_411_LENGTH_REQUIRED: return 'Length Required';
+			case self::STATUS_412_PRECONDITION_FAILED: return 'Precondition Failed';
+			case self::STATUS_413_REQUEST_ENTITY_TOO_LARGE: return 'Request Entity Too Large';
+			case self::STATUS_414_REQUEST_URI_TOO_LONG: return 'Request-URI Too Large';
+			case self::STATUS_415_UNSUPPORTED_MEDIA_TYPE: return 'Unsupported Media Type';
 			case self::STATUS_416_REQUEST_RANGE_NOT_SATISFIABLE: return 'Requested Range Not Satisfiable';
 			case self::STATUS_417_EXPECTATION_FAILED: return 'Expectation Failed';
 			case self::STATUS_418_IM_A_TEAPOT: return 'I’m a teapot';
@@ -744,18 +743,18 @@ class Response {
 			case self::STATUS_429_TOO_MANY_REQUESTS: return 'Too Many Requests';
 			case self::STATUS_431_REQUEST_HEADER_FIELDS_TOO_LARGE: return 'Request Header Fields Too Large';
 			case self::STATUS_451_UNAVAILABLE_FOR_LEGAL_REASONS: return 'Unavailable For Legal Reasons';
-			case self::STATUS_500_INTERNAL_SERVER_ERROR: return 'Internal Server Error'; 
-			case self::STATUS_501_NOT_IMPLEMENTED: return 'Not Implemented'; 
-			case self::STATUS_502_BAD_GATEWAY: return 'Bad Gateway'; 
-			case self::STATUS_503_SERVICE_UNAVAILABLE: return 'Service Unavailable'; 
-			case self::STATUS_504_GATEWAY_TIME_OUT: return 'Gateway Timeout'; 
-			case self::STATUS_505_HTTP_VERSION_NOT_SUPPORTED: return 'HTTP Version not supported'; 
-			case self::STATUS_506_VARIANT_ALSO_NEGOTIATES: return 'Variant Also Negotiates';  
-			case self::STATUS_507_INSUFFICIENT_STORAGE: return 'Insufficient Storage';  
-			case self::STATUS_508_LOOP_DETECTED: return 'Loop Detected';  
-			case self::STATUS_509_BANDWIDTH_LIMIT_EXCEEDED: return 'Bandwidth Limit Exceeded';  
-			case self::STATUS_510_NOT_EXTENDED: return 'Not Extended';  
-			case self::STATUS_511_NETWORK_AUTHENTICATION_REQUIRED: return 'Network Authentication Required'; 
+			case self::STATUS_500_INTERNAL_SERVER_ERROR: return 'Internal Server Error';
+			case self::STATUS_501_NOT_IMPLEMENTED: return 'Not Implemented';
+			case self::STATUS_502_BAD_GATEWAY: return 'Bad Gateway';
+			case self::STATUS_503_SERVICE_UNAVAILABLE: return 'Service Unavailable';
+			case self::STATUS_504_GATEWAY_TIME_OUT: return 'Gateway Timeout';
+			case self::STATUS_505_HTTP_VERSION_NOT_SUPPORTED: return 'HTTP Version not supported';
+			case self::STATUS_506_VARIANT_ALSO_NEGOTIATES: return 'Variant Also Negotiates';
+			case self::STATUS_507_INSUFFICIENT_STORAGE: return 'Insufficient Storage';
+			case self::STATUS_508_LOOP_DETECTED: return 'Loop Detected';
+			case self::STATUS_509_BANDWIDTH_LIMIT_EXCEEDED: return 'Bandwidth Limit Exceeded';
+			case self::STATUS_510_NOT_EXTENDED: return 'Not Extended';
+			case self::STATUS_511_NETWORK_AUTHENTICATION_REQUIRED: return 'Network Authentication Required';
 			default:
 				if (!$required) return null;
 				throw new \InvalidArgumentException('Unknown http status code: ' . $code);
@@ -773,9 +772,9 @@ interface HeaderJob {
 
 class ApplyHeaderJob implements HeaderJob {
 	private $headerStr;
-	private $replace; 
+	private $replace;
 	/**
-	 * 
+	 *
 	 * @param string $headerStr
 	 * @param bool $replace
 	 */
@@ -783,26 +782,26 @@ class ApplyHeaderJob implements HeaderJob {
 		if (is_numeric(strpos($headerStr, "\r")) || is_numeric(strpos($headerStr, "\n"))) {
 			throw new \InvalidArgumentException('Illegal chars in http header str: ' . $headerStr);
 		}
-		
+
 		// @todo maybe throw an illegalargument exception headerStr contains illegal characters.
 		$this->headerStr = str_replace(array("\r", "\n"), '', (string) $headerStr);
 		$this->replace = (boolean) $replace;
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getHeaderStr() {
 		return $this->headerStr;
 	}
 	/**
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function isReplace() {
 		return $this->replace;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -830,13 +829,13 @@ class RemoveHeaderJob implements HeaderJob {
 }
 
 class HttpHeadersAlreadySentException extends \ErrorException {
-	
+
 }
 
 class ResponseBufferIsClosed extends HttpRuntimeException {
-	
+
 }
 
 class PayloadAlreadySentException extends HttpRuntimeException {
-	
+
 }
