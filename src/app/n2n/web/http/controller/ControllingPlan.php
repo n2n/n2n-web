@@ -622,7 +622,7 @@ class ControllerContextQueue {
 	 * @return ControllerContext|null
 	 */
 	function getByKey(string $key) {
-		foreach ($this->mainControllerContexts as $mainCc) {
+		foreach ($this->controllerContexts as $mainCc) {
 			if ($mainCc->getName() == $key) {
 				return $mainCc;
 			}
