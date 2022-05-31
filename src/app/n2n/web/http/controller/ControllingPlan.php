@@ -204,10 +204,6 @@ class ControllingPlan {
 		if ($this->status !== self::STATUS_READY) {
 			throw new ControllingPlanException('ControllingPlan already executed.');
 		}
-		
-		if ($this->n2nLocale !== null) {
-			$this->getHttpContext()->getN2nContext()->setN2nLocale($this->n2nLocale);
-		}
 
 		try {
 			$this->workOffQueues();
@@ -242,6 +238,10 @@ class ControllingPlan {
 		}
 
 		$this->triggerPostPrecache();
+
+		if ($this->n2nLocale !== null) {
+			$this->getHttpContext()->getN2nContext()->setN2nLocale($this->n2nLocale);
+		}
 		
 		$this->status = self::STATUS_FILTER;
 		while ($this->status == self::STATUS_FILTER && null !== ($nextFilter = $this->filterQueue->next())) {
