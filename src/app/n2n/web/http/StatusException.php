@@ -25,9 +25,9 @@ class StatusException extends \RuntimeException {
 	private $status;
 // 	private $attributes;
 	
-	public function __construct($status, $message = null, $code = null, \Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-		$this->status = (int) $status;
+	public function __construct(int $status, string $message = null, int $code = null, \Exception $previous = null) {
+		parent::__construct((string) $message, (int) $code, $previous);
+		$this->status = $status;
 // 		$this->attributes = new Attributes();
 	}
 	/**
