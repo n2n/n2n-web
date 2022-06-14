@@ -23,29 +23,30 @@ namespace n2n\web\http\orm;
 
 use n2n\reflection\ObjectAdapter;
 use n2n\web\http\ResponseCacheStore;
+use n2n\context\ThreadScoped;
 
-class ResponseCacheClearer extends ObjectAdapter {
+class ResponseCacheClearer extends ObjectAdapter implements ThreadScoped {
 	private $responseCacheControl;
-	
+
 	private function _init(ResponseCacheStore $responseCacheStore = null) {
 		$this->responseCacheControl = $responseCacheStore;
 	}
-	
+
 	public function _postPersist() {
 		if ($this->responseCacheControl === null) return;
-		
+
 		$this->responseCacheControl->clear();
 	}
-	
+
 	public function _postUpdate() {
 		if ($this->responseCacheControl === null) return;
-		
+
 		$this->responseCacheControl->clear();
 	}
-	
+
 	public function _postRemove() {
 		if ($this->responseCacheControl === null) return;
-		
+
 		$this->responseCacheControl->clear();
 	}
 }
