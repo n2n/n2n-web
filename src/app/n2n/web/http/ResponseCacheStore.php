@@ -167,7 +167,7 @@ class ResponseCacheActionQueue implements TransactionalResource {
 		$this->onCommitClosures[] = $closure;
 	}
 	
-	public function beginTransaction(Transaction $transaction) {
+	public function beginTransaction(Transaction $transaction): void {
 		$this->inTransaction = true;		
 	}
 	
@@ -175,7 +175,7 @@ class ResponseCacheActionQueue implements TransactionalResource {
 		return true;
 	}
 	
-	public function commit(Transaction $transaction) {
+	public function commit(Transaction $transaction): void {
 		foreach ($this->onCommitClosures as $onCommitClosure) {
 			$onCommitClosure();
 		}
@@ -186,7 +186,10 @@ class ResponseCacheActionQueue implements TransactionalResource {
 	/**
 	 * @param Transaction $transaction
 	 */
-	public function rollBack(Transaction $transaction) {
+	public function rollBack(Transaction $transaction): void {
 		$this->reset();
+	}
+
+	function release(): void {
 	}
 }
