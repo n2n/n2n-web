@@ -28,6 +28,8 @@ use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
 use n2n\util\type\attrs\AttributeReader;
 use n2n\util\type\attrs\AttributesException;
+use n2n\util\type\TypeConstraints;
+use n2n\util\StringUtils;
 
 class HttpData implements AttributeReader {
 
@@ -84,7 +86,66 @@ class HttpData implements AttributeReader {
 	function has($path) {
 		return $this->dataMap->has($path);
 	}
-	
+
+	/**
+	 * @param array $paths
+	 * @param \Closure $closure
+	 * @return HttpData
+	 */
+	function mapStrings(array $paths, \Closure $closure) {
+		try {
+			$this->dataMap->mapStrings($paths, $closure);
+		} catch (\n2n\util\type\attrs\AttributesException $e) {
+			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param $path
+	 * @param \Closure $closure
+	 * @return HttpData
+	 */
+	function mapString($path, \Closure $closure) {
+		try {
+			$this->dataMap->mapString($path, $closure);
+		} catch (\n2n\util\type\attrs\AttributesException $e) {
+			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param $path
+	 * @param bool $simpleWhitespacesOnly
+	 * @return HttpData
+	 */
+	function cleanString($path, bool $simpleWhitespacesOnly = true) {
+		try {
+			$this->dataMap->cleanString($path, $simpleWhitespacesOnly);
+		} catch (\n2n\util\type\attrs\AttributesException $e) {
+			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+		}
+		return $this;
+	}
+
+	/**
+	 * @param array $paths
+	 * @param bool $simpleWhitespacesOnly
+	 * @return HttpData
+	 */
+	function cleanStrings(array $paths, bool $simpleWhitespacesOnly = true) {
+		try {
+			$this->dataMap->cleanStrings($paths, $simpleWhitespacesOnly);
+		} catch (\n2n\util\type\attrs\AttributesException $e) {
+			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+		}
+		return $this;
+	}
+
+
 	/**
 	 * @param string $name
 	 * @param bool $mandatory
