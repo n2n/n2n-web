@@ -103,12 +103,7 @@ class VarsRequest implements Request {
 	}
 	
 	private function initUrl(array $getVars) {
-		$requestUrl = null;
-		if (isset($this->serverVars['HTTP_X_REWRITE_URL'])) {
-			$requestUrl = $this->serverVars['HTTP_X_REWRITE_URL'];
-		} else {
-			$requestUrl = $this->extractServerVar('REQUEST_URI');
-		}
+		$requestUrl = $this->serverVars['HTTP_X_REWRITE_URL'] ?? $this->extractServerVar('REQUEST_URI');
 		
 		$queryLength = mb_strlen($this->extractServerVar('QUERY_STRING'));
 		if ($queryLength > 0) $requestUrl = mb_substr($requestUrl, 0, -($queryLength + 1));
@@ -117,15 +112,13 @@ class VarsRequest implements Request {
 		
 		$this->cmdContextPath = Path::create($scriptDirName, true)->chEndingDelimiter(true);
 		$this->cmdPath = Path::create(mb_substr($requestUrl, mb_strlen($scriptDirName)), true);
-		
-		$protocol = isset($this->serverVars['HTTPS']) && $this->serverVars['HTTPS'] != 'off' 
-				&& $this->serverVars['HTTPS'] ? Request::PROTOCOL_HTTPS : Request::PROTOCOL_HTTP;
-		$hostName = null;
-		if (isset($this->serverVars['HTTP_HOST'])) {
-			$hostName = $this->serverVars['HTTP_HOST'];
-		} else {
-			$hostName = $this->extractServerVar('SERVER_NAME');	
-		}
+
+		$protocol = $this->serverVars['HTTP_X_FORWARDED_PROTO'] ?? $this->serverVars['REQUEST_SCHEME']
+				?? (isset($this->serverVars['HTTPS']) && $this->serverVars['HTTPS'] != 'off'
+						&& $this->serverVars['HTTPS'] ? Request::PROTOCOL_HTTPS : Request::PROTOCOL_HTTP);
+
+		$hostName = $this->serverVars['HTTP_X_FORWARDED_HOST'] ?? $this->serverVars['HTTP_HOST']
+				?? $this->extractServerVar('SERVER_NAME');
 		
 		$this->origMethodName = mb_strtoupper($this->extractServerVar('REQUEST_METHOD'));
 		try {
@@ -136,7 +129,7 @@ class VarsRequest implements Request {
 		
 		$this->requestedUrl = new Url($protocol, Authority::create($hostName), 
 				$this->cmdContextPath->ext($this->cmdPath), new Query($getVars));		
-	}	
+	}
 	
 	/**
 	 * {@inheritDoc}
