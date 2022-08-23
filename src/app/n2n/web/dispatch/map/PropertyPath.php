@@ -22,6 +22,7 @@
 namespace n2n\web\dispatch\map;
 
 use n2n\util\ex\IllegalStateException;
+
 class PropertyPath implements \IteratorAggregate, \Countable {
 	const PROPERTY_LEVEL_SEPARATOR = '.';
 	
@@ -35,10 +36,8 @@ class PropertyPath implements \IteratorAggregate, \Countable {
 			$this->pathParts[] = PropertyPathPart::createFromExpression($pathPart);
 		}
 	}
-	/* (non-PHPdoc)
-	 * @see IteratorAggregate::getIterator()
-	 */
-	public function getIterator() {
+
+	public function getIterator(): \Traversable {
 		return new PropertyPathIterator($this->pathParts);
 	}
 	
@@ -83,7 +82,7 @@ class PropertyPath implements \IteratorAggregate, \Countable {
 		return implode(self::PROPERTY_LEVEL_SEPARATOR, $pathParts);
 	}
 
-	public function count() {
+	public function count(): int {
 		return sizeof($this->pathParts);
 	}
 	
@@ -190,23 +189,23 @@ class PropertyPathIterator implements \Iterator {
 		$this->position = 0;
 	}
 
-	function rewind() {
+	function rewind(): void {
 		$this->position = 0;
 	}
 
-	function current() {
+	function current(): mixed {
 		return $this->array[$this->position];
 	}
 
-	function key() {
+	function key(): int {
 		return $this->position;
 	}
 
-	function next() {
+	function next(): void {
 		++$this->position;
 	}
 
-	function valid() {
+	function valid(): bool {
 		return isset($this->array[$this->position]);
 	}
 }

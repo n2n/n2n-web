@@ -109,7 +109,7 @@ class PropertyPathPart {
 	/**
 	 * @param string $expression
 	 * @throws InvalidPropertyExpressionException
-	 * @return \n2n\web\dispatch\map\PropertyPathPart
+	 * @return PropertyPathPart
 	 */
 	public static function createFromExpression($expression) {
 		if ($expression instanceof PropertyPathPart) {

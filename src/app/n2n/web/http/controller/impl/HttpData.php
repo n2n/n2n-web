@@ -28,10 +28,11 @@ use n2n\util\type\attrs\AttributePath;
 use n2n\util\type\attrs\DataMap;
 use n2n\util\type\attrs\AttributeReader;
 use n2n\util\type\attrs\AttributesException;
+use n2n\util\type\attrs\AttributeWriter;
 use n2n\util\type\TypeConstraints;
 use n2n\util\StringUtils;
 
-class HttpData implements AttributeReader {
+class HttpData implements AttributeReader, AttributeWriter {
 
 	private $dataMap;
 	private $errStatus;
@@ -78,7 +79,27 @@ class HttpData implements AttributeReader {
 			$defaultValue = null) {
 		return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
 	}
-	
+
+	/**
+	 * <strong>This method throws an {@link AttributesException} instead of a {@link StatusException} to implement
+	 * {@link AttributeReader} correclty.</strong>
+	 *
+	 * {@inheritDoc}
+	 */
+	function writeAttribute(AttributePath $path, mixed $value): void {
+		$this->dataMap->writeAttribute($path, $value);
+	}
+
+	/**
+	 * <strong>This method throws an {@link AttributesException} instead of a {@link StatusException} to implement
+	 * {@link AttributeReader} correclty.</strong>
+	 *
+	 * {@inheritDoc}
+	 */
+	function removeAttribute(AttributePath $path): bool {
+		return $this->dataMap->removeAttribute($path);
+	}
+
 	/**
 	 * @param string|AttributePath $path
 	 * @return boolean
@@ -311,11 +332,12 @@ class HttpData implements AttributeReader {
 		
 		return null;
 	}
-	
+
 	/**
 	 * @param string|AttributePath|string[] $path
 	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
+	 * @param int|null $errStatus
 	 * @return HttpData|null
 	 */
 	public function optHttpData($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
@@ -339,10 +361,10 @@ class HttpData implements AttributeReader {
 		
 		return array_map(fn ($data) => new HttpData(new DataMap($data)), $httpDatas);
 	}
-	
+
 	/**
 	 * @param string $propName
-	 * @param \Closure $closure
+	 * @param \Closure $valueCallback
 	 * @param array $convertableExcpetionNames
 	 * @return HttpData
 	 */
@@ -365,7 +387,7 @@ class HttpData implements AttributeReader {
 	
 	/**
 	 * 
-	 * @return \n2n\util\type\attrs\DataMap
+	 * @return DataMap
 	 */
 	function toDataMap() {
 		return $this->dataMap;
