@@ -38,10 +38,9 @@ use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
 use n2n\web\http\controller\ControllerErrorException;
 use n2n\core\TypeNotFoundException;
-use n2n\io\managed\File;
-use n2n\validation\build\ValidationJob;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
+use n2n\util\magic\MagicTask;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -448,11 +447,20 @@ trait ControllingUtilsTrait {
 		return $this->cu()->intercept(...$interceptors);
 	}
 	
+//	/**
+//	 * @return ExecResult
+//	 * @see ControllingUtils::val()
+//	 * @deprecated use exec()
+//	 */
+//	protected final function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+//		return $this->cu()->val($validationJob, $rejectStatus);
+//	}
+
 	/**
-	 * @see ControllingUtils::val()
-	 * @return ValResult
+	 * @return ExecResult
+	 * @see ControllingUtils::exec()
 	 */
-	protected final function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
-		return $this->cu()->val($validationJob, $rejectStatus);
+	protected final function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+		return $this->cu()->exec($magicTask, $rejectStatus);
 	}
 }

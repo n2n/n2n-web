@@ -21,24 +21,20 @@
  */
 namespace n2n\web\http\controller\impl;
 
-use n2n\validation\build\ErrorMap;
-use n2n\validation\build\ValidationResult;
+use n2n\util\magic\ErrorResult;
+use n2n\util\magic\MagicArray;
 
-class ValResult implements ValidationResult {
-	private $origValidationResult;
-	private $cu;
-	
-	function __construct(ValidationResult $origValidationResult, ControllingUtils $cu) {
-		$this->origValidationResult = $origValidationResult;
-		$this->cu = $cu;
+class ExecResult implements ErrorResult {
+
+	function __construct(private ErrorResult $origErrorResult, private ControllingUtils $cu) {
 	}
 	
 	function hasErrors(): bool {
-		return $this->origValidationResult->hasErrors();
+		return $this->origErrorResult->hasErrors();
 	}
 	
-	function getErrorMap(): ErrorMap {
-		return $this->origValidationResult->getErrorMap();	
+	function getErrorMap(): MagicArray {
+		return $this->origErrorResult->getErrorMap();
 	}
 	
 	/**

@@ -64,8 +64,9 @@ use n2n\web\http\StatusException;
 use n2n\core\container\N2nContext;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
-use n2n\validation\build\ValidationJob;
-use n2n\validation\err\ValidationException;
+use n2n\util\magic\MagicTaskExecutionException;
+use n2n\util\magic\MagicTask;
+use n2n\core\container\Transaction;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -511,7 +512,7 @@ class ControllingUtils {
 	}
 	
 	/**
-	 * @param array $data
+	 * @param \SimpleXMLElement|string $data
 	 * @param bool $includeBuffer
 	 */
 	public function sendXml($data, bool $includeBuffer = true) {
@@ -535,16 +536,16 @@ class ControllingUtils {
 	}
 	
 	/**
-	 * @param File $file
+	 * @param Downloadable $file
 	 * @param bool $includeBuffer
 	 */
 	public function sendFile(Downloadable $file, bool $includeBuffer = true) {
 		$this->send(new FilePayload($file), $includeBuffer);
 	}
-	
+
 	/**
-	 * @param File $file
-	 * @param string $name
+	 * @param Downloadable $file
+	 * @param string|null $name
 	 * @param bool $includeBuffer
 	 */
 	public function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true) {
@@ -611,18 +612,35 @@ class ControllingUtils {
 		return true;
 	}
 	
+//	/**
+//	 * Executes a {@see ValidationJob} and automatically converts {@see ValidationException}s to {@see StatusException}s
+//	 *
+//	 * @param ValidationJob $validationJob
+//	 * @param int $rejectStatus
+//	 * @return ExecResult
+//	 * @throws StatusException
+//	 */
+//	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+//		try {
+//			return new ExecResult($validationJob->exec($this->getN2nContext()), $this);
+//		} catch (ValidationException $e) {
+//			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+//		}
+//	}
+
 	/**
-	 * Executes a {@see ValidationJob} and automatically converts {@see ValidationException}s to {@see StatusException}s 
-	 * 
-	 * @param ValidationJob $validationJob
+	 * Executes a {@see MagicTask} and automatically converts {@see MagicTaskExecutionException}s to
+	 * {@see StatusException}s
+	 *
+	 * @param MagicTask $magicTask
 	 * @param int $rejectStatus
+	 * @return ExecResult
 	 * @throws StatusException
-	 * @return \n2n\web\http\controller\impl\ValResult
 	 */
-	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+	function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
 		try {
-			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
-		} catch (ValidationException $e) {
+			return new ExecResult($magicTask->exec($this->getN2nContext()), $this);
+		} catch (MagicTaskExecutionException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
