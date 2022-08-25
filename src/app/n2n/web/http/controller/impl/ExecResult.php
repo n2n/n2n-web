@@ -21,20 +21,20 @@
  */
 namespace n2n\web\http\controller\impl;
 
-use n2n\util\magic\ErrorResult;
+use n2n\util\magic\TaskResult;
 use n2n\util\magic\MagicArray;
 
-class ExecResult implements ErrorResult {
+class ExecResult implements TaskResult {
 
-	function __construct(private ErrorResult $origErrorResult, private ControllingUtils $cu) {
+	function __construct(private TaskResult $origTaskResult, private ControllingUtils $cu) {
 	}
 	
 	function hasErrors(): bool {
-		return $this->origErrorResult->hasErrors();
+		return $this->origTaskResult->hasErrors();
 	}
 	
 	function getErrorMap(): MagicArray {
-		return $this->origErrorResult->getErrorMap();
+		return $this->origTaskResult->getErrorMap();
 	}
 	
 	/**
