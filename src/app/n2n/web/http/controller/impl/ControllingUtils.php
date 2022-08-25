@@ -612,21 +612,21 @@ class ControllingUtils {
 		return true;
 	}
 	
-//	/**
-//	 * Executes a {@see ValidationJob} and automatically converts {@see ValidationException}s to {@see StatusException}s
-//	 *
-//	 * @param ValidationJob $validationJob
-//	 * @param int $rejectStatus
-//	 * @return ExecResult
-//	 * @throws StatusException
-//	 */
-//	function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
-//		try {
-//			return new ExecResult($validationJob->exec($this->getN2nContext()), $this);
-//		} catch (ValidationException $e) {
-//			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
-//		}
-//	}
+	/**
+	 * Executes a {@see ValidationJob} and automatically converts {@see ValidationException}s to {@see StatusException}s
+	 *
+	 * @param MagicTask $validationJob
+	 * @param int $rejectStatus
+	 * @return ValResult
+	 * @throws StatusException
+	 */
+	function val(MagicTask $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+		try {
+			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
+		} catch (MagicTaskExecutionException $e) {
+			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+		}
+	}
 
 	/**
 	 * Executes a {@see MagicTask} and automatically converts {@see MagicTaskExecutionException}s to

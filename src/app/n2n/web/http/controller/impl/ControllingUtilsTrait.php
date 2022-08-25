@@ -447,14 +447,14 @@ trait ControllingUtilsTrait {
 		return $this->cu()->intercept(...$interceptors);
 	}
 	
-//	/**
-//	 * @return ExecResult
-//	 * @see ControllingUtils::val()
-//	 * @deprecated use exec()
-//	 */
-//	protected final function val(ValidationJob $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
-//		return $this->cu()->val($validationJob, $rejectStatus);
-//	}
+	/**
+	 * @return ExecResult
+	 * @see ControllingUtils::val()
+	 * @deprecated use exec()
+	 */
+	protected final function val(MagicTask $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+		return $this->cu()->val($validationJob, $rejectStatus);
+	}
 
 	/**
 	 * @return ExecResult
