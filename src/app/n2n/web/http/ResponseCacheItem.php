@@ -23,6 +23,7 @@ namespace n2n\web\http;
 
 use n2n\web\http\payload\BufferedPayload;
 use n2n\util\type\ArgUtils;
+use DateTime;
 
 class ResponseCacheItem extends BufferedPayload {
 	private int $expireTimestamp;
@@ -30,12 +31,12 @@ class ResponseCacheItem extends BufferedPayload {
 	/**
 	 * @param string $contents
 	 * @param int $statusCode
-	 * @param array $headerJobs
+	 * @param HeaderJob[] $headerJobs
 	 * @param HttpCacheControl|null $httpCacheControl
-	 * @param \DateTime $expireDate
+	 * @param DateTime $expireDate
 	 */
 	public function __construct(private string $contents, private int $statusCode, private array $headerJobs,
-			private ?HttpCacheControl $httpCacheControl, \DateTime $expireDate) {
+			private ?HttpCacheControl $httpCacheControl, DateTime $expireDate) {
 		ArgUtils::valArray($headerJobs, HeaderJob::class);
 		$this->expireTimestamp = $expireDate->getTimestamp();
 	}
@@ -46,10 +47,10 @@ class ResponseCacheItem extends BufferedPayload {
 		return $this->httpCacheControl;
 	}
 	/**
-	 * @param \DateTime $now
+	 * @param DateTime $now
 	 * @return boolean
 	 */
-	public function isExpired(\DateTime $now) {
+	public function isExpired(DateTime $now) {
 		return $this->expireTimestamp < $now->getTimestamp();
 	}
 	/* (non-PHPdoc)
