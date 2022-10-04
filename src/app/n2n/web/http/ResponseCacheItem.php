@@ -25,24 +25,18 @@ use n2n\web\http\payload\BufferedPayload;
 use n2n\util\type\ArgUtils;
 
 class ResponseCacheItem extends BufferedPayload {
-	private $contents;
-	private $statusCode;
-	private $headerJobs;
-	private $httpCacheControl;
-	private $expireTimestamp;
+	private int $expireTimestamp;
+
 	/**
 	 * @param string $contents
 	 * @param int $statusCode
 	 * @param array $headerJobs
-	 * @param HttpCacheControl $httpCacheControl
+	 * @param HttpCacheControl|null $httpCacheControl
 	 * @param \DateTime $expireDate
 	 */
-	public function __construct($contents, $statusCode, array $headerJobs, HttpCacheControl $httpCacheControl = null, \DateTime $expireDate) {
-		$this->contents = $contents;
-		$this->statusCode = $statusCode;
+	public function __construct(private string $contents, private int $statusCode, private array $headerJobs,
+			private ?HttpCacheControl $httpCacheControl, \DateTime $expireDate) {
 		ArgUtils::valArray($headerJobs, HeaderJob::class);
-		$this->headerJobs = $headerJobs;
-		$this->httpCacheControl = $httpCacheControl;
 		$this->expireTimestamp = $expireDate->getTimestamp();
 	}
 	/**
