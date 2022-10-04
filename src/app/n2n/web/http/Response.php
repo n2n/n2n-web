@@ -118,7 +118,7 @@ class Response {
 	/**
 	 * @var HeaderJob[]
 	 */
-	private $headers;
+	private $headerJobs;
 	private $statusCode;
 	private ?HttpCacheControl $httpCacheControl = null;
 	private ?ResponseCacheControl $responseCacheControl = null;
@@ -372,7 +372,7 @@ class Response {
 // 		$this->ensureBuffering();
 
 		$this->statusCode = self::STATUS_200_OK;
-		$this->headers = array();
+		$this->headerJobs = array();
 		if ($this->isBuffering()) {
 			$this->fetchBufferedOutput(false);
 		}
@@ -516,7 +516,7 @@ class Response {
 					$this->buildQueryParamsCharacteristic(),
 					$this->responseCacheControl->getCharacteristics(),
 					new ResponseCacheItem($this->bodyContents, $this->statusCode,
-							$this->headers, $this->httpCacheControl, $expireDate));
+							$this->headerJobs, $this->httpCacheControl, $expireDate));
 		}
 
 		if ($this->notModified(HashUtils::base36md5Hash($this->bodyContents, 26))) {
@@ -563,11 +563,15 @@ class Response {
 //			return;
 //		}
 
-		$this->headers[] = new ApplyHeaderJob($header, $replace);
+		$this->headerJobs[] = new ApplyHeaderJob($header, $replace);
 	}
 
 	function removeHeader(string $name) {
-		$this->headers[] = new RemoveHeaderJob($name);
+		$this->headerJobs[] = new RemoveHeaderJob($name);
+	}
+
+	function addHeaderJob(HeaderJob $headerJob) {
+		$this->headerJobs[] = $headerJob;
 	}
 
 	public function setHttpCacheControl(HttpCacheControl $httpCacheControl = null) {
@@ -627,7 +631,7 @@ class Response {
 			$this->httpCacheControl->applyHeaders($this);
 		}
 
-		while (!is_null($header = array_shift($this->headers))) {
+		while (!is_null($header = array_shift($this->headerJobs))) {
 			$header->flush();
 		}
 	}

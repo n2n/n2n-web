@@ -22,24 +22,26 @@
 namespace n2n\web\http;
 
 use n2n\web\http\payload\BufferedPayload;
+use n2n\util\type\ArgUtils;
 
 class ResponseCacheItem extends BufferedPayload {
 	private $contents;
 	private $statusCode;
-	private $headers;
+	private $headerJobs;
 	private $httpCacheControl;
 	private $expireTimestamp;
 	/**
 	 * @param string $contents
 	 * @param int $statusCode
-	 * @param array $headers
+	 * @param array $headerJobs
 	 * @param HttpCacheControl $httpCacheControl
 	 * @param \DateTime $expireDate
 	 */
-	public function __construct($contents, $statusCode, array $headers, HttpCacheControl $httpCacheControl = null, \DateTime $expireDate) {
+	public function __construct($contents, $statusCode, array $headerJobs, HttpCacheControl $httpCacheControl = null, \DateTime $expireDate) {
 		$this->contents = $contents;
 		$this->statusCode = $statusCode;
-		$this->headers = $headers;
+		ArgUtils::valArray($headerJobs, HeaderJob::class);
+		$this->headerJobs = $headerJobs;
 		$this->httpCacheControl = $httpCacheControl;
 		$this->expireTimestamp = $expireDate->getTimestamp();
 	}
@@ -67,8 +69,8 @@ class ResponseCacheItem extends BufferedPayload {
 	 */
 	public function prepareForResponse(\n2n\web\http\Response $response): void {
 		$response->setStatus($this->statusCode);
-		foreach ($this->headers as $header) {
-			$response->setHeader($header);
+		foreach ($this->headerJobs as $headerJob) {
+			$response->addHeaderJob($headerJob);
 		}
 
 		$response->setHttpCacheControl($this->httpCacheControl);
