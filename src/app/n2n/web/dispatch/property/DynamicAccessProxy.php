@@ -28,6 +28,7 @@ use n2n\util\type\ArgUtils;
 use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\reflection\property\PropertyValueTypeMissmatchException;
 use n2n\util\type\TypeUtils;
+use n2n\util\ex\UnsupportedOperationException;
 
 class DynamicAccessProxy implements AccessProxy {
 	private $propertyName;
@@ -114,5 +115,21 @@ class DynamicAccessProxy implements AccessProxy {
 	public function __toString(): string {	
 		return 'AccessProxy [' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') 
 				. ', ' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') . ']';
+	}
+
+	function getGetterConstraint(): TypeConstraint {
+		return $this->constraint;
+	}
+
+	function isReadable(): bool {
+		return true;
+	}
+
+	function getSetterConstraint(): TypeConstraint {
+		return $this->constraint;
+	}
+
+	function createRestricted(TypeConstraint $getterConstraint = null, TypeConstraint $setterConstraint = null): AccessProxy {
+		throw new UnsupportedOperationException();
 	}
 }
