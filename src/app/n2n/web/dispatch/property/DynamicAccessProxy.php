@@ -28,6 +28,7 @@ use n2n\util\type\ArgUtils;
 use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\reflection\property\PropertyValueTypeMissmatchException;
 use n2n\util\type\TypeUtils;
+use n2n\util\ex\UnsupportedOperationException;
 
 class DynamicAccessProxy implements AccessProxy {
 	private $propertyName;
@@ -77,7 +78,7 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setValue()
 	 */
-	public function setValue($object, $value, $validate = true) {
+	public function setValue(object $object, mixed $value, bool $validate = true): void {
 		ArgUtils::assertTrue($object instanceof DynamicDispatchable);
 		if ($validate) {
 			try {
@@ -96,7 +97,7 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::getValue()
 	 */
-	public function getValue($object) {
+	public function getValue($object): mixed {
 		ArgUtils::assertTrue($object instanceof DynamicDispatchable);
 		$value = $object->getPropertyValue($this->propertyName);
 		if ($this->nullReturnAllowed && $value === null) return $value;
@@ -114,5 +115,21 @@ class DynamicAccessProxy implements AccessProxy {
 	public function __toString(): string {	
 		return 'AccessProxy [' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') 
 				. ', ' . TypeUtils::prettyMethName(DynamicDispatchable::class, 'getPropertyValue') . ']';
+	}
+
+	function getGetterConstraint(): TypeConstraint {
+		return $this->constraint;
+	}
+
+	function isReadable(): bool {
+		return true;
+	}
+
+	function getSetterConstraint(): TypeConstraint {
+		return $this->constraint;
+	}
+
+	function createRestricted(TypeConstraint $getterConstraint = null, TypeConstraint $setterConstraint = null): AccessProxy {
+		throw new UnsupportedOperationException();
 	}
 }
