@@ -78,7 +78,7 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setValue()
 	 */
-	public function setValue($object, $value, $validate = true) {
+	public function setValue(object $object, mixed $value, bool $validate = true): void {
 		ArgUtils::assertTrue($object instanceof DynamicDispatchable);
 		if ($validate) {
 			try {
@@ -97,7 +97,7 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::getValue()
 	 */
-	public function getValue($object) {
+	public function getValue($object): mixed {
 		ArgUtils::assertTrue($object instanceof DynamicDispatchable);
 		$value = $object->getPropertyValue($this->propertyName);
 		if ($this->nullReturnAllowed && $value === null) return $value;
