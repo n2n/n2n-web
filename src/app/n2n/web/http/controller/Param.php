@@ -29,6 +29,8 @@ use n2n\util\type\attrs\Attributes;
 use n2n\util\type\attrs\DataMap;
 use n2n\util\type\attrs\DataSet;
 use n2n\web\http\controller\impl\HttpData;
+use n2n\util\type\TypeConstraint;
+use n2n\util\type\TypeConstraints;
 
 abstract class Param {
 	private string|array $value;
@@ -40,9 +42,25 @@ abstract class Param {
 	public function __construct(private string|array $rawValue) {
 		$this->value = StringUtils::convertNonPrintables($rawValue);
 	}
-	
-	public function toInt() {
-		return (int) $this->value;
+
+	private function val(TypeConstraint $typeConstraint, int $rejectStatus = Response::STATUS_404_NOT_FOUND) {
+		try {
+			return $typeConstraint->validate($this->rawValue);
+		} catch (\InvalidArgumentException $e) {
+			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+		}
+	}
+
+	function toString(int $rejectStatus = Response::STATUS_404_NOT_FOUND): string {
+		return $this->val(TypeConstraints::string());
+	}
+
+	function toInt(int $rejectStatus = Response::STATUS_404_NOT_FOUND): int {
+		return $this->val(TypeConstraints::int());
+	}
+
+	function toFloat(int $rejectStatus = Response::STATUS_404_NOT_FOUND): float {
+		return $this->val(TypeConstraints::float());
 	}
 
 	/**
@@ -58,7 +76,7 @@ abstract class Param {
 		try {
 			ArgUtils::valEnum($this->rawValue, [$trueStr, $falseStr]);
 			return $this->rawValue === $trueStr;
-		} catch (InvalidArgumentException $e) {
+		} catch (\InvalidArgumentException $e) {
 			throw new StatusException($status, $e->getMessage(), null, $e);
 		}
 	}
