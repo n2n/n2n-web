@@ -21,6 +21,7 @@
  */
 namespace n2n\web\http\controller;
 
+use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\web\http\StatusException;
 use n2n\web\http\Response;
 use n2n\util\type\ArgUtils;
@@ -46,7 +47,7 @@ abstract class Param {
 	private function val(TypeConstraint $typeConstraint, int $rejectStatus = Response::STATUS_404_NOT_FOUND) {
 		try {
 			return $typeConstraint->validate($this->rawValue);
-		} catch (\InvalidArgumentException $e) {
+		} catch (ValueIncompatibleWithConstraintsException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
@@ -56,11 +57,11 @@ abstract class Param {
 	}
 
 	function toInt(int $rejectStatus = Response::STATUS_404_NOT_FOUND): int {
-		return $this->val(TypeConstraints::int());
+		return $this->val(TypeConstraints::int(false, true));
 	}
 
 	function toFloat(int $rejectStatus = Response::STATUS_404_NOT_FOUND): float {
-		return $this->val(TypeConstraints::float());
+		return $this->val(TypeConstraints::float(false, true));
 	}
 
 	/**
