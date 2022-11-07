@@ -53,6 +53,8 @@ class VarsSession implements Session {
 			return;
 		}
 
+		$this->started = true;
+
 		// @todo find new place for static functions
 		
 		ini_set('session.use_only_cookies', true);
