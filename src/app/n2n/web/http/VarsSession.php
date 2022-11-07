@@ -74,9 +74,8 @@ class VarsSession implements Session {
 // 			session_id($_GET[self::ID_OVERWRITING_GET_PARAM]);
 // 		}
 
+        session_cache_limiter(null);
         session_gc();
-
-		session_cache_limiter(null);
 
         if ($this->dirFsPath !== null) {
             session_save_path((string) $this->dirFsPath);
