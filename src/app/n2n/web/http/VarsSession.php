@@ -75,7 +75,6 @@ class VarsSession implements Session {
 // 		}
 
         session_cache_limiter(null);
-        session_gc();
 
         if ($this->dirFsPath !== null) {
             session_save_path((string) $this->dirFsPath);
@@ -86,6 +85,8 @@ class VarsSession implements Session {
 		}
 
 		HttpUtils::sessionStart();
+
+		session_gc();
 		
 		if (!isset($_SESSION[$this->applicationName])) {
 			$_SESSION[$this->applicationName] = array();
