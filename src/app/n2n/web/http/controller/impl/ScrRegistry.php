@@ -48,7 +48,7 @@ class ScrRegistry implements RequestScoped {
 	private function testScrController(string $lookupId) {
 		try {
 			$scrController = $this->lookupManager->lookup($lookupId);
-		} catch (TypeNotFoundException $e) {
+		} catch (\ReflectionException $e) {
 			throw new \InvalidArgumentException('Invalid lookup id: ' . $lookupId, 0, $e);
 		}
 		
