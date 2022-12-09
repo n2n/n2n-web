@@ -30,7 +30,7 @@
 		"n2n/n2n" : "~7.3",
 		"n2n/n2n-context" : "~7.3",
 		"n2n/n2n-l10n" : "~7.3",
-		"n2n/n2n-reflection" : "~7.3",
+		"n2n/n2n-reflection" : "~7.3.3",
 		"n2n/n2n-util" : "~7.3",
 		"psr/http-factory": "^1",
 		"psr/http-message": "^1"

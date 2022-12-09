@@ -190,7 +190,7 @@ trait ControllingUtilsTrait {
 	protected final function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null) {
 		try {
 			return $this->cu()->createViewFromCache($viewNameExpression, $moduleNamespace);
-		} catch (TypeNotFoundException $e) {
+		} catch (\ReflectionException $e) {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
@@ -204,7 +204,7 @@ trait ControllingUtilsTrait {
 	protected final function createView(string $viewNameExpression, array $params = null, string $moduleNamespace = null) {
 		try {
 			return $this->cu()->createView($viewNameExpression, $params, $moduleNamespace);
-		} catch (TypeNotFoundException $e) {
+		} catch (\ReflectionException $e) {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
@@ -217,7 +217,7 @@ trait ControllingUtilsTrait {
 	protected final function forwardCache(string $viewNameExpression, ViewCacheControl $viewCacheControl = null) {
 		try {
 			return $this->cu()->forwardCache($viewNameExpression, $viewCacheControl);
-		} catch (TypeNotFoundException $e) {
+		} catch (\ReflectionException $e) {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
@@ -230,7 +230,7 @@ trait ControllingUtilsTrait {
 			ViewCacheControl $viewCacheControl = null) {
 		try {
 			$this->cu()->forward($viewNameExpression, $params, $viewCacheControl);
-		} catch (TypeNotFoundException $e) {
+		} catch (\ReflectionException $e) {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
