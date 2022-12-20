@@ -8,6 +8,11 @@ use n2n\core\HttpContextFactory;
 use n2n\web\http\VarsRequest;
 use n2n\web\http\VarsSession;
 use n2n\web\http\controller\ControllerRegistry;
+use n2n\util\magic\impl\SimpleMagicContext;
+use n2n\web\http\HttpContext;
+use n2n\web\http\Request;
+use n2n\web\http\Response;
+use n2n\web\http\Session;
 
 class WebN2nExtension implements N2nExtension {
 
@@ -26,7 +31,13 @@ class WebN2nExtension implements N2nExtension {
 
 		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
 
-		new ControllerInvoker($controllerRegistry)
+		$appN2nContext->setN2nHttpEngine(new ControllerInvoker($httpContext, $controllerRegistry));
+		$appN2nContext->addMagicContext(new SimpleMagicContext([
+			HttpContext::class => $httpContext,
+			Request::class => $request,
+			Response::class => $httpContext->getResponse(),
+			Session::class => $httpContext->getSession()
+		]));
 
 	}
 
