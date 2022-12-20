@@ -33,24 +33,12 @@ use n2n\context\LookupFailedException;
 use n2n\web\http\HttpContext;
 use n2n\web\http\SubsystemRule;
 
-class ControllerRegistry implements RequestScoped {
-	private $webConfig;
-	private $n2nContext;
+class ControllerRegistry {
 
-	/**
-	 *
-	 */
-	private function _init(WebConfig $webConfig, HttpContext $httpContext) {
-		$this->webConfig = $webConfig;
-		$this->httpContext = $httpContext;
+	function __construct(private readonly WebConfig $webConfig) {
 	}
-	
-	
-	/**
-	 * @param string $alias
-	 * @param N2nLocale $contextN2nLocale
-	 */
-	public function setContextN2nLocale($alias, N2nLocale $contextN2nLocale) {
+
+	public function setContextN2nLocale(string $alias, N2nLocale $contextN2nLocale): void {
 		$this->contextN2nLocales[$alias] = $contextN2nLocale;
 	}
 	
@@ -60,9 +48,10 @@ class ControllerRegistry implements RequestScoped {
 	 * @param string $subsystemRuleName
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
-	public function createControllingPlan(Path $cmdPath, SubsystemRule $subsystemRule = null) {
+	public function createControllingPlan(HttpContext $httpContext, Path $cmdPath,
+			SubsystemRule $subsystemRule = null): ControllingPlan {
 		$contextN2nLocales = new \ArrayObject();
-		foreach ($this->httpContext->getSupersystem()->getN2nLocales() as $n2nLocale) {
+		foreach ($httpContext->getSupersystem()->getN2nLocales() as $n2nLocale) {
 			$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;	
 		}
 		
@@ -100,7 +89,7 @@ class ControllerRegistry implements RequestScoped {
 			$controllingPlanFactory->registerMainControllerDef($mainControllerDef);
 		}
 		
-		return $controllingPlanFactory->createControllingPlan($this->httpContext, $cmdPath);
+		return $controllingPlanFactory->createControllingPlan($httpContext, $cmdPath);
 	}
 }
 
