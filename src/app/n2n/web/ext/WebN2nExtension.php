@@ -32,7 +32,7 @@ class WebN2nExtension implements N2nExtension {
 		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
 
 		$appN2nContext->setN2nHttpEngine(new ControllerInvoker($httpContext, $controllerRegistry));
-		$appN2nContext->addMagicContext(new SimpleMagicContext([
+		$appN2nContext->addAddonContext(new SimpleMagicContext([
 			HttpContext::class => $httpContext,
 			Request::class => $request,
 			Response::class => $httpContext->getResponse(),

@@ -19,23 +19,6 @@ class ControllerInvoker implements N2nHttpEngine {
 
 	}
 
-	function canUnwrap(string $className): bool {
-		return match ($className) {
-			Request::class, Response::class, Session::class, HttpContext::class => true,
-			default => false,
-		};
-	}
-
-	function unwrap(string $className): ?object {
-		return match ($className) {
-			Request::class => $this->httpContext->getRequest(),
-			Response::class => $this->httpContext->getResponse(),
-			Session::class => $this->httpContext->getSession(),
-			HttpContext::class => $this->httpContext,
-			default => null,
-		};
-	}
-
 	public function invokerControllers(): void {
 		$request = $this->httpContext->getRequest();
 		$response = $this->httpContext->getResponse();
