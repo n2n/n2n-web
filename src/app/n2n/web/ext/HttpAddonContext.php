@@ -2,7 +2,7 @@
 
 namespace n2n\web;
 
-use n2n\core\ext\N2nHttpEngine;
+use n2n\core\ext\N2nHttp;
 use n2n\web\http\Method;
 use n2n\web\http\MethodNotAllowedException;
 use n2n\web\http\controller\ControllerRegistry;
@@ -11,12 +11,20 @@ use n2n\web\http\Request;
 use n2n\web\http\Response;
 use n2n\web\http\Session;
 use n2n\context\config\LookupSession;
+use n2n\core\container\impl\AddOnContext;
+use n2n\util\magic\impl\SimpleMagicContext;
+use n2n\core\container\impl\AppN2nContext;
 
-class ControllerInvoker implements N2nHttpEngine {
+class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnContext {
 
 	function __construct(private readonly HttpContext $httpContext,
 			private readonly ControllerRegistry $controllerRegistry) {
-
+		parent::__construct([
+			HttpContext::class => $httpContext,
+			Request::class => $httpContext->getRequest(),
+			Response::class => $httpContext->getResponse(),
+			Session::class => $httpContext->getSession()
+		]);
 	}
 
 	public function invokerControllers(): void {
@@ -36,6 +44,8 @@ class ControllerInvoker implements N2nHttpEngine {
 			$controllingPlan->sendStatusView($result->getStatusException());
 		}
 	}
+
+
 
 //	public static function invokerControllers(string $subsystemName = null, Path $cmdPath = null) {
 //		$n2nContext = self::_i()->n2nContext;
@@ -58,5 +68,10 @@ class ControllerInvoker implements N2nHttpEngine {
 //	}
 	function getLookupSession(): LookupSession {
 		return $this->httpContext->getSession();
+	}
+
+	function copyTo(AppN2nContext $appN2NContext): void {
+		$appN2NContext->setN2nHttpEngine($this);
+		$appN2NContext->addAddonContext($this);
 	}
 }

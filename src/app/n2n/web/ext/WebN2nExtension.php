@@ -31,17 +31,8 @@ class WebN2nExtension implements N2nExtension {
 
 		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
 
-		$appN2nContext->setN2nHttpEngine(new ControllerInvoker($httpContext, $controllerRegistry));
-		$appN2nContext->addAddonContext(new SimpleMagicContext([
-			HttpContext::class => $httpContext,
-			Request::class => $request,
-			Response::class => $httpContext->getResponse(),
-			Session::class => $httpContext->getSession()
-		]));
-
-	}
-
-	function copyTo(AppN2nContext $appN2nContext): void {
-		// TODO: Implement copyTo() method.
+		$controllerInvoker = new HttpAddonContext($httpContext, $controllerRegistry);
+		$appN2nContext->setN2nHttpEngine($controllerInvoker);
+		$appN2nContext->addAddonContext($controllerInvoker);
 	}
 }
