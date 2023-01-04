@@ -28,7 +28,7 @@ use n2n\core\container\TransactionManager;
 use n2n\core\container\TransactionalResource;
 use n2n\core\container\Transaction;
 
-class ResponseCacheStore implements ThreadScoped {
+class ResponseCacheStore {
 	const RESPONSE_NAME = 'r';
 	const INDEX_NAME = 'i';
 	
@@ -36,7 +36,7 @@ class ResponseCacheStore implements ThreadScoped {
 	private $responseCacheActionQueue;
 	private TransactionManager $tm;
 	
-	private function _init(AppCache $appCache, TransactionManager $transactionManager) {
+	function __construct(AppCache $appCache, TransactionManager $transactionManager) {
 		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class);
 		$this->responseCacheActionQueue = new ResponseCacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);

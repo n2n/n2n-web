@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\core;
+namespace n2n\web\ext;
 
 
 use n2n\core\config\AppConfig;
@@ -31,6 +31,7 @@ use n2n\web\http\HttpContext;
 use n2n\web\http\Response;
 use n2n\web\http\ResponseCacheStore;
 use n2n\web\http\BadRequestException;
+use n2n\core\N2N;
 
 class HttpContextFactory {
 
@@ -38,7 +39,7 @@ class HttpContextFactory {
 	const DEFAULT_STATUS_LIVE_VIEW = 'n2n\core\view\errorpages\statusLive.html';
 
 	static function createFromAppConfig(AppConfig $appConfig, Request $request, Session $session, N2nContext $n2nContext,
-            ?ExceptionHandler $exceptionHandler): HttpContext {
+            ResponseCacheStore $responseCacheStore, ?ExceptionHandler $exceptionHandler): HttpContext {
 		$generalConfig = $appConfig->general();
 		$webConfig = $appConfig->web();
 		$filesConfig = $appConfig->files();
@@ -46,7 +47,7 @@ class HttpContextFactory {
 		
 		$response = new Response($request);
 		$response->setResponseCachingEnabled($webConfig->isResponseCachingEnabled());
-		$response->setResponseCacheStore($n2nContext->lookup(ResponseCacheStore::class));
+		$response->setResponseCacheStore($responseCacheStore);
 		$response->setHttpCachingEnabled($webConfig->isResponseBrowserCachingEnabled());
 		$response->setSendEtagAllowed($webConfig->isResponseSendEtagAllowed());
 		$response->setSendLastModifiedAllowed($webConfig->isResponseSendLastModifiedAllowed());
