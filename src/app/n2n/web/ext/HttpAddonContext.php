@@ -40,14 +40,14 @@ class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnConte
 	function __construct(private readonly ?HttpContext $httpContext,
 			private readonly ?ControllerRegistry $controllerRegistry,
 			private readonly ResponseCacheStore $responseCacheStore) {
-		parent::__construct([
+		parent::__construct(array_filter([
 			HttpContext::class => $httpContext,
-			Request::class => $httpContext->getRequest(),
-			Response::class => $httpContext->getResponse(),
-			Session::class => $httpContext->getSession(),
+			Request::class => $httpContext?->getRequest(),
+			Response::class => $httpContext?->getResponse(),
+			Session::class => $httpContext?->getSession(),
 			ResponseCacheStore::class => $this->responseCacheStore,
 			ControllerRegistry::class => $controllerRegistry
-		]);
+		]));
 	}
 
 	public function invokerControllers(): void {
