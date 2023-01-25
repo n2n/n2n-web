@@ -34,12 +34,23 @@ use n2n\core\container\impl\AddOnContext;
 use n2n\util\magic\impl\SimpleMagicContext;
 use n2n\core\container\impl\AppN2nContext;
 use n2n\web\http\ResponseCacheStore;
+use n2n\core\err\ExceptionHandler;
+use n2n\core\N2N;
 
 class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnContext {
 
+	/**
+	 * @param HttpContext|null $httpContext
+	 * @param ControllerRegistry|null $controllerRegistry
+	 * @param ResponseCacheStore $responseCacheStore
+	 * @param bool $statusExceptionLoggingEnabled
+	 * @param int[] $loggingExcludedStatusCodes
+	 */
 	function __construct(private readonly ?HttpContext $httpContext,
 			private readonly ?ControllerRegistry $controllerRegistry,
-			private readonly ResponseCacheStore $responseCacheStore) {
+			private readonly ResponseCacheStore $responseCacheStore,
+			private readonly bool $statusExceptionLoggingEnabled = false,
+			private readonly array $loggingExcludedStatusCodes = []) {
 		parent::__construct(array_filter([
 			HttpContext::class => $httpContext,
 			Request::class => $httpContext?->getRequest(),
@@ -62,8 +73,15 @@ class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnConte
 		$controllingPlan = $this->controllerRegistry->createControllingPlan($this->httpContext, $request->getCmdPath(),
 				$this->httpContext->getActiveSubsystemRule());
 		$result = $controllingPlan->execute();
-		if (!$result->isSuccessful()) {
-			$controllingPlan->sendStatusView($result->getStatusException());
+		if ($result->isSuccessful()) {
+			return;
+		}
+
+		$statusException = $result->getStatusException();
+		$controllingPlan->sendStatusView($statusException);
+		if ($this->statusExceptionLoggingEnabled
+				&& !in_array($statusException->getStatus(), $this->loggingExcludedStatusCodes)) {
+			N2N::getExceptionHandler()->log($statusException);
 		}
 	}
 
