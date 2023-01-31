@@ -386,6 +386,7 @@ class Response {
 	 *
 	 * @param string $etag
 	 * @param \DateTime $lastModified
+	 * @return bool
 	 */
 	private function notModified(?string $etag, \DateTime $lastModified = null) {
 		if ($this->statusCode !== self::STATUS_200_OK) return false;
@@ -395,7 +396,7 @@ class Response {
 			$this->setHeader('Etag: "' . $etag . '"');
 
 			if (null !== ($ifNoneMatch = $this->request->getHeader('If-None-Match'))) {
-				$etagNotModified = '"' . $etag . '"' ==  $ifNoneMatch;
+				$etagNotModified = in_array('"' . $etag . '"', preg_split('/\s*,\s*/', $ifNoneMatch));
 			}
 		}
 
