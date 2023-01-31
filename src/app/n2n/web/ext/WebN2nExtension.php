@@ -53,7 +53,11 @@ class WebN2nExtension implements N2nExtension {
 
 		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
 
-		$controllerInvoker = new HttpAddonContext($httpContext, $controllerRegistry, $responseCacheStore);
+		$errorConfig = $appConfig->error();
+
+
+		$controllerInvoker = new HttpAddonContext($httpContext, $controllerRegistry, $responseCacheStore,
+				$errorConfig->isLogHandleStatusExceptionsEnabled(), $errorConfig->getLogExcludedHttpStatus());
 		$appN2nContext->setHttp($controllerInvoker);
 		$appN2nContext->addAddonContext($controllerInvoker);
 	}
