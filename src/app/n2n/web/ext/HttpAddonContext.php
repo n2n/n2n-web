@@ -38,7 +38,8 @@ use n2n\core\err\ExceptionHandler;
 use n2n\core\N2N;
 use n2n\util\magic\MagicObjectUnavailableException;
 
-class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnContext {
+class HttpAddonContext implements N2nHttp, AddOnContext {
+	private SimpleMagicContext $simpleMagicContext;
 
 	/**
 	 * @param HttpContext|null $httpContext
@@ -52,7 +53,8 @@ class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnConte
 			private readonly ResponseCacheStore $responseCacheStore,
 			private readonly bool $statusExceptionLoggingEnabled = false,
 			private readonly array $loggingExcludedStatusCodes = []) {
-		parent::__construct(array_filter([
+
+		$this->simpleMagicContext = new SimpleMagicContext(array_filter([
 			HttpContext::class => $httpContext,
 			Request::class => $httpContext?->getRequest(),
 			Response::class => $httpContext?->getResponse(),
@@ -62,9 +64,13 @@ class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnConte
 		]));
 	}
 
-	function lookup(\ReflectionClass|string $id, bool $required = true, string $contextNamespace = null): mixed {
-		$result = parent::lookup($id, $required, $contextNamespace);
-		if ($result !== null || $this->httpContext !== null) {
+	function hasMagicObject(string $id): bool {
+		return $this->simpleMagicContext->has($id);
+	}
+
+	function lookupMagicObject(\ReflectionClass|string $id, bool $required = true, string $contextNamespace = null): mixed {
+		$result = $this->simpleMagicContext->lookup($id, false, $contextNamespace);
+		if ($result !== null || $this->httpContext !== null || !$required) {
 			return $result;
 		}
 
