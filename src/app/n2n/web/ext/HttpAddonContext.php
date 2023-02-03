@@ -36,6 +36,7 @@ use n2n\core\container\impl\AppN2nContext;
 use n2n\web\http\ResponseCacheStore;
 use n2n\core\err\ExceptionHandler;
 use n2n\core\N2N;
+use n2n\util\magic\MagicObjectUnavailableException;
 
 class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnContext {
 
@@ -59,6 +60,23 @@ class HttpAddonContext extends SimpleMagicContext implements N2nHttp, AddOnConte
 			ResponseCacheStore::class => $this->responseCacheStore,
 			ControllerRegistry::class => $controllerRegistry
 		]));
+	}
+
+	function lookup(\ReflectionClass|string $id, bool $required = true, string $contextNamespace = null): mixed {
+		$result = parent::lookup($id, $required, $contextNamespace);
+		if ($result !== null || $this->httpContext !== null) {
+			return $result;
+		}
+
+		switch ($id) {
+			case HttpContext::class:
+			case Request::class:
+			case Response::class:
+			case Session::class:
+				throw new MagicObjectUnavailableException('HttpContext not available.');
+			default:
+				return null;
+		}
 	}
 
 	public function invokerControllers(): void {
