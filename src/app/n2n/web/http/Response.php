@@ -396,7 +396,7 @@ class Response {
 			$this->setHeader('Etag: "' . $etag . '"');
 
 			if (null !== ($ifNoneMatch = $this->request->getHeader('If-None-Match'))) {
-				$etagNotModified = in_array('"' . $etag . '"', preg_split('/\s*,\s*/', $ifNoneMatch));
+				$etagNotModified = in_array('"' . $etag . '"', preg_split('/\s*,\s*W\//', $ifNoneMatch));
 			}
 		}
 
