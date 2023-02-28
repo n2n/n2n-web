@@ -171,8 +171,7 @@ class ResponseCacheActionQueue implements TransactionalResource {
 		$this->inTransaction = true;		
 	}
 	
-	public function prepareCommit(Transaction $transaction): bool {
-		return true;
+	public function prepareCommit(Transaction $transaction): void {
 	}
 	
 	public function commit(Transaction $transaction): void {
