@@ -32,6 +32,7 @@ use n2n\util\type\attrs\DataSet;
 use n2n\web\http\controller\impl\HttpData;
 use n2n\util\type\TypeConstraint;
 use n2n\util\type\TypeConstraints;
+use n2n\util\EnumUtils;
 
 abstract class Param {
 	private string|array $value;
@@ -174,14 +175,13 @@ abstract class Param {
 	}
 
 	/**
-	 * @param string[] $options
+	 * @param string[]|\UnitEnum[] $options
 	 * @param int $rejectStatus
 	 * @return string
 	 */
-	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): string {
+	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): string|\UnitEnum {
 		try {
-			ArgUtils::valEnum($this->rawValue, $options);
-			return $this->rawValue;
+			return EnumUtils::valueToPseudoUnit($this->rawValue, $options);
 		} catch (\InvalidArgumentException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
