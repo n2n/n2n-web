@@ -177,9 +177,9 @@ abstract class Param {
 	/**
 	 * @param string[]|\UnitEnum[] $options
 	 * @param int $rejectStatus
-	 * @return string
+	 * @return string|\UnitEnum
 	 */
-	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): string|\UnitEnum {
+	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
 		try {
 			return EnumUtils::valueToPseudoUnit($this->rawValue, $options);
 		} catch (\InvalidArgumentException $e) {
