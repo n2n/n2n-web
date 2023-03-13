@@ -39,7 +39,7 @@ class ActionInvokerFactory {
 	const PARAM_CMD_PATH = 'cmdPath';
 	const PARAM_CMD_PATH_PARTS = 'cmdPathParts';
 	const PARAM_EXTENSION = 'extension';
-	
+
 	private $cmdPath;
 	private $cmdContextPath;
 	private $request;
@@ -49,8 +49,8 @@ class ActionInvokerFactory {
 	private $acceptRange;
 	private $magicContext;
 	private $constantValues;
-		
-	public function __construct(Path $cmdPath, Path $cmdContextPath, Request $request, $httpMethod, 
+
+	public function __construct(Path $cmdPath, Path $cmdContextPath, Request $request, $httpMethod,
 			Query $query, Query $postQuery, AcceptRange $acceptRange, MagicContext $magicContext = null) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
@@ -61,32 +61,32 @@ class ActionInvokerFactory {
 		$this->acceptRange = $acceptRange;
 		$this->magicContext = $magicContext;
 	}
-	
+
 	public function setConstantValues(array $constantValues) {
 		$this->constantValues = $constantValues;
-	} 
-	
+	}
+
 	public function getConstantValues() {
 		return $this->constantValues;
 	}
-	
+
 	public function getCmdPath() {
 		return $this->cmdPath;
 	}
-	
+
 	public function getHttpMethod() {
 		return $this->httpMethod;
 	}
-	
+
 	public function getAcceptRange() {
 		return $this->acceptRange;
 	}
-	
+
 	private function checkForCmdParam($paramName) {
 		if (array_key_exists($paramName, $this->constantValues)) {
 			return $this->constantValues[$paramName];
-		}		
-		
+		}
+
 		switch ($paramName) {
 			case self::PARAM_CMD_CONTEXT_PATH:
 				return $this->cmdContextPath;
@@ -100,7 +100,7 @@ class ActionInvokerFactory {
 				return null;
 		}
 	}
-	
+
 	private function checkForQueryParam($paramName, $paramClass, &$value) {
 		$value = null;
 		switch ($paramClass->getName()) {
@@ -137,11 +137,11 @@ class ActionInvokerFactory {
 			case ParamBody::class:
 				$value = new ParamBody($this->request->getBody());
 				return true;
-			default: 
+			default:
 				return false;
 		}
 	}
-	
+
 	/**
 	 * @param \ReflectionMethod $method
 	 * @param Path $cmdParamPath
@@ -151,7 +151,7 @@ class ActionInvokerFactory {
 	 */
 	public function createFullMagic(\ReflectionMethod $method, Path $cmdParamPath, array $allowedExtensions = null) {
 		$pathPattern = new PathPattern();
-		
+
 		if ($allowedExtensions !== null) {
 			$pathPattern->setAllowedExtensions($allowedExtensions);
 			$pathPattern->setExtensionIncluded(false);
@@ -169,12 +169,13 @@ class ActionInvokerFactory {
 				$pathPattern->setExtensionIncluded(false);
 				continue;
 			}
-			
+
 			if (null !== ($paramValue = $this->checkForCmdParam($paramName))) {
 				$paramValues[$paramName] = $paramValue;
 				continue;
 			}
-			
+
+			$isParamPath = false;
 			if (null !== ($paramClass = ReflectionUtils::extractParameterClass($parameter))) {
 				$value = null;
 				if ($this->checkForQueryParam($paramName, $paramClass, $value)) {
@@ -186,47 +187,48 @@ class ActionInvokerFactory {
 					continue;
 				}
 
-				if ($paramClass->getName() === 'n2n\web\http\controller\ParamPath') {
+				if ($paramClass->getName() === ParamPath::class) {
 					$pathObjParamNames[$paramName] = $paramName;
+					$isParamPath = true;
 				} else {
 					continue;
 				}
 			}
-			
+
 			$isArray = ReflectionUtils::isArrayParameter($parameter);
-			
+
 			if (!$isArray) $numSinglePathParts++;
-		
+
 			try {
-				if ($isArray || !$parameter->hasType())	{
+				if ($isArray || $isParamPath || !$parameter->hasType())	{
 					$pathPattern->addWhitechar(!$parameter->isDefaultValueAvailable(), $isArray, $paramName);
 				} else {
-					$pathPattern->addTypeConstraint(!$parameter->isDefaultValueAvailable(), 
+					$pathPattern->addTypeConstraint(!$parameter->isDefaultValueAvailable(),
 							TypeConstraints::type($parameter->getType(), true), false,
 							$paramName);
 				}
 
-				
+
 			} catch (PathPatternComposeException $e) {
-				throw new ControllerErrorException('Invalid definition of param: ' . $paramName, 
+				throw new ControllerErrorException('Invalid definition of param: ' . $paramName,
 						$method->getFileName(), $method->getStartLine(), null, null, $e);
 			}
 		}
-	
+
 		$matchResult = $pathPattern->matchesPath($cmdParamPath);
 		if ($matchResult === null) return null;
-			
+
 		$invoker = new MagicMethodInvoker($this->magicContext);
 		$invoker->setMethod($method);
-		
+
 		if  ($extParamName !== null) {
 			$invoker->setParamValue($extParamName, $matchResult->getExtension());
 		}
-		
+
 		foreach ($paramValues as $paramName => $value) {
 			$invoker->setParamValue($paramName, $value);
 		}
-		
+
 		foreach ($matchResult->getParamValues() as $paramName => $value) {
 			if (isset($pathObjParamNames[$paramName])) {
 				$invoker->setParamValue($paramName, new ParamPath($value));
@@ -234,34 +236,34 @@ class ActionInvokerFactory {
 				$invoker->setParamValue($paramName, $value);
 			}
 		}
-		
+
 		return new InvokerInfo($invoker, $numSinglePathParts, $queryParams);
 	}
 
 	public function createSemiMagic(\ReflectionMethod $method, PathPattern $pathPattern) {
 		$matchResult = $pathPattern->matchesPath($this->cmdPath);
 		if ($matchResult === null) return null;
-		
-		$paramValues = $matchResult->getParamValues(); 
+
+		$paramValues = $matchResult->getParamValues();
 		$extension = $matchResult->getExtension();
 		$queryParams = array();
-		
+
 		$invoker = new MagicMethodInvoker($this->magicContext);
 		$invoker->setMethod($method);
-		
+
 		foreach ($method->getParameters() as $parameter) {
 			$paramName = $parameter->getName();
 			if (array_key_exists($paramName, $paramValues)) {
 				$invoker->setParamValue($paramName, $paramValues[$paramName]);
 				continue;
 			}
-		
+
 			if (null !== ($paramValue = $this->checkForCmdParam($paramName))) {
 				$invoker->setParamValue($paramName, $paramValue);
 				$queryParams[$paramName] = $paramValue;
 				continue;
 			}
-				
+
 			if (null !== ($paramClass = ReflectionUtils::extractParameterClass($parameter))) {
 				$value = null;
 				if ($this->checkForQueryParam($paramName, $paramClass, $value)) {
@@ -277,24 +279,24 @@ class ActionInvokerFactory {
 				continue;
 			}
 		}
-		
+
 		$numSinglePathParts = $pathPattern->size();
 		if ($pathPattern->hasMultiple()) $numSinglePathParts--;
 		return new InvokerInfo($invoker, $numSinglePathParts, $queryParams);
 	}
-	
+
 	public function createNonMagic(\ReflectionMethod $method) {
 		$invoker = new MagicMethodInvoker($this->magicContext);
 		$invoker->setMethod($method);
-		
+
 		foreach ($method->getParameters() as $parameter) {
 			$paramName = $parameter->getName();
-			
+
 			if (null !== ($paramValue = $this->checkForCmdParam($paramName))) {
 				$invoker->setParamValue($paramName, $paramValue);
 			}
 		}
-		
+
 		return new InvokerInfo($invoker, 0, array());
 	}
 }
@@ -304,36 +306,36 @@ class InvokerInfo {
 	private $numSinglePathParts;
 	private $queryParams;
 	private $interceptors = array();
-	
+
 	public function __construct(MagicMethodInvoker $invoker, int $numSinglePathParts, array $queryParams) {
 		$this->invoker = $invoker;
 		$this->numSinglePathParts = $numSinglePathParts;
 		$this->queryParams = $queryParams;
 	}
-	
+
 	public function getInvoker() {
 		return $this->invoker;
 	}
-	
+
 	public function setNumSinglePathParts($numSinglePathParts) {
 		$this->numSinglePathParts = $numSinglePathParts;
 	}
-	
+
 	public function getNumSinglePathParts() {
 		return $this->numSinglePathParts;
 	}
-	
+
 	public function getQueryParams() {
 		return $this->queryParams;
 	}
-	
+
 	/**
 	 * @param Interceptor[] $interceptors
 	 */
 	public function setInterceptors(array $interceptors) {
 		$this->interceptors = $interceptors;
 	}
-	
+
 	/**
 	 * @return Interceptor[]
 	 */
