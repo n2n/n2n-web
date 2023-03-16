@@ -27,12 +27,14 @@ use n2n\core\container\AppCache;
 use n2n\core\container\TransactionManager;
 use n2n\core\container\TransactionalResource;
 use n2n\core\container\Transaction;
+use n2n\util\cache\CacheStore;
+use n2n\util\ex\IllegalStateException;
 
 class ResponseCacheStore {
 	const RESPONSE_NAME = 'r';
 	const INDEX_NAME = 'i';
 	
-	private $cacheStore;
+	private ?CacheStore $cacheStore;
 	private $responseCacheActionQueue;
 	private TransactionManager $tm;
 	
@@ -43,8 +45,21 @@ class ResponseCacheStore {
 		$this->tm = $transactionManager;
 	}
 
-	private function _terminate() {
+	function close() {
 		$this->tm->unregisterResource($this->responseCacheActionQueue);
+		$this->cacheStore = null;
+	}
+
+	function isClosed(): bool {
+		return $this->cacheStore === null;
+	}
+
+	private function ensureNotClosed(): void {
+		if ($this->isClosed()) {
+			return;
+		}
+
+		throw new IllegalStateException(self::class . ' already closed.');
 	}
 	
 	private function buildResponseCharacteristics(int $method, string $hostName, Path $path,

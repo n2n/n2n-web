@@ -28,10 +28,12 @@ use n2n\web\http\VarsSession;
 use n2n\web\http\controller\ControllerRegistry;
 use n2n\core\N2N;
 use n2n\web\http\ResponseCacheStore;
+use n2n\core\config\AppConfig;
+use n2n\core\container\AppCache;
 
 class WebN2nExtension implements N2nExtension {
 
-	public function __construct() {
+	public function __construct(private AppConfig $appConfig, private AppCache $appCache) {
 	}
 
 	function setUp(AppN2nContext $appN2nContext): void {

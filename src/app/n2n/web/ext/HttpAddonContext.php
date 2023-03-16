@@ -37,9 +37,10 @@ use n2n\web\http\ResponseCacheStore;
 use n2n\core\err\ExceptionHandler;
 use n2n\core\N2N;
 use n2n\util\magic\MagicObjectUnavailableException;
+use n2n\util\ex\IllegalStateException;
 
 class HttpAddonContext implements N2nHttp, AddOnContext {
-	private SimpleMagicContext $simpleMagicContext;
+	private ?SimpleMagicContext $simpleMagicContext;
 
 	/**
 	 * @param HttpContext|null $httpContext
@@ -65,10 +66,14 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 	}
 
 	function hasMagicObject(string $id): bool {
+		$this->ensureNotFinalized();
+
 		return $this->simpleMagicContext->has($id);
 	}
 
 	function lookupMagicObject(\ReflectionClass|string $id, bool $required = true, string $contextNamespace = null): mixed {
+		$this->ensureNotFinalized();
+
 		$result = $this->simpleMagicContext->lookup($id, false, $contextNamespace);
 		if ($result !== null || $this->httpContext !== null || !$required) {
 			return $result;
@@ -86,6 +91,8 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 	}
 
 	public function invokerControllers(): void {
+		$this->ensureNotFinalized();
+
 		$request = $this->httpContext->getRequest();
 		$response = $this->httpContext->getResponse();
 
@@ -131,16 +138,35 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 //		$controllerRegistry->createControllingPlan($request->getCmdPath(), $request->getSubsystemName())->execute();
 //	}
 	function getLookupSession(): LookupSession {
+		$this->ensureNotFinalized();
+
 		return $this->httpContext->getSession();
 	}
 
-	function copyTo(AppN2nContext $appN2NContext): void {
-		if ($this->httpContext !== null) {
-			$appN2NContext->setHttp($this);
+//	function copyTo(AppN2nContext $appN2NContext): void {
+//		if ($this->httpContext !== null) {
+//			$appN2NContext->setHttp($this);
+//		}
+//		$appN2NContext->addAddonContext($this);
+//	}
+
+
+	function isFinalized(): bool {
+		return $this->simpleMagicContext === null;
+	}
+
+	private function ensureNotFinalized(): void {
+		if ($this->isFinalized()) {
+			return;
 		}
-		$appN2NContext->addAddonContext($this);
+
+		throw new IllegalStateException(self::class . ' already finalized.');
 	}
 
 	function finalize(): void {
+		$this->ensureNotFinalized();
+
+		$this->simpleMagicContext = null;
+		$this->responseCacheStore->close();
 	}
 }
