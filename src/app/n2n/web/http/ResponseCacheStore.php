@@ -23,7 +23,7 @@ namespace n2n\web\http;
 
 use n2n\util\uri\Path;
 use n2n\context\ThreadScoped;
-use n2n\core\container\AppCache;
+use n2n\core\cache\AppCache;
 use n2n\core\container\TransactionManager;
 use n2n\core\container\TransactionalResource;
 use n2n\core\container\Transaction;

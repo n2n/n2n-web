@@ -29,7 +29,7 @@ use n2n\web\http\controller\ControllerRegistry;
 use n2n\core\N2N;
 use n2n\web\http\ResponseCacheStore;
 use n2n\core\config\AppConfig;
-use n2n\core\container\AppCache;
+use n2n\core\cache\AppCache;
 
 class WebN2nExtension implements N2nExtension {
 
