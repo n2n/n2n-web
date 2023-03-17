@@ -156,7 +156,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 	}
 
 	private function ensureNotFinalized(): void {
-		if ($this->isFinalized()) {
+		if (!$this->isFinalized()) {
 			return;
 		}
 
