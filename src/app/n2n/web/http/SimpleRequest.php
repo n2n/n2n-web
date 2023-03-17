@@ -290,6 +290,10 @@ class SimpleRequest implements Request {
 	public function getPostQuery(): Query {
 		return $this->postQuery;
 	}
+
+	function setPostQuery(Query $postQuery): void {
+		$this->postQuery = $postQuery;
+	}
 	
 	/**
 	 * {@inheritDoc}
