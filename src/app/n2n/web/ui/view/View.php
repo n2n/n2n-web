@@ -46,6 +46,7 @@ use n2n\web\http\nav\UrlBuilder;
 use n2n\util\uri\UnavailableUrlException;
 use n2n\web\ui\BuildContext;
 use n2n\web\ui\SimpleBuildContext;
+use ReflectionClass;
 
 abstract class View extends BufferedPayload implements UiComponent {
 	private $params = array();
@@ -265,10 +266,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->ensureContentsAreInitialized();
 		return $this->contents;
 	}
-	/**
-	 * (non-PHPdoc)
-	 * @see n2n\web\ui.UiComponent::build()
-	 */
+
 	public function build(BuildContext $buildContext): string {
 		if (!$this->isInitialized()) {
 			$this->initialize(null, $buildContext);
@@ -589,12 +587,13 @@ abstract class View extends BufferedPayload implements UiComponent {
 				new ViewAssertionFailedException('View assertion failed'));
 	}
 	/**
-	 * 
-	 * @param string|\ReflectionClass $useableClassName
-	 * @return \n2n\context\Lookupable
+	 * @template T
+	 * @param class-string<T>|ReflectionClass $className
+	 * @return T|null
+	 * @return mixed
 	 */
-	public function lookup($useableClassName) {
-		return $this->getN2nContext()->lookup($useableClassName);
+	public function lookup(string|ReflectionClass $className) {
+		return $this->getN2nContext()->lookup($className);
  	}
 	/**
 	 * 
