@@ -222,9 +222,9 @@ class ControllingPlanFactory {
 			
 			if (null === $currentMatchResult 
 					/*|| ($currentMatchResult->hasPlaceholderValues() 
-							&& !$matchResult->hasPlaceholderValues())*/
+							&& !$matchResult->hasPlaceholderValues())
 					|| ($currentMainControllerDef->getSubsystemName() === null 
-							&& $mainControllerDef->getSubsystemName() !== null)) {
+							&& $mainControllerDef->getSubsystemName() !== null)*/) {
 				$currentMatchResult = $matchResult;
 				$currentMainControllerDef = $mainControllerDef;
 				continue;
