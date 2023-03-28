@@ -50,8 +50,6 @@ use n2n\web\ui\SimpleBuildContext;
 abstract class View extends BufferedPayload implements UiComponent {
 	private $params = array();
 	private $stateObjs = array();
-	
-	private $scriptPath;
 	private $moduleNamespace;
 	private $n2nContext;
 	private $contentBuffer;
@@ -72,9 +70,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param Module $module
 	 * @param N2nContext $n2nContext
 	 */
-	public final function __construct(string $scriptPath, string $name, Module $module, N2nContext $n2nContext) {
-		$this->scriptPath = $scriptPath;
-		$this->name = $name;
+	public final function __construct(private string $scriptPath, private string $name, Module $module, N2nContext $n2nContext) {
 		$this->moduleNamespace = $module;
 		$this->n2nContext = $n2nContext;
 		$this->stateListeners = array();
@@ -756,7 +752,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$cb = $this->getContentBuffer();
 		$key = $cb->breakPoint();
 		$that = $this;
-		$cb->on(function () use ($cb, $contents, $that) {
+		$cb->on(function () use ($key, $cb, $contents, $that) {
 			$cb->insertOnBreakPoint($key, $that->getOut($contents));
 		});
 	}

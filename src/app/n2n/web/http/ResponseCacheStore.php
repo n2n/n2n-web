@@ -35,7 +35,7 @@ class ResponseCacheStore {
 	const INDEX_NAME = 'i';
 	
 	private ?CacheStore $cacheStore;
-	private $responseCacheActionQueue;
+	private ResponseCacheActionQueue $responseCacheActionQueue;
 	private TransactionManager $tm;
 	
 	function __construct(AppCache $appCache, TransactionManager $transactionManager) {
@@ -45,7 +45,7 @@ class ResponseCacheStore {
 		$this->tm = $transactionManager;
 	}
 
-	function close() {
+	function close(): void {
 		$this->tm->unregisterResource($this->responseCacheActionQueue);
 		$this->cacheStore = null;
 	}
