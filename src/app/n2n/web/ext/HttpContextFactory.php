@@ -58,7 +58,7 @@ class HttpContextFactory {
 			$response->setHeader('Cache-Control: no-cache');
 		} else {
 			foreach ($responseDefaultHeaders as $defaultResponseHeader) {
-				$response->setHeader($defaultResponseHeader, true);
+				$response->setHeader($defaultResponseHeader, false);
 			}
 		}
 		
