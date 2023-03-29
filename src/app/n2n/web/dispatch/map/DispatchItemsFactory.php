@@ -41,8 +41,7 @@ class DispatchItemsFactory {
 	private $mappingMethods;
 	private $validationMethods;
 	
-	public function __construct(DispatchModel $dispatchModel) {
-		$this->dispatchModel = $dispatchModel;
+	public function __construct(private DispatchModel $dispatchModel) {
 		$this->class = $this->dispatchModel->getClass();
 	}
 	
