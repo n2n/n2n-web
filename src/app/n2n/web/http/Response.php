@@ -680,7 +680,7 @@ class Response {
 		}
 
 //		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
-//		http_response_code($this->statusCode);
+		http_response_code($this->statusCode);
 
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
