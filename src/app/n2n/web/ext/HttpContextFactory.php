@@ -47,6 +47,7 @@ class HttpContextFactory {
 		
 		$response = new Response($request);
 		$response->setResponseCachingEnabled($webConfig->isResponseCachingEnabled());
+		$response->setContentSecurityPolicyEnabled($webConfig->isResponseContentSecurityPolicyEnabled());
 		$response->setResponseCacheStore($responseCacheStore);
 		$response->setHttpCachingEnabled($webConfig->isResponseBrowserCachingEnabled());
 		$response->setSendEtagAllowed($webConfig->isResponseSendEtagAllowed());
