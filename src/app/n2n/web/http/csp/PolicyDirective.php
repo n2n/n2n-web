@@ -14,7 +14,7 @@ enum PolicyDirective: string {
 	case OBJECT_SRC = 'object-src';
 	case PREFETCH_SRC = 'prefetch-src';
 	case SCRIPT_SRC = 'script-src';
-	case SCRIPT_SRC_ELM = 'script-src-elem';
+	case SCRIPT_SRC_ELEM = 'script-src-elem';
 	case SCRIPT_SRC_ATTR = 'script-src-attr';
 	case STYLE_SRC = 'style-src';
 	case STYLE_SRC_ELEM = 'style-src-elem';
