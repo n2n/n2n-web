@@ -110,6 +110,7 @@ class Response {
 	private $request;
 	private $responseCachingEnabled = true;
 	private $httpCachingEnabled = true;
+	private $contentSecurityPolicyEnabled = true;
 	private $sendEtagAllowed = true;
 	private $sendLastModifiedAllowed = true;
 	private $serverPushAllowed = true;
@@ -238,6 +239,20 @@ class Response {
 		$this->ensureNotFlushed();
 
 		$this->httpCachingEnabled = $httpCachingEnabled;
+	}
+
+	public function isContentSecurityPolicyEnabled(): bool {
+		return $this->contentSecurityPolicyEnabled;
+	}
+
+	/**
+	 * If false response cache configurations assigned over {@see self::setResponseCacheControl()} will be ignored.
+	 * @param bool $contentSecurityPolicyEnabled
+	 */
+	public function setContentSecurityPolicyEnabled(bool $contentSecurityPolicyEnabled): void {
+		$this->ensureNotFlushed();
+
+		$this->contentSecurityPolicyEnabled = $contentSecurityPolicyEnabled;
 	}
 
 	/**
@@ -381,6 +396,7 @@ class Response {
 		}
 		$this->httpCacheControl = null;
 		$this->responseCacheControl = null;
+		$this->contentSecurityPolicyEnabled = null;
 		$this->sentPayload = null;
 		$this->bodyContents = '';
 	}
@@ -670,7 +686,7 @@ class Response {
 			$this->httpCacheControl->applyHeaders($this);
 		}
 
-		if ($this->contentSecurityPolicy !== null) {
+		if ($this->contentSecurityPolicy !== null && $this->responseCachingEnabled) {
 			$this->contentSecurityPolicy->applyHeaders($this);
 		}
 
