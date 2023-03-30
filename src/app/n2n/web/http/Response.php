@@ -686,7 +686,7 @@ class Response {
 			$this->httpCacheControl->applyHeaders($this);
 		}
 
-		if ($this->contentSecurityPolicy !== null && $this->responseCachingEnabled) {
+		if ($this->contentSecurityPolicy !== null && $this->contentSecurityPolicyEnabled) {
 			$this->contentSecurityPolicy->applyHeaders($this);
 		}
 
@@ -867,15 +867,17 @@ class ApplyHeaderJob implements HeaderJob {
 		}
 
 		$parts = explode(':', $this->headerStr, 2);
-		$this->name = $parts[0];
-		$this->value = $parts[1] ?? null;
+		$this->name = trim($parts[0]);
+		$this->value = isset($parts[1]) ? trim($parts[1]) : null;
 	}
 
 	function getName(): string {
+		$this->ensureNameValueAnalyzed();
 		return $this->name;
 	}
 
 	function getValue(): ?string {
+		$this->ensureNameValueAnalyzed();
 		return $this->value;
 	}
 

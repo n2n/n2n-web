@@ -23,6 +23,10 @@ class Policy {
 		return $this->directive;
 	}
 
+	function isEmpty(): bool {
+		return empty($this->sources);
+	}
+
 	function addSource(PolicySource $policySource): static {
 		$this->sources[$policySource->getValue()] = $policySource;
 		return $this;

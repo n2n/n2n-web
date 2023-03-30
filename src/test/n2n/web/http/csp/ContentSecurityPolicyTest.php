@@ -22,7 +22,7 @@ class ContentSecurityPolicyTest extends \PHPUnit\Framework\TestCase {
 
 		$this->assertEquals(ContentSecurityPolicy::HEADER_NAME . ': ' . $cspStr, $csp->toHeaderStr());
 
-		$csp->append(ContentSecurityPolicy::parse('script-src \'unsafe-eval\'; img-src \'unsafe-hashes\''));
+		$this->assertFalse($csp->isEmpty());
 	}
 
 	function testAppend() {
