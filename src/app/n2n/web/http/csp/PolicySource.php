@@ -30,7 +30,7 @@ class PolicySource {
 	}
 
 	static function createHash(string $content): PolicySource {
-		return new PolicySource('\'sha256-' . hash('sha256', $content) . '\'');
+		return new PolicySource('\'sha256-' . base64_encode(hash('sha256', $content, true)) . '\'');
 	}
 
 }
