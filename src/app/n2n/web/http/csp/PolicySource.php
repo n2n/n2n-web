@@ -7,8 +7,8 @@ use n2n\util\uri\Url;
 class PolicySource {
 
 	function __construct(private string $value) {
-		if (false === preg_match('/^[^\'\s]+$/', $this->value)
-				&& false === preg_match('/^\'[^\'\s]+\'$/', $this->value)) {
+		if (0 === preg_match('/^[^\'\s]+$/', $this->value)
+				&& 0 === preg_match('/^\'[^\'\s]+\'$/', $this->value)) {
 			throw new InvalidCspException('Invalid content security policy source: ' . $this->value);
 		}
 	}

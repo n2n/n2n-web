@@ -10,7 +10,7 @@ class ContentSecurityPolicy {
 	const HEADER_NAME = 'Content-Security-Policy';
 	const POLICY_SEPARATOR = ';';
 
-	private \SplObjectStorage $policyStorage;
+	private array $policies = [];
 
 	function __construct(array $policies = []) {
 		ArgUtils::valArray($policies, Policy::class);
@@ -20,22 +20,18 @@ class ContentSecurityPolicy {
 	}
 
 	function getPolicy(PolicyDirective $directive): Policy {
-		return $this->policyStorage[$directive] ?? $this->policyStorage[$directive] = new Policy($directive);
+		return $this->policies[$directive->value] ?? $this->policies[$directive->value] = new Policy($directive);
 	}
 
 	/**
 	 * @return Policy[]
 	 */
 	function getPolicies(): array {
-		$policies = [];
-		foreach ($this->policyStorage as $policy) {
-			$policies[] = $policy;
-		}
-		return $policies;
+		return $this->policies;
 	}
 
 	function addPolicy(Policy $policy): static {
-		$this->policyStorage[$policy->getDirective()] = $policy;
+		$this->policies[$policy->getDirective()->value] = $policy;
 		return $this;
 	}
 
@@ -45,11 +41,11 @@ class ContentSecurityPolicy {
 	}
 
 	function isEmpty(): bool {
-		if ($this->policyStorage->count() === 0) {
+		if (empty($this->policies)) {
 			return true;
 		}
 
-		foreach ($this->policyStorage as $policy) {
+		foreach ($this->policies as $policy) {
 			if (!$policy->isEmpty()) {
 				return false;
 			}
@@ -86,7 +82,7 @@ class ContentSecurityPolicy {
 	}
 
 	function toHeaderStr(): string {
-		return self::HEADER_NAME . ': ' . implode(self::POLICY_SEPARATOR, $this->getPolicies());
+		return self::HEADER_NAME . ': ' . implode(self::POLICY_SEPARATOR . ' ', $this->getPolicies());
 	}
 
 	function copy(): ContentSecurityPolicy {
@@ -94,7 +90,7 @@ class ContentSecurityPolicy {
 	}
 
 	static function parse(string $str): ContentSecurityPolicy {
-		$parts = preg_split('\s*;\s*', trim($str));
+		$parts = preg_split('/\s*;\s*/', trim($str));
 
 		return new ContentSecurityPolicy(array_map(fn ($p) => Policy::parse($p), $parts));
 	}

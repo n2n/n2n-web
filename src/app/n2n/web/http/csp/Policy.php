@@ -11,7 +11,7 @@ class Policy {
 	 */
 	private array $sources = [];
 
-	function __construct(private PolicyDirective $directive, array $policySources) {
+	function __construct(private PolicyDirective $directive, array $policySources = []) {
 		ArgUtils::valArray($policySources, PolicySource::class);
 
 		foreach ($policySources as $policySource) {
@@ -36,7 +36,7 @@ class Policy {
 		ArgUtils::valArray($sources, PolicySource::class);
 
 		foreach ($sources as $source) {
-			$this->addSources($source);
+			$this->addSource($source);
 		}
 
 		return $this;
@@ -67,17 +67,18 @@ class Policy {
 	 * @throws InvalidCspException
 	 */
 	static function parse(string $str): Policy {
-		$parts = preg_split('\s+', trim($str));
+		$parts = preg_split('/\s+/', trim($str));
 
 		try {
 			$directive = PolicyDirective::tryFrom(array_shift($parts));
+
 			if ($directive === null) {
 				throw new InvalidCspException('Invalid content security directive: ' . $directive);
 			}
 
-			return new Policy($directive, array_map(fn($s) => new PolicySource($str), $parts));
+			return new Policy($directive, array_map(fn($s) => new PolicySource($s), $parts));
 		} catch (InvalidCspException $e) {
-			throw new InvalidCspException('Invalid content security policy: ' . $str);
+			throw new InvalidCspException('Invalid content security policy: ' . $str, previous: $e);
 		}
 	}
 }
