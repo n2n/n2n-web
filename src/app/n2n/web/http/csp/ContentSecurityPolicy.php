@@ -44,6 +44,20 @@ class ContentSecurityPolicy {
 		return $this;
 	}
 
+	function isEmpty(): bool {
+		if ($this->policyStorage->count() === 0) {
+			return true;
+		}
+
+		foreach ($this->policyStorage as $policy) {
+			if (!$policy->isEmpty()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	function append(ContentSecurityPolicy $contentSecurityPolicy): static {
 		foreach ($contentSecurityPolicy->getPolicies() as $policy) {
 			$this->getPolicy($policy->getDirective())->addSources($policy->getSources());
@@ -53,6 +67,10 @@ class ContentSecurityPolicy {
 	}
 
 	function applyHeaders(Response $response): void {
+		if ($this->isEmpty()) {
+			return;
+		}
+
 		$existingHeaderValues = $response->getHeaderValues(self::HEADER_NAME);
 		if (empty($existingHeaderValues)) {
 			$response->setHeader($this->toHeaderStr());
