@@ -60,7 +60,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	private $stateListeners;
 	private $controllerContext = null;
 	protected $contentsBuildContext;
-	
+
 	private $contentView = null;
 	private $activePanelBuffer = null;
 	private $bufferingPanel = null;
@@ -78,16 +78,16 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->contentsBuildContext = new SimpleBuildContext($this);
 		$this->reset();
 	}
-	
+
 	public function getParams() {
 		return $this->params;
 	}
-	
+
 	public function setParams(array $params) {
 		$this->params = $params;
 	}
 	/**
-	 * 
+	 *
 	 * @throws UndefinedViewNameException
 	 * @return string
 	 */
@@ -95,14 +95,14 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return $this->name;
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getScriptPath() {
 		return $this->scriptPath;
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getModuleNamespace(): string {
@@ -116,68 +116,68 @@ abstract class View extends BufferedPayload implements UiComponent {
 				$this->moduleNamespace = (string) $module;
 			}
 		}
-		
+
 		return $this->moduleNamespace;
 	}
-	
+
 	private $resolver;
-	
+
 	private function resolveViewName(string $viewNameExpression) {
 		if ($this->resolver === null) {
-			$this->resolver = new TypeExpressionResolver(ReflectionUtils::getNamespace($this->getName()), 
+			$this->resolver = new TypeExpressionResolver(ReflectionUtils::getNamespace($this->getName()),
 					$this->getN2nContext()->getModuleManager());
 		}
-		
+
 		return $this->resolver->resolve($viewNameExpression);
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\HttpContext
 	 */
 	public function getHttpContext(): HttpContext {
 		return $this->n2nContext->getHttpContext();
 	}
-	
+
 	/**
 	 * @return \n2n\core\container\N2nContext
 	 */
 	public function getN2nContext(): N2nContext {
 		return $this->n2nContext;
 	}
-	
+
 	/**
 	 * @return \n2n\l10n\N2nLocale
 	 */
 	public function getN2nLocale(): N2nLocale {
 		return $this->getHttpContext()->getN2nLocale();
 	}
-	
+
 	public function getRequest() {
 		return $this->getHttpContext()->getRequest();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param ControllerContext $controllerContext
 	 */
 	public function setControllerContext(ControllerContext $controllerContext = null) {
 		$this->controllerContext = $controllerContext;
-	} 
-	
+	}
+
 	public function hasControllerContext() {
 		return $this->controllerContext !== null;
 	}
 	/**
-	 * 
+	 *
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function getControllerContext() {
 		if ($this->controllerContext !== null) {
 			return $this->controllerContext;
 		}
-		
+
 		throw $this->decorateException(
-				new UnknownControllerContextException('No Controller Context assigned to View.'));		
+				new UnknownControllerContextException('No Controller Context assigned to View.'));
 	}
 	/**
 	 *
@@ -186,54 +186,54 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public function getControllerContextByName($name) {
 		return $this->getControllerContext()->getControllingPlan()->getByName($name);
 	}
-	
+
 	protected function getStateObjs() {
 		return $this->stateObjs;
 	}
-	
+
 	protected function setStateObjs(array $stateObjs) {
 		$this->stateObjs = $stateObjs;
 	}
-	
+
 	public function getStateObj(string $refTypeName) {
 		if (isset($this->stateObjs[$refTypeName])) {
 			return $this->stateObjs[$refTypeName];
 		}
-		
+
 		return null;
 	}
-	
+
 	public function setStateObj(string $refTypeName, $stateObj) {
 		$this->stateObjs[$refTypeName] = $stateObj;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isInitialized() {
 		return $this->contents !== null;
 	}
 	/**
-	 * 
+	 *
 	 * @param Response $response
 	 * @param View $contentView
 	 */
 	public final function initialize(View $contentView = null, BuildContext $buildContext = null) {
 		$this->ensureContentsAreNotInitialized();
 		$this->ensureBufferIsNotActive();
-		
+
 		$this->contentView = $contentView;
 		if ($contentView !== null) {
 			$this->panels = $contentView->getPanels();
 		}
-		
+
 		if ($this->n2nContext->isHttpContextAvailable()) {
 			$this->contentBuffer = $this->getHttpContext()->getResponse()->createOutputBuffer();
 		} else {
 			$this->contentBuffer = new OutputBuffer();
 		}
-		
+
 		if ($buildContext === null) {
 			$buildContext = new SimpleBuildContext();
 		}
@@ -241,7 +241,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->compile($this->contentBuffer, $buildContext);
 
 		$this->contentBuffer = null;
-		
+
 		$this->triggerContentsInitialized();
 	}
 	/**
@@ -251,7 +251,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public function initializeFromCache($data) {
 		$this->ensureContentsAreNotInitialized();
 		$this->ensureBufferIsNotActive();
-		
+
 		ArgUtils::valType($data, 'scalar');
 		$this->contents = $data;
 	}
@@ -268,51 +268,51 @@ abstract class View extends BufferedPayload implements UiComponent {
 			$this->initialize(null, $buildContext);
 		}
 // 		$this->ensureContentsAreInitialized();
-	
+
 		return $this->contents;
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	public function getContents() {
 		return $this->build(new SimpleBuildContext());
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param mixed $contents
 	 */
 	public function setContents($contents) {
 		$this->ensureContentsAreNotInitialized();
 		$this->ensureBufferIsNotActive();
-		
+
 		$this->contents = (string) $contents;
-		
+
 		$this->triggerContentsInitialized();
 	}
 	/**
-	 * 
+	 *
 	 */
 	public final function reset() {
 		$this->ensureBufferIsNotActive();
-		
+
 		$this->contents = null;
 		$this->contentView = null;
 		$this->activePanelBuffer = null;
 		$this->bufferingPanel = null;
 		$this->panels = array();
 	}
-	
+
 	/**
 	 * @return \n2n\web\ui\SimpleBuildContext
 	 */
 	public function getContentsBuildContext() {
 		return $this->contentsBuildContext;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private function triggerContentsInitialized() {
 		foreach ($this->stateListeners as $stateListener) {
@@ -320,54 +320,54 @@ abstract class View extends BufferedPayload implements UiComponent {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param ViewStateListener $stateListener
 	 */
 	public function registerStateListener(ViewStateListener $stateListener) {
 		$this->stateListeners[spl_object_hash($stateListener)] = $stateListener;
 	}
 	/**
-	 * 
+	 *
 	 * @param ViewStateListener $stateListener
 	 */
 	public function unregisterStateListener(ViewStateListener $stateListener) {
 		unset($this->stateListeners[spl_object_hash($stateListener)]);
 	}
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected function getContentView() {
 		return $this->contentView;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param array $viewVars
 	 * @param \Closure $bufferingEnded
 	 * @throws ViewPanelNerverEndedException
 	 */
 	protected final function bufferContents(array $viewVars, \Closure $bufferingEnded = null) {
 		$this->ensureBufferIsNotActive();
-		
+
 		foreach ($this->stateListeners as $stateListener) {
 			$stateListener->onViewContentsBuffering($this);
 		}
-		
+
 		foreach($viewVars as $varName => $varValue) {
 			$$varName = $varValue;
 		}
-	
+
 		$this->contentBuffer->start();
-		
+
 		try {
 			include($this->scriptPath);
 		} catch (\Exception $e) {
 			throw $this->decorateException($e);
 		}
-	
+
 		if ($this->bufferingPanel !== null) {
-			throw new ViewErrorException('Panel was never closed: ' . $this->bufferingPanel->getName(), 
+			throw new ViewErrorException('Panel was never closed: ' . $this->bufferingPanel->getName(),
 					$this->getScriptPath());
 		}
 
@@ -375,76 +375,76 @@ abstract class View extends BufferedPayload implements UiComponent {
 		if ($bufferingEnded !== null) {
 			$bufferingEnded($this->contentBuffer);
 		}
-		
+
 		$this->contents = $this->contentBuffer->getBufferedContents();
 		$this->contentBuffer->clean();
-		
+
 		if ($this->templateView !== null) {
 			$this->templateView->initialize($this);
 			$this->contents = $this->templateView->build(new SimpleBuildContext());
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public final function isBuffering() {
 		return isset($this->contentBuffer) && $this->contentBuffer->isBuffering();
 	}
-	
+
 	public final function getContentBuffer() {
 		$this->ensureBufferIsActive();
-		
+
 		return $this->contentBuffer;
 	}
 
 	public final function getActiveBuffer() {
 		$this->ensureBufferIsActive();
-	
+
 		if ($this->activePanelBuffer !== null) {
 			return $this->activePanelBuffer;
 		}
-	
+
 		return $this->contentBuffer;
 	}
 	/**
-	 * 
+	 *
 	 * @throws ViewNotInitializedException
 	 */
 	protected function ensureContentsAreInitialized() {
 		if ($this->isInitialized()) return;
-		
+
 		throw new IllegalStateException('View not yet initialized: ' . $this->getName());
 	}
 	/**
-	 * 
+	 *
 	 * @throws ViewIsAlreadyInitializedException
 	 */
 	protected function ensureContentsAreNotInitialized() {
 		if (!$this->isInitialized()) return;
-		
+
 		throw new IllegalStateException('View already initialized: ' . $this->getName());
 	}
 	/**
-	 * 
+	 *
 	 * @throws ViewIsNotBufferingException
 	 */
 	protected function ensureBufferIsActive() {
 		if ($this->isBuffering()) return;
-		
+
 		throw new IllegalStateException('View has no active buffer:' . $this->getName());
 	}
 	/**
-	 * 
+	 *
 	 * @throws ViewIsBufferingException
 	 */
 	protected function ensureBufferIsNotActive() {
 		if (!$this->isBuffering()) return;
-		
+
 		throw new IllegalStateException('View has an active buffer: ' . $this->getName());
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	public abstract function getContentType();
@@ -454,11 +454,11 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 */
 	protected function compile(OutputBuffer $contentBuffer, BuildContext $buildContext) {
 		$n2nContext = $this->getN2nContext();
-		return $this->bufferContents(array('request' => $this->getHttpContext()->getRequest(), 
+		return $this->bufferContents(array('request' => $this->getHttpContext()->getRequest(),
 				'response' => $this->getHttpContext()->getResponse(), 'view' => $this,
 				'httpContext' => $this->getHttpContext()));
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see n2n\web\http.Payload::prepareForResponse()
@@ -492,14 +492,14 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return $this->build(new SimpleBuildContext());
 	}
 	/**
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getPanels() {
 		return $this->panels;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $panelName
 	 * @return boolean
 	 */
@@ -507,7 +507,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return isset($this->panels[$panelName]);
 	}
 	/**
-	 * 
+	 *
 	 * @param string $panelName
 	 * @return Panel
 	 */
@@ -519,14 +519,14 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return $this->panels[$panelName];
 	}
 	/**
-	 * 
+	 *
 	 * @param Panel $panel
 	 */
 	public function putPanel(Panel $panel) {
 		$this->panels[$panel->getName()] = $panel;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $panelName
 	 * @param UiComponent $uiComponent
 	 */
@@ -534,51 +534,51 @@ abstract class View extends BufferedPayload implements UiComponent {
 		$this->getOrCreatePanel($panelName)->append($uiComponent);
 	}
 	/**
-	 * 
+	 *
 	 * @param \Exception $e
 	 * @return \Exception either ViewErrorException or a ViewStuffFailedException
-	 */				 
+	 */
 	private function decorateException(\Exception $e) {
-		if (!($e instanceof \ErrorException) && 
+		if (!($e instanceof \ErrorException) &&
 				null !== ($lutp = ReflectionUtils::getLastMatchingUserTracemPointOfException($e, 0, $this->getScriptPath()))) {
-			return new ViewErrorException('Error while compiling view: ' . $this->getName(), 
+			return new ViewErrorException('Error while compiling view: ' . $this->getName(),
 					$lutp['file'], $lutp['line'], null, null, $e);
 		}
-		
+
 		return $e;
 	}
-	
+
 	/*
 	 * VIEW SCRIPT UTILS
 	 */
-	
+
 	private $dynamicTextCollection = null;
-	
+
 	public function getParam($name, $required = true, $default = null) {
 		if (is_array($this->params) && array_key_exists($name, $this->params)) {
 			return $this->params[$name];
 		}
-	
+
 		if (!$required) return $default;
-	
+
 		throw new InvalidViewArgumentException('Undefined view parameter: ' .  $name);
 	}
-	
+
 	/**
 	 * @param array $params
 	 */
 	public function mergeParams(array $params = array()) {
 		if (empty($params)) return $this->params;
-		
-		return array_merge($this->params, $params);	
+
+		return array_merge($this->params, $params);
 	}
-	
+
 	/**
-	 * @param boolean 
+	 * @param boolean
 	 */
 	public function assert($e) {
 		if ($e) return;
-		
+
 		throw $this->decorateException(
 				new ViewAssertionFailedException('View assertion failed'));
 	}
@@ -590,58 +590,62 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 */
 	public function lookup(string|ReflectionClass $className) {
 		return $this->getN2nContext()->lookup($className);
- 	}
+	}
 	/**
-	 * 
+	 *
 	 * @param string $viewNameExpression
 	 * @param mixed $params
 	 */
 	public function useTemplate(string $viewNameExpression, array $params = null) {
 		$this->ensureContentsAreNotInitialized();
-		
+
 		$this->templateView = $this->getN2nContext()->lookup(ViewFactory::class)->create(
-				$this->resolveViewName($viewNameExpression), 
+				$this->resolveViewName($viewNameExpression),
 				$params);
-		
+
 		if ($this->hasControllerContext()) {
 			$this->templateView->setControllerContext($this->getControllerContext());
 		}
 	}
+
+	protected function getTemplateView(): ?View {
+		return $this->templateView;
+	}
 	/**
-	 * 
+	 *
 	 * @param string $name
 	 * @param bool $append
 	 */
 	public function panelStart(string $name, bool $append = false) {
 		$this->ensureBufferIsActive();
-		
+
 		if (isset($this->bufferingPanel)) {
-			throw new ViewPanelAlreadyStartedException('View panel already started: ' 
+			throw new ViewPanelAlreadyStartedException('View panel already started: '
 					. $this->bufferingPanel->getName());
 		}
-		
+
 		if ($append) {
 			$this->bufferingPanel = $this->getOrCreatePanel($name);
 		} else {
 			$this->bufferingPanel = new Panel($name);
 			$this->putPanel($this->bufferingPanel);
 		}
-		
+
 		$this->activePanelBuffer = $this->getHttpContext()->getResponse()->createOutputBuffer();
 		$this->activePanelBuffer->start();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public function panelEnd() {
 		$this->ensureBufferIsActive();
-	
+
 		if ($this->bufferingPanel === null) {
 			throw $this->decorateException(new IllegalStateException(
 					'No panel started in View: ' . $this->getName()));
 		}
-	
+
 		$this->activePanelBuffer->end();
 		$this->bufferingPanel->append($this->activePanelBuffer->getBufferedContents());
 		$this->bufferingPanel = null;
@@ -653,16 +657,16 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string|View $viewName
 	 * @param array $params
 	 */
-	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null, 
+	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null,
 			Module $module = null) {
 		$this->out($this->getImport($viewNameExpression, $params, $viewCacheControl, $module));
 	}
-	
+
 	/**
 	 * @param string|View $viewName
 	 * @param mixed $params
 	 */
-	public function getImport($viewNameExpression, array $params = null, 
+	public function getImport($viewNameExpression, array $params = null,
 			ViewCacheControl $viewCacheControl = null, Module $module = null) {
 		$view = null;
 		if ($viewNameExpression instanceof View) {
@@ -672,36 +676,36 @@ abstract class View extends BufferedPayload implements UiComponent {
 			$view = $this->createImportView($viewNameExpression, $params, $viewCacheControl, $module);
 		}
 		$view->setControllerContext($this->controllerContext);
-		
+
 		if (!$view->isInitialized()) {
 			$view->setStateObjs($this->getStateObjs());
 		}
-		
+
 		return $view;
 	}
-	
-	protected function createImportView(string $viewNameExpression, array $params = null, 
+
+	protected function createImportView(string $viewNameExpression, array $params = null,
 			ViewCacheControl $viewCacheControl = null, Module $module = null) {
-				
+
 		$viewName = $this->resolveViewName($viewNameExpression);
-		
+
 		$viewFactory = $this->getHttpContext()->getN2nContext()->lookup(ViewFactory::class);
 		CastUtils::assertTrue($viewFactory instanceof ViewFactory);
-		
+
 		if ($viewCacheControl !== null) {
 			$view = $viewFactory->createFromCache($viewName, $viewCacheControl, $module);
 			if (null !== $view) return $view;
 		}
-		
+
 		$view = $viewFactory->create($viewName, $params, $module);
 		if ($viewCacheControl !== null) {
 			$viewFactory->cache($view, $viewCacheControl);
 		}
-		
-		return $view; 
+
+		return $view;
 	}
 	/**
-	 * 
+	 *
 	 */
 	public function importContentView() {
 		if (isset($this->contentView)) {
@@ -709,26 +713,26 @@ abstract class View extends BufferedPayload implements UiComponent {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $panelName
 	 */
 	public function importPanel(string $panelName) {
 		foreach ($this->stateListeners as $stateListener) {
 			$stateListener->onPanelImport($this, $panelName);
 		}
-		
+
 		if (!$this->hasPanel($panelName)) return;
 		$this->out($this->getOrCreatePanel($panelName)->buildContents($this->contentsBuildContext));
-	} 
+	}
 	/**
 	 * @param UiComponent|string $contents
 	 */
 	public function out($contents) {
 		// $this->ensureBufferIsActive();
-		
-		echo $this->getOut($contents); 
+
+		echo $this->getOut($contents);
 	}
-	
+
 	/**
 	 * @param UiComponent|string $contents
 	 */
@@ -736,14 +740,14 @@ abstract class View extends BufferedPayload implements UiComponent {
 // 		if ($contents instanceof View && !$contents->isInitialized()) {
 // 			$contents->initialize();
 // 		}
-		
+
 		if ($contents instanceof UiComponent) {
 			return $contents->build($this->contentsBuildContext);
 		}
-		
+
 		return (string) $contents;
 	}
-	
+
 	/**
 	 * @param UiComponent|string $contents
 	 */
@@ -769,7 +773,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 */
 	public function getDynamicTextCollection() {
 		if ($this->dynamicTextCollection === null) {
-			$this->dynamicTextCollection = new DynamicTextCollection($this->moduleNamespace, 
+			$this->dynamicTextCollection = new DynamicTextCollection($this->moduleNamespace,
 					$this->getHttpContext()->getN2nLocale());
 		}
 		return $this->dynamicTextCollection;
@@ -787,11 +791,11 @@ abstract class View extends BufferedPayload implements UiComponent {
 		if ($module === null) {
 			return $this->getDynamicTextCollection()->translate($code, $args, $num, $replacements);
 		}
-		
-		return L10nUtils::translateModuleTextCode($this->getDynamicTextCollection(), $module, 
+
+		return L10nUtils::translateModuleTextCode($this->getDynamicTextCollection(), $module,
 				$code, $args, $num, $replacements);
 	}
-	
+
 	/**
 	 * @param float $value
 	 * @param string $currency The 3-letter ISO 4217 currency code indicating the currency to use.
@@ -801,32 +805,32 @@ abstract class View extends BufferedPayload implements UiComponent {
 		if ($value === null) return $value;
 		return L10nUtils::formatCurrency($value, $this->getN2nContext()->getN2nLocale(), $currency);
 	}
-	
+
 	public function getL10nNumber($value, $style = \NumberFormatter::DECIMAL, $pattern = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatNumber($value, $this->getN2nContext()->getN2nLocale(), $style, $pattern);
 	}
-	
+
 	public function getL10nDate(\DateTime $value = null, $dateStyle = null, \DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), $dateStyle, DateTimeFormat::STYLE_NONE, $timeZone);
 	}
-	
+
 	public function getL10nTime(\DateTime $value = null, $timeStyle = null, \DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), DateTimeFormat::STYLE_NONE, $timeStyle, $timeZone);
-	}	
-	
+	}
+
 	public function getL10nDateTime(\DateTime $value = null, $dateStyle = null, $timeStyle = null, \DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), $dateStyle, $timeStyle, $timeZone);
 	}
-	
+
 	public function getL10nDateTimeFormat(\DateTime $value = null, $icuPattern, \DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTimeWithIcuPattern($value, $this->getN2nContext()->getN2nLocale(), $icuPattern, $timeZone);
 	}
-	
+
 	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrl($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
@@ -835,7 +839,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 			return null;
 		}
 	}
-	
+
 	public function buildUrlStr($murl, bool $required = true, string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrlStr($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
@@ -844,7 +848,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * @param View $view
 	 * @return View
@@ -852,7 +856,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public static function view(View $view): View {
 		return $view;
 	}
-	
+
 	/**
 	 * @param View $view
 	 * @return \n2n\web\http\Request
@@ -860,7 +864,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public static function request(View $view) {
 		return $view->getRequest();
 	}
-	
+
 	/**
 	 * @param View $view
 	 * @return \n2n\web\http\Response
@@ -868,7 +872,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public static function response(View $view) {
 		return $view->getN2nContext()->getHttpContext()->getResponse();
 	}
-	
+
 	/**
 	 * @param View $view
 	 * @return \n2n\web\http\HttpContext
@@ -879,39 +883,39 @@ abstract class View extends BufferedPayload implements UiComponent {
 }
 
 class UndefinedViewNameException extends UiException {
-	
+
 }
 
 class UndefinedViewParameterException extends UiException {
-	
-} 
+
+}
 
 class ViewIsAlreadyInitializedException extends UiException {
 
 }
 
 class ViewNotInitializedException extends UiException {
-	
+
 }
 
 class ViewIsNotBufferingException extends UiException {
-	
+
 }
 
 class ViewIsBufferingException extends UiException {
-	
-} 
+
+}
 
 class ViewPanelAlreadyStartedException extends UiException {
-	
+
 }
 
 class NoViewPanelStartedException extends UiException {
-	
+
 }
 
 class ViewPanelNerverEndedException extends UiException {
-	
+
 }
 
 
