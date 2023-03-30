@@ -34,6 +34,8 @@ use n2n\util\type\ArgUtils;
 use Psr\Http\Message\ResponseInterface;
 use n2n\web\http\payload\impl\PsrResponsePayload;
 use DateTimeInterface;
+use n2n\web\http\csp\ContentSecurityPolicy;
+use n2n\util\ex\UnsupportedOperationException;
 
 /**
  * Assembles the http response and gives you different tools to modify it according to your wishes.
@@ -122,6 +124,7 @@ class Response {
 	private $statusCode;
 	private ?HttpCacheControl $httpCacheControl = null;
 	private ?ResponseCacheControl $responseCacheControl = null;
+	private ?ContentSecurityPolicy $contentSecurityPolicy = null;
 	private $responseCacheStore;
 	private $sentPayload;
 	private string $bodyContents = '';
@@ -205,7 +208,7 @@ class Response {
 	 * @see self::setResponseCachingEnabled()
 	 * @return bool
 	 */
-	public function isResponseCachingEnabled() {
+	public function isResponseCachingEnabled(): bool {
 		return $this->responseCachingEnabled;
 	}
 
@@ -213,7 +216,7 @@ class Response {
 	 * If false response cache configurations assigned over {@see self::setResponseCacheControl()} will be ignored.
 	 * @param bool $responseCachingEnabled
 	 */
-	public function setResponseCachingEnabled(bool $responseCachingEnabled) {
+	public function setResponseCachingEnabled(bool $responseCachingEnabled): void {
 		$this->ensureNotFlushed();
 
 		$this->responseCachingEnabled = $responseCachingEnabled;
@@ -578,6 +581,29 @@ class Response {
 		$this->headerJobs[] = $headerJob;
 	}
 
+	/**
+	 * @param string $name
+	 * @return string[];
+	 */
+	function getHeaderValues(string $name): array {
+		$name = mb_strtolower(trim($name));
+		$values = [];
+
+		foreach ($this->headerJobs as $headerJob) {
+			if (mb_strtolower($headerJob->getName()) !== $name) {
+				continue;
+			}
+
+			if ($headerJob->isRemove()) {
+				$values = [];
+			}
+
+			$values[] = $headerJob->getValue();
+		}
+
+		return $values;
+	}
+
 	public function setHttpCacheControl(HttpCacheControl $httpCacheControl = null) {
 		$this->ensureNotFlushed();
 		$this->httpCacheControl = $httpCacheControl;
@@ -594,6 +620,15 @@ class Response {
 
 	public function getResponseCacheControl() {
 		return $this->responseCacheControl;
+	}
+
+
+	function setContentSecurityPolicy(?ContentSecurityPolicy $contentSecurityPolicy) {
+		$this->contentSecurityPolicy = $contentSecurityPolicy;
+	}
+
+	function getContentSecurityPolicy(): ?ContentSecurityPolicy {
+		return $this->contentSecurityPolicy;
 	}
 
 	/**
@@ -628,11 +663,15 @@ class Response {
 					0, E_USER_ERROR, $file, $line);
 		}
 
-		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
+//		header('X-Powered-By: N2N/' . N2N::VERSION, false, $this->statusCode);
 //		http_response_code($this->statusCode);
 
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
+		}
+
+		if ($this->contentSecurityPolicy !== null) {
+			$this->contentSecurityPolicy->applyHeaders($this);
 		}
 
 		while (!is_null($header = array_shift($this->headerJobs))) {
@@ -771,6 +810,13 @@ class Response {
 }
 
 interface HeaderJob {
+
+	function getName(): string;
+
+	function isRemove(): bool;
+
+	function getValue(): ?string;
+
 	function flush(): void;
 
 	function __toString(): string;
@@ -781,6 +827,9 @@ interface HeaderJob {
 class ApplyHeaderJob implements HeaderJob {
 	private $headerStr;
 	private $replace;
+
+	private string $name;
+	private ?string $value;
 	/**
 	 *
 	 * @param string $headerStr
@@ -795,6 +844,29 @@ class ApplyHeaderJob implements HeaderJob {
 		$this->headerStr = str_replace(array("\r", "\n"), '', (string) $headerStr);
 		$this->replace = (boolean) $replace;
 	}
+
+	private function ensureNameValueAnalyzed(): void {
+		if (isset($this->name)) {
+			return;
+		}
+
+		$parts = explode(':', $this->headerStr, 2);
+		$this->name = $parts[0];
+		$this->value = $parts[1] ?? null;
+	}
+
+	function getName(): string {
+		return $this->name;
+	}
+
+	function getValue(): ?string {
+		return $this->value;
+	}
+
+	function isRemove(): bool {
+		return false;
+	}
+
 	/**
 	 *
 	 * @return string
@@ -825,6 +897,18 @@ class ApplyHeaderJob implements HeaderJob {
 class RemoveHeaderJob implements HeaderJob {
 
 	function __construct(private string $name) {
+	}
+
+	function isRemove(): bool {
+		return true;
+	}
+
+	public function getName(): string {
+		return $this->name;
+	}
+
+	function getValue(): ?string {
+		throw new UnsupportedOperationException();
 	}
 
 	function __toString(): string {
