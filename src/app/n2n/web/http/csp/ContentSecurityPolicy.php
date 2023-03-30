@@ -72,10 +72,17 @@ class ContentSecurityPolicy {
 			$response->setHeader($this->toHeaderStr());
 		}
 
-		$csp = $this->copy();
+		$csp = null;
 		foreach ($existingHeaderValues as $value) {
-			$csp->append(ContentSecurityPolicy::parse($value));
+			$existingCsp = ContentSecurityPolicy::parse($value);
+
+			if ($csp === null) {
+				$csp = $existingCsp;
+			} else {
+				$csp->append($existingCsp);
+			}
 		}
+		$csp->append($this);
 
 		$response->removeHeader(self::HEADER_NAME);
 		$response->setHeader($csp->toHeaderStr(), true);
