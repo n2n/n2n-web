@@ -99,6 +99,7 @@ class ContentSecurityPolicy {
 	static function parse(string $str): ContentSecurityPolicy {
 		$parts = preg_split('/\s*;\s*/', trim($str));
 
-		return new ContentSecurityPolicy(array_map(fn ($p) => Policy::parse($p), $parts));
+		return new ContentSecurityPolicy(array_map(fn ($p) => Policy::parse($p),
+				array_filter($parts, fn ($p) => !empty($p))));
 	}
 }
