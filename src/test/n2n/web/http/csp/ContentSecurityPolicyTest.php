@@ -44,7 +44,7 @@ class ContentSecurityPolicyTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals(PolicyDirective::IMG_SRC, $policies['img-src']->getDirective());
 		$sources = $policies['img-src']->getSources();
 		$this->assertCount(1, $sources);
-		$this->assertEquals('\'unsafe-hashes\'', $sources['\'unsafe-eval\'']->getValue());
+		$this->assertEquals('\'unsafe-hashes\'', $sources['\'unsafe-hashes\'']->getValue());
 
 	}
 
