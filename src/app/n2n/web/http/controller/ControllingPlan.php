@@ -46,7 +46,7 @@ class ControllingPlan {
 	private $responseCachePrevented = false;
 	private $filterQueue;
 	private $mainQueue;
-	private $responseHeaders;
+	private $responseHeaders = [];
 	
 	private $onPostPrecacheClosures = [];
 	private $onMainStartClosures = [];
