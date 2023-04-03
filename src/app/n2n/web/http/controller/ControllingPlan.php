@@ -46,6 +46,7 @@ class ControllingPlan {
 	private $responseCachePrevented = false;
 	private $filterQueue;
 	private $mainQueue;
+	private $responseHeaders;
 	
 	private $onPostPrecacheClosures = [];
 	private $onMainStartClosures = [];
@@ -205,6 +206,10 @@ class ControllingPlan {
 			throw new ControllingPlanException('ControllingPlan already executed.');
 		}
 
+		foreach ($this->responseHeaders as $responseHeader) {
+			$this->httpContext->getResponse()->setHeader($responseHeader, false);
+		}
+		
 		try {
 			$this->workOffQueues();
 		} catch (StatusException $e) {
@@ -558,6 +563,14 @@ class ControllingPlan {
 		while (null !== ($closure = array_shift($this->onPostPrecacheClosures))) {
 			$closure();
 		}
+	}
+	
+	function setResponseHeaders(array $responseHeaders) {
+		$this->responseHeaders = $responseHeaders;
+	}
+	
+	function getResponseHeaders() {
+		return $this->responseHeaders;
 	}
 }
 

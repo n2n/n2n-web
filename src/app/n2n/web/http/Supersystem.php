@@ -31,7 +31,7 @@ class Supersystem {
 	/**
 	 * @param N2nLocale[] $matchers
 	 */
-	public function __construct(array $n2nLocales = []) {
+	public function __construct(array $n2nLocales = [], private array $responseHeaders = []) {
 		$this->setN2nLocales($n2nLocales);
 	}
 	
@@ -80,5 +80,13 @@ class Supersystem {
 	 */
 	function containsN2nLocaleId(string $id) {
 		return isset($this->n2nLocales[$id]);
+	}
+	
+	function setResponseHeaders(array $responseHeaders) {
+		$this->responseHeaders = $responseHeaders;
+	}
+	
+	function getResponseHeaders() {
+		return $this->responseHeaders;
 	}
 }

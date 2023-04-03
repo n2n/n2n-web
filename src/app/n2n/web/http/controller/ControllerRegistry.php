@@ -32,6 +32,7 @@ use n2n\web\http\UnknownSubsystemException;
 use n2n\context\LookupFailedException;
 use n2n\web\http\HttpContext;
 use n2n\web\http\SubsystemRule;
+use n2n\web\http\Supersystem;
 
 class ControllerRegistry {
 
@@ -89,7 +90,31 @@ class ControllerRegistry {
 			$controllingPlanFactory->registerMainControllerDef($mainControllerDef);
 		}
 
-		return $controllingPlanFactory->createControllingPlan($httpContext, $cmdPath);
+		$controllingPlan = $controllingPlanFactory->createControllingPlan($httpContext, $cmdPath);
+		
+		$controllingPlan->setResponseHeaders($this->buildResponseHeaders($httpContext->getSupersystem(), 
+				$subsystemRule));
+		
+		return $controllingPlan;
+	}
+	
+	private function buildResponseHeaders(Supersystem $superSystem, ?SubsystemRule $subsystemRule) {
+		$responseHeaders = $this->webConfig->getResponseDefaultHeaders();
+		foreach ($superSystem->getResponseHeaders() as $key => $responseHeader) {
+			$responseHeaders[$key] = $responseHeader;
+		}
+		
+		if ($subsystemRule !== null) {
+			foreach ($subsystemRule->getResponseHeaders() as $key => $responseHeader) {
+				$responseHeaders[$key] = $responseHeader;
+			}
+		}
+		
+		if (!empty($responseHeaders)) {
+			return $responseHeaders;
+		}
+		
+		return ['Cache-Control: no-cache'];
 	}
 }
 

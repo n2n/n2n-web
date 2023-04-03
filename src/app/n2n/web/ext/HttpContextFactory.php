@@ -53,15 +53,6 @@ class HttpContextFactory {
 		$response->setSendEtagAllowed($webConfig->isResponseSendEtagAllowed());
 		$response->setSendLastModifiedAllowed($webConfig->isResponseSendLastModifiedAllowed());
 		$response->setServerPushAllowed($webConfig->isResponseServerPushAllowed());
-
-		$responseDefaultHeaders = $webConfig->getResponseDefaultHeaders();
-		if (empty($responseDefaultHeaders)) {
-			$response->setHeader('Cache-Control: no-cache');
-		} else {
-			foreach ($responseDefaultHeaders as $defaultResponseHeader) {
-				$response->setHeader($defaultResponseHeader, false);
-			}
-		}
 		
 		$assetsUrl = $filesConfig->getAssetsUrl();
 		if ($assetsUrl->isRelative() && !$assetsUrl->getPath()->hasLeadingDelimiter()) {

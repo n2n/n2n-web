@@ -57,12 +57,12 @@ class Subsystem {
 	 * @param array $n2nLocales
 	 * @return Subsystem
 	 */
-	function createRule(string $name, ?string $hostName, ?string $contextPath, array $n2nLocales) {
+	function createRule(string $name, ?string $hostName, ?string $contextPath, array $n2nLocales, array $responseHeaders) {
 		if (isset($this->rules[$name])) {
 			throw new DuplicateElementException('Subsystem rule with name already exists: ' . $name);
 		}
 
-		$this->rules[$name] = new SubsystemRule($this, $name, $hostName, $contextPath, $n2nLocales);
+		$this->rules[$name] = new SubsystemRule($this, $name, $hostName, $contextPath, $n2nLocales, $responseHeaders);
 		return $this;
 	}
 

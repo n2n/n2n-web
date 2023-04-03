@@ -10,7 +10,7 @@ class SubsystemRule {
 	private array $n2nLocales;
 
 	public function __construct(private Subsystem $subsystem, private string $name, private ?string $hostName, private
-			?string $contextPath, array $n2nLocales) {
+			?string $contextPath, array $n2nLocales, private array $responseHeaders) {
 		$this->name = $name;
 		$this->hostName = $hostName;
 		$this->contextPath = $contextPath;
@@ -105,5 +105,13 @@ class SubsystemRule {
 		}
 
 		return false;
+	}
+	
+	function setResponseHeaders(array $responseHeaders) {
+		$this->responseHeaders = $responseHeaders;
+	}
+	
+	function getResponseHeaders() {
+		return $this->responseHeaders;
 	}
 }
