@@ -497,6 +497,12 @@ class Response {
 		throw new IllegalStateException('Response is already flushed.');
 	}
 
+	private function applyHeaders(): void {
+		if ($this->contentSecurityPolicy !== null && $this->contentSecurityPolicyEnabled) {
+			$this->contentSecurityPolicy->applyHeaders($this);
+		}
+	}
+
 	/**
 	 *
 	 */
@@ -509,6 +515,7 @@ class Response {
 			$listener->onFlush($this);
 		}
 
+		$this->applyHeaders();
 		$contents = $this->fetchBufferedOutput(true);
 
 		if ($this->sentPayload !== null && !$this->sentPayload->isBufferable()) {
@@ -684,10 +691,6 @@ class Response {
 
 		if ($this->httpCacheControl !== null && $this->httpCachingEnabled) {
 			$this->httpCacheControl->applyHeaders($this);
-		}
-
-		if ($this->contentSecurityPolicy !== null && $this->contentSecurityPolicyEnabled) {
-			$this->contentSecurityPolicy->applyHeaders($this);
 		}
 
 		while (!is_null($header = array_shift($this->headerJobs))) {
