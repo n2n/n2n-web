@@ -55,7 +55,7 @@ class WebN2nExtension implements N2nExtension {
 
 		$appN2nContext->setN2nLocale($httpContext->determineBestN2nLocale());
 
-		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
+		$controllerRegistry = new ControllerRegistry($appConfig->web(), $appConfig->routing(),  $httpContext);
 
 		$errorConfig = $appConfig->error();
 

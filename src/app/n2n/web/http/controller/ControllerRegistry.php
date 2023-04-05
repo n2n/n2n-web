@@ -33,10 +33,12 @@ use n2n\context\LookupFailedException;
 use n2n\web\http\HttpContext;
 use n2n\web\http\SubsystemRule;
 use n2n\web\http\Supersystem;
+use n2n\core\config\RoutingConfig;
+use n2n\core\config\routing\ControllerDef;
 
 class ControllerRegistry {
 
-	function __construct(private readonly WebConfig $webConfig) {
+	function __construct(private readonly WebConfig $webConfig, private RoutingConfig $routingConfig) {
 	}
 
 	public function setContextN2nLocale(string $alias, N2nLocale $contextN2nLocale): void {
@@ -66,7 +68,7 @@ class ControllerRegistry {
 
 		$subsystemRuleName = $subsystemRule?->getName();
 		$subsystemName = $subsystemRule?->getSubsystem()->getName();
-		foreach ($this->webConfig->getPrecacheControllerDefs() as $precacheControllerDef) {
+		foreach ($this->routingConfig->getPrecacheControllerDefs() as $precacheControllerDef) {
 			if (!$precacheControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}
@@ -74,7 +76,7 @@ class ControllerRegistry {
 			$controllingPlanFactory->registerPrecacheControllerDef($precacheControllerDef);
 		}
 
-		foreach ($this->webConfig->getFilterControllerDefs() as $filterControllerDef) {
+		foreach ($this->routingConfig->getFilterControllerDefs() as $filterControllerDef) {
 			if (!$filterControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}
@@ -82,7 +84,7 @@ class ControllerRegistry {
 			$controllingPlanFactory->registerFilterControllerDef($filterControllerDef);
 		}
 
-		foreach ($this->webConfig->getMainControllerDefs() as $mainControllerDef) {
+		foreach ($this->routingConfig->getMainControllerDefs() as $mainControllerDef) {
 			if (!$mainControllerDef->acceptableBy($subsystemName, $subsystemRuleName)) {
 				continue;
 			}

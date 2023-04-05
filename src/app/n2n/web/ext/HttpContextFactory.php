@@ -32,6 +32,8 @@ use n2n\web\http\Response;
 use n2n\web\http\ResponseCacheStore;
 use n2n\web\http\BadRequestException;
 use n2n\core\N2N;
+use n2n\core\config\RoutingConfig;
+use n2n\web\http\Supersystem;
 
 class HttpContextFactory {
 
@@ -44,6 +46,7 @@ class HttpContextFactory {
 		$webConfig = $appConfig->web();
 		$filesConfig = $appConfig->files();
 		$errorConfig = $appConfig->error();
+		$routingConfig = $appConfig->routing();
 		
 		$response = new Response($request);
 		$response->setResponseCachingEnabled($webConfig->isResponseCachingEnabled());
@@ -60,7 +63,7 @@ class HttpContextFactory {
 		}
 		
 		$httpContext = new HttpContext($request, $response, $session, $assetsUrl,
-				$webConfig->getSupersystem(), $webConfig->getSubsystems(), $n2nContext);
+				self::createSupersystem($routingConfig), self::createSubsystems($routingConfig), $n2nContext);
 
 		$httpContext->setErrorStatusViewNames($errorConfig->getErrorViewNames());
 		$httpContext->setErrorStatusDefaultViewName($errorConfig->getDefaultErrorViewName()
@@ -74,5 +77,19 @@ class HttpContextFactory {
 		}
 
         return $httpContext;
+	}
+
+	private static function createSupersystem(RoutingConfig $routingConfig): Supersystem {
+		return new Supersystem($routingConfig->getN2nLocales(), $routingConfig->getResponseHeaders());
+	}
+
+	private static function createSubsystems(RoutingConfig $routingConfig): array {
+		$subsystemBuilder = new SubsystemBuilder();
+		foreach ($routingConfig->getRoutingRules() as $routingRule) {
+			$subsystemBuilder->addSchema($routingRule->getMatcherName(), $routingRule->getSubsystemName(),
+					$routingRule->getHostName(), $routingRule->getContextPath(), $routingRule->getN2nLocales(),
+					$routingRule->getResponseHeaders());
+		}
+		return $subsystemBuilder->getSubsystems();
 	}
 }

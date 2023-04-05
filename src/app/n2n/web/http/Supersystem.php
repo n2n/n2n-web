@@ -26,10 +26,11 @@ use n2n\l10n\UnknownN2nLocaleException;
 use n2n\util\type\ArgUtils;
 
 class Supersystem {
-	private $n2nLocales = [];
+	private array $n2nLocales = [];
 
 	/**
-	 * @param N2nLocale[] $matchers
+	 * @param N2nLocale[] $n2nLocales
+	 * @param string[] $responseHeaders
 	 */
 	public function __construct(array $n2nLocales = [], private array $responseHeaders = []) {
 		$this->setN2nLocales($n2nLocales);
