@@ -53,6 +53,8 @@ class WebN2nExtension implements N2nExtension {
 		$httpContext = HttpContextFactory::createFromAppConfig($appConfig, $request, $session, $appN2nContext,
 				$responseCacheStore, N2N::getExceptionHandler());
 
+		$appN2nContext->setN2nLocale($httpContext->determineBestN2nLocale());
+
 		$controllerRegistry = new ControllerRegistry($appConfig->web(), $httpContext);
 
 		$errorConfig = $appConfig->error();
