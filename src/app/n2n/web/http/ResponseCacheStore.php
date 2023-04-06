@@ -39,7 +39,7 @@ class ResponseCacheStore {
 	private TransactionManager $tm;
 	
 	function __construct(AppCache $appCache, TransactionManager $transactionManager) {
-		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class);
+		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class, true);
 		$this->responseCacheActionQueue = new ResponseCacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
 		$this->tm = $transactionManager;

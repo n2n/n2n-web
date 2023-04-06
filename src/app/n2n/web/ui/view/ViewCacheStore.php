@@ -28,7 +28,7 @@ class ViewCacheStore implements ThreadScoped {
 	private $cacheStore;
 	
 	private function _init(AppCache $appCache) {
-		$this->cacheStore = $appCache->lookupCacheStore(ViewCacheStore::class);
+		$this->cacheStore = $appCache->lookupCacheStore(ViewCacheStore::class, true);
 	}
 	
 	public function store(string $name, array $characteristics, $data, \DateTime $lastMod = null) {
