@@ -54,7 +54,7 @@ class WebN2nExtension implements N2nExtension {
 
 		if ($appConfig->general()->isApplicationReplicatable()) {
 			$session->setDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
-					N2N::NS, 'session', shared: true));
+					N2N::NS, 'sessions', shared: true));
 		}
 
 		$httpContext = HttpContextFactory::createFromAppConfig($appConfig, $request, $session, $appN2nContext,
