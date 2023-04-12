@@ -70,6 +70,7 @@ class ContentSecurityPolicy {
 		$existingHeaderValues = $response->getHeaderValues(self::HEADER_NAME);
 		if (empty($existingHeaderValues)) {
 			$response->setHeader($this->toHeaderStr());
+			return;
 		}
 
 		$csp = null;
