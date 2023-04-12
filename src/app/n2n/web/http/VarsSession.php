@@ -23,7 +23,6 @@ namespace n2n\web\http;
 
 use n2n\util\io\fs\FsPath;
 use n2n\util\StringUtils;
-use n2n\util\type\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 
 class VarsSession implements Session {

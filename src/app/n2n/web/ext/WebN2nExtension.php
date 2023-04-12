@@ -30,6 +30,7 @@ use n2n\core\N2N;
 use n2n\web\http\ResponseCacheStore;
 use n2n\core\config\AppConfig;
 use n2n\core\cache\AppCache;
+use n2n\core\VarStore;
 
 class WebN2nExtension implements N2nExtension {
 
@@ -48,7 +49,13 @@ class WebN2nExtension implements N2nExtension {
 		$request = new VarsRequest($phpVars->server, $phpVars->get, $phpVars->post, $phpVars->files);
 		$request->legacyN2nContext = $appN2nContext;
 		$appConfig = $appN2nContext->getAppConfig();
+
 		$lookupSession = $session = new VarsSession($appConfig->general()->getApplicationName());
+
+		if ($appConfig->general()->isApplicationReplicatable()) {
+			$session->setDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
+					N2N::NS, 'sessions', shared: true));
+		}
 
 		$httpContext = HttpContextFactory::createFromAppConfig($appConfig, $request, $session, $appN2nContext,
 				$responseCacheStore, N2N::getExceptionHandler());
