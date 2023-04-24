@@ -619,6 +619,7 @@ class Response {
 
 			if ($headerJob->isRemove()) {
 				$values = [];
+				continue;
 			}
 
 			$values[] = $headerJob->getValue();
