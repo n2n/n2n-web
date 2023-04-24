@@ -8,9 +8,9 @@ use n2n\util\uri\Url;
 class PolicySourceTest extends TestCase {
 
 	function testUrlQueryFragment() {
-		$source = PolicySource::createUrl(Url::create('https://www.tomekk.rocks/somepath?holeradio=1#frag'));
+		$source = PolicySource::createUrl(Url::create('https://www.n2n.rocks/somepath?holeradio=1#frag'));
 
-		$this->assertEquals('https://www.tomekk.rocks/somepath', $source->getValue());
+		$this->assertEquals('https://www.n2n.rocks/somepath', $source->getValue());
 
 	}
 }
