@@ -61,7 +61,7 @@ class PolicySource {
 	}
 
 	static function createUrl(Url $url): PolicySource {
-		$source = new PolicySource((string) $url);
+		$source = new PolicySource((string) $url->chQuery(null)->chFragment(null));
 		$source->type = PolicySourceType::OTHER;
 		return $source;
 	}
