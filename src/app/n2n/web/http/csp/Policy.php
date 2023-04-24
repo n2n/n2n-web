@@ -62,7 +62,16 @@ class Policy {
 	const SEPARATOR = ' ';
 
 	function __toString(): string {
-		return $this->directive->value . self::SEPARATOR . implode(self::SEPARATOR, array_keys($this->sources));
+		$generalInlineGranted = !empty(array_filter($this->sources, fn ($s) => $s->isGeneralInlineGrant()));
+
+		if (!$generalInlineGranted) {
+			$sources = $this->sources;
+		} else {
+			$sources = array_filter($this->sources, fn ($s) => !$s->isSpecificInlineGrant());
+		}
+
+		return $this->directive->value . self::SEPARATOR . implode(self::SEPARATOR,
+				array_map(fn ($s) => $s->getValue(), $sources));
 	}
 
 	/**
