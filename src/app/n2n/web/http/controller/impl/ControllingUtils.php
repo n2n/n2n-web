@@ -67,6 +67,10 @@ use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTaskExecutionException;
 use n2n\util\magic\MagicTask;
 use n2n\core\container\Transaction;
+use n2n\web\http\controller\ParamPost;
+use n2n\web\http\controller\ParamQuery;
+use SimpleXMLElement;
+use JsonSerializable;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -106,6 +110,24 @@ class ControllingUtils {
 	 */
 	public function getRequest(): Request {
 		return $this->getHttpContext()->getRequest();
+	}
+
+	function getParamQuery(string $name): ?ParamQuery {
+		$str = $this->getRequest()->getPostQuery()->get($name);
+		if ($str !== null) {
+			return new ParamQuery($str);
+		}
+
+		return null;
+	}
+
+	function getParamPost(string $name): ?ParamPost {
+		$str = $this->getRequest()->getPostQuery()->get($name);
+		if ($str !== null) {
+			return new ParamPost($str);
+		}
+
+		return null;
 	}
 	
 	/**
@@ -504,7 +526,7 @@ class ControllingUtils {
 	}
 	
 	/**
-	 * @param array $data
+	 * @param array|JsonSerializable $data
 	 * @param bool $includeBuffer
 	 */
 	public function sendJson($data, bool $includeBuffer = true) {
@@ -512,7 +534,7 @@ class ControllingUtils {
 	}
 	
 	/**
-	 * @param \SimpleXMLElement|string $data
+	 * @param SimpleXMLElement|string $data
 	 * @param bool $includeBuffer
 	 */
 	public function sendXml($data, bool $includeBuffer = true) {
@@ -644,4 +666,6 @@ class ControllingUtils {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
+
+
 }
