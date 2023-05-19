@@ -21,13 +21,11 @@
  */
 namespace n2n\web\http;
 
-class StatusException extends \RuntimeException {
-	private $status;
+class StatusException extends \Exception {
 // 	private $attributes;
 	
-	public function __construct(int $status, string $message = null, int $code = null, \Exception $previous = null) {
+	public function __construct(private int $status, string $message = null, int $code = null, \Exception $previous = null) {
 		parent::__construct((string) $message, (int) $code, $previous);
-		$this->status = $status;
 // 		$this->attributes = new Attributes();
 	}
 	/**
