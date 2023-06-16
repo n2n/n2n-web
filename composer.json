@@ -35,7 +35,8 @@
 		"n2n/n2n-util" : "~7.4",
 		"psr/http-factory": "^1",
 		"psr/http-message": "^1",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+      "ext-mbstring": "*"
     },
 	"autoload" : {
 		"psr-4" : {
