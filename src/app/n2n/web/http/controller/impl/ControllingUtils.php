@@ -71,20 +71,21 @@ use n2n\web\http\controller\ParamPost;
 use n2n\web\http\controller\ParamQuery;
 use SimpleXMLElement;
 use JsonSerializable;
+use n2n\web\http\cache\PayloadCacheControl;
+use n2n\web\http\cache\PayloadCacheStore;
+use n2n\web\http\ResponseCacheItem;
 
 class ControllingUtils {
 	private $relatedTypeName;
-	private $controllerContext;
 	private $typeExpressionResolver;
-	private $invokerInfo;
+	private ?InvokerInfo $invokerInfo = null;
 	private $viewCacheControl;
 	private $httpCacheControl;
 	private $responseCacheControl;
 	private $transactions = array();
 	
-	public function __construct(string $relatedTypeName, ControllerContext $controllerContext) {
+	public function __construct(string $relatedTypeName, private ?ControllerContext $controllerContext) {
 		$this->relatedTypeName = $relatedTypeName;
-		$this->controllerContext = $controllerContext;
 		$this->typeExpressionResolver = new TypeExpressionResolver(ReflectionUtils::getNamespace($relatedTypeName),
 				$this->getN2nContext()->getModuleManager());
 	}
@@ -94,7 +95,7 @@ class ControllingUtils {
 	 * @return string
 	 */
 	public function getModuleNamespace(): string {
-		$moduleNamespace = $this->controllerContext->getModuleNamespace();
+		$moduleNamespace = $this->getControllerContext()->getModuleNamespace();
 		if ($moduleNamespace !== null) return $moduleNamespace;
 	
 		return $this->getN2nContext()->getModuleManager()
@@ -189,7 +190,7 @@ class ControllingUtils {
 	/**
 	 * 
 	 */
-	public function resetCacheControl() {
+	public function resetCacheControl(): void {
 		$this->viewCacheControl = null;
 		$this->httpCacheControl = null;
 		$this->responseCacheControl = null;
@@ -217,39 +218,58 @@ class ControllingUtils {
 	/**
 	 * 
 	 */
-	public function commit() {
+	public function commit(): void {
 		$this->peakTransaction()->commit();
 	}
 	
 	/**
 	 * 
 	 */
-	public function rollBack() {
+	public function rollBack(): void {
 		$this->peakTransaction()->rollBack();
 	}
+
 	/**
 	 *
-	 * @param ViewCacheControl $viewCacheControl
+	 * @param \DateInterval|null $cacheInterval
+	 * @param array $characteristics
 	 */
-	public function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()) {
+	public function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
 		$this->viewCacheControl = new ViewCacheControl($cacheInterval, $characteristics);
 	}
+
+	function resetViewCacheControl(): void {
+		$this->viewCacheControl = null;
+	}
+
+	function assignPayloadCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
+		$this->playloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics);
+	}
+
+	function resetPayloadCacheControl(): void {
+		$this->payloadCacheControl = null;
+	}
+
 	/**
 	 *
-	 * @param HttpCacheControl $httpCacheControl
+	 * @param \DateInterval|null $maxAge
+	 * @param array|null $directives
 	 */
-	public function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null) {
+	public function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null): void {
 		$this->httpCacheControl = new HttpCacheControl($maxAge, $directives);
 	}
 	
-	public function resetHttpCacheControl() {
+	public function resetHttpCacheControl(): void {
 		$this->httpCacheControl = null;
 	}
+
 	/**
-	 * @param ResponseCacheControl $responseCacheControl
+	 * @param \DateInterval|null $cacheInterval
+	 * @param bool $includeQuery
+	 * @param array $characteristics
 	 */
 	public function assignResponseCacheControl(\DateInterval $cacheInterval = null,
-			bool $includeQuery = false, array $characteristics = array()) {
+			bool $includeQuery = false, array $characteristics = array()): void {
 		$queryParamNames = null;
 		if ($includeQuery) {
 			$queryParamNames = array_keys($this->getInvokerInfo()->getQueryParams());
@@ -258,16 +278,17 @@ class ControllingUtils {
 		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics);
 	}
 	
-	public function resetResponseCacheControl() {
+	public function resetResponseCacheControl(): void {
 		$this->responseCacheControl = null;
 	}
-	
+
 	/**
 	 *
-	 * @param string $viewName
-	 * @param ViewCacheControl $viewCacheControl
+	 * @param string $viewNameExpression
+	 * @param string|null $moduleNamespace
+	 * @return View|null
 	 */
-	public function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null) {
+	public function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null): ?View {
 		if ($this->viewCacheControl === null) return null;
 	
 		$viewFactory = $this->getN2nContext()->lookup(ViewFactory::class);
@@ -276,11 +297,12 @@ class ControllingUtils {
 		$viewName = $this->typeExpressionResolver->resolve($viewNameExpression);
 		return $viewFactory->createFromCache($viewName, $this->viewCacheControl, $moduleNamespace);
 	}
-	
+
 	/**
 	 *
-	 * @param string $viewName
+	 * @param string $viewNameExpression
 	 * @param mixed $params
+	 * @param string|null $moduleNamespace
 	 * @return View
 	 */
 	public function createView(string $viewNameExpression, array $params = null, string $moduleNamespace = null) {
@@ -524,7 +546,8 @@ class ControllingUtils {
 		
 		return null;
 	}
-	
+
+
 	/**
 	 * @param array|JsonSerializable $data
 	 * @param bool $includeBuffer
@@ -570,7 +593,7 @@ class ControllingUtils {
 	 * @param string|null $name
 	 * @param bool $includeBuffer
 	 */
-	public function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true) {
+	public function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true): void {
 		$this->send(new FilePayload($file, true, $name), $includeBuffer);
 	}
 	
@@ -578,38 +601,81 @@ class ControllingUtils {
 	 * @param FsPath|string $fsPath
 	 * @param bool $includeBuffer
 	 */
-	public function sendFsPath($fsPath, bool $includeBuffer = true) {
+	public function sendFsPath($fsPath, bool $includeBuffer = true): void {
 		$this->send(new FsPathPayload(FsPath::create($fsPath)), $includeBuffer);
 	}
-	
+
 	/**
 	 * @param FsPath|string $fsPath
-	 * @param string $name
+	 * @param string|null $name
 	 * @param bool $includeBuffer
 	 */
-	public function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true) {
+	public function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true): void {
 		$this->send(new FsPathPayload(FsPath::create($fsPath), true, $name), $includeBuffer);
 	}
-	
-	public function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true) {
+
+	private ?PayloadCacheControl $payloadCacheControl = null;
+
+	private function createPayloadSrcName(): string {
+		$method = $this->getInvokerInfo()->getInvoker()->getMethod();
+		return $this->relatedTypeName . '::' . $method->getName();
+	}
+
+	public function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true): void {
 		$this->assignCacheControls();
 		$this->getResponse()->send($responseThing, $includeBuffer);
+
+		$this->storePayloadCache();
 	}
-	
+
+	private function storePayloadCache(): void {
+		if ($this->payloadCacheControl === null) {
+			return;
+		}
+
+		$expireDate = new \DateTime();
+		$expireDate->add($this->payloadCacheControl->getCacheInterval());
+		$responseCacheItem = ResponseCacheItem::createFromSentPayload($this->getResponse(), $expireDate);
+
+		$this->getN2nContext()->lookup(PayloadCacheStore::class)
+				->store($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristics(),
+						$responseCacheItem, $this->payloadCacheControl->isShared());
+	}
+
+	public function createPayloadFromCache(): ?Payload {
+		if ($this->payloadCacheControl === null) {
+			return null;
+		}
+
+		return $this->getN2nContext()->lookup(PayloadCacheStore::class)
+				->get($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristics(),
+						$this->payloadCacheControl->isShared());
+	}
+
+	public function sendCache(): bool {
+		$payload = $this->createPayloadFromCache();
+		if ($payload === null) {
+			return false;
+		}
+
+		$this->getResponse()->send($payload);
+		return true;
+	}
+
 	public function accepted(string ...$mimeTypes) {
 		return $this->getRequest()->getAcceptRange()->bestMatch($mimeTypes);
 	}
 	
-	public function acceptQuality(string $mimeType) {
+	public function acceptQuality(string $mimeType): float|int {
 		return $this->getRequest()->getAcceptRange()->matchQuality($mimeType);
 	}
 	
-	private $interceptorFactory;
-	
+	private ?InterceptorFactory $interceptorFactory = null;
+
 	/**
-	 * @return \n2n\web\http\controller\InterceptorFactory
+	 * @return InterceptorFactory|null
 	 */
-	private function getInterceptorFactory() {
+	private function getInterceptorFactory(): ?InterceptorFactory {
 		if ($this->interceptorFactory === null) {
 			$this->interceptorFactory = new InterceptorFactory($this->getN2nContext());
 		}
@@ -620,7 +686,7 @@ class ControllingUtils {
 	/**
 	 * @param Interceptor|string ...$interceptors
 	 */
-	public function intercept(...$interceptors) {
+	public function intercept(...$interceptors): bool {
 		ArgUtils::valArray($interceptors, ['string', Interceptor::class]);
 		
 		foreach ($interceptors as $interceptor) {
@@ -659,7 +725,7 @@ class ControllingUtils {
 	 * @return ExecResult
 	 * @throws StatusException
 	 */
-	function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+	function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		try {
 			return new ExecResult($magicTask->exec($this->getN2nContext()), $this);
 		} catch (MagicTaskExecutionException $e) {

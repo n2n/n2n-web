@@ -54,6 +54,9 @@ interface Payload {
 	
 	/**
 	 * Returns a string which describes this object. This string is mainly used to be displayed in error messages.
+	 *
+	 * Note: The spelling mistake can not be fixed due to too many implementations across multiple projects.
+	 *
 	 * @return string
 	 */
 	public function toKownPayloadString(): string;

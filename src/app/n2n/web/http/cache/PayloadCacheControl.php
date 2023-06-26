@@ -19,29 +19,23 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
-class ResponseCacheControl {
-	private $cacheInterval;
-	private $includedQueryParamNames;
-	private $characteristics;
+class PayloadCacheControl {
 	
-	public function __construct(\DateInterval $cacheInterval = null, array $includedQueryParamNames = null,
-			array $characteristics = array()) {
-		$this->cacheInterval = $cacheInterval;
-		$this->includedQueryParamNames = $includedQueryParamNames;
-		$this->characteristics = $characteristics;
+	public function __construct(private ?\DateInterval $cacheInterval = null, private array $characteristics = array(),
+			private bool $shared = true) {
 	}
 	
-	public function getCacheInterval() {
+	function getCacheInterval(): ?\DateInterval {
 		return $this->cacheInterval;
 	}
 	
-	public function getIncludedQueryParamNames() {
-		return $this->includedQueryParamNames;
-	}
-	
-	public function getCharacteristics(): array {
+	function getCharacteristics(): array {
 		return $this->characteristics;
+	}
+
+	function isShared(): bool {
+		return $this->shared;
 	}
 }

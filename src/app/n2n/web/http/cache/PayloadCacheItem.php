@@ -19,33 +19,28 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
 use n2n\web\http\payload\BufferedPayload;
 use n2n\util\type\ArgUtils;
 use DateTime;
+use n2n\web\http\HeaderJob;
 
-class ResponseCacheItem extends BufferedPayload {
+class PayloadCacheItem extends BufferedPayload {
 	private int $expireTimestamp;
 
 	/**
 	 * @param string $contents
 	 * @param int $statusCode
 	 * @param HeaderJob[] $headerJobs
-	 * @param HttpCacheControl|null $httpCacheControl
-	 * @param DateTime $expireDateTime
+	 * @param DateTime $expireDate
 	 */
 	public function __construct(private string $contents, private int $statusCode, private array $headerJobs,
-			private ?HttpCacheControl $httpCacheControl, \DateTimeInterface $expireDateTime) {
+			DateTime $expireDate) {
 		ArgUtils::valArray($headerJobs, HeaderJob::class);
-		$this->expireTimestamp = $expireDateTime->getTimestamp();
+		$this->expireTimestamp = $expireDate->getTimestamp();
 	}
-	/**
-	 * @return HttpCacheControl
-	 */
-	public function getHttpCacheControl() {
-		return $this->httpCacheControl;
-	}
+
 	/**
 	 * @param DateTime $now
 	 * @return boolean
@@ -53,32 +48,19 @@ class ResponseCacheItem extends BufferedPayload {
 	public function isExpired(DateTime $now): bool {
 		return $this->expireTimestamp < $now->getTimestamp();
 	}
-	/* (non-PHPdoc)
-	 * @see \n2n\web\http\payload\BufferedPayload::getBufferedContents()
-	 */
-	public function getBufferedContents(): string {
+
+	function getBufferedContents(): string {
 		return $this->contents;
 	}
-	/* (non-PHPdoc)
-	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
-	 */
-	public function prepareForResponse(\n2n\web\http\Response $response): void {
+
+	function prepareForResponse(\n2n\web\http\Response $response): void {
 		$response->setStatus($this->statusCode);
 		foreach ($this->headerJobs as $headerJob) {
 			$response->addHeaderJob($headerJob);
 		}
-
-		$response->setHttpCacheControl($this->httpCacheControl);
 	}
 
-	public function toKownPayloadString(): string {
-		return 'Cached response';
+	 function toKownPayloadString(): string {
+		return 'Cached payload';
 	}
-
-	static function createFromSentPayload(Response $response, \DateTimeInterface $expireDateTime): ResponseCacheItem {
-		return new ResponseCacheItem($response->getSentPayload()->getBufferedContents(),
-				$response->getStatus(),
-				$response->getHeaderJobs(), $response->getHttpCacheControl(), $expireDateTime);
-	}
-
 }

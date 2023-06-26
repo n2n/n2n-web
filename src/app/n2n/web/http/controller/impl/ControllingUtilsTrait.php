@@ -46,7 +46,7 @@ trait ControllingUtilsTrait {
 	private $controllingUtils;
 	
 	/**
-	 * @return \n2n\web\http\controller\impl\ControllingUtils
+	 * @return ControllingUtils
 	 */
 	protected function cu() {
 		if ($this->controllingUtils !== null) {
@@ -61,7 +61,7 @@ trait ControllingUtilsTrait {
 	}
 	
 	/**
-	 * @return \n2n\web\http\controller\impl\ControllingUtils
+	 * @return ControllingUtils
 	 */
 	protected final function getControllingUtils() {
 		return $this->cu();
@@ -149,36 +149,49 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::rollBack()
 	 */
-	protected final function rollBack() {
+	protected final function rollBack(): void {
 		$this->cu()->rollBack();
 	}
 	
 	/**
 	 * @see ControllingUtils::assignViewCacheControl()
 	 */
-	protected final function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()) {
+	protected final function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
 		$this->cu()->assignViewCacheControl($cacheInterval, $characteristics);
 	}
-	/**
-	 *
-	 * @param HttpCacheControl $httpCacheControl
-	 */
-	protected final function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null) {
+
+	protected final function resetViewCacheControl(): void {
+		$this->cu()->resetViewCacheControl();
+	}
+
+	protected final function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null): void {
 		$this->cu()->assignHttpCacheControl($maxAge, $directives);
 	}
 	
-	protected final function resetHttpCacheControl() {
+	protected final function resetHttpCacheControl(): void {
 		$this->cu()->resetHttpCacheControl();
 	}
+
+	protected final function assignPayloadCacheControl(\DateInterval $cacheInterval = null,
+			array $characteristics = []): void {
+		$this->cu()->assignPayloadCacheControl($cacheInterval, $characteristics);
+	}
+
+	protected final function resetPayloadCacheControl(): void {
+		$this->cu()->resetPayloadCacheControl();
+	}
+
 	/**
-	 * @param ResponseCacheControl $responseCacheControl
+	 * @param \DateInterval|null $cacheInterval
+	 * @param bool $includeQuery
+	 * @param array $characteristics
 	 */
 	protected final function assignResponseCacheControl(\DateInterval $cacheInterval = null,
-			$includeQuery = false, array $characteristics = array()) {
+			bool $includeQuery = false, array $characteristics = array()): void {
 		$this->cu()->assignResponseCacheControl($cacheInterval, $includeQuery, $characteristics);
 	}
 	
-	protected final function resetResponseCacheControl() {
+	protected final function resetResponseCacheControl(): void {
 		$this->cu()->resetResponseCacheControl();
 	}
 	
@@ -422,10 +435,20 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::send()
 	 */
-	protected final function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true) {
+	protected final function send(Payload|ResponseInterface $responseThing, bool $includeBuffer = true): void {
 		$this->cu()->send($responseThing, $includeBuffer);
 	}
-	
+
+	protected final function createPayloadFromCache(): ?Payload {
+		return $this->cu()->createPayloadFromCache();
+	}
+
+	protected final function sendCache(): bool {
+		return $this->cu()->sendCache();
+	}
+
+
+
 	/**
 	 * @see ControllingUtils::accepted()
 	 */

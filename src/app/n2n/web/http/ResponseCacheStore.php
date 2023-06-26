@@ -35,12 +35,12 @@ class ResponseCacheStore {
 	const INDEX_NAME = 'i';
 	
 	private ?CacheStore $cacheStore;
-	private ResponseCacheActionQueue $responseCacheActionQueue;
+	private cache\CacheActionQueue $responseCacheActionQueue;
 	private TransactionManager $tm;
 	
 	function __construct(AppCache $appCache, TransactionManager $transactionManager) {
 		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class, true);
-		$this->responseCacheActionQueue = new ResponseCacheActionQueue();
+		$this->responseCacheActionQueue = new cache\CacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
 		$this->tm = $transactionManager;
 	}
@@ -71,7 +71,7 @@ class ResponseCacheStore {
 				'query' => $queryParams);
 	}
 	
-	private function buildIndexCharacteristics(array $responseCharacteristics, array $customCharacteristics) {
+	private function buildIndexCharacteristics(array $responseCharacteristics, array $customCharacteristics): array {
 		foreach ($customCharacteristics as $key => $value) {
 			$responseCharacteristics['cust' . $key] = $value;
 		}
@@ -79,7 +79,7 @@ class ResponseCacheStore {
 	}
 	
 	public function store(int $method, string $hostName, Path $path, array $queryParams = null,
-			array $characteristics, ResponseCacheItem $item) {
+			array $characteristics, ResponseCacheItem $item): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$this->cacheStore->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
 		$this->cacheStore->store(self::INDEX_NAME, 
@@ -88,7 +88,7 @@ class ResponseCacheStore {
 	}
 	
 	public function get(int $method, string $hostName, Path $path, array $queryParams = null,
-			\DateTime $now = null) {
+			\DateTime $now = null): ?ResponseCacheItem {
 		$cacheItem = $this->cacheStore->get(self::RESPONSE_NAME, 
 				$this->buildResponseCharacteristics($method, $hostName, $path, $queryParams));
 		if ($cacheItem === null) return null;
@@ -107,14 +107,12 @@ class ResponseCacheStore {
 		return $data;
 	}
 	
-	public function remove(int $method, string $hostName, Path $path, array $queryParams = null) {
-		if ($this->responseCacheActionQueue->isSealed()) return;
-		
+	public function remove(int $method, string $hostName, Path $path, array $queryParams = null): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
 		
 		$that = $this;
-		$this->responseCacheActionQueue->onCommit(false, function () 
+		$this->responseCacheActionQueue->registerAction(false, function ()
 				use ($that, $responseCharacteristics, $indexCharacteristics){
 			$that->cacheStore->remove(self::RESPONSE_NAME, $responseCharacteristics);
 			$that->cacheStore->removeAll(self::INDEX_NAME, $indexCharacteristics);
@@ -127,13 +125,11 @@ class ResponseCacheStore {
 // 				$characteristicNeedles));
 // 	}
 	
-	public function removeByCharacteristics(array $characteristicNeedles) {
-		if ($this->responseCacheActionQueue->isSealed()) return;
-		
+	public function removeByCharacteristics(array $characteristicNeedles): void {
 		$cacheItems = $this->cacheStore->findAll(self::INDEX_NAME, $this->buildIndexCharacteristics(
 				array(), $characteristicNeedles));
 		$that = $this;
-		$this->responseCacheActionQueue->onCommit(false, function () use ($that, $cacheItems) {
+		$this->responseCacheActionQueue->registerAction(false, function () use ($that, $cacheItems) {
 			foreach ($cacheItems as $cacheItem) {
 				$responseCharacteristics = $cacheItem->getData();
 				if (is_array($responseCharacteristics)) {
@@ -144,66 +140,7 @@ class ResponseCacheStore {
 		});
 	}
 	
-	public function clear() {
-		if ($this->responseCacheActionQueue->isSealed()) return;
-		
+	public function clear(): void {
 		$this->cacheStore->clear();
-	}
-}
-
-class ResponseCacheActionQueue implements TransactionalResource {
-	private $inTransaction = false;
-	private $sealed = false;
-	private $onCommitClosures = array();
-		
-	private function reset() {
-		$this->inTransaction = false;
-		$this->sealed = false;
-		$this->onCommitClosures = array();
-	}
-	
-	public function isSealed() {
-		return $this->sealed;
-	}
-	
-	public function onCommit(bool $master, \Closure $closure) {
-		if (!$this->inTransaction) {
-			$closure();
-			return;
-		}
-		
-		if ($this->sealed) return;
-		
-		if ($master) {
-			$this->onCommitClosures = array();
-			$this->sealed = true;
-		}
-		
-		$this->onCommitClosures[] = $closure;
-	}
-	
-	public function beginTransaction(Transaction $transaction): void {
-		$this->inTransaction = true;		
-	}
-	
-	public function prepareCommit(Transaction $transaction): void {
-	}
-	
-	public function commit(Transaction $transaction): void {
-		foreach ($this->onCommitClosures as $onCommitClosure) {
-			$onCommitClosure();
-		}
-		
-		$this->reset();
-	}
-	
-	/**
-	 * @param Transaction $transaction
-	 */
-	public function rollBack(Transaction $transaction): void {
-		$this->reset();
-	}
-
-	function release(): void {
 	}
 }

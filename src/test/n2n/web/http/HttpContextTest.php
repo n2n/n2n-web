@@ -13,7 +13,7 @@ class HttpContextTest extends TestCase  {
 
 	function setUp(): void {
 		$request = new SimpleRequest(Url::create('https://www.holeradio.ch/context'));
-		$response = new Response($request);
+		$response = new ManagedResponse($request);
 
 		$n2nContext = $this->getMockBuilder(N2nContext::class)->getMock();
 

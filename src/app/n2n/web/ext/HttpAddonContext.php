@@ -32,12 +32,11 @@ use n2n\web\http\Session;
 use n2n\context\config\LookupSession;
 use n2n\core\container\impl\AddOnContext;
 use n2n\util\magic\impl\SimpleMagicContext;
-use n2n\core\container\impl\AppN2nContext;
 use n2n\web\http\ResponseCacheStore;
-use n2n\core\err\ExceptionHandler;
 use n2n\core\N2N;
 use n2n\util\magic\MagicObjectUnavailableException;
 use n2n\util\ex\IllegalStateException;
+use n2n\web\http\cache\PayloadCacheStore;
 
 class HttpAddonContext implements N2nHttp, AddOnContext {
 	private ?SimpleMagicContext $simpleMagicContext;
@@ -52,6 +51,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 	function __construct(private readonly ?HttpContext $httpContext,
 			private readonly ?ControllerRegistry $controllerRegistry,
 			private readonly ResponseCacheStore $responseCacheStore,
+			private readonly PayloadCacheStore $payloadCacheStore,
 			private readonly bool $statusExceptionLoggingEnabled = false,
 			private readonly array $loggingExcludedStatusCodes = []) {
 
@@ -61,6 +61,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 			Response::class => $httpContext?->getResponse(),
 			Session::class => $httpContext?->getSession(),
 			ResponseCacheStore::class => $this->responseCacheStore,
+			PayloadCacheStore::class => $this->payloadCacheStore,
 			ControllerRegistry::class => $controllerRegistry
 		]));
 	}

@@ -219,7 +219,7 @@ class CacheViewStateListener implements ViewStateListener {
 	/* (non-PHPdoc)
 	 * @see \n2n\web\ui\view\ViewStateListener::viewContentsInitialized()
 	 */
-	public function viewContentsInitialized(View $view) {
+	public function viewContentsInitialized(View $view): void {
 		$this->cacheStore->store($view->getName(), $this->viewCacheControl->getCharacteristics(), 
 				$view->toCacheData());
 	}

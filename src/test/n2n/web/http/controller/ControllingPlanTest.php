@@ -5,22 +5,20 @@ use PHPUnit\Framework\TestCase;
 use n2n\web\http\HttpContext;
 use n2n\web\http\SimpleRequest;
 use n2n\util\uri\Url;
-use n2n\web\http\Response;
 use n2n\web\http\Supersystem;
 use n2n\l10n\N2nLocale;
-use n2n\web\ui\ViewFactory;
-use n2n\util\magic\SimpleMagicContext;
 use n2n\util\uri\Path;
 use n2n\web\http\mock\CommonControllerMock;
 use n2n\web\http\SimpleSession;
 use n2n\core\container\N2nContext;
+use n2n\web\http\ManagedResponse;
 
 class ControllingPlanTest extends TestCase {
 	private $httpContext;
 	
 	function setUp(): void {
 		$request = new SimpleRequest(Url::create('https://www.holeradio.ch/context'));
-		$response = new Response($request);
+		$response = new ManagedResponse($request);
 		
 		$n2nContext = $this->getMockBuilder(N2nContext::class)->getMock();
 		

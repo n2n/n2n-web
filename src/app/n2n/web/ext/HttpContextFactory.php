@@ -34,6 +34,7 @@ use n2n\web\http\BadRequestException;
 use n2n\core\N2N;
 use n2n\core\config\RoutingConfig;
 use n2n\web\http\Supersystem;
+use n2n\web\http\ManagedResponse;
 
 class HttpContextFactory {
 
@@ -48,7 +49,7 @@ class HttpContextFactory {
 		$errorConfig = $appConfig->error();
 		$routingConfig = $appConfig->routing();
 		
-		$response = new Response($request);
+		$response = new ManagedResponse($request);
 		$response->setResponseCachingEnabled($webConfig->isResponseCachingEnabled());
 		$response->setContentSecurityPolicyEnabled($webConfig->isResponseContentSecurityPolicyEnabled());
 		$response->setResponseCacheStore($responseCacheStore);
