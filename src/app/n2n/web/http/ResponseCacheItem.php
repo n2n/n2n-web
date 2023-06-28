@@ -50,7 +50,7 @@ class ResponseCacheItem extends BufferedPayload {
 	 * @param DateTime $now
 	 * @return boolean
 	 */
-	public function isExpired(DateTime $now): bool {
+	public function isExpired(\DateTimeInterface $now): bool {
 		return $this->expireTimestamp < $now->getTimestamp();
 	}
 	/* (non-PHPdoc)

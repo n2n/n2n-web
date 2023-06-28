@@ -31,6 +31,7 @@ use n2n\web\http\ResponseCacheStore;
 use n2n\core\config\AppConfig;
 use n2n\core\cache\AppCache;
 use n2n\core\VarStore;
+use n2n\web\http\cache\PayloadCacheStore;
 
 class WebN2nExtension implements N2nExtension {
 
@@ -39,9 +40,11 @@ class WebN2nExtension implements N2nExtension {
 
 	function setUp(AppN2nContext $appN2nContext): void {
 		$responseCacheStore = new ResponseCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
+		$payloadCacheStore = new PayloadCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
 
 		if (!isset($appN2nContext->getPhpVars()->server['REQUEST_URI'])) {
-			$appN2nContext->addAddonContext(new HttpAddonContext(null, null, $responseCacheStore));
+			$appN2nContext->addAddonContext(new HttpAddonContext(null, null,
+					$responseCacheStore, $payloadCacheStore));
 			return;
 		}
 
@@ -67,7 +70,8 @@ class WebN2nExtension implements N2nExtension {
 		$errorConfig = $appConfig->error();
 
 		$controllerInvoker = new HttpAddonContext($httpContext, $controllerRegistry, $responseCacheStore,
-				$errorConfig->isLogHandleStatusExceptionsEnabled(), $errorConfig->getLogExcludedHttpStatus());
+				$payloadCacheStore, $errorConfig->isLogHandleStatusExceptionsEnabled(),
+				$errorConfig->getLogExcludedHttpStatus());
 		$appN2nContext->setHttp($controllerInvoker);
 		$appN2nContext->addAddonContext($controllerInvoker);
 	}

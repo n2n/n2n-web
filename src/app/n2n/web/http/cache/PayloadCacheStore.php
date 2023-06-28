@@ -36,7 +36,7 @@ class PayloadCacheStore {
 	}
 
 	private function ensureNotClosed(): void {
-		if ($this->isClosed()) {
+		if (!$this->isClosed()) {
 			return;
 		}
 
@@ -48,11 +48,11 @@ class PayloadCacheStore {
 
 		if ($shared) {
 			return $this->sharedCacheStore ?? $this->sharedCacheStore
-					= $this->appCache->lookupCacheStore(ResponseCacheStore::class, true);
+					= $this->appCache->lookupCacheStore(PayloadCacheStore::class, true);
 		}
 
 		return $this->localCacheStore ?? $this->localCacheStore
-				= $this->appCache->lookupCacheStore(ResponseCacheStore::class, false);
+				= $this->appCache->lookupCacheStore(PayloadCacheStore::class, false);
 	}
 
 	private function getCacheStores(?bool $shared): array {
@@ -70,9 +70,9 @@ class PayloadCacheStore {
 		$this->getCacheStore($shared)->store($srcName, $characteristics, $item);
 	}
 
-	public function get(string $srcName, array $characteristics, bool $shared, \DateTime $now = null): ?ResponseCacheItem {
+	public function get(string $srcName, array $characteristics, bool $shared, \DateTimeInterface $now = null): ?ResponseCacheItem {
 		$cacheStore = $this->getCacheStore($shared);
-		$cacheItem = $cacheStore->get($srcName, $characteristics);;
+		$cacheItem = $cacheStore->get($srcName, $characteristics);
 		if ($cacheItem === null) {
 			return null;
 		}

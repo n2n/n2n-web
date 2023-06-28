@@ -25,7 +25,8 @@ class HttpContextTest extends TestCase  {
 					(new Subsystem('holeradio'))
 							->createRule('holeradio-de', 'de.holeradio.ch', null, [new N2nLocale('de_CH')], ['Cache-Control: no-cache'])
 							->createRule('holeradio-it', 'it.holeradio.ch', null,
-									[new N2nLocale('it_CH'), new N2nLocale('rm_CH')], ['Cache-Control: no-cache', 'X-Content-Type-Options: nosniff'])
+									[new N2nLocale('it_CH'), new N2nLocale('rm_CH')],
+									['Cache-Control: no-cache', 'X-Content-Type-Options: nosniff'])
 				],
 				$n2nContext);
 	}
