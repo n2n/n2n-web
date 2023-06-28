@@ -11,7 +11,8 @@
 	],
 	"homepage" : "https://n2n.rocks/",
 	"license" : "LGPL-3.0-or-later",
-	"authors" : [{
+	"authors" : [
+        {
 			"name" : "Andreas von Burg",
 			"email" : "a@von-burg.net",
 			"homepage" : "https://www.von-burg.net/",

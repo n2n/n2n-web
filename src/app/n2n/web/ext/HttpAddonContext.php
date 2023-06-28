@@ -91,7 +91,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		}
 	}
 
-	public function invokerControllers(): void {
+	public function invokerControllers(bool $flush): void {
 		$this->ensureNotFinalized();
 
 		$request = $this->httpContext->getRequest();
@@ -106,6 +106,9 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 				$this->httpContext->getActiveSubsystemRule());
 		$result = $controllingPlan->execute();
 		if ($result->isSuccessful()) {
+			if ($flush) {
+				$response->flush();
+			}
 			return;
 		}
 
@@ -114,6 +117,10 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		if ($this->statusExceptionLoggingEnabled
 				&& !in_array($statusException->getStatus(), $this->loggingExcludedStatusCodes)) {
 			N2N::getExceptionHandler()->log($statusException);
+		}
+
+		if ($flush) {
+			$response->flush();
 		}
 	}
 

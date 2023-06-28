@@ -48,7 +48,7 @@ class WebN2nExtensionTest extends TestCase {
 
 
 		$this->expectException(TypeNotFoundException::class);
-		$appN2nContext->getHttp()->invokerControllers();
+		$appN2nContext->getHttp()->invokerControllers(false);
 
 	}
 
