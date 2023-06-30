@@ -286,15 +286,21 @@ class HttpData implements AttributeReader, AttributeWriter {
 		
 		return null;
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
 		try {
-			return $this->dataMap->reqEnum($path, $allowedValues);
+			return $this->dataMap->reqEnum($path, $allowedValues, $nullAllowed);
 		} catch (\n2n\util\type\attrs\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
 		try {
 			return $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed);
@@ -302,30 +308,43 @@ class HttpData implements AttributeReader, AttributeWriter {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function reqArray($name, $fieldType = null, bool $nullAllowed = false) {
 		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false) {
 		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType), $defaultValue);
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function reqScalarArray($name, bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->reqArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $nullAllowed);
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optScalarArray($name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->optArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $defaultValue, $nullAllowed);
 	}
-	
+
 	/**
 	 * @param string|AttributePath|string[] $path
-	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
+	 * @param int|null $errStatus
 	 * @return HttpData|null
+	 * @throws StatusException
 	 */
-	public function reqHttpData($path, bool $nullAllowed = false, int $errStatus = null) {
+	public function reqHttpData($path, bool $nullAllowed = false, int $errStatus = null): ?HttpData {
 		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
 			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}
