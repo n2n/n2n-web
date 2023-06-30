@@ -354,20 +354,24 @@ class HttpData implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @param string|AttributePath|string[] $path
-	 * @param mixed $defaultValue
+	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @param int|null $errStatus
 	 * @return HttpData|null
 	 */
-	public function optHttpData($path, $defaultValue = null, bool $nullAllowed = true, int $errStatus = null) {
-		if (null !== ($array = $this->optArray($path, null, null, $nullAllowed))) {
+	public function optHttpData($path, mixed $defaultValue = null, bool $nullAllowed = true, int $errStatus = null): ?HttpData {
+		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
 			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}
 		
 		return null;
 	}
-	
-	public function reqHttpDatas($path, bool $nullAllowed = false) {
+
+	/**
+	 * @return HttpData[]
+	 * @throws StatusException
+	 */
+	public function reqHttpDatas($path, bool $nullAllowed = false): array {
 		return array_map(fn ($data) => new HttpData(new DataMap($data)),
 				$this->reqArray($path, 'array', $nullAllowed));
 	}
