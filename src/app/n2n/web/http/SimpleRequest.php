@@ -44,6 +44,7 @@ class SimpleRequest implements Request {
 	private $cmdContextPath;
 	private $cmdUrl;
 	private $postQuery;
+	private ?string $body = null;
 	private $uploadDefinitions = [];
 	private $n2nLocale;
 	private $availableN2nLocaleAliases = array();
