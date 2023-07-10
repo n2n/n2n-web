@@ -40,6 +40,7 @@ class SimpleRequest implements Request {
 	
 	private $method;
 	private $origMethodName;
+	private array $headers = [];
 	private $contextUrl;
 	private $cmdContextPath;
 	private $cmdUrl;
