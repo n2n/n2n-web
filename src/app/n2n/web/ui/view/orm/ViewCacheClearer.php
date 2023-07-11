@@ -23,7 +23,9 @@ namespace n2n\web\ui\view\orm;
 
 use n2n\reflection\ObjectAdapter;
 use n2n\web\ui\view\ViewCacheStore;
+use n2n\context\attribute\ThreadScoped;
 
+#[ThreadScoped]
 class ViewCacheClearer extends ObjectAdapter {
 	private $viewCacheControl;
 	
