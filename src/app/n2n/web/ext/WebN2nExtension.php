@@ -32,13 +32,15 @@ use n2n\core\config\AppConfig;
 use n2n\core\cache\AppCache;
 use n2n\core\VarStore;
 use n2n\web\http\cache\PayloadCacheStore;
+use n2n\core\N2nApplication;
+use n2n\core\ext\ConfigN2nExtension;
 
-class WebN2nExtension implements N2nExtension {
+class WebN2nExtension implements ConfigN2nExtension {
 
-	public function __construct(private AppConfig $appConfig, private AppCache $appCache) {
+	public function __construct(private N2nApplication $n2nApplication) {
 	}
 
-	function setUp(AppN2nContext $appN2nContext): void {
+	function applyToN2nContext(AppN2nContext $appN2nContext): void {
 		$responseCacheStore = new ResponseCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
 		$payloadCacheStore = new PayloadCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
 
