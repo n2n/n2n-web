@@ -450,8 +450,6 @@ class ManagedResponse extends Response {
 	public function flush(): void {
 		$this->ensureNotFlushed();
 
-		$this->flushed = true;
-
 		foreach ($this->listeners as $listener) {
 			$listener->onFlush($this);
 		}
@@ -463,6 +461,8 @@ class ManagedResponse extends Response {
 			if ($this->responseCacheControl !== null) {
 				throw new MalformedResponseException('ResponseCacheControl only works with bufferable response objects.');
 			}
+
+			$this->flushed = true;
 
 			if (!strlen($contents) && $this->notModified($this->sentPayload->getEtag(), $this->sentPayload->getLastModified())) {
 				$this->flushHeaders();
@@ -489,6 +489,8 @@ class ManagedResponse extends Response {
 					new ResponseCacheItem($this->bodyContents, $this->statusCode,
 							$this->headerJobs, $this->httpCacheControl, $expireDate));
 		}
+
+		$this->flushed = true;
 
 		if ($this->notModified(HashUtils::base36md5Hash($this->bodyContents, 26))) {
 			$this->flushHeaders();
