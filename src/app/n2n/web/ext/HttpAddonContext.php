@@ -151,11 +151,11 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		return $this->httpContext->getSession();
 	}
 
-//	function copyTo(AppN2nContext $appN2NContext): void {
+//	function copyTo(AppN2nContext $appN2nContext): void {
 //		if ($this->httpContext !== null) {
-//			$appN2NContext->setHttp($this);
+//			$appN2nContext->setHttp($this);
 //		}
-//		$appN2NContext->addAddonContext($this);
+//		$appN2nContext->addAddonContext($this);
 //	}
 
 
