@@ -3,7 +3,6 @@
 namespace n2n\web\http\cache;
 
 use PHPUnit\Framework\TestCase;
-use n2n\core\cache\impl\EphemeralAppCache;
 use n2n\core\cache\AppCache;
 use n2n\util\cache\impl\EphemeralCacheStore;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -69,8 +68,6 @@ class PayloadCacheStoreTest extends TestCase {
 		$this->assertEquals($responseCacheItem3,
 				$this->payloadCacheStore->get( 'holeradio-3', ['chr1' => 2, 'chr2' => 'zwei'], false, $now));
 
-		// @todo: remove after nikolai fix
-		return;
 		$this->payloadCacheStore->removeAll(null, ['chr2' => 'zwei'], false);
 
 		$this->assertEquals($responseCacheItem1,

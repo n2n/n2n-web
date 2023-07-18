@@ -20,19 +20,24 @@ use n2n\context\LookupManager;
 use n2n\context\config\SimpleLookupSession;
 use n2n\util\cache\impl\EphemeralCacheStore;
 use n2n\core\TypeNotFoundException;
+use n2n\core\N2nApplication;
 
 class WebN2nExtensionTest extends TestCase {
 
-	private function createAppConfig(): AppConfig {
+	private function createN2nApplication(): N2nApplication {
 		$iniFsPath = (new FsPath(__DIR__))->ext(['mock', 'ini', 'routing.app.ini']);
 		$source = new CombinedConfigSource(new IniFileConfigSource($iniFsPath));
 
-		$appConfigFactory = new AppConfigFactory(new FsPath('public'));
-		return $appConfigFactory->create($source, N2N::STAGE_LIVE);
+		$publicFsPath = new FsPath('public');
+		$appConfigFactory = new AppConfigFactory($publicFsPath);
+		$appConfig = $appConfigFactory->create($source, N2N::STAGE_LIVE);
+
+		return new N2nApplication(new VarStore('var', null, null), new ModuleManager(),
+				new NullAppCache(), $appConfig, $publicFsPath);
 	}
 
 	function testRouting() {
-		$extension = new WebN2nExtension($appConfig = $this->createAppConfig(), new NullAppCache());
+		$extension = new WebN2nExtension($appConfig = $this->createN2nApplication(), new NullAppCache());
 
 
 		$serverVars = ['REQUEST_URI' => '/holeradio', 'QUERY_STRING' => '', 'SCRIPT_NAME' => 'index.php',
@@ -40,8 +45,7 @@ class WebN2nExtensionTest extends TestCase {
 		$getVars = [];
 		$postVars = [];
 		$filesVars = [];
-		$extension->setUp($appN2nContext = new AppN2nContext(new TransactionManager(), new ModuleManager(), new NullAppCache(),
-				new VarStore('var', null, null), $appConfig,
+		$extension->applyToN2nContext($appN2nContext = new AppN2nContext(new TransactionManager(), $this->createN2nApplication(),
 				new PhpVars($serverVars, $getVars, $postVars, $filesVars)));
 
 		$appN2nContext->setLookupManager(new LookupManager(new SimpleLookupSession(), new EphemeralCacheStore(), $appN2nContext));
