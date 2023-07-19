@@ -37,7 +37,8 @@ class ControllerContext {
 	 * @param array $contextCmds
 	 * @param Controller $controller
 	 */
-	public function __construct(Path $cmdPath, Path $cmdContextPath, Controller $controller = null) {
+	public function __construct(Path $cmdPath, Path $cmdContextPath, Controller $controller = null,
+			private bool $payloadCachingEnabled = true, private bool $viewCachingEnabled = true) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
 		if ($controller !== null) {
@@ -101,6 +102,25 @@ class ControllerContext {
 		}
 		return $this->controller;
 	}
+
+	public function isPayloadCachingEnabled(): bool {
+		return $this->payloadCachingEnabled;
+	}
+
+	public function setPayloadCachingEnabled(bool $payloadCachingEnabled): static {
+		$this->payloadCachingEnabled = $payloadCachingEnabled;
+		return $this;
+	}
+
+	public function isViewCachingEnabled(): bool {
+		return $this->viewCachingEnabled;
+	}
+
+	public function setViewCachingEnabled(bool $viewCachingEnabled): static {
+		$this->viewCachingEnabled = $viewCachingEnabled;
+		return $this;
+	}
+
 	/**
 	 * @param string $name
 	 */
@@ -154,6 +174,7 @@ class ControllerContext {
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
 	public function copy() {
-		return new ControllerContext($this->cmdPath, $this->cmdContextPath);
+		return new ControllerContext($this->cmdPath, $this->cmdContextPath, $this->controller,
+				$this->payloadCachingEnabled, $this->viewCachingEnabled);
 	}
 }

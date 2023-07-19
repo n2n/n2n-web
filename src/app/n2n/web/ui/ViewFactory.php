@@ -41,27 +41,15 @@ class ViewFactory implements ThreadScoped {
 	private $viewClassNames;
 	private $viewClasses = array();
 	private $viewCacheStore;
-	private $viewCachingEnabled = true;
 // 	private static $creationListeners = array();
 	
 	private function _init(N2nContext $n2nContext, WebConfig $webConfig, ViewCacheStore $viewCacheStore) {
 		$this->n2nContext = $n2nContext;
 		$this->viewClassNames = $webConfig->getViewClassNames();
 		$this->viewCacheStore = $viewCacheStore;
-		$this->viewCachingEnabled = $webConfig->isViewCachingEnabled();
-	}
-	
-	public function isViewCachingEnabled(): bool {
-		return $this->viewCachingEnabled;
-	}
-	
-	public function setViewCachingEnabled(bool $viewCachingEnabled) {
-		$this->viewCachingEnabled = $viewCachingEnabled;
 	}
 	
 	public function createFromCache($viewName, ViewCacheControl $viewCacheControl, Module $module = null) {
-		if (!$this->viewCachingEnabled) return null;
-		
 		$cacheItem = $this->viewCacheStore->get($viewName, $viewCacheControl->getCharacteristics());
 		if ($cacheItem === null) return null;
 			
@@ -153,8 +141,6 @@ class ViewFactory implements ThreadScoped {
 	}
 	
 	public function cache(View $view, ViewCacheControl $viewCacheControl) {
-		if (!$this->viewCachingEnabled) return;
-		
 		$listener = new CacheViewStateListener($this->viewCacheStore, $viewCacheControl);
 		if ($view->isInitialized()) {
 			$listener->viewContentsInitialized($view);

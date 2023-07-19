@@ -64,7 +64,8 @@ class ControllerRegistry {
 			}
 		}
 
-		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales);
+		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales,
+				$this->webConfig->isResponseCachingEnabled(), $this->webConfig->isViewCachingEnabled());
 
 		$subsystemRuleName = $subsystemRule?->getName();
 		$subsystemName = $subsystemRule?->getSubsystem()->getName();
@@ -132,7 +133,8 @@ class ControllingPlanFactory {
 	private $mainControllerDefs = array();
 	private $mainPathPatterns = array();
 
-	public function __construct(\ArrayObject $contextN2nLocales) {
+	public function __construct(\ArrayObject $contextN2nLocales, public bool $payloadCachingEnabled = true,
+			public bool $viewCachingEnabled = true) {
 		$this->contextN2nLocales = $contextN2nLocales;
 		$this->pathPatternCompiler = new PathPatternCompiler();
 		$this->pathPatternCompiler->addPlaceholder(self::LOCALE_PLACEHOLDER,
@@ -199,7 +201,8 @@ class ControllingPlanFactory {
 
 			$controllerContext = new ControllerContext($matchResult->getSurplusPath(),
 					$matchResult->getUsedPath(), $n2nContext->lookup(
-							$precacheControllerDef->getControllerClassName()));
+							$precacheControllerDef->getControllerClassName()),
+					$this->payloadCachingEnabled, $this->viewCachingEnabled);
 			$controllerContext->setParams($matchResult->getParamValues());
 			$controllingPlan->addPrecacheFilter($controllerContext);
 		}
@@ -223,7 +226,8 @@ class ControllingPlanFactory {
 
 			$controllerContext = new ControllerContext($matchResult->getSurplusPath(),
 					$matchResult->getUsedPath(), $n2nContext->lookup(
-							$filterControllerDef->getControllerClassName()));
+							$filterControllerDef->getControllerClassName()),
+					$this->payloadCachingEnabled, $this->viewCachingEnabled);
 			$controllerContext->setParams($matchResult->getParamValues());
 			$controllingPlan->addFilter($controllerContext);
 		}
@@ -303,8 +307,9 @@ class ControllingPlanFactory {
 				throw new LookupFailedException('Registered controller ' . get_class($controller)
 						. ' does not implement: ' . Controller::class);
 			}
-			$controllerContext = new ControllerContext($currentMatchResult->getSurplusPath(), $currentMatchResult->getUsedPath(),
-					$controller);
+			$controllerContext = new ControllerContext($currentMatchResult->getSurplusPath(),
+					$currentMatchResult->getUsedPath(), $controller, $this->payloadCachingEnabled,
+					$this->viewCachingEnabled);
 			$controllerContext->setParams($currentMatchResult->getParamValues());
 			$controllingPlan->addMain($controllerContext);
 		}

@@ -74,6 +74,7 @@ use JsonSerializable;
 use n2n\web\http\cache\PayloadCacheControl;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\web\http\ResponseCacheItem;
+use n2n\core\config\WebConfig;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -243,7 +244,7 @@ class ControllingUtils {
 	}
 
 	function assignPayloadCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
-		$this->playloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics);
+		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics);
 	}
 
 	function resetPayloadCacheControl(): void {
@@ -282,6 +283,10 @@ class ControllingUtils {
 		$this->responseCacheControl = null;
 	}
 
+	private function isViewCachingEnabled(): bool {
+		return $this->getControllerContext()->isViewCachingEnabled();
+	}
+
 	/**
 	 *
 	 * @param string $viewNameExpression
@@ -289,7 +294,9 @@ class ControllingUtils {
 	 * @return View|null
 	 */
 	public function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null): ?View {
-		if ($this->viewCacheControl === null) return null;
+		if ($this->viewCacheControl === null || !$this->isViewCachingEnabled()) {
+			return null;
+		}
 	
 		$viewFactory = $this->getN2nContext()->lookup(ViewFactory::class);
 		CastUtils::assertTrue($viewFactory instanceof ViewFactory);
@@ -314,7 +321,7 @@ class ControllingUtils {
 		$view = $viewFactory->create($viewName, $params, $moduleNamespace);
 		$view->setControllerContext($this->getControllerContext());
 	
-		if (null !== $this->viewCacheControl) {
+		if (null !== $this->viewCacheControl && $this->isViewCachingEnabled()) {
 			$viewFactory->cache($view, $this->viewCacheControl);
 		}
 	
@@ -628,8 +635,12 @@ class ControllingUtils {
 		$this->storePayloadCache();
 	}
 
+	private function isPayloadCachingEnabled(): bool {
+		return $this->getControllerContext()->isPayloadCachingEnabled();
+	}
+
 	private function storePayloadCache(): void {
-		if ($this->payloadCacheControl === null) {
+		if ($this->payloadCacheControl === null && $this->isPayloadCachingEnabled()) {
 			return;
 		}
 
@@ -643,7 +654,7 @@ class ControllingUtils {
 	}
 
 	public function createPayloadFromCache(): ?Payload {
-		if ($this->payloadCacheControl === null) {
+		if ($this->payloadCacheControl === null || !$this->isPayloadCachingEnabled()) {
 			return null;
 		}
 
