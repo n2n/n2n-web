@@ -243,8 +243,9 @@ class ControllingUtils {
 		$this->viewCacheControl = null;
 	}
 
-	function assignPayloadCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
-		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics);
+	function assignPayloadCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array(),
+			bool $shared = true): void {
+		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics, $shared);
 	}
 
 	function resetPayloadCacheControl(): void {
