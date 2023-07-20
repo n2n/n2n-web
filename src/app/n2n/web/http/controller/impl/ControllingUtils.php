@@ -641,7 +641,7 @@ class ControllingUtils {
 	}
 
 	private function storePayloadCache(): void {
-		if ($this->payloadCacheControl === null && $this->isPayloadCachingEnabled()) {
+		if ($this->payloadCacheControl === null || !$this->isPayloadCachingEnabled()) {
 			return;
 		}
 
