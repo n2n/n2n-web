@@ -65,7 +65,7 @@ class ControllerRegistry {
 		}
 
 		$controllingPlanFactory = new ControllingPlanFactory($contextN2nLocales,
-				$this->webConfig->isResponseCachingEnabled(), $this->webConfig->isViewCachingEnabled());
+				$this->webConfig->isPayloadCachingEnabled(), $this->webConfig->isViewCachingEnabled());
 
 		$subsystemRuleName = $subsystemRule?->getName();
 		$subsystemName = $subsystemRule?->getSubsystem()->getName();
