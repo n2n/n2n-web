@@ -149,7 +149,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @return \n2n\l10n\N2nLocale
 	 */
 	public function getN2nLocale(): N2nLocale {
-		return $this->getHttpContext()->getN2nLocale();
+		return $this->getN2nContext()->getN2nLocale();
 	}
 
 	public function getRequest() {
@@ -689,7 +689,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 
 		$viewName = $this->resolveViewName($viewNameExpression);
 
-		$viewFactory = $this->getHttpContext()->getN2nContext()->lookup(ViewFactory::class);
+		$viewFactory = $this->getN2nContext()->lookup(ViewFactory::class);
 		CastUtils::assertTrue($viewFactory instanceof ViewFactory);
 
 		if ($viewCacheControl !== null) {
@@ -774,7 +774,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	public function getDynamicTextCollection() {
 		if ($this->dynamicTextCollection === null) {
 			$this->dynamicTextCollection = new DynamicTextCollection($this->moduleNamespace,
-					$this->getHttpContext()->getN2nLocale());
+					$this->getN2nLocale());
 		}
 		return $this->dynamicTextCollection;
 	}
