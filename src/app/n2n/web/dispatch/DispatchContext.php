@@ -71,9 +71,11 @@ class DispatchContext implements ThreadScoped {
 		$encryptionDescriptor = new EncryptionDescriptor($algorithm);
 	
 		$filePathKey = $varStore->requestFileFsPath(VarStore::CATEGORY_SRV, N2N::NS,
-				self::CRYPT_FOLDER, $algorithm . self::CRYPT_KEY_FILE_SUFFIX, true, true);
+				self::CRYPT_FOLDER, $algorithm . self::CRYPT_KEY_FILE_SUFFIX, true,
+				true, shared: true);
 		$filePathIv = $varStore->requestFileFsPath(VarStore::CATEGORY_SRV, N2N::NS,
-				self::CRYPT_FOLDER, $algorithm . self::CRYPT_IV_FILE_SUFFIX, true, true);
+				self::CRYPT_FOLDER, $algorithm . self::CRYPT_IV_FILE_SUFFIX, true,
+				true, shared: true);
 	
 		$key = IoUtils::getContents($filePathKey);
 		$iv = IoUtils::getContents($filePathIv);
