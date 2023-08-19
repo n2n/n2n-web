@@ -55,8 +55,8 @@ class DynamicAccessProxy implements AccessProxy {
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setConstraint()
 	 */
-	public function setConstraint(TypeConstraint $constraints) {
-		$this->constraint = $constraints;
+	public function setConstraint(TypeConstraint $constraint) {
+		$this->constraint = $constraint;
 	}
 	
 	public function isNullReturnAllowed() {
