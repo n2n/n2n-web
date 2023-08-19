@@ -24,7 +24,6 @@ namespace n2n\web\dispatch\model;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\property\PropertiesAnalyzer;
 use n2n\reflection\ReflectionContext;
-use n2n\reflection\ReflectionException;
 use n2n\reflection\annotation\Annotation;
 use n2n\reflection\property\AccessProxy;
 use n2n\web\dispatch\DispatchErrorException;
@@ -97,7 +96,7 @@ class DispatchModelFactory {
 					throw new DispatchErrorException('Invalid property access method for property: ' 
 									. $class->getName() . '::$' . $name, 
 							$e->getMethod()->getFileName(), $e->getMethod()->getStartLine(), null, null, $e);
-				} catch (ReflectionException $e) {
+				} catch (\ReflectionException $e) {
 					throw $this->createDispatchErrorException($e, $annoDispProperties);
 				}
 			}
@@ -141,7 +140,8 @@ class DispatchModelFactory {
 		$setupProcess->provideManagedProperty(new ScalarProperty($propertyAccessProxy, $arrayLike));
 	}
 	
-	private function createDispatchErrorException(ReflectionException $e, Annotation $anno) {
-		return new DispatchErrorException('Invalid use of annotation ' . get_class($anno), $anno->getFileName(), $anno->getLine(), null, null, $e);
+	private function createDispatchErrorException(\ReflectionException $e, Annotation $anno): DispatchErrorException {
+		return new DispatchErrorException('Invalid use of annotation ' . get_class($anno), $anno->getFileName(),
+				$anno->getLine(), null, null, $e);
 	}
 }

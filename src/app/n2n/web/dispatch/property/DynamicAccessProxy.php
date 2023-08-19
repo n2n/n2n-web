@@ -26,7 +26,7 @@ use n2n\reflection\property\AccessProxy;
 use n2n\util\type\TypeConstraint;
 use n2n\util\type\ArgUtils;
 use n2n\util\type\ValueIncompatibleWithConstraintsException;
-use n2n\reflection\property\PropertyValueTypeMissmatchException;
+use n2n\reflection\property\PropertyValueTypeMismatchException;
 use n2n\util\type\TypeUtils;
 use n2n\util\ex\UnsupportedOperationException;
 
@@ -84,7 +84,7 @@ class DynamicAccessProxy implements AccessProxy {
 			try {
 				$value = $this->constraint->validate($value);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
-				throw new PropertyValueTypeMissmatchException('Could not pass invalid value for property \''
+				throw new PropertyValueTypeMismatchException('Could not pass invalid value for property \''
 						. $this->propertyName . '\' to '
 						. TypeUtils::prettyMethName(get_class($object), 'setPropertyValue'), 0, $e);
 						
@@ -105,7 +105,7 @@ class DynamicAccessProxy implements AccessProxy {
 		try {
 			$value = $this->constraint->validate($value);
 		} catch (ValueIncompatibleWithConstraintsException $e) {
-			throw new PropertyValueTypeMissmatchException(
+			throw new PropertyValueTypeMismatchException(
 					TypeUtils::prettyMethName(get_class($object), 'getPropertyValue') 
 							. ' returns invalid value for property \'' . $this->propertyName . '\'', 0, $e);
 		}
