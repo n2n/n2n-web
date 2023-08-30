@@ -121,11 +121,24 @@ class VarsRequest implements Request {
 		$this->cmdContextPath = Path::create($scriptDirName, true)->chEndingDelimiter(true);
 		$this->cmdPath = Path::create(mb_substr($requestUrl, mb_strlen($scriptDirName)), true);
 
-		$protocol = $this->serverVars['HTTP_X_FORWARDED_PROTO'] ?? $this->serverVars['REQUEST_SCHEME']
-				?? (isset($this->serverVars['HTTPS']) && $this->serverVars['HTTPS'] != 'off'
-						&& $this->serverVars['HTTPS'] ? Request::PROTOCOL_HTTPS : Request::PROTOCOL_HTTP);
+		$originProtocol = null;
+		$originHost = null;
+		if (isset($this->serverVars['HTTP_ORIGIN'])) {
+			$url = Url::create($this->serverVars['HTTP_ORIGIN']);
+			if ($url->hasScheme()) {
+				$originProtocol = $url->getScheme();
+			}
 
-		$hostName = $this->serverVars['HTTP_X_FORWARDED_HOST'] ?? $this->serverVars['HTTP_HOST']
+			if (!$url->getAuthority()->hasHost()) {
+				$originHost = $url->getAuthority()->getHost();
+			}
+		}
+
+		$protocol = $originProtocol ?? $this->serverVars['HTTP_X_FORWARDED_PROTO'] ?? $this->serverVars['REQUEST_SCHEME']
+				?? (isset($this->serverVars['HTTPS']) && $this->serverVars['HTTPS'] != 'off'
+				&& $this->serverVars['HTTPS'] ? Request::PROTOCOL_HTTPS : Request::PROTOCOL_HTTP);
+
+		$hostName = $originHost ?? $this->serverVars['HTTP_X_FORWARDED_HOST'] ?? $this->serverVars['HTTP_HOST']
 				?? $this->extractServerVar('SERVER_NAME');
 		
 		$this->origMethodName = mb_strtoupper($this->extractServerVar('REQUEST_METHOD'));
