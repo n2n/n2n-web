@@ -86,9 +86,9 @@ class VarsSession implements Session {
 
 		HttpUtils::sessionStart();
 
-		if ($this->dirFsPath !== null) {
-			session_gc();
-		}
+//		if ($this->dirFsPath !== null) {
+//			session_gc();
+//		}
 		
 		if (!isset($_SESSION[$this->applicationName])) {
 			$_SESSION[$this->applicationName] = array();
