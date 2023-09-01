@@ -36,6 +36,9 @@ class CacheActionQueue implements TransactionalResource {
 	public function prepareCommit(Transaction $transaction): void {
 	}
 
+	public function requestCommit(Transaction $transaction): void {
+	}
+
 	public function commit(Transaction $transaction): void {
 		while (null !== ($onCommitClosure = array_shift($this->onCommitClosures))) {
 			$onCommitClosure();
