@@ -22,48 +22,78 @@
 namespace n2n\web\http;
 
 use n2n\util\uri\Path;
-use n2n\context\ThreadScoped;
 use n2n\core\cache\AppCache;
 use n2n\core\container\TransactionManager;
-use n2n\core\container\TransactionalResource;
-use n2n\core\container\Transaction;
 use n2n\util\cache\CacheStore;
 use n2n\util\ex\IllegalStateException;
+use n2n\web\http\cache\CacheActionQueue;
 
 class ResponseCacheStore {
 	const RESPONSE_NAME = 'r';
 	const INDEX_NAME = 'i';
 	
-	private ?CacheStore $cacheStore;
-	private cache\CacheActionQueue $responseCacheActionQueue;
+//	private ?CacheStore $cacheStore;
+	private CacheActionQueue $responseCacheActionQueue;
 	private TransactionManager $tm;
+
+	private ?CacheStore $sharedCacheStore = null;
+	private ?CacheStore $localCacheStore = null;
 	
-	function __construct(AppCache $appCache, TransactionManager $transactionManager) {
-		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class, true);
-		$this->responseCacheActionQueue = new cache\CacheActionQueue();
+	function __construct(private AppCache $appCache, TransactionManager $transactionManager) {
+//		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class, true);
+		$this->responseCacheActionQueue = new CacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
 		$this->tm = $transactionManager;
 	}
 
+	// TODO: ensureNotClosed(), getCacheStore(), getCacheStores() von PayloadCacheStore übernehmen.
+
 	function close(): void {
 		$this->tm->unregisterResource($this->responseCacheActionQueue);
-		$this->cacheStore = null;
+//		$this->cacheStore = null;
+		unset($this->responseCacheActionQueue);
+		$this->sharedCacheStore = null;
+		$this->localCacheStore = null;
 	}
 
 	function isClosed(): bool {
-		return $this->cacheStore === null;
+//		return $this->cacheStore === null;
+		return !isset($this->responseCacheActionQueue);
 	}
 
 	private function ensureNotClosed(): void {
-		if ($this->isClosed()) {
+		if (!$this->isClosed()) {
 			return;
 		}
 
 		throw new IllegalStateException(self::class . ' already closed.');
 	}
+
+	private function getCacheStore(bool $shared): CacheStore {
+		$this->ensureNotClosed();
+
+		if ($shared) {
+			return $this->sharedCacheStore ?? $this->sharedCacheStore
+					= $this->appCache->lookupCacheStore(ResponseCacheStore::class, true);
+		}
+
+		return $this->localCacheStore ?? $this->localCacheStore
+				= $this->appCache->lookupCacheStore(ResponseCacheStore::class, false);
+	}
+
+	private function getCacheStores(?bool $shared): array {
+		$cacheStores = [];
+		if ($shared === null || $shared === true) {
+			$cacheStores[] = $this->getCacheStore(true);
+		}
+		if ($shared === null || $shared === false) {
+			$cacheStores[] = $this->getCacheStore(false);
+		}
+		return $cacheStores;
+	}
 	
 	private function buildResponseCharacteristics(int $method, string $hostName, Path $path,
-			array $queryParams = null) {
+			array $queryParams = null): array {
 		if ($queryParams !== null) {
 			ksort($queryParams);
 		}
@@ -78,44 +108,50 @@ class ResponseCacheStore {
 		return $responseCharacteristics;
 	}
 	
-	public function store(int $method, string $hostName, Path $path, array $queryParams = null,
+	public function store(int $method, string $hostName, Path $path, bool $shared, array $queryParams = null,
 			array $characteristics, ResponseCacheItem $item): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
-		$this->cacheStore->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
-		$this->cacheStore->store(self::INDEX_NAME, 
+		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
+		$this->getCacheStore($shared)->store(self::INDEX_NAME,
 				$this->buildIndexCharacteristics($responseCharacteristics, $characteristics), 
 				$responseCharacteristics);
 	}
 	
-	public function get(int $method, string $hostName, Path $path, array $queryParams = null,
+	public function get(int $method, string $hostName, Path $path, bool $shared, array $queryParams = null,
 			\DateTime $now = null): ?ResponseCacheItem {
-		$cacheItem = $this->cacheStore->get(self::RESPONSE_NAME, 
-				$this->buildResponseCharacteristics($method, $hostName, $path, $queryParams));
-		if ($cacheItem === null) return null;
-		
+		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
+
+		$cacheItem = $this->getCacheStore($shared)->get(self::RESPONSE_NAME, $responseCharacteristics);
+		if ($cacheItem === null) {
+			return null;
+		}
+
 		if ($now === null) {
 			$now = new \DateTime();
 		}
-		
+
 		$data = $cacheItem->getData();
+		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
 		if (!($data instanceof ResponseCacheItem) || $data->isExpired($now)) {
 			$responseCharacteristics = $cacheItem->getCharacteristics();
-			$this->cacheStore->remove(self::RESPONSE_NAME, $responseCharacteristics);
+			$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
+			$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
+			// TODO: maybe also remove Index cache item
 			return null;
 		}
 		
 		return $data;
 	}
 	
-	public function remove(int $method, string $hostName, Path $path, array $queryParams = null): void {
+	public function remove(int $method, string $hostName, Path $path, bool $shared, array $queryParams = null): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
 		
 		$that = $this;
 		$this->responseCacheActionQueue->registerAction(false, function ()
-				use ($that, $responseCharacteristics, $indexCharacteristics){
-			$that->cacheStore->remove(self::RESPONSE_NAME, $responseCharacteristics);
-			$that->cacheStore->removeAll(self::INDEX_NAME, $indexCharacteristics);
+				use ($that, $responseCharacteristics, $indexCharacteristics, $shared){
+			$that->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
+			$that->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
 		});
 	}
 	
@@ -125,22 +161,24 @@ class ResponseCacheStore {
 // 				$characteristicNeedles));
 // 	}
 	
-	public function removeByCharacteristics(array $characteristicNeedles): void {
-		$cacheItems = $this->cacheStore->findAll(self::INDEX_NAME, $this->buildIndexCharacteristics(
+	public function removeByCharacteristics(array $characteristicNeedles, bool $shared): void {
+		$cacheItems = $this->getCacheStore($shared)->findAll(self::INDEX_NAME, $this->buildIndexCharacteristics(
 				array(), $characteristicNeedles));
 		$that = $this;
-		$this->responseCacheActionQueue->registerAction(false, function () use ($that, $cacheItems) {
+		$this->responseCacheActionQueue->registerAction(false, function () use ($that, $cacheItems, $shared) {
 			foreach ($cacheItems as $cacheItem) {
 				$responseCharacteristics = $cacheItem->getData();
 				if (is_array($responseCharacteristics)) {
-					$that->cacheStore->remove(self::RESPONSE_NAME, $responseCharacteristics);
+					$that->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
 				}
-				$that->cacheStore->remove(self::INDEX_NAME, $cacheItem->getCharacteristics());
+				$that->getCacheStore($shared)->remove(self::INDEX_NAME, $cacheItem->getCharacteristics());
 			}
 		});
 	}
-	
-	public function clear(): void {
-		$this->cacheStore->clear();
+
+	public function clear(bool $shared = null): void {
+		foreach ($this->getCacheStores($shared) as $cacheStore) {
+			$cacheStore->clear();
+		}
 	}
 }
