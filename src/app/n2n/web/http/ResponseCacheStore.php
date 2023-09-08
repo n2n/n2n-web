@@ -32,7 +32,6 @@ class ResponseCacheStore {
 	const RESPONSE_NAME = 'r';
 	const INDEX_NAME = 'i';
 	
-//	private ?CacheStore $cacheStore;
 	private CacheActionQueue $responseCacheActionQueue;
 	private TransactionManager $tm;
 
@@ -40,24 +39,19 @@ class ResponseCacheStore {
 	private ?CacheStore $localCacheStore = null;
 	
 	function __construct(private AppCache $appCache, TransactionManager $transactionManager) {
-//		$this->cacheStore = $appCache->lookupCacheStore(ResponseCacheStore::class, true);
 		$this->responseCacheActionQueue = new CacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
 		$this->tm = $transactionManager;
 	}
 
-	// TODO: ensureNotClosed(), getCacheStore(), getCacheStores() von PayloadCacheStore übernehmen.
-
 	function close(): void {
 		$this->tm->unregisterResource($this->responseCacheActionQueue);
-//		$this->cacheStore = null;
 		unset($this->responseCacheActionQueue);
 		$this->sharedCacheStore = null;
 		$this->localCacheStore = null;
 	}
 
 	function isClosed(): bool {
-//		return $this->cacheStore === null;
 		return !isset($this->responseCacheActionQueue);
 	}
 
@@ -136,7 +130,6 @@ class ResponseCacheStore {
 			$responseCharacteristics = $cacheItem->getCharacteristics();
 			$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
 			$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
-			// TODO: maybe also remove Index cache item
 			return null;
 		}
 		

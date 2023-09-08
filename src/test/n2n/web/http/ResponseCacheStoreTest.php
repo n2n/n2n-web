@@ -28,21 +28,39 @@ class ResponseCacheStoreTest extends TestCase {
 	function testStore() {
 		$localCacheStore = new EphemeralCacheStore();
 		$sharedCacheStore = new EphemeralCacheStore();
+		$path = new Path(['path','part2']);
 
-		$this->mockedAppCache->expects($this->once())
+		$this->mockedAppCache->expects($this->exactly(2))
 				->method('lookupCacheStore')
-				->with(ResponseCacheStore::class, false)
-				->willReturn($localCacheStore);
-		$this->mockedAppCache->expects($this->once())
-				->method('lookupCacheStore')
-				->with(ResponseCacheStore::class, true)
-				->willReturn($sharedCacheStore);
+				->withConsecutive([ResponseCacheStore::class, true],[ResponseCacheStore::class, false])
+				->willReturnOnConsecutiveCalls($sharedCacheStore, $localCacheStore);
 
-		$this->assertCount(2, $cacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
-		$cacheStore->get(ResponseCacheStore::RESPONSE_NAME, ['method' => 1, 'hostName' => $hostName, 'path' => $path->__toString(),
-				'query' => $queryParams]);
 
-		$cacheStore->get(ResponseCacheStore::RESPONSE_NAME, []);
+		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
+		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
+		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
+		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], ['char1' => 1], $responseCacheItem1, true);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], ['char2' => 1], $responseCacheItem1, true);
+		$this->responseCacheStore->store(1, 'mirror', new Path(['path','part2']), [], [], $responseCacheItem2, false);
+		$this->responseCacheStore->store(2, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem3, false);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem4, false);
+
+		//shared
+		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
+		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
+		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], true, $this->today));
+		$this->assertEquals($responseCacheItem1, $sharedCacheStore->get(ResponseCacheStore::RESPONSE_NAME,
+				['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => []])->getData());
+		//local
+		$this->assertCount(3, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
+		$this->assertCount(3, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
+		$this->assertCount(1, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME, ['method' => 1, 'hostName' => 'hostname']));
+		$this->assertEquals($responseCacheItem4, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
+		$this->assertEquals($responseCacheItem4, $localCacheStore->get(ResponseCacheStore::RESPONSE_NAME,
+				['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => []])->getData());
+
 	}
 
 	function testMethodParam(): void {
@@ -56,18 +74,18 @@ class ResponseCacheStoreTest extends TestCase {
 		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
 		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem1);
-		$this->responseCacheStore->store(2, 'hostname', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem2);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem1, false);
+		$this->responseCacheStore->store(2, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem2, false);
 
-		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
-		$this->responseCacheStore->remove(1, 'hostname', new Path(['pathPart1','part2']), false, []);
+		$this->responseCacheStore->remove(1, 'hostname', new Path(['path','part2']), [], false);
 
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
-		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(2, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
+		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(2, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
 		$this->responseCacheStore->clear(false);
-		$this->assertNull($this->responseCacheStore->get(2, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(2, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
 
 	}
@@ -83,18 +101,18 @@ class ResponseCacheStoreTest extends TestCase {
 		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
 		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(1, 'mirror', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem1);
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem2);
+		$this->responseCacheStore->store(1, 'mirror', new Path(['path','part2']), [], [], $responseCacheItem1, false);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem2, false);
 
-		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'mirror', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'mirror', new Path(['path','part2']), [], false, $this->today));
 
-		$this->responseCacheStore->remove(1, 'mirror', new Path(['pathPart1','part2']), false, []);
+		$this->responseCacheStore->remove(1, 'mirror', new Path(['path','part2']), [], false);
 
-		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['pathPart1','part2']), false, [], $this->today));
-		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['path','part2']), [], false, $this->today));
+		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
 		$this->responseCacheStore->clear(false);
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 	}
 
 	function testPathParam(): void {
@@ -108,18 +126,18 @@ class ResponseCacheStoreTest extends TestCase {
 		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
 		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part1']), false, [], [], $responseCacheItem1);
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem2);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part1']), [], [], $responseCacheItem1, false);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem2, false);
 
-		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part1']), false, [], $this->today));
+		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part1']), [], false, $this->today));
 
-		$this->responseCacheStore->remove(1, 'hostname', new Path(['pathPart1','part1']), false, []);
+		$this->responseCacheStore->remove(1, 'hostname', new Path(['path','part1']), [], false);
 
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part1']), false, [], $this->today));
-		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part1']), [], false, $this->today));
+		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
 		$this->responseCacheStore->clear(false);
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 	}
 
 	function testQueryParams(): void {
@@ -133,18 +151,18 @@ class ResponseCacheStoreTest extends TestCase {
 		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
 		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, ['queryParam1' => 1], [], $responseCacheItem1);
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [], [], $responseCacheItem2);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), ['queryParam1' => 1], [], $responseCacheItem1, false);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [], [], $responseCacheItem2, false);
 
-		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, ['queryParam1' => 1], $this->today));
+		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), ['queryParam1' => 1], false, $this->today));
 
-		$this->responseCacheStore->remove(1, 'hostname', new Path(['pathPart1','part2']), false, ['queryParam1' => 1]);
+		$this->responseCacheStore->remove(1, 'hostname', new Path(['path','part2']), ['queryParam1' => 1], false);
 
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, ['queryParam1' => 1], $this->today));
-		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), ['queryParam1' => 1], false, $this->today));
+		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 
 		$this->responseCacheStore->clear(false);
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']), false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']), [], false, $this->today));
 	}
 
 	function testCharacteristicsParams(): void {
@@ -158,31 +176,35 @@ class ResponseCacheStoreTest extends TestCase {
 		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
 		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
 		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [],
-				['characteristicsParam1' => 1, 'characteristicsParam2' => 1], $responseCacheItem1);
-		$this->responseCacheStore->store(1, 'mirror', new Path(['pathPart1','part2']), false, [],
-				['characteristicsParam1' => 2], $responseCacheItem2);
-		$this->responseCacheStore->store(1, 'mirror', new Path(['pathPart1','part3']), false, [],
-				['characteristicsParam2' => 1, 'characteristicsParam3' => 3], $responseCacheItem3);
-		// TODO: check
-		$this->responseCacheStore->store(1, 'hostname', new Path(['pathPart1','part2']), false, [],
-				['characteristicsParam1' => 1, 'characteristicsParam2' => 2], $responseCacheItem4);
+		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part2']), [],
+				['characteristicsParam1' => 1, 'characteristicsParam2' => 1], $responseCacheItem1, false);
+		$this->responseCacheStore->store(1, 'mirror', new Path(['path','part2']), [],
+				['characteristicsParam1' => 2], $responseCacheItem2, false);
+		$this->responseCacheStore->store(1, 'mirror', new Path(['path','part3']), [],
+				['characteristicsParam2' => 1, 'characteristicsParam3' => 3], $responseCacheItem3, false);
+		$this->responseCacheStore->store(1, 'hostname', new Path(['path','part4']), [],
+				['characteristicsParam1' => 1, 'characteristicsParam2' => 2], $responseCacheItem4, false);
 
 		$this->assertEquals($responseCacheItem1, $this->responseCacheStore->get(1, 'hostname',
-				new Path(['pathPart1','part2']), false, [], $this->today));
+				new Path(['path','part2']), [], false, $this->today));
 
 		$this->responseCacheStore->removeByCharacteristics(['characteristicsParam2' => 1], false);
 
-		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['pathPart1','part2']),
-				false, [], $this->today));
-		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['pathPart1','part3']),
-				false, [], $this->today));
+		//'characteristicsParam1' => 1 are deleted
+		$this->assertNull($this->responseCacheStore->get(1, 'hostname', new Path(['path','part2']),
+				[], false, $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['path','part3']),
+				[], false, $this->today));
 		$this->assertEquals($responseCacheItem2, $this->responseCacheStore->get(1, 'mirror',
-				new Path(['pathPart1','part2']), false, [], $this->today));
+				new Path(['path','part2']), [], false, $this->today));
+		//'characteristicsParam1' => 2 still exist
+		$this->assertEquals($responseCacheItem4, $this->responseCacheStore->get(1, 'hostname',
+				new Path(['path','part4']), [], false, $this->today));
 
 		$this->responseCacheStore->clear(false);
-		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['pathPart1','part2']),
-				false, [], $this->today));
+		$this->assertNull($this->responseCacheStore->get(1, 'mirror', new Path(['path','part2']),
+				[], false, $this->today));
 	}
 
 }
