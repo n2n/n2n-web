@@ -16,7 +16,7 @@ class CacheActionQueue implements TransactionalResource {
 		return $this->onCommitClosures !== null;
 	}
 
-	public function registerAction(bool $master, \Closure $closure): void {
+	public function registerRemoveAction(bool $master, \Closure $closure): void {
 		if (!$this->isInTransaction()) {
 			$closure();
 			return;
@@ -37,14 +37,14 @@ class CacheActionQueue implements TransactionalResource {
 	}
 
 	public function requestCommit(Transaction $transaction): void {
-	}
-
-	public function commit(Transaction $transaction): void {
 		while (null !== ($onCommitClosure = array_shift($this->onCommitClosures))) {
 			$onCommitClosure();
 		}
 
 		$this->reset();
+	}
+
+	public function commit(Transaction $transaction): void {
 	}
 
 	/**

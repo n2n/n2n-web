@@ -91,14 +91,14 @@ class PayloadCacheStore {
 	}
 
 	public function remove(string $srcName, array $characteristics, bool $shared): void {
-		$this->cacheActionQueue->registerAction(false, function ()
+		$this->cacheActionQueue->registerRemoveAction(false, function ()
 				use ($srcName, $characteristics, $shared) {
 			$this->getCacheStore($shared)->remove($srcName, $characteristics);
 		});
 	}
 
 	public function removeAll(string $srcName = null, array $characteristicNeedles = null, bool $shared = null): void {
-		$this->cacheActionQueue->registerAction(false, function ()
+		$this->cacheActionQueue->registerRemoveAction(false, function ()
 				use ($shared, $srcName, $characteristicNeedles) {
 			foreach ($this->getCacheStores($shared) as $cacheStore) {
 				$cacheStore->removeAll($srcName, $characteristicNeedles);
