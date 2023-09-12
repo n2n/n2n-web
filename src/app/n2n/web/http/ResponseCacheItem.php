@@ -46,10 +46,7 @@ class ResponseCacheItem extends BufferedPayload {
 	public function getHttpCacheControl() {
 		return $this->httpCacheControl;
 	}
-	/**
-	 * @param DateTime $now
-	 * @return boolean
-	 */
+
 	public function isExpired(\DateTimeInterface $now): bool {
 		return $this->expireTimestamp < $now->getTimestamp();
 	}
@@ -71,6 +68,11 @@ class ResponseCacheItem extends BufferedPayload {
 		$response->setHttpCacheControl($this->httpCacheControl);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return string
+	 */
 	public function toKownPayloadString(): string {
 		return 'Cached response';
 	}

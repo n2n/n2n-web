@@ -27,7 +27,7 @@ class ResponseCacheControl {
 	private $characteristics;
 	
 	public function __construct(\DateInterval $cacheInterval = null, array $includedQueryParamNames = null,
-			array $characteristics = array()) {
+			array $characteristics = array(), private readonly bool $shared = true) {
 		$this->cacheInterval = $cacheInterval;
 		$this->includedQueryParamNames = $includedQueryParamNames;
 		$this->characteristics = $characteristics;
@@ -43,5 +43,9 @@ class ResponseCacheControl {
 	
 	public function getCharacteristics(): array {
 		return $this->characteristics;
+	}
+
+	function isShared(): bool {
+		return $this->shared;
 	}
 }

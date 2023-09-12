@@ -70,7 +70,7 @@ class ManagedResponse extends Response {
 	private ?HttpCacheControl $httpCacheControl = null;
 	private ?ResponseCacheControl $responseCacheControl = null;
 	private ?ContentSecurityPolicy $contentSecurityPolicy = null;
-	private $responseCacheStore;
+	private ?ResponseCacheStore $responseCacheStore = null;
 	private $sentPayload;
 	private string $bodyContents = '';
 
@@ -397,15 +397,28 @@ class ManagedResponse extends Response {
 		}
 
 		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
-				$this->request->getHostName(), $this->request->getPath());
+				$this->request->getHostName(), $this->request->getPath(), null, false);
 
 		if ($responseCacheItem === null) {
 			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
 					$this->request->getHostName(), $this->request->getPath(),
-					$this->request->getQuery()->toArray());
+					$this->request->getQuery()->toArray(), false);
 		}
 
-		if ($responseCacheItem === null) return false;
+		if ($responseCacheItem === null) {
+			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
+					$this->request->getHostName(), $this->request->getPath(), null, true);
+		}
+
+		if ($responseCacheItem === null) {
+			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
+					$this->request->getHostName(), $this->request->getPath(),
+					$this->request->getQuery()->toArray(), true);
+		}
+
+		if ($responseCacheItem === null) {
+			return false;
+		}
 
 		$this->send($responseCacheItem);
 		return true;
@@ -487,7 +500,8 @@ class ManagedResponse extends Response {
 					$this->buildQueryParamsCharacteristic(),
 					$this->responseCacheControl->getCharacteristics(),
 					new ResponseCacheItem($this->bodyContents, $this->statusCode,
-							$this->headerJobs, $this->httpCacheControl, $expireDate));
+							$this->headerJobs, $this->httpCacheControl, $expireDate),
+					$this->responseCacheControl->isShared());
 		}
 
 		$this->flushed = true;

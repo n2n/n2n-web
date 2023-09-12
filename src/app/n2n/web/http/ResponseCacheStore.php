@@ -19,8 +19,12 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
+
 namespace n2n\web\http;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use n2n\util\uri\Path;
 use n2n\core\cache\AppCache;
 use n2n\core\container\TransactionManager;
@@ -31,13 +35,13 @@ use n2n\web\http\cache\CacheActionQueue;
 class ResponseCacheStore {
 	const RESPONSE_NAME = 'r';
 	const INDEX_NAME = 'i';
-	
+
 	private CacheActionQueue $responseCacheActionQueue;
 	private TransactionManager $tm;
 
 	private ?CacheStore $sharedCacheStore = null;
 	private ?CacheStore $localCacheStore = null;
-	
+
 	function __construct(private AppCache $appCache, TransactionManager $transactionManager) {
 		$this->responseCacheActionQueue = new CacheActionQueue();
 		$transactionManager->registerResource($this->responseCacheActionQueue);
@@ -85,34 +89,35 @@ class ResponseCacheStore {
 		}
 		return $cacheStores;
 	}
-	
+
 	private function buildResponseCharacteristics(int $method, string $hostName, Path $path,
 			array $queryParams = null): array {
 		if ($queryParams !== null) {
 			ksort($queryParams);
 		}
-		return array('method' => $method, 'hostName' => $hostName, 'path' => $path->__toString(), 
+		return array('method' => $method, 'hostName' => $hostName, 'path' => $path->__toString(),
 				'query' => $queryParams);
 	}
-	
+
 	private function buildIndexCharacteristics(array $responseCharacteristics, array $customCharacteristics): array {
+		ksort($customCharacteristics);
 		foreach ($customCharacteristics as $key => $value) {
 			$responseCharacteristics['cust' . $key] = $value;
 		}
 		return $responseCharacteristics;
 	}
-	
+
 	public function store(int $method, string $hostName, Path $path, ?array $queryParams,
 			array $characteristics, ResponseCacheItem $item, bool $shared): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
 		$this->getCacheStore($shared)->store(self::INDEX_NAME,
-				$this->buildIndexCharacteristics($responseCharacteristics, $characteristics), 
+				$this->buildIndexCharacteristics($responseCharacteristics, $characteristics),
 				$responseCharacteristics);
 	}
-	
+
 	public function get(int $method, string $hostName, Path $path, ?array $queryParams,
-			bool $shared, \DateTime $now = null): ?ResponseCacheItem {
+			bool $shared, DateTimeInterface $now = null): ?ResponseCacheItem {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
 
 		$cacheItem = $this->getCacheStore($shared)->get(self::RESPONSE_NAME, $responseCharacteristics);
@@ -121,47 +126,42 @@ class ResponseCacheStore {
 		}
 
 		if ($now === null) {
-			$now = new \DateTime();
+			$now = new DateTimeImmutable();
 		}
 
 		$data = $cacheItem->getData();
-		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
 		if (!($data instanceof ResponseCacheItem) || $data->isExpired($now)) {
-			$responseCharacteristics = $cacheItem->getCharacteristics();
-			$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
-			$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
+			$this->removeByResponseCharacteristics($responseCharacteristics, $shared);
 			return null;
 		}
-		
+
 		return $data;
 	}
-	
+
 	public function remove(int $method, string $hostName, Path $path, ?array $queryParams, bool $shared): void {
 		$responseCharacteristics = $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams);
-		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
-		
-		$that = $this;
-		$this->responseCacheActionQueue->registerRemoveAction(false, function ()
-				use ($that, $responseCharacteristics, $indexCharacteristics, $shared){
-			$that->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
-			$that->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
+		$this->responseCacheActionQueue->registerRemoveAction(false, function()
+		use ($responseCharacteristics, $shared) {
+			$this->removeByResponseCharacteristics($responseCharacteristics, $shared);
 		});
 	}
 
-	private function removeByResponseCharacteristics(array $responseCharacteristics): void {
-
+	private function removeByResponseCharacteristics(array $responseCharacteristics, $shared): void {
+		$indexCharacteristics = $this->buildIndexCharacteristics($responseCharacteristics, array());
+		$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
+		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
 	}
-	
+
 // 	public function removeByFilter(string $method, string $hostName, Path $path, array $queryParams = null,
 // 			array $characteristicNeedles) {
 // 		$this->cacheStore->removeAll(self::RESPONSE_NAME, $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams, 
 // 				$characteristicNeedles));
 // 	}
-	
+
 	public function removeByCharacteristics(array $characteristicNeedles, bool $shared): void {
 		$cacheItems = $this->getCacheStore($shared)->findAll(self::INDEX_NAME, $this->buildIndexCharacteristics(
 				array(), $characteristicNeedles));
-		$this->responseCacheActionQueue->registerRemoveAction(false, function () use ($cacheItems, $shared) {
+		$this->responseCacheActionQueue->registerRemoveAction(false, function() use ($cacheItems, $shared) {
 			foreach ($cacheItems as $cacheItem) {
 				$responseCharacteristics = $cacheItem->getData();
 				if (is_array($responseCharacteristics)) {

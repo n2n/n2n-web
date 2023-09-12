@@ -271,13 +271,13 @@ class ControllingUtils {
 	 * @param array $characteristics
 	 */
 	public function assignResponseCacheControl(\DateInterval $cacheInterval = null,
-			bool $includeQuery = false, array $characteristics = array()): void {
+			bool $includeQuery = false, array $characteristics = array(), bool $shared = true): void {
 		$queryParamNames = null;
 		if ($includeQuery) {
 			$queryParamNames = array_keys($this->getInvokerInfo()->getQueryParams());
 		}
 
-		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics);
+		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics, $shared);
 	}
 	
 	public function resetResponseCacheControl(): void {
