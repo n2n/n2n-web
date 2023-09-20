@@ -416,7 +416,7 @@ class ManagedResponse extends Response {
 	}
 
 	private function cachePayload(): void {
-		if ($this->responseCacheControl === null || $this->responseCacheStore === null) {
+		if (!$this->responseCachingEnabled || $this->responseCacheControl === null || $this->responseCacheStore === null) {
 			return;
 		}
 
