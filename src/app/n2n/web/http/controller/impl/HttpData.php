@@ -194,9 +194,12 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function reqScalar($path, bool $nullAllowed = false) {
 		return $this->req($path, TypeConstraint::createSimple('scalar', $nullAllowed));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optScalar($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed));
+		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed), $defaultValue);
 	}
 	
 	public function getString($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
