@@ -732,9 +732,11 @@ class ControllingUtils {
 	 * Executes a {@see MagicTask} and automatically converts {@see MagicTaskExecutionException}s to
 	 * {@see StatusException}s
 	 *
-	 * @param MagicTask $magicTask
+	 *
+	 * @template T
+	 * @param MagicTask<T> $magicTask
 	 * @param int $rejectStatus
-	 * @return ExecResult
+	 * @return ExecResult<T>
 	 * @throws StatusException
 	 */
 	function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
