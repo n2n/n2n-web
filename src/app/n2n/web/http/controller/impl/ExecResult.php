@@ -24,8 +24,15 @@ namespace n2n\web\http\controller\impl;
 use n2n\util\magic\TaskResult;
 use n2n\util\magic\MagicArray;
 
+/**
+ * @template T
+ */
 class ExecResult implements TaskResult {
 
+	/**
+	 * @param TaskResult<T> $origTaskResult
+	 * @param ControllingUtils $cu
+	 */
 	function __construct(private TaskResult $origTaskResult, private ControllingUtils $cu) {
 	}
 	
@@ -39,9 +46,9 @@ class ExecResult implements TaskResult {
 	
 	/**
 	 * Sends a default error report as json if de ValidationResult contains any errors. 
-	 * @return boolean true if the ValidationResult contains and a error report has been sent.
+	 * @return boolean true if the ValidationResult contains and an error report has been sent.
 	 */
-	function sendErrJson() {
+	function sendErrJson(): bool {
 		if (!$this->hasErrors()) {
 			return false;
 		}
@@ -52,5 +59,12 @@ class ExecResult implements TaskResult {
 		]);
 		
 		return true;
+	}
+
+	/**
+	 * @return T
+	 */
+	function get(): mixed {
+		return $this->origTaskResult->get();
 	}
 }
