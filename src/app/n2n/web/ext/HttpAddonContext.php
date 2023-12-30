@@ -32,7 +32,7 @@ use n2n\web\http\Session;
 use n2n\context\config\LookupSession;
 use n2n\core\container\impl\AddOnContext;
 use n2n\util\magic\impl\SimpleMagicContext;
-use n2n\web\http\ResponseCacheStore;
+use n2n\web\http\cache\ResponseCacheStore;
 use n2n\core\N2N;
 use n2n\util\magic\MagicObjectUnavailableException;
 use n2n\util\ex\IllegalStateException;
@@ -61,6 +61,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 			Response::class => $httpContext?->getResponse(),
 			Session::class => $httpContext?->getSession(),
 			ResponseCacheStore::class => $this->responseCacheStore,
+			\n2n\web\http\ResponseCacheStore::class => new \n2n\web\http\ResponseCacheStore($this->responseCacheStore),
 			PayloadCacheStore::class => $this->payloadCacheStore,
 			ControllerRegistry::class => $controllerRegistry
 		]));

@@ -1,10 +1,10 @@
 <?php
 
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
 use n2n\util\magic\MagicContext;
 use n2n\context\LookupFailedException;
-use n2n\util\uri\Path;
+use n2n\web\http\InvalidResponseCacheVerifierException;
 
 class ResponseCacheVerifying {
 

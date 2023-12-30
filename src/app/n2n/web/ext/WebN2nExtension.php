@@ -21,20 +21,17 @@
  */
 namespace n2n\web\ext;
 
-use n2n\core\ext\N2nExtension;
 use n2n\core\container\impl\AppN2nContext;
 use n2n\web\http\VarsRequest;
 use n2n\web\http\VarsSession;
 use n2n\web\http\controller\ControllerRegistry;
 use n2n\core\N2N;
-use n2n\web\http\ResponseCacheStore;
-use n2n\core\config\AppConfig;
-use n2n\core\cache\AppCache;
+use n2n\web\http\cache\ResponseCacheStore;
 use n2n\core\VarStore;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\core\N2nApplication;
 use n2n\core\ext\ConfigN2nExtension;
-use n2n\web\http\ResponseCacheVerifying;
+use n2n\web\http\cache\ResponseCacheVerifying;
 
 class WebN2nExtension implements ConfigN2nExtension {
 

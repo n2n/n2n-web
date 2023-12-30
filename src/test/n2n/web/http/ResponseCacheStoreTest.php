@@ -12,6 +12,10 @@ use DateTimeImmutable;
 use DateInterval;
 use n2n\util\magic\MagicContext;
 use n2n\web\http\cache\CachedPayload;
+use n2n\web\http\cache\ResponseCacheId;
+use n2n\web\http\cache\ResponseCacheItem;
+use n2n\web\http\cache\ResponseCacheStore;
+use n2n\web\http\cache\ResponseCacheVerifying;
 
 class ResponseCacheStoreTest extends TestCase {
 

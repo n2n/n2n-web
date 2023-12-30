@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use n2n\core\cache\AppCache;
 use n2n\util\cache\impl\EphemeralCacheStore;
 use PHPUnit\Framework\MockObject\MockObject;
-use n2n\web\http\ResponseCacheItem;
 use n2n\core\container\TransactionManager;
 use DateTimeImmutable;
 use DateInterval;

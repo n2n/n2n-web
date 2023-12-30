@@ -22,7 +22,7 @@
 namespace n2n\web\http\orm;
 
 use n2n\reflection\ObjectAdapter;
-use n2n\web\http\ResponseCacheStore;
+use n2n\web\http\cache\ResponseCacheStore;
 use n2n\context\ThreadScoped;
 
 class ResponseCacheClearer extends ObjectAdapter implements ThreadScoped {

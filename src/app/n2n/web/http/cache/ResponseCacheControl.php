@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
 class ResponseCacheControl {
 	private $cacheInterval;

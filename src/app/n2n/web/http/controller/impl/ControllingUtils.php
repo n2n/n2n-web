@@ -34,7 +34,7 @@ use n2n\web\http\nav\UrlComposer;
 use n2n\web\http\payload\impl\Redirect;
 use n2n\web\dispatch\DispatchContext;
 use n2n\web\dispatch\Dispatchable;
-use n2n\web\http\ResponseCacheControl;
+use n2n\web\http\cache\ResponseCacheControl;
 use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\ViewFactory;
 use n2n\util\type\CastUtils;
@@ -73,8 +73,6 @@ use SimpleXMLElement;
 use JsonSerializable;
 use n2n\web\http\cache\PayloadCacheControl;
 use n2n\web\http\cache\PayloadCacheStore;
-use n2n\web\http\ResponseCacheItem;
-use n2n\core\config\WebConfig;
 use n2n\web\http\cache\CachedPayload;
 
 class ControllingUtils {

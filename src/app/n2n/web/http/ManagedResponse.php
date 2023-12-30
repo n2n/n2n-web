@@ -21,26 +21,23 @@
  */
 namespace n2n\web\http;
 
-use n2n\core\N2nErrorException;
 use n2n\util\HashUtils;
-use n2n\core\N2nRuntimeException;
 use n2n\util\io\ob\OutputBuffer;
-use n2n\core\N2N;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\payload\Payload;
-use n2n\util\col\ArrayUtils;
-use n2n\reflection\ReflectionUtils;
-use n2n\util\type\ArgUtils;
 use Psr\Http\Message\ResponseInterface;
 use n2n\web\http\payload\impl\PsrResponsePayload;
 use DateTimeInterface;
 use n2n\web\http\csp\ContentSecurityPolicy;
-use n2n\util\ex\UnsupportedOperationException;
 use n2n\util\io\ob\OutputBufferDisturbedException;
 use n2n\util\ex\err\FancyError;
 use n2n\web\http\err\HttpHeadersAlreadySentException;
 use n2n\web\http\err\ResponseBufferIsClosed;
 use n2n\web\http\cache\CachedPayload;
+use n2n\web\http\cache\ResponseCacheControl;
+use n2n\web\http\cache\ResponseCacheId;
+use n2n\web\http\cache\ResponseCacheItem;
+use n2n\web\http\cache\ResponseCacheStore;
 
 /**
  * Assembles the http response and gives you different tools to modify it according to your wishes.

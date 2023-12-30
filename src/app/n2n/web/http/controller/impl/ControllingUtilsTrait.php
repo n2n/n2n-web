@@ -22,8 +22,6 @@
 namespace n2n\web\http\controller\impl;
 
 use n2n\web\http\controller\ControllerContext;
-use n2n\web\http\ResponseCacheControl;
-use n2n\web\http\HttpCacheControl;
 use n2n\web\ui\view\ViewCacheControl;
 use n2n\web\ui\view\View;
 use n2n\web\dispatch\Dispatchable;
@@ -37,7 +35,6 @@ use n2n\web\http\Response;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
 use n2n\web\http\controller\ControllerErrorException;
-use n2n\core\TypeNotFoundException;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTask;

@@ -1,8 +1,9 @@
 <?php
 
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
 use n2n\util\uri\Path;
+use n2n\web\http\Request;
 
 class ResponseCacheId {
 

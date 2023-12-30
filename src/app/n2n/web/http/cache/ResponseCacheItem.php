@@ -19,12 +19,9 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\cache;
 
-use n2n\web\http\payload\BufferedPayload;
-use n2n\util\type\ArgUtils;
-use DateTime;
-use n2n\web\http\cache\CachedPayload;
+use n2n\web\http\Response;
 
 class ResponseCacheItem {
 	private int $expireTimestamp;
