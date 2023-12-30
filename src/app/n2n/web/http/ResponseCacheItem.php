@@ -24,63 +24,40 @@ namespace n2n\web\http;
 use n2n\web\http\payload\BufferedPayload;
 use n2n\util\type\ArgUtils;
 use DateTime;
+use n2n\web\http\cache\CachedPayload;
 
-class ResponseCacheItem extends BufferedPayload {
+class ResponseCacheItem {
 	private int $expireTimestamp;
 
 	/**
-	 * @param string $contents
-	 * @param int $statusCode
-	 * @param HeaderJob[] $headerJobs
-	 * @param HttpCacheControl|null $httpCacheControl
-	 * @param DateTime $expireDateTime
+	 * @param CachedPayload $cachedPayload
+	 * @param string|null $verifierLookupId
 	 */
-	public function __construct(private string $contents, private int $statusCode, private array $headerJobs,
-			private ?HttpCacheControl $httpCacheControl, \DateTimeInterface $expireDateTime) {
-		ArgUtils::valArray($headerJobs, HeaderJob::class);
-		$this->expireTimestamp = $expireDateTime->getTimestamp();
-	}
-	/**
-	 * @return HttpCacheControl
-	 */
-	public function getHttpCacheControl() {
-		return $this->httpCacheControl;
+	public function __construct(private CachedPayload $cachedPayload, private ?string $verifierLookupId = null) {
 	}
 
 	public function isExpired(\DateTimeInterface $now): bool {
-		return $this->expireTimestamp < $now->getTimestamp();
-	}
-	/* (non-PHPdoc)
-	 * @see \n2n\web\http\payload\BufferedPayload::getBufferedContents()
-	 */
-	public function getBufferedContents(): string {
-		return $this->contents;
-	}
-	/* (non-PHPdoc)
-	 * @see \n2n\web\http\payload\Payload::prepareForResponse()
-	 */
-	public function prepareForResponse(\n2n\web\http\Response $response): void {
-		$response->setStatus($this->statusCode);
-		foreach ($this->headerJobs as $headerJob) {
-			$response->addHeaderJob($headerJob);
-		}
-
-		$response->setHttpCacheControl($this->httpCacheControl);
+		return $this->cachedPayload->isExpired($now)
+				// invalidate cache of old serialized objects
+				|| !isset($this->cachedPayload);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @return string
-	 */
-	public function toKownPayloadString(): string {
-		return 'Cached response';
+	function hasVerifier(): bool {
+		return $this->verifierLookupId !== null;
 	}
 
-	static function createFromSentPayload(Response $response, \DateTimeInterface $expireDateTime): ResponseCacheItem {
-		return new ResponseCacheItem($response->getSentPayload()->getBufferedContents(),
-				$response->getStatus(),
-				$response->getHeaderJobs(), $response->getHttpCacheControl(), $expireDateTime);
+	function getVerifierLookupId(): ?string {
+		return $this->verifierLookupId;
+	}
+
+	function getCachedPayload(): CachedPayload {
+		return $this->cachedPayload;
+	}
+
+	static function createFromSentPayload(Response $response, \DateTimeInterface $expireDateTime,
+			string $verifierLookupId = null): ResponseCacheItem {
+		return new ResponseCacheItem(CachedPayload::createFromSentPayload($response, $expireDateTime),
+				$verifierLookupId);
 	}
 
 }

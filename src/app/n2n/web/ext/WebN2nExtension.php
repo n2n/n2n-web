@@ -34,6 +34,7 @@ use n2n\core\VarStore;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\core\N2nApplication;
 use n2n\core\ext\ConfigN2nExtension;
+use n2n\web\http\ResponseCacheVerifying;
 
 class WebN2nExtension implements ConfigN2nExtension {
 
@@ -41,7 +42,8 @@ class WebN2nExtension implements ConfigN2nExtension {
 	}
 
 	function applyToN2nContext(AppN2nContext $appN2nContext): void {
-		$responseCacheStore = new ResponseCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
+		$responseCacheStore = new ResponseCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager(),
+				new ResponseCacheVerifying($appN2nContext));
 		$payloadCacheStore = new PayloadCacheStore($appN2nContext->getAppCache(), $appN2nContext->getTransactionManager());
 
 		if (!isset($appN2nContext->getPhpVars()->server['REQUEST_URI'])) {

@@ -35,10 +35,10 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturnOnConsecutiveCalls($sharedCacheStore, $localCacheStore);
 
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
-		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->future));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->future));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('content three', 3, [], null, $this->future));
+		$responseCacheItem4 = new ResponseCacheItem(new CachedPayload('content four', 4, [], null, $this->future));
 
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem3, true);
 		$this->payloadCacheStore->store('holeradio', ['char2' => 1], $responseCacheItem4, true);
@@ -66,10 +66,10 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturnOnConsecutiveCalls($sharedCacheStore, $localCacheStore);
 
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
-		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->future));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->future));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('content three', 3, [], null, $this->future));
+		$responseCacheItem4 = new ResponseCacheItem(new CachedPayload('content four', 4, [], null, $this->future));
 
 
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem3, true);
@@ -99,10 +99,10 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturnOnConsecutiveCalls($localCacheStore, $sharedCacheStore);
 
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
-		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->future));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->future));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('content three', 3, [], null, $this->future));
+		$responseCacheItem4 = new ResponseCacheItem(new CachedPayload('content four', 4, [], null, $this->future));
 
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem1, false);
 		$this->payloadCacheStore->store('holeradio', ['char2' => 1], $responseCacheItem2, false);
@@ -124,10 +124,10 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturnOnConsecutiveCalls($sharedCacheStore, $localCacheStore);
 
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
-		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->future));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->future));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('content three', 3, [], null, $this->future));
+		$responseCacheItem4 = new ResponseCacheItem(new CachedPayload('content four', 4, [], null, $this->future));
 
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem3, true);
 		$this->payloadCacheStore->store('holeradio', ['char2' => 1], $responseCacheItem4, true);
@@ -149,10 +149,10 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturnOnConsecutiveCalls($sharedCacheStore, $localCacheStore);
 
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->future);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->future);
-		$responseCacheItem3 = new ResponseCacheItem('content three', 3, [], null, $this->future);
-		$responseCacheItem4 = new ResponseCacheItem('content four', 4, [], null, $this->future);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->future));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->future));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('content three', 3, [], null, $this->future));
+		$responseCacheItem4 = new ResponseCacheItem(new CachedPayload('content four', 4, [], null, $this->future));
 
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem3, true);
 		$this->payloadCacheStore->store('holeradio', ['char2' => 1], $responseCacheItem4, true);
@@ -172,8 +172,8 @@ class PayloadCacheStoreTest extends TestCase {
 				->with(PayloadCacheStore::class, false)
 				->willReturn($cacheStore);
 
-		$responseCacheItem1 = new ResponseCacheItem('content one', 1, [], null, $this->today);
-		$responseCacheItem2 = new ResponseCacheItem('content two', 2, [], null, $this->today);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('content one', 1, [], null, $this->today));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('content two', 2, [], null, $this->today));
 		$this->payloadCacheStore->store('holeradio', ['char1' => 1], $responseCacheItem1, false);
 		$this->payloadCacheStore->store('holeradio', ['char2' => 1], $responseCacheItem2, false);
 
@@ -198,7 +198,7 @@ class PayloadCacheStoreTest extends TestCase {
 				->willReturn($cacheStore);
 
 
-		$responseCacheItem = new ResponseCacheItem('some content', 2, [], null, $this->future);
+		$responseCacheItem = new ResponseCacheItem(new CachedPayload('some content', 2, [], null, $this->future));
 
 		$this->payloadCacheStore->store('holeradio', [], $responseCacheItem, false);
 
@@ -217,9 +217,9 @@ class PayloadCacheStoreTest extends TestCase {
 				->with(PayloadCacheStore::class, false)
 				->willReturn($cacheStore);
 
-		$responseCacheItem1 = new ResponseCacheItem('some content', 1, [], null, $this->today);
-		$responseCacheItem2 = new ResponseCacheItem('some content-2', 2, [], null, $this->today);
-		$responseCacheItem3 = new ResponseCacheItem('some content-3', 3, [], null, $this->today);
+		$responseCacheItem1 = new ResponseCacheItem(new CachedPayload('some content', 1, [], null, $this->today));
+		$responseCacheItem2 = new ResponseCacheItem(new CachedPayload('some content-2', 2, [], null, $this->today));
+		$responseCacheItem3 = new ResponseCacheItem(new CachedPayload('some content-3', 3, [], null, $this->today));
 
 		$this->payloadCacheStore->store('holeradio', ['chr1' => 1, 'chr2' => 'not-zwei'], $responseCacheItem1, false);
 		$this->payloadCacheStore->store('holeradio-2', ['chr0' => 0, 'chr2' => 'zwei'], $responseCacheItem2, false);

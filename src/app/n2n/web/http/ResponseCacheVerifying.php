@@ -1,0 +1,54 @@
+<?php
+
+namespace n2n\web\http;
+
+use n2n\util\magic\MagicContext;
+use n2n\context\LookupFailedException;
+use n2n\util\uri\Path;
+
+class ResponseCacheVerifying {
+
+	function __construct(private MagicContext $magicContext) {
+
+	}
+
+
+	/**
+	 * @throws InvalidResponseCacheVerifierException
+	 */
+	function assertVerifier(string $lookupId): void {
+		try {
+			$verifier = $this->magicContext->lookup($lookupId);
+		} catch (LookupFailedException $e) {
+			throw new InvalidResponseCacheVerifierException('Provided lookup id for ResponseCacheVerifier is invalid: '
+					. $lookupId, previous: $e);
+		}
+
+		if (!($verifier instanceof ResponseCacheVerifier)) {
+			throw new InvalidResponseCacheVerifierException('ResponseCacheVerifier must implement '
+					. ResponseCacheVerifier::class . ': ' . get_class($verifier));
+		}
+	}
+
+	function verifyValidity(ResponseCacheId $responseCacheId, array $characteristics, ResponseCacheItem $item,
+			\DateTimeInterface $now): bool {
+		$verifierLookupId = $item->getVerifierLookupId();
+		if ($verifierLookupId === null) {
+			return true;
+		}
+
+		try {
+			$verifier = $this->magicContext->lookup($verifierLookupId);
+		} catch (LookupFailedException $e) {
+			return false;
+		}
+
+		if (!($verifier instanceof ResponseCacheVerifier)) {
+			return false;
+		}
+
+		return $verifier->verifyValidity($responseCacheId, $characteristics, $item, $now);
+
+	}
+
+}

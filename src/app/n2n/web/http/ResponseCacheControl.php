@@ -25,9 +25,17 @@ class ResponseCacheControl {
 	private $cacheInterval;
 	private $includedQueryParamNames;
 	private $characteristics;
-	
+
+	/**
+	 * @param \DateInterval|null $cacheInterval
+	 * @param array|null $includedQueryParamNames
+	 * @param array $characteristics
+	 * @param bool $shared
+	 * @param string|null $verifierCheckLookupId
+	 */
 	public function __construct(\DateInterval $cacheInterval = null, array $includedQueryParamNames = null,
-			array $characteristics = array(), private readonly bool $shared = true) {
+			array $characteristics = array(), private readonly bool $shared = true,
+			private readonly ?string $verifierCheckLookupId = null) {
 		$this->cacheInterval = $cacheInterval;
 		$this->includedQueryParamNames = $includedQueryParamNames;
 		$this->characteristics = $characteristics;
@@ -47,5 +55,9 @@ class ResponseCacheControl {
 
 	function isShared(): bool {
 		return $this->shared;
+	}
+
+	function getVerifierCheckLookupId(): ?string {
+		return $this->verifierCheckLookupId;
 	}
 }

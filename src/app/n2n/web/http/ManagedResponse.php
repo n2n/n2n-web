@@ -40,6 +40,7 @@ use n2n\util\io\ob\OutputBufferDisturbedException;
 use n2n\util\ex\err\FancyError;
 use n2n\web\http\err\HttpHeadersAlreadySentException;
 use n2n\web\http\err\ResponseBufferIsClosed;
+use n2n\web\http\cache\CachedPayload;
 
 /**
  * Assembles the http response and gives you different tools to modify it according to your wishes.
@@ -400,31 +401,29 @@ class ManagedResponse extends Response {
 			return false;
 		}
 
-		$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
-				$this->request->getHostName(), $this->request->getPath(), null, false);
+		$responseCacheItem = $this->responseCacheStore->get(
+				ResponseCacheId::createFromRequest($this->request, false), false);
 
 		if ($responseCacheItem === null) {
-			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
-					$this->request->getHostName(), $this->request->getPath(),
-					$this->request->getQuery()->toArray(), false);
+			$responseCacheItem = $this->responseCacheStore->get(
+					ResponseCacheId::createFromRequest($this->request, true), false);
 		}
 
 		if ($responseCacheItem === null) {
-			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
-					$this->request->getHostName(), $this->request->getPath(), null, true);
+			$responseCacheItem = $this->responseCacheStore->get(
+					ResponseCacheId::createFromRequest($this->request, false), true);
 		}
 
 		if ($responseCacheItem === null) {
-			$responseCacheItem = $this->responseCacheStore->get($this->request->getMethod(),
-					$this->request->getHostName(), $this->request->getPath(),
-					$this->request->getQuery()->toArray(), true);
+			$responseCacheItem = $this->responseCacheStore->get(
+					ResponseCacheId::createFromRequest($this->request, true), true);
 		}
 
 		if ($responseCacheItem === null) {
 			return false;
 		}
 
-		$this->send($responseCacheItem);
+		$this->send($responseCacheItem->getCachedPayload());
 		return true;
 	}
 
@@ -435,12 +434,14 @@ class ManagedResponse extends Response {
 
 		$expireDate = new \DateTime();
 		$expireDate->add($this->responseCacheControl->getCacheInterval());
-		$this->responseCacheStore->store($this->request->getMethod(),
+		$this->responseCacheStore->store(new ResponseCacheId($this->request->getMethod(),
 				$this->request->getHostName(), $this->request->getPath(),
-				$this->buildQueryParamsCharacteristic(),
+				$this->buildQueryParamsCharacteristic()),
 				$this->responseCacheControl->getCharacteristics(),
-				new ResponseCacheItem($this->bodyContents, $this->statusCode,
-						$this->headerJobs, $this->httpCacheControl, $expireDate),
+				new ResponseCacheItem(
+						new CachedPayload($this->bodyContents, $this->statusCode,
+								$this->headerJobs, $this->httpCacheControl, $expireDate),
+						$this->responseCacheControl->getVerifierCheckLookupId()),
 				$this->responseCacheControl->isShared());
 	}
 
