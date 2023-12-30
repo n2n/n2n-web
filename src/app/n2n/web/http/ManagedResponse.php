@@ -434,13 +434,14 @@ class ManagedResponse extends Response {
 
 		$expireDate = new \DateTime();
 		$expireDate->add($this->responseCacheControl->getCacheInterval());
-		$this->responseCacheStore->store(new ResponseCacheId($this->request->getMethod(),
-				$this->request->getHostName(), $this->request->getPath(),
-				$this->buildQueryParamsCharacteristic()),
-				$this->responseCacheControl->getCharacteristics(),
+		$this->responseCacheStore->store(
+				new ResponseCacheId($this->request->getMethod(),
+						$this->request->getHostName(), $this->request->getPath(),
+						$this->buildQueryParamsCharacteristic()),
 				new ResponseCacheItem(
 						new CachedPayload($this->bodyContents, $this->statusCode,
 								$this->headerJobs, $this->httpCacheControl, $expireDate),
+						$this->responseCacheControl->getCharacteristics(),
 						$this->responseCacheControl->getVerifierCheckLookupId()),
 				$this->responseCacheControl->isShared());
 	}

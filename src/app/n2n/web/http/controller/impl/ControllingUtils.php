@@ -75,6 +75,7 @@ use n2n\web\http\cache\PayloadCacheControl;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\web\http\ResponseCacheItem;
 use n2n\core\config\WebConfig;
+use n2n\web\http\cache\CachedPayload;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -647,11 +648,11 @@ class ControllingUtils {
 
 		$expireDate = new \DateTime();
 		$expireDate->add($this->payloadCacheControl->getCacheInterval());
-		$responseCacheItem = ResponseCacheItem::createFromSentPayload($this->getResponse(), $expireDate);
+		$cachedPayload = CachedPayload::createFromSentPayload($this->getResponse(), $expireDate);
 
 		$this->getN2nContext()->lookup(PayloadCacheStore::class)
 				->store($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristics(),
-						$responseCacheItem, $this->payloadCacheControl->isShared());
+						$cachedPayload, $this->payloadCacheControl->isShared());
 	}
 
 	public function createPayloadFromCache(): ?Payload {
