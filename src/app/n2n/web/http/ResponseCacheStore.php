@@ -129,6 +129,10 @@ class ResponseCacheStore {
 
 	public function store(ResponseCacheId $responseCacheId,
 			array $characteristics, ResponseCacheItem $item, bool $shared): void {
+		if ($item->hasVerifier()) {
+			$this->verifying->assertVerifier($item->getVerifierLookupId());
+		}
+
 		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
 		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
 		$this->getCacheStore($shared)->store(self::INDEX_NAME,
