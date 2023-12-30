@@ -2,12 +2,9 @@
 
 namespace n2n\web\http\cache;
 
-use n2n\web\http\cache\CacheActionQueue;
 use n2n\core\container\TransactionManager;
 use n2n\core\cache\AppCache;
-use n2n\web\http\ResponseCacheStore;
 use n2n\util\ex\IllegalStateException;
-use n2n\web\http\ResponseCacheItem;
 use n2n\util\cache\CacheStore;
 
 class PayloadCacheStore {
@@ -66,11 +63,11 @@ class PayloadCacheStore {
 		return $cacheStores;
 	}
 
-	public function store(string $srcName, array $characteristics, ResponseCacheItem $item, bool $shared): void {
+	public function store(string $srcName, array $characteristics, CachedPayload $item, bool $shared): void {
 		$this->getCacheStore($shared)->store($srcName, $characteristics, $item);
 	}
 
-	public function get(string $srcName, array $characteristics, bool $shared, \DateTimeInterface $now = null): ?ResponseCacheItem {
+	public function get(string $srcName, array $characteristics, bool $shared, \DateTimeInterface $now = null): ?CachedPayload {
 		$cacheStore = $this->getCacheStore($shared);
 		$cacheItem = $cacheStore->get($srcName, $characteristics);
 		if ($cacheItem === null) {
@@ -82,7 +79,7 @@ class PayloadCacheStore {
 		}
 
 		$data = $cacheItem->getData();
-		if (!($data instanceof ResponseCacheItem) || $data->isExpired($now)) {
+		if (!($data instanceof CachedPayload) || $data->isExpired($now)) {
 			$cacheStore->remove($srcName, $characteristics);
 			return null;
 		}

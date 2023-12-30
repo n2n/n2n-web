@@ -33,13 +33,17 @@ class ResponseCacheItem {
 	 * @param CachedPayload $cachedPayload
 	 * @param string|null $verifierLookupId
 	 */
-	public function __construct(private CachedPayload $cachedPayload, private ?string $verifierLookupId = null) {
+	public function __construct(private CachedPayload $cachedPayload, private array $characteristics, private ?string $verifierLookupId = null) {
 	}
 
 	public function isExpired(\DateTimeInterface $now): bool {
 		return $this->cachedPayload->isExpired($now)
 				// invalidate cache of old serialized objects
 				|| !isset($this->cachedPayload);
+	}
+
+	function getCharacteristics(): array {
+		return $this->characteristics;
 	}
 
 	function hasVerifier(): bool {
@@ -55,9 +59,9 @@ class ResponseCacheItem {
 	}
 
 	static function createFromSentPayload(Response $response, \DateTimeInterface $expireDateTime,
-			string $verifierLookupId = null): ResponseCacheItem {
+			array $characteristics, string $verifierLookupId = null): ResponseCacheItem {
 		return new ResponseCacheItem(CachedPayload::createFromSentPayload($response, $expireDateTime),
-				$verifierLookupId);
+				$characteristics, $verifierLookupId);
 	}
 
 }

@@ -115,20 +115,8 @@ class ResponseCacheStore {
 		return $responseCharacteristics;
 	}
 
-	private function extractCharacteristics(array $indexCharacteristics): array {
-		$characteristics = [];
-		foreach ($indexCharacteristics as $key => $value) {
-			if (!StringUtils::startsWith(self::CUSTOM_KEY_PREFIX, $key)) {
-				continue;
-			}
-
-			$characteristics[mb_substr($key, 0, mb_strlen(self::CUSTOM_KEY_PREFIX))] = $value;
-		}
-		return $characteristics;
-	}
-
 	public function store(ResponseCacheId $responseCacheId,
-			array $characteristics, ResponseCacheItem $item, bool $shared): void {
+			ResponseCacheItem $item, bool $shared): void {
 		if ($item->hasVerifier()) {
 			$this->verifying->assertVerifier($item->getVerifierLookupId());
 		}
@@ -136,7 +124,7 @@ class ResponseCacheStore {
 		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
 		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
 		$this->getCacheStore($shared)->store(self::INDEX_NAME,
-				$this->buildIndexCharacteristics($responseCharacteristics, $characteristics),
+				$this->buildIndexCharacteristics($responseCharacteristics, $item->getCharacteristics()),
 				$responseCharacteristics);
 	}
 
@@ -154,13 +142,8 @@ class ResponseCacheStore {
 		}
 
 		$data = $cacheItem->getData();
-		if (!($data instanceof ResponseCacheItem) || $data->isExpired($now)) {
-			$this->removeByResponseCharacteristics($responseCharacteristics, $shared);
-			return null;
-		}
-
-		if ($data->hasVerifier() && !$this->verifying->verifyValidity($responseCacheId,
-				$this->extractCharacteristics($cacheItem->getCharacteristics()), $data, $now)) {
+		if (!($data instanceof ResponseCacheItem) || $data->isExpired($now)
+				|| ($data->hasVerifier() && !$this->verifying->verifyValidity($responseCacheId, $data, $now))) {
 			$this->removeByResponseCharacteristics($responseCharacteristics, $shared);
 			return null;
 		}

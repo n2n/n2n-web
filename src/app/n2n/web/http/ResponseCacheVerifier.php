@@ -7,6 +7,5 @@ use n2n\util\uri\Path;
 interface ResponseCacheVerifier {
 
 	
-	function verifyValidity(ResponseCacheId $responseCacheId,
-			array $characteristics, ResponseCacheItem $item, \DateTimeInterface $now): bool;
+	function verifyValidity(ResponseCacheId $responseCacheId, ResponseCacheItem $item, \DateTimeInterface $now): bool;
 }

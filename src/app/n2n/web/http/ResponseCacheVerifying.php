@@ -30,8 +30,7 @@ class ResponseCacheVerifying {
 		}
 	}
 
-	function verifyValidity(ResponseCacheId $responseCacheId, array $characteristics, ResponseCacheItem $item,
-			\DateTimeInterface $now): bool {
+	function verifyValidity(ResponseCacheId $responseCacheId, ResponseCacheItem $item, \DateTimeInterface $now): bool {
 		$verifierLookupId = $item->getVerifierLookupId();
 		if ($verifierLookupId === null) {
 			return true;
@@ -47,7 +46,7 @@ class ResponseCacheVerifying {
 			return false;
 		}
 
-		return $verifier->verifyValidity($responseCacheId, $characteristics, $item, $now);
+		return $verifier->verifyValidity($responseCacheId, $item, $now);
 
 	}
 
