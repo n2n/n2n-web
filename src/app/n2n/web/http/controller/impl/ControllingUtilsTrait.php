@@ -41,6 +41,7 @@ use n2n\core\TypeNotFoundException;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTask;
+use n2n\web\http\StatusException;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -480,10 +481,13 @@ trait ControllingUtilsTrait {
 	}
 
 	/**
-	 * @return ExecResult
-	 * @see ControllingUtils::exec()
+	 * @template T
+	 * @param MagicTask<T> $magicTask
+	 * @param int $rejectStatus
+	 * @return ExecResult<T>
+	 * @throws StatusException
 	 */
-	protected final function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+	protected final function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		return $this->cu()->exec($magicTask, $rejectStatus);
 	}
 }

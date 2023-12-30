@@ -69,14 +69,14 @@ class HttpData implements AttributeReader, AttributeWriter {
 		
 	/**
 	 * <strong>This method throws an {@link AttributesException} instead of a {@link StatusException} to implement
-	 * {@link AttributeReader} correclty.</strong> For safe usage where only {@link StatusException} are desired
+	 * {@link AttributeReader} correctly.</strong> For safe usage where only {@link StatusException} are desired
 	 * use {@link self::req()} instead.
 	 * 
 	 * {@inheritDoc}
 	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
 	 */
 	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
-			$defaultValue = null) {
+			mixed $defaultValue = null): mixed {
 		return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
 	}
 
@@ -104,7 +104,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * @param string|AttributePath $path
 	 * @return boolean
 	 */
-	function has($path) {
+	function has($path): bool {
 		return $this->dataMap->has($path);
 	}
 
@@ -194,9 +194,12 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function reqScalar($path, bool $nullAllowed = false) {
 		return $this->req($path, TypeConstraint::createSimple('scalar', $nullAllowed));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optScalar($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed));
+		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed), $defaultValue);
 	}
 	
 	public function getString($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {

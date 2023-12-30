@@ -119,13 +119,15 @@ abstract class Response {
 
 	abstract function fetchBufferedOutput(bool $closeBaseBuffer = false): string;
 
+	abstract function getBufferableOutput(): string;
+
 	abstract function reset(): void;
 
 	abstract function sendCachedPayload(): bool;
 
 	abstract function isFlushed(): bool;
 
-	abstract function flush(): void;
+	abstract function flush(FlushMode $flushMode = FlushMode::OUT): void;
 
 	abstract function closeBuffer(): void;
 

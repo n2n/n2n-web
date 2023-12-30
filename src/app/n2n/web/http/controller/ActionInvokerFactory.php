@@ -218,6 +218,9 @@ class ActionInvokerFactory {
 		$matchResult = $pathPattern->matchesPath($cmdParamPath);
 		if ($matchResult === null) return null;
 
+		// possible unfilled optional parameters
+		$numSinglePathParts = min($cmdParamPath->size(), $numSinglePathParts);
+
 		$invoker = new MagicMethodInvoker($this->magicContext);
 		$invoker->setMethod($method);
 

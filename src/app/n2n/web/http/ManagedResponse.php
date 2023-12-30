@@ -277,6 +277,10 @@ class ManagedResponse extends Response {
 		}
 	}
 
+	function getBufferableOutput(): string {
+		return $this->bodyContents;
+	}
+
 	function cleanBufferedOutput(): void {
 		foreach ($this->outputBuffers as $outputBuffer) {
 			if (!$outputBuffer->isBuffering()) continue;
@@ -424,6 +428,22 @@ class ManagedResponse extends Response {
 		return true;
 	}
 
+	private function cachePayload(): void {
+		if (!$this->responseCachingEnabled || $this->responseCacheControl === null || $this->responseCacheStore === null) {
+			return;
+		}
+
+		$expireDate = new \DateTime();
+		$expireDate->add($this->responseCacheControl->getCacheInterval());
+		$this->responseCacheStore->store($this->request->getMethod(),
+				$this->request->getHostName(), $this->request->getPath(),
+				$this->buildQueryParamsCharacteristic(),
+				$this->responseCacheControl->getCharacteristics(),
+				new ResponseCacheItem($this->bodyContents, $this->statusCode,
+						$this->headerJobs, $this->httpCacheControl, $expireDate),
+				$this->responseCacheControl->isShared());
+	}
+
 	/**
 	 * @return array|null
 	 */
@@ -460,7 +480,7 @@ class ManagedResponse extends Response {
 	 *
 	 * @throws HttpHeadersAlreadySentException
 	 */
-	public function flush(): void {
+	public function flush(FlushMode $flushMode = FlushMode::OUT): void {
 		$this->ensureNotFlushed();
 
 		foreach ($this->listeners as $listener) {
@@ -478,41 +498,41 @@ class ManagedResponse extends Response {
 			$this->flushed = true;
 
 			if (!strlen($contents) && $this->notModified($this->sentPayload->getEtag(), $this->sentPayload->getLastModified())) {
-				$this->flushHeaders();
+				if ($flushMode->isEchoEnabled()) {
+					$this->flushHeaders();
+				}
 				$this->closeBuffer();
 				return;
 			}
 
-			$this->flushHeaders();
-			echo $this->bodyContents;
-			$this->sentPayload->responseOut();
-			echo $contents;
+			if ($flushMode->isEchoEnabled()) {
+				$this->flushHeaders();
+				echo $this->bodyContents;
+				$this->sentPayload->responseOut();
+				echo $contents;
+			}
+			$this->bodyContents .= $contents;
 			return;
 		}
 
 		$this->bodyContents .= $contents;
 
-		if ($this->responseCacheControl !== null && $this->responseCacheStore !== null) {
-			$expireDate = new \DateTime();
-			$expireDate->add($this->responseCacheControl->getCacheInterval());
-			$this->responseCacheStore->store($this->request->getMethod(),
-					$this->request->getHostName(), $this->request->getPath(),
-					$this->buildQueryParamsCharacteristic(),
-					$this->responseCacheControl->getCharacteristics(),
-					new ResponseCacheItem($this->bodyContents, $this->statusCode,
-							$this->headerJobs, $this->httpCacheControl, $expireDate),
-					$this->responseCacheControl->isShared());
-		}
+		$this->cachePayload();
 
 		$this->flushed = true;
 
 		if ($this->notModified(HashUtils::base36md5Hash($this->bodyContents, 26))) {
-			$this->flushHeaders();
+			if ($flushMode->isEchoEnabled()) {
+				$this->flushHeaders();
+			}
 			return;
 		}
 
-		$this->flushHeaders();
-		echo $this->bodyContents;
+
+		if ($flushMode->isEchoEnabled()) {
+			$this->flushHeaders();
+			echo $this->bodyContents;
+		}
 	}
 	/**
 	 *
