@@ -71,14 +71,14 @@ abstract class ControllerAdapter extends ObjectAdapter implements Controller, Lo
 				new InterceptorFactory($controllerContext->getControllingPlan()->getHttpContext()->getN2nContext()));
 		
 		$this->resetCacheControl();
-		
-		if (!$this->intercept(...$interpreter->findControllerInterceptors())) {
-			$this->endBuffer($outputBuffer, true);
-			return true;
-		}
 
 		$caughtStatusException = null;
 		try {
+			if (!$this->intercept(...$interpreter->findControllerInterceptors())) {
+				$this->endBuffer($outputBuffer, true);
+				return true;
+			}
+
 			$prepareInvokers = $interpreter->interpret(ControllerInterpreter::DETECT_PREPARE_METHOD);
 			foreach ($prepareInvokers as $prepareInvoker) {
 				$this->cu()->setInvokerInfo($prepareInvoker);
