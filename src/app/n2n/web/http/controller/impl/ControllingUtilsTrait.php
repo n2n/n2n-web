@@ -185,8 +185,9 @@ trait ControllingUtilsTrait {
 	 * @param array $characteristics
 	 */
 	protected final function assignResponseCacheControl(\DateInterval $cacheInterval = null,
-			bool $includeQuery = false, array $characteristics = array(), bool $shared = true): void {
-		$this->cu()->assignResponseCacheControl($cacheInterval, $includeQuery, $characteristics, $shared);
+			bool $includeQuery = false, array $characteristics = array(), bool $shared = true,
+			string $verifierCheckLookupId = null): void {
+		$this->cu()->assignResponseCacheControl($cacheInterval, $includeQuery, $characteristics, $shared, $verifierCheckLookupId);
 	}
 	
 	protected final function resetResponseCacheControl(): void {

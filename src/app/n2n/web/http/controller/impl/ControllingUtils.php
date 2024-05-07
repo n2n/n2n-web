@@ -270,13 +270,15 @@ class ControllingUtils {
 	 * @param array $characteristics
 	 */
 	public function assignResponseCacheControl(\DateInterval $cacheInterval = null,
-			bool $includeQuery = false, array $characteristics = array(), bool $shared = true): void {
+			bool $includeQuery = false, array $characteristics = array(), bool $shared = true,
+			string $verifierCheckLookupId = null): void {
 		$queryParamNames = null;
 		if ($includeQuery) {
 			$queryParamNames = array_keys($this->getInvokerInfo()->getQueryParams());
 		}
 
-		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics, $shared);
+		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics,
+				$shared, $verifierCheckLookupId);
 	}
 	
 	public function resetResponseCacheControl(): void {
