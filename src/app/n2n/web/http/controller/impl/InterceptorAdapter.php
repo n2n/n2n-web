@@ -5,7 +5,7 @@ use n2n\web\http\controller\Interceptor;
 use n2n\reflection\ReflectionUtils;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\magic\MagicContext;
-use n2n\web\http\controller\ControllerErrorException;
+use n2n\web\http\controller\ControllerError;
 use n2n\context\Lookupable;
 
 abstract class InterceptorAdapter implements Interceptor, Lookupable {
@@ -43,7 +43,7 @@ class InterceptorInvoker {
 		$methods = ReflectionUtils::extractMethodHierarchy($class, self::METHOD);
 		
 		if (empty($methods)) {
-			throw new ControllerErrorException('Interpretor must implemnt a method ' . self::METHOD . '(): ' 
+			throw new ControllerError('Interpretor must implemnt a method ' . self::METHOD . '(): '
 					. $class->getName(), $class->getFileName());
 		}
 		

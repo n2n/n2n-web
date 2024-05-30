@@ -34,7 +34,7 @@ use n2n\web\http\Request;
 use n2n\web\http\Response;
 use n2n\util\ex\IllegalStateException;
 use n2n\reflection\ReflectionUtils;
-use n2n\web\http\controller\ControllerErrorException;
+use n2n\web\http\controller\ControllerError;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTask;
@@ -250,7 +250,7 @@ trait ControllingUtilsTrait {
 	private function decorateException(string $viewNameExpression, \Exception $e) {
 		if (!($e instanceof \ErrorException) &&
 				null !== ($lutp = ReflectionUtils::getLastMatchingUserTracemPointOfException($e, 0, (new \ReflectionClass($this))->getFileName()))) {
-			return new ControllerErrorException('Failed to lookup view: ' . $viewNameExpression,
+			return new ControllerError('Failed to lookup view: ' . $viewNameExpression,
 					$lutp['file'], $lutp['line'], null, null, $e);
 		}
 	

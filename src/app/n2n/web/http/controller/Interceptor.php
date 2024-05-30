@@ -24,10 +24,10 @@ namespace n2n\web\http\controller;
 use n2n\web\http\controller\impl\ControllingUtils;
 
 interface Interceptor {
-    
-    /**
-     * @param ControllerContext $controller
-     * @return bool
-     */
-    function invoke(ControllingUtils $controlleringUtils): bool;
+
+	/**
+	 * @param ControllingUtils $controllingUtils
+	 * @return bool
+	 */
+    function invoke(ControllingUtils $controllingUtils): bool;
 }

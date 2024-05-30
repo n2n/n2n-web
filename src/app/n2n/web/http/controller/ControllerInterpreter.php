@@ -44,7 +44,7 @@ class ControllerInterpreter {
 	const DETECT_ALL = 31;
 
 	const PREPARE_METHOD_NAME = 'prepare';
-	const MAGIC_METHOD_PERFIX = 'do';
+	const MAGIC_METHOD_PREFIX = 'do';
 	const MAGIC_GET_METHOD_PREFIX = 'getDo';
 	const MAGIC_PUT_METHOD_PREFIX = 'putDo';
 	const MAGIC_DELETE_METHOD_PREFIX = 'deleteDo';
@@ -116,12 +116,12 @@ class ControllerInterpreter {
 	
 	/**
 	 * @param \ReflectionMethod $method
-	 * @throws ControllerErrorException
+	 * @throws ControllerError
 	 */
 	private function checkAccessabilityMethod(\ReflectionMethod $method) {
 		if ($method->isPublic()) return;
 		
-		throw new ControllerErrorException('Method must be public: ' 
+		throw new ControllerError('Method must be public: '
 						. $method->getDeclaringClass()->getName() . '::' . $method->getName() . '()',
 				$method->getFileName(), $method->getStartLine());
 	}
@@ -186,10 +186,10 @@ class ControllerInterpreter {
 	
 	/**
 	 * @param MethodAnnotation $annotation
-	 * @throws ControllerErrorException
+	 * @throws ControllerError
 	 */
 	private function createInvalidAnnoException(MethodAnnotation $annotation) {
-		return new ControllerErrorException('Invalid annotation for method:'
+		return new ControllerError('Invalid annotation for method:'
 						. TypeUtils::prettyReflMethName($annotation->getAnnotatedMethod()),
 				$annotation->getFileName(), $annotation->getLine());
 	}
@@ -270,8 +270,8 @@ class ControllerInterpreter {
 			return $method;
 		}
 
-		if ($this->class->hasMethod(self::MAGIC_METHOD_PERFIX . $nameBase)) {
-			return $this->class->getMethod(self::MAGIC_METHOD_PERFIX . $nameBase);
+		if ($this->class->hasMethod(self::MAGIC_METHOD_PREFIX . $nameBase)) {
+			return $this->class->getMethod(self::MAGIC_METHOD_PREFIX . $nameBase);
 		}
 		
 		return null;
@@ -389,11 +389,12 @@ class ControllerInterpreter {
 		
 		return null;
 	}
-	
+
 	/**
 	 * @param AnnoPath $annoPath
-	 * @throws ControllerErrorException
+	 * @param array|null $allowedExtensions
 	 * @return InvokerInfo
+	 * @throws ControllerError
 	 */
 	private function analyzePattern(AnnoPath $annoPath, array $allowedExtensions = null) {
 		try {
@@ -405,16 +406,16 @@ class ControllerInterpreter {
 			
 			return $this->invokerFactory->createSemiMagic($annoPath->getAnnotatedMethod(), $pathPattern);
 		} catch (PathPatternCompileException $e) {
-			throw new ControllerErrorException('Invalid pattern annotated', 
+			throw new ControllerError('Invalid pattern annotated',
 					$annoPath->getFileName(), $annoPath->getLine());
-		} catch (ControllerErrorException $e) {
+		} catch (ControllerError $e) {
 			$e->addAdditionalError($annoPath->getFileName(), $annoPath->getLine());
 			throw $e;
 		}
 	}
 	
 	/**
-	 * @return InvokerInfo
+	 * @return InvokerInfo|null
 	 */
 	private function findNotFoundMethod() {
 		if (null !== ($method = $this->getMethod(self::NOT_FOUND_METHOD_NAME))) {
@@ -438,9 +439,9 @@ class ControllerInterpreter {
 	
 	/**
 	 * @param \ReflectionMethod $method
-	 * @return \n2n\web\http\controller\Interceptor[]
+	 * @return Interceptor[]
 	 */
-	private function findInterceptors(\ReflectionMethod $method) {
+	private function findInterceptors(\ReflectionFunctionAbstract $method) {
 	    $annotationSet = ReflectionContext::getAnnotationSet($method->getDeclaringClass());
 	    
 	    $annoIntercept = $annotationSet->getMethodAnnotation($method->getName(), AnnoIntercept::class);
@@ -460,8 +461,8 @@ class InterceptorFactory {
     
     /**
      * @param AnnoIntercept $annoIntercept
-     * @throws ControllerErrorException
      * @return Interceptor[]
+	 *@throws ControllerError
      */
     function createByAnno(AnnoIntercept $annoIntercept)  {
         $interceptors = array();
@@ -470,7 +471,7 @@ class InterceptorFactory {
             try {
                 $interceptors[] = $this->createByLookupId($interceptorLookupId);
             } catch (MagicObjectUnavailableException|InvalidInterceptorException $e) {
-                throw new ControllerErrorException('Invalid interceptor annotated: ' . $interceptorLookupId,
+                throw new ControllerError('Invalid interceptor annotated: ' . $interceptorLookupId,
                         $annoIntercept->getFileName(), $annoIntercept->getLine());
             }    
         }

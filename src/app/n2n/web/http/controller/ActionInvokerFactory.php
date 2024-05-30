@@ -146,8 +146,8 @@ class ActionInvokerFactory {
 	 * @param \ReflectionMethod $method
 	 * @param Path $cmdParamPath
 	 * @param array $allowedExtensions
-	 * @throws ControllerErrorException
 	 * @return NULL|\n2n\web\http\controller\InvokerInfo
+	 * @throws ControllerError
 	 */
 	public function createFullMagic(\ReflectionMethod $method, Path $cmdParamPath, array $allowedExtensions = null) {
 		$pathPattern = new PathPattern();
@@ -210,7 +210,7 @@ class ActionInvokerFactory {
 
 
 			} catch (PathPatternComposeException $e) {
-				throw new ControllerErrorException('Invalid definition of param: ' . $paramName,
+				throw new ControllerError('Invalid definition of param: ' . $paramName,
 						$method->getFileName(), $method->getStartLine(), null, null, $e);
 			}
 		}
