@@ -35,6 +35,10 @@ class ExecResult implements TaskResult {
 	 */
 	function __construct(private TaskResult $origTaskResult, private ControllingUtils $cu) {
 	}
+
+	function isValid(): bool {
+		return $this->origTaskResult->isValid();
+	}
 	
 	function hasErrors(): bool {
 		return $this->origTaskResult->hasErrors();
