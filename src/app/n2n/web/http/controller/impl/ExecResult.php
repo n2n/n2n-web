@@ -41,7 +41,7 @@ class ExecResult implements TaskResult {
 	}
 	
 	function hasErrors(): bool {
-		return $this->origTaskResult->hasErrors();
+		return !$this->origTaskResult->isValid();
 	}
 	
 	function getErrorMap(): MagicArray {
