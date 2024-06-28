@@ -18,7 +18,7 @@ use n2n\core\VarStore;
 use n2n\core\container\impl\PhpVars;
 use n2n\context\LookupManager;
 use n2n\context\config\SimpleLookupSession;
-use n2n\util\cache\impl\EphemeralCacheStore;
+use n2n\cache\impl\ephemeral\EphemeralCacheStore;
 use n2n\core\TypeNotFoundException;
 use n2n\core\N2nApplication;
 

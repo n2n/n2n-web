@@ -4,7 +4,7 @@ namespace n2n\web\http;
 
 use PHPUnit\Framework\TestCase;
 use n2n\core\cache\AppCache;
-use n2n\util\cache\impl\EphemeralCacheStore;
+use n2n\cache\impl\ephemeral\EphemeralCacheStore;
 use PHPUnit\Framework\MockObject\MockObject;
 use n2n\core\container\TransactionManager;
 use n2n\util\uri\Path;

@@ -26,7 +26,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use n2n\core\cache\AppCache;
 use n2n\core\container\TransactionManager;
-use n2n\util\cache\CacheStore;
+use n2n\cache\CacheStore;
 use n2n\util\ex\IllegalStateException;
 
 class ResponseCacheStore {

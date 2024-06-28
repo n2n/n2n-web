@@ -21,7 +21,7 @@
  */
 namespace n2n\web\dispatch\model;
 
-use n2n\util\cache\CacheStore;
+use n2n\cache\CacheStore;
 use n2n\web\dispatch\Dispatchable;
 use n2n\web\dispatch\DynamicDispatchable;
 
