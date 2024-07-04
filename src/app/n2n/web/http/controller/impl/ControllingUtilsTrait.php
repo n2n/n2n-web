@@ -488,4 +488,9 @@ trait ControllingUtilsTrait {
 	protected final function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		return $this->cu()->exec($magicTask, $rejectStatus);
 	}
+
+	protected final function execIsolated(\Closure $closure, int $tries = 3, \Closure $deadlockHandler = null,
+			bool $readOnly = false): mixed {
+		return $this->cu()->execIsolated($closure, $tries, $deadlockHandler, $readOnly);
+	}
 }

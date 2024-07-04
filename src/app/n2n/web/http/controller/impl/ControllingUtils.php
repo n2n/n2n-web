@@ -74,6 +74,7 @@ use JsonSerializable;
 use n2n\web\http\cache\PayloadCacheControl;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\web\http\cache\CachedPayload;
+use n2n\core\util\N2nUtil;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -747,6 +748,13 @@ class ControllingUtils {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
+
+	function execIsolated(\Closure $closure, int $tries = 3, \Closure $deadlockHandler = null,
+			bool $readOnly = false): mixed {
+		return (new N2nUtil($this->getN2nContext()))->container()
+				->execIsolated($closure, $tries, $deadlockHandler, $readOnly);
+	}
+
 
 
 }
