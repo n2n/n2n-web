@@ -63,7 +63,7 @@ class DynamicAccessProxy implements AccessProxy {
 		return $this->nullReturnAllowed;
 	}
 	
-	public function setNullReturnAllowed($nullReturnAllowed) {
+	public function setNullReturnAllowed(bool $nullReturnAllowed): void {
 		$this->nullReturnAllowed = $nullReturnAllowed;
 	}
 	
