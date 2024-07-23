@@ -52,6 +52,10 @@ class DynamicAccessProxy implements AccessProxy {
 		return $this->constraint;
 	}
 
+	function isConstant(): bool {
+		return false;
+	}
+
 	/* (non-PHPdoc)
 	 * @see \n2n\reflection\property\AccessProxy::setConstraint()
 	 */
