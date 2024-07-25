@@ -315,15 +315,15 @@ class HttpData implements AttributeReader, AttributeWriter {
 	/**
 	 * @throws StatusException
 	 */
-	public function reqArray($name, $fieldType = null, bool $nullAllowed = false) {
-		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType));
+	public function reqArray($name, $fieldType = null, bool $nullAllowed = false, $keyType = null) {
+		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType, arrayKeyType: $keyType));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
-	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false) {
-		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType), $defaultValue);
+	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false, $keyType = null) {
+		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType, arrayKeyType: $keyType), $defaultValue);
 	}
 
 	/**
