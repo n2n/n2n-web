@@ -32,10 +32,43 @@ use n2n\web\http\cache\PayloadCacheStore;
 use n2n\core\N2nApplication;
 use n2n\core\ext\ConfigN2nExtension;
 use n2n\web\http\cache\ResponseCacheVerifying;
+use n2n\web\http\Session;
+use n2n\reflection\magic\MagicMethodInvoker;
+use n2n\util\type\TypeConstraints;
 
 class WebN2nExtension implements ConfigN2nExtension {
 
+	private ?\Closure $sessionFactory = null;
+
 	public function __construct(private N2nApplication $n2nApplication) {
+	}
+
+	function setSessionFactory(\Closure $sessionFactory): static {
+		$this->sessionFactory = $sessionFactory;
+		return $this;
+	}
+
+	function getSessionFactory(): ?\Closure {
+		return $this->sessionFactory;
+	}
+
+	private function createSession(AppN2nContext $appN2nContext): Session {
+		if ($this->sessionFactory !== null) {
+			$mmi = new MagicMethodInvoker($appN2nContext);
+			$mmi->setClosure($this->sessionFactory);
+			$mmi->setReturnTypeConstraint(TypeConstraints::type(Session::class));
+			return $mmi->invoke();
+		}
+
+		$appConfig = $appN2nContext->getAppConfig();
+		$session = new VarsSession($appConfig->general()->getApplicationName());
+
+		if ($appConfig->general()->isApplicationReplicatable()) {
+			$session->setDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
+					N2N::NS, 'sessions', shared: true));
+		}
+
+		return $session;
 	}
 
 	function applyToN2nContext(AppN2nContext $appN2nContext): void {
@@ -54,12 +87,7 @@ class WebN2nExtension implements ConfigN2nExtension {
 		$request->legacyN2nContext = $appN2nContext;
 		$appConfig = $appN2nContext->getAppConfig();
 
-		$lookupSession = $session = new VarsSession($appConfig->general()->getApplicationName());
-
-		if ($appConfig->general()->isApplicationReplicatable()) {
-			$session->setDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
-					N2N::NS, 'sessions', shared: true));
-		}
+		$session = $this->createSession($appN2nContext);
 
 		$httpContext = HttpContextFactory::createFromAppConfig($appConfig, $request, $session, $appN2nContext,
 				$responseCacheStore, N2N::getExceptionHandler());

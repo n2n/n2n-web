@@ -66,6 +66,7 @@ class VarsSession implements Session {
 
 		// @todo find a way to use this call only for ssl requests
 // 		ini_set('session.cookie_secure', true);
+		ini_set('session.use_strict_mode', 1);
 		
 		ini_set('session.name', $this->applicationName . self::SESSION_COOKIE_SUFFIX);
 				
