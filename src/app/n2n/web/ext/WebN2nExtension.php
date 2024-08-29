@@ -43,7 +43,7 @@ class WebN2nExtension implements ConfigN2nExtension {
 	public function __construct(private N2nApplication $n2nApplication) {
 	}
 
-	function setSessionFactory(\Closure $sessionFactory): static {
+	function setSessionFactory(?\Closure $sessionFactory): static {
 		$this->sessionFactory = $sessionFactory;
 		return $this;
 	}
@@ -64,7 +64,7 @@ class WebN2nExtension implements ConfigN2nExtension {
 		$session = new VarsSession($appConfig->general()->getApplicationName());
 
 		if ($appConfig->general()->isApplicationReplicatable()) {
-			$session->setDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
+			$session->setSaveDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
 					N2N::NS, 'sessions', shared: true));
 		}
 
@@ -94,7 +94,7 @@ class WebN2nExtension implements ConfigN2nExtension {
 
 		$appN2nContext->setN2nLocale($httpContext->determineBestN2nLocale());
 
-		$controllerRegistry = new ControllerRegistry($appConfig->web(), $appConfig->routing(),  $httpContext);
+		$controllerRegistry = new ControllerRegistry($appConfig->web(), $appConfig->routing(), $httpContext);
 
 		$errorConfig = $appConfig->error();
 

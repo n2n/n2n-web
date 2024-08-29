@@ -32,49 +32,51 @@ interface Session extends LookupSession {
 	public function getId(): string;
 	
 	/**
-	 * @param string $module
+	 * @param string $namespace
 	 * @param string $key
 	 * @return bool
 	 */
-	public function has(string $module, string $key): bool;
+	public function has(string $namespace, string $key): bool;
 	
 	/**
 	 * 
-	 * @param mixed $module
+	 * @param mixed $namespace
 	 * @param string $key
 	 * @param mixed $value
 	 */
-	public function set(string $module, string $key, mixed $value);
+	public function set(string $namespace, string $key, mixed $value): void;
 	
 	/**
 	 * 
-	 * @param mixed $module
-	 * @param string $key
-	 * @return string
-	 */
-	public function get(string $module, string $key);
-	
-	/**
-	 * 
-	 * @param mixed $module
-	 * @param string $key
-	 */
-	public function remove(string $module, string $key);
-	
-	/**
-	 * 
-	 * @param mixed $module
-	 * @param string $key
-	 * @param mixed $obj
-	 */
-	public function serialize(string $module, string $key, $obj);
-	
-	/**
-	 * 
-	 * @param mixed $module
+	 * @param mixed $namespace
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function unserialize(string $module, string $key);
+	public function get(string $namespace, string $key): mixed;
+	
+	/**
+	 * 
+	 * @param mixed $namespace
+	 * @param string $key
+	 */
+	public function remove(string $namespace, string $key): void;
+	
+//	/**
+//	 *
+//	 * @param mixed $module
+//	 * @param string $key
+//	 * @param mixed $obj
+//	 * @deprecated
+//	 */
+//	public function serialize(string $module, string $key, $obj);
+//
+//	/**
+//	 *
+//	 * @param mixed $module
+//	 * @param string $key
+//	 * @return mixed
+//	 * @deprecated
+//	 */
+//	public function unserialize(string $module, string $key);
 }
 

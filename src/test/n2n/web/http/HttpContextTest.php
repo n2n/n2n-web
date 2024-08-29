@@ -6,6 +6,7 @@ use n2n\util\uri\Url;
 use n2n\core\container\N2nContext;
 use n2n\l10n\N2nLocale;
 use PHPUnit\Framework\TestCase;
+use n2n\web\http\impl\SimpleSession;
 
 class HttpContextTest extends TestCase  {
 

@@ -9,7 +9,7 @@ use n2n\web\http\Supersystem;
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Path;
 use n2n\web\http\mock\CommonControllerMock;
-use n2n\web\http\SimpleSession;
+use n2n\web\http\impl\SimpleSession;
 use n2n\core\container\N2nContext;
 use n2n\web\http\ManagedResponse;
 

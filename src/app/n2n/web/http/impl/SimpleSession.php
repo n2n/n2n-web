@@ -19,9 +19,10 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http;
+namespace n2n\web\http\impl;
 
 use n2n\util\StringUtils;
+use n2n\web\http\Session;
 
 class SimpleSession implements Session {
 // 	const ID_OVERWRITING_GET_PARAM = '_osid';
@@ -60,48 +61,48 @@ class SimpleSession implements Session {
 		return session_id();
 	}
 	
-	public function has(string $module, string $key): bool {
-		return isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module])
-				&& array_key_exists($key, $this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module]);
+	public function has(string $namespace, string $key): bool {
+		return isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace])
+				&& array_key_exists($key, $this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace]);
 	}
 	/**
 	 * 
-	 * @param mixed $module
+	 * @param mixed $namespace
 	 * @param string $key
 	 * @param string $value
 	 */
-	public function set(string $module, string $key, $value) {
-		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module])) {
-			$this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module] = array();
+	public function set(string $namespace, string $key, $value): void {
+		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace])) {
+			$this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace] = array();
 		}
 
-		$this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][(string) $key] = $value;
+		$this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][(string) $key] = $value;
 	}
 	/**
 	 * 
-	 * @param string $module
+	 * @param string $namespace
 	 * @param string $key
 	 * @return string
 	 */
-	public function get(string $module, string $key) {
-		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module])
-				|| !isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][$key])) {
+	public function get(string $namespace, string $key): mixed {
+		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace])
+				|| !isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][$key])) {
 			return null;
 		}
 
-		return $this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][$key];
+		return $this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][$key];
 	}
 	/**
 	 * 
-	 * @param mixed $module
+	 * @param mixed $namespace
 	 * @param string $key
 	 */
-	public function remove(string $module, string $key) {
-		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module])) {
+	public function remove(string $namespace, string $key): void {
+		if(!isset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace])) {
 			return;
 		}
 	
-		unset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][(string) $key]);
+		unset($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][(string) $key]);
 	}
 	/**
 	 * 
