@@ -21,6 +21,7 @@ use n2n\context\config\SimpleLookupSession;
 use n2n\cache\impl\ephemeral\EphemeralCacheStore;
 use n2n\core\TypeNotFoundException;
 use n2n\core\N2nApplication;
+use n2n\core\cache\impl\N2nCaches;
 
 class WebN2nExtensionTest extends TestCase {
 
@@ -33,11 +34,11 @@ class WebN2nExtensionTest extends TestCase {
 		$appConfig = $appConfigFactory->create($source, N2N::STAGE_LIVE);
 
 		return new N2nApplication(new VarStore('var', null, null), new ModuleManager(),
-				new NullAppCache(), $appConfig, $publicFsPath);
+				N2nCaches::null(), $appConfig, $publicFsPath);
 	}
 
 	function testRouting() {
-		$extension = new WebN2nExtension($appConfig = $this->createN2nApplication(), new NullAppCache());
+		$extension = new WebN2nExtension($this->createN2nApplication());
 
 
 		$serverVars = ['REQUEST_URI' => '/holeradio', 'QUERY_STRING' => '', 'SCRIPT_NAME' => 'index.php',
@@ -45,8 +46,8 @@ class WebN2nExtensionTest extends TestCase {
 		$getVars = [];
 		$postVars = [];
 		$filesVars = [];
-		$extension->applyToN2nContext($appN2nContext = new AppN2nContext(new TransactionManager(), $this->createN2nApplication(),
-				new PhpVars($serverVars, $getVars, $postVars, $filesVars)));
+		$extension->applyToN2nContext($appN2nContext = $this->createN2nApplication()
+				->createN2nContext(phpVars: new PhpVars($serverVars, $getVars, $postVars, $filesVars)));
 
 		$appN2nContext->setLookupManager(new LookupManager(new SimpleLookupSession(), new EphemeralCacheStore(), $appN2nContext));
 
