@@ -131,4 +131,7 @@ class SimpleSession implements Session {
 
 		return StringUtils::unserialize($this->data[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][$key]);
 	}
+
+	function close(): void {
+	}
 }

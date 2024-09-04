@@ -60,6 +60,8 @@ interface Session extends LookupSession {
 	 * @param string $key
 	 */
 	public function remove(string $namespace, string $key): void;
+
+	function close(): void;
 	
 //	/**
 //	 *

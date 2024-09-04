@@ -214,6 +214,11 @@ class VarsSession implements Session {
 	
 		unset($_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][(string) $key]);
 	}
+
+	function close(): void {
+		session_write_close();
+	}
+
 	/**
 	 * 
 	 * @param mixed $module
