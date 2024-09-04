@@ -23,7 +23,7 @@ namespace n2n\web\ext;
 
 use n2n\core\container\impl\AppN2nContext;
 use n2n\web\http\VarsRequest;
-use n2n\web\http\VarsSession;
+use n2n\web\http\impl\VarsSession;
 use n2n\web\http\controller\ControllerRegistry;
 use n2n\core\N2N;
 use n2n\web\http\cache\ResponseCacheStore;
@@ -35,6 +35,7 @@ use n2n\web\http\cache\ResponseCacheVerifying;
 use n2n\web\http\Session;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\type\TypeConstraints;
+use n2n\core\config\web\SessionSaveMode;
 
 class WebN2nExtension implements ConfigN2nExtension {
 
@@ -66,6 +67,10 @@ class WebN2nExtension implements ConfigN2nExtension {
 		if ($appConfig->general()->isApplicationReplicatable()) {
 			$session->setSaveDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
 					N2N::NS, 'sessions', shared: true));
+		}
+
+		if ($appConfig->web()->getSessionSaveMode() === SessionSaveMode::APPCACHE) {
+			$session->setSaveCacheStore($appN2nContext->getAppCache()->lookupCacheStore(VarsSession::class, true));
 		}
 
 		return $session;
