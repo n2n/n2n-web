@@ -277,7 +277,7 @@ class CacheStoreSessionHandler implements \SessionHandlerInterface {
 	}
 
 	public function read(string $id): string|false {
-		return $this->cacheStore->get($id, [])?->getData() ?? false;
+		return $this->cacheStore->get($id, [])?->getData() ?? '';
 	}
 
 	public function write(string $id, string $data): bool {
