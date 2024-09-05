@@ -176,7 +176,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		$this->ensureNotFinalized();
 
 		$this->simpleMagicContext = null;
-		$this->httpContext->getSession()->close();
+		$this->httpContext?->getSession()->close();
 		$this->responseCacheStore->close();
 	}
 }
