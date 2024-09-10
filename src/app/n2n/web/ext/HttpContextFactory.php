@@ -37,9 +37,6 @@ use n2n\web\http\ManagedResponse;
 
 class HttpContextFactory {
 
-	const DEFAULT_STATUS_DEV_VIEW = 'n2n\core\view\errorpages\statusDev.html';
-	const DEFAULT_STATUS_LIVE_VIEW = 'n2n\core\view\errorpages\statusLive.html';
-
 	static function createFromAppConfig(AppConfig $appConfig, Request $request, Session $session, N2nContext $n2nContext,
             ResponseCacheStore $responseCacheStore, ?ExceptionHandler $exceptionHandler): HttpContext {
 		$generalConfig = $appConfig->general();
@@ -56,7 +53,8 @@ class HttpContextFactory {
 		$response->setSendEtagAllowed($webConfig->isResponseSendEtagAllowed());
 		$response->setSendLastModifiedAllowed($webConfig->isResponseSendLastModifiedAllowed());
 		$response->setServerPushAllowed($webConfig->isResponseServerPushAllowed());
-		
+
+
 		$assetsUrl = $filesConfig->getAssetsUrl();
 		if ($assetsUrl->isRelative() && !$assetsUrl->getPath()->hasLeadingDelimiter()) {
 			$assetsUrl = $request->getContextPath()->toUrl()->ext($assetsUrl);
@@ -66,8 +64,7 @@ class HttpContextFactory {
 				self::createSupersystem($routingConfig), self::createSubsystems($routingConfig), $n2nContext);
 
 		$httpContext->setErrorStatusViewNames($errorConfig->getErrorViewNames());
-		$httpContext->setErrorStatusDefaultViewName($errorConfig->getDefaultErrorViewName()
-				?? (N2N::isDevelopmentModeOn() ? self::DEFAULT_STATUS_DEV_VIEW : self::DEFAULT_STATUS_LIVE_VIEW));
+		$httpContext->setErrorStatusDefaultViewName($errorConfig->getDefaultErrorViewName());
 
 		if ($exceptionHandler !== null) {
 			$prevError = $exceptionHandler->getPrevError();

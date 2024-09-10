@@ -37,8 +37,18 @@ use n2n\core\N2N;
 use n2n\util\magic\MagicObjectUnavailableException;
 use n2n\util\ex\IllegalStateException;
 use n2n\web\http\cache\PayloadCacheStore;
+use n2n\core\config\ErrorConfig;
+use n2n\core\err\ThrowableModel;
+use n2n\web\ui\ViewFactory;
+use n2n\web\http\controller\ControllerContext;
+use n2n\web\http\StatusException;
+use n2n\web\http\controller\SpecialViewRenderer;
+use function n2n\core\err\ExceptionHandlingFailedException;
+use n2n\core\err\ExceptionHandlingFailedException;
 
 class HttpAddonContext implements N2nHttp, AddOnContext {
+
+
 	private ?SimpleMagicContext $simpleMagicContext;
 
 	/**
@@ -53,7 +63,8 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 			private readonly ResponseCacheStore $responseCacheStore,
 			private readonly PayloadCacheStore $payloadCacheStore,
 			private readonly bool $statusExceptionLoggingEnabled = false,
-			private readonly array $loggingExcludedStatusCodes = []) {
+			private readonly array $loggingExcludedStatusCodes = [],
+			private readonly ErrorConfig $errorConfig = new ErrorConfig()) {
 
 		$this->simpleMagicContext = new SimpleMagicContext(array_filter([
 			HttpContext::class => $httpContext,
@@ -92,7 +103,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		}
 	}
 
-	public function invokerControllers(bool $flush): void {
+	public function invokerControllers(bool $flush): bool {
 		$this->ensureNotFinalized();
 
 		$request = $this->httpContext->getRequest();
@@ -100,31 +111,58 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 
 		if ($request->getOrigMethodName() !== Method::toString(Method::HEAD)
 				&& ($request->getOrigMethodName() != Method::toString($request->getMethod()))) {
-			throw new MethodNotAllowedException(Method::HEAD|Method::GET|Method::POST|Method::PUT|Method::OPTIONS|Method::PATCH|Method::DELETE|Method::TRACE);
+			$this->handleStatusException(
+					new MethodNotAllowedException(Method::HEAD|Method::GET|Method::POST|Method::PUT|Method::OPTIONS|Method::PATCH|Method::DELETE|Method::TRACE),
+					$flush);
+			return true;
 		}
 
 		$controllingPlan = $this->controllerRegistry->createControllingPlan($this->httpContext, $request->getCmdPath(),
 				$this->httpContext->getActiveSubsystemRule());
-		$result = $controllingPlan->execute();
+		try {
+			$result = $controllingPlan->execute();
+		} catch (\Throwable $e) {
+			$this->handleException($e);
+			return false;
+		}
+
 		if ($result->isSuccessful()) {
 			if ($flush) {
 				$response->flush();
 			}
-			return;
+			return true;
 		}
 
-		$statusException = $result->getStatusException();
-		$controllingPlan->sendStatusView($statusException);
+		$this->handleStatusException($result->getStatusException(), $flush);
+		return true;
+	}
+
+	private function handleStatusException(StatusException $e, bool $flush): void {
+		ExceptionHandlingFailedException::try(
+				fn () => (new SpecialViewRenderer($this->httpContext))->sendStatusView($e, $flush),
+				$e);
+
 		if ($this->statusExceptionLoggingEnabled
-				&& !in_array($statusException->getStatus(), $this->loggingExcludedStatusCodes)) {
-			N2N::getExceptionHandler()->log($statusException);
-		}
-
-		if ($flush) {
-			$response->flush();
+				&& !in_array($e->getStatus(), $this->loggingExcludedStatusCodes)) {
+			N2N::getExceptionHandler()->log($e);
 		}
 	}
 
+	function handleException(\Throwable $e): bool {
+		if ($this->httpContext === null || $this->httpContext->getResponse()->isFlushed()) {
+			return false;
+		}
+
+		if ($e instanceof StatusException) {
+			$this->handleStatusException($e, true);
+			return true;
+		}
+
+		ExceptionHandlingFailedException::try(
+				fn () => (new SpecialViewRenderer($this->httpContext))->sendExceptionView($e, true), $e);
+		N2N::getExceptionHandler()->log($e);
+		return true;
+	}
 
 
 //	public static function invokerControllers(string $subsystemName = null, Path $cmdPath = null) {

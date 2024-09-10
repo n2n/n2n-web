@@ -1,0 +1,40 @@
+@CHARSET "UTF-8";
+
+* {
+	margin:0;
+	padding:0;
+}
+
+
+body {
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	color: #000000;
+	background: #fff;
+}
+
+header {
+	background: #ef7f01;
+}
+
+header img {
+	margin-left: 30px;
+}
+
+#exception {
+	margin: 30px;
+}
+
+
+#exception p {
+	margin: 5px 0;
+}
+
+#exception p.salutation {
+	margin: 20px 0 10px 0;
+	font-size: 16px;
+}
+
+#exception p.contact {
+	margin-top: 10px;	
+}

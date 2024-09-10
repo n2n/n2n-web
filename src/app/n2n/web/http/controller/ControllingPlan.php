@@ -273,14 +273,7 @@ class ControllingPlan {
 		$this->status = self::STATUS_EXECUTED;
 	}
 	
-	function sendStatusView(StatusException $e) {
-		$view = $this->httpContext->getN2nContext()->lookup(ViewFactory::class)
-				->create($this->httpContext->determineErrorStatusViewName($e->getStatus()),
-						['throwableModel' => new ThrowableModel($e)]);
-	    $response = $this->httpContext->getResponse();
-	    $e->prepareResponse($response);
-		$response->send($view);
-	}
+
 	
 	/**
 	 * @throws ControllingPlanException

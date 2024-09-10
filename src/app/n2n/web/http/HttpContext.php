@@ -31,6 +31,7 @@ use n2n\util\type\ArgUtils;
 use n2n\util\magic\MagicContext;
 use n2n\web\ui\ViewFactory;
 use n2n\core\container\N2nContext;
+use n2n\core\N2N;
 
 class HttpContext {
 	
@@ -45,9 +46,11 @@ class HttpContext {
 	private $subsystems;
 	private $n2nContext;
 	private ?SubsystemRule $activeSubsystemRule;
-	
-	
-	const DEFAULT_STATUS_VIEW = 'n2n\\web\\http\\view\\status.html';
+
+	const DEFAULT_STATUS_DEV_VIEW = 'n2n\web\view\errorpages\statusDev.html';
+	const DEFAULT_STATUS_LIVE_VIEW = 'n2n\web\view\errorpages\statusLive.html';
+	const DEFAULT_500_DEV_VIEW = 'n2n\web\view\errorpages\500Dev.html';
+	const DEFAULT_500_LIVE_VIEW = 'n2n\web\view\errorpages\500Live.html';
 	
 	private $errorStatusViewNames = [];
 	private $errorStatusDefaultViewName = null;
@@ -451,7 +454,16 @@ class HttpContext {
 	 * @return string
 	 */
 	function determineErrorStatusViewName(int $httpStatus) {
-		return $this->errorStatusViewNames[$httpStatus] ?? $this->errorStatusDefaultViewName ?? self::DEFAULT_STATUS_VIEW;
+		$viewName = $this->errorStatusViewNames[$httpStatus] ?? $this->errorStatusDefaultViewName;
+		if ($viewName !== null) {
+			return $viewName;
+		}
+
+		if ($httpStatus === Response::STATUS_500_INTERNAL_SERVER_ERROR) {
+			return (N2N::isDevelopmentModeOn() ? self::DEFAULT_500_DEV_VIEW : self::DEFAULT_500_LIVE_VIEW);
+		}
+
+		return (N2N::isDevelopmentModeOn() ? self::DEFAULT_STATUS_DEV_VIEW : self::DEFAULT_STATUS_LIVE_VIEW);
 	}
 	
 	/**

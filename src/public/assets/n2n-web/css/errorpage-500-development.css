@@ -1,0 +1,347 @@
+@CHARSET "UTF-8";
+
+/**
+ * H E L P E R   C L A S S E S 
+ */
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+ 
+.clearfix {
+    display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+    display: block;
+}
+ 
+* html .clearfix {
+    height: 1%;
+}
+
+/**
+ * G E N E R A L   S T Y L E S 
+ */
+
+body {
+	color: #373431;
+	font-family: 'Arial', sans-serif;
+	background-color: #FFF;
+	background-image: url("../img/background-tile.png");
+}
+
+h2, h3, h4 {
+	font-size: 1em;
+	font-weight: bold;
+	margin: 1em 0 0.5em 0;
+}
+
+h2 {
+	margin-top: 0.25em;
+}
+
+h2 > span {
+	color: #87827C;
+}
+
+h2, h3, h4 {
+	color: #66615C;
+}
+
+h3 {
+	margin-bottom: 0.25em;
+}
+
+a {
+	color: #373431;
+	text-decoration: none;
+}
+
+
+/**
+ * L A Y O U T   S T Y L E S
+ */
+
+#intro {
+	background: #4F4A46;
+	min-height: 80px;
+	padding: 0 10px 0 20px;
+	position: relative;
+}
+
+#intro > h1 {
+	padding: 25px 100px 25px 0;
+	background: url("../img/n2n-logo-small-h60.png") no-repeat right center;
+	color: white;
+	font-weight: normal;	
+}
+
+#intro h1 i {
+	margin-right: 0.5em;
+}
+
+#help-nav {
+	position: absolute;
+	bottom: 0;
+	right: 200px;
+}
+
+#help-nav li {
+	float: left;
+	list-style: none;
+}
+
+#help-nav li a  {
+	display: block;
+	height: 2em;
+	padding: 0 1em;
+	margin-right: 1px;
+	font-weight: bold;
+	font-size: 0.8em;
+	text-decoration: none;
+	background: #CCC;
+	line-height: 2em;	
+}
+
+#help-nav li a i {
+	margin-right: 0.5em;
+}
+
+#help-nav li a:hover,
+#help-nav li a:focus {
+	color: #FFF;
+	background-color: #ED8207;
+	outline: none;
+}
+
+#exception-meta-container {
+	width: 15%;
+	/*max-width: 283px;*/
+	position: fixed;
+}
+
+#exception-container {
+	width: 85%;
+	margin-left: 15%;
+}
+
+#exception-container,
+#status-container {
+	padding: 20px;
+}
+
+#exception-logo {
+	margin: 20px;
+	width: calc(100% - 20px);
+	max-width: 263px;
+	height: auto;
+}
+
+#exception-navi {
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+#exception-navi > ul {
+	list-style: none;
+}
+
+#exception-help {
+	font-size: 0.75em;
+	padding: 15px 0 0 20px;
+	line-height: 1.5;
+}
+
+.exception-link > a {
+	padding: 5px 10px;
+	background: #E9E6E3;
+	margin-bottom: 1px;
+	display: block;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.exception-link > a:hover {
+	background: #ED8207;
+	color: white;
+}
+
+/**
+ * E X C E P T I O N   S T Y L E S
+ */
+
+.exception, 
+.output {
+	margin-bottom: 20px;
+	padding: 10px;
+	background: #e9e6e3;
+	border-radius: 4px;
+	border: 3px solid #e9e6e3;
+}
+.exception.highlighted, 
+.output.highlighted {
+	border-color: #ED8207;
+}
+
+
+h2.exception-title {
+	font-size: 1em;
+	margin-top: 0;
+}
+
+.debug-info h3 {
+	font-size: 1em;
+	margin-bottom: 0;
+}
+
+.stack-trace pre {
+	padding: 10px;
+	background-color: white;
+	overflow-x: scroll;	
+}
+
+.stack-trace h3 {
+	cursor: pointer;
+}
+
+p.message {
+	color: #ED8207;
+	font-weight: bold;
+}
+
+p.message i {
+	margin-right: 0.5em;
+}
+
+p.message strong {
+	color: #FF6701;
+}
+
+p.message.no-message {
+	font-style: italic;
+}
+
+.error-description {
+	margin-top: 1em;
+}
+
+table.error-info, 
+.error-lines {
+	margin: 0.5em 0 0 0;
+}
+
+table.error-info th {
+	padding-right: 50px;
+	text-align: left;
+	font-weight: bold;
+	color: #666;
+}
+
+table.error-info td {
+	padding: 2px;
+}
+
+div.code {
+	border: 1px solid #A7A29C;
+}
+
+div.code div.syntaxhighlighter {
+	margin: 0 !important;
+	padding: 0 !important;
+	width: auto !important;
+}
+
+div.query table.bound-values {
+	border: 1px solid #A7A29C;
+	border-collapse: collapse;
+}
+
+div.query table.bound-values td {
+	padding: 2px 4px;
+	font-family: "Consolas","Bitstream Vera Sans Mono","Courier New",Courier,monospace;
+	min-width: 60px;
+}
+
+div.query table.bound-values td.name {
+	font-weight: bold;
+	color: gray;
+}
+
+div.query table.bound-values td.value {
+	
+}
+
+div.query table.bound-values tr:nth-child(2n - 1) td{
+	background-color: #F9F8F7;
+}
+
+@media screen and (min-width: 1024px) {
+	#intro {
+		position: fixed;
+		left: 0;
+		right: 0;
+		z-index: 10000;
+	}
+	
+	#status-container, 
+	#exception-meta-container,
+	#exception-container {
+		padding-top: 110px;
+	}
+	
+	#exception-logo {
+		margin: 0 20px;
+	}
+}
+
+@media screen and (max-width: 1023px) {
+	#intro > h1 {
+		background: none;
+		padding: 25px 0;
+	}
+	
+	#intro > h1 > i {
+		color: #ED8207;
+	}
+	
+	#help-nav {
+		bottom: 0;
+		left: 20px;
+		width: calc(100% - 40px);
+	}
+
+	#exception-meta-container, 
+	#exception-container {
+		position: static;
+		margin-left: 0;
+		width: 100%;
+		height: auto;
+	}
+	
+	#exception-help {
+		padding-right: 20px;
+	}
+	
+	#exception-logo {
+		display: none;
+	}
+	
+	#exception-navi {
+		margin-right: 20px;
+		margin-top: 20px;
+	}
+	
+}
