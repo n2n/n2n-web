@@ -35,7 +35,6 @@ class WebN2nExtensionTest extends TestCase {
 	function testRouting() {
 		$extension = new WebN2nExtension($this->createN2nApplication());
 
-
 		$serverVars = ['REQUEST_URI' => '/holeradio', 'QUERY_STRING' => '', 'SCRIPT_NAME' => 'index.php',
 				'SERVER_NAME' => 'holeradio', 'REQUEST_METHOD' => 'GET'];
 		$getVars = [];
