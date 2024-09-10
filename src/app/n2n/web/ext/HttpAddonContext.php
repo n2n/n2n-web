@@ -43,8 +43,7 @@ use n2n\web\ui\ViewFactory;
 use n2n\web\http\controller\ControllerContext;
 use n2n\web\http\StatusException;
 use n2n\web\http\controller\SpecialViewRenderer;
-use function n2n\core\err\ExceptionHandlingFailedException;
-use n2n\core\err\ExceptionHandlingFailedException;
+use n2n\core\err\DispatchedException;
 
 class HttpAddonContext implements N2nHttp, AddOnContext {
 
@@ -122,7 +121,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		try {
 			$result = $controllingPlan->execute();
 		} catch (\Throwable $e) {
-			$this->handleException($e);
+			$this->httpContext->getN2nContext()->dispatchThrowable($e);
 			return false;
 		}
 
@@ -138,9 +137,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 	}
 
 	private function handleStatusException(StatusException $e, bool $flush): void {
-		ExceptionHandlingFailedException::try(
-				fn () => (new SpecialViewRenderer($this->httpContext))->sendStatusView($e, $flush),
-				$e);
+		(new SpecialViewRenderer($this->httpContext))->sendStatusView($e, $flush);
 
 		if ($this->statusExceptionLoggingEnabled
 				&& !in_array($e->getStatus(), $this->loggingExcludedStatusCodes)) {
@@ -148,22 +145,14 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		}
 	}
 
-	function handleException(\Throwable $e): bool {
+	function renderThrowable(\Throwable $t): bool {
 		if ($this->httpContext === null || $this->httpContext->getResponse()->isFlushed()) {
 			return false;
 		}
 
-		if ($e instanceof StatusException) {
-			$this->handleStatusException($e, true);
-			return true;
-		}
-
-		ExceptionHandlingFailedException::try(
-				fn () => (new SpecialViewRenderer($this->httpContext))->sendExceptionView($e, true), $e);
-		N2N::getExceptionHandler()->log($e);
+		(new SpecialViewRenderer($this->httpContext))->sendExceptionView($t, true);
 		return true;
 	}
-
 
 //	public static function invokerControllers(string $subsystemName = null, Path $cmdPath = null) {
 //		$n2nContext = self::_i()->n2nContext;
