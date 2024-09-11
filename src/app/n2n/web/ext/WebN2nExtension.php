@@ -64,13 +64,11 @@ class WebN2nExtension implements ConfigN2nExtension {
 		$appConfig = $appN2nContext->getAppConfig();
 		$session = new VarsSession($appConfig->general()->getApplicationName());
 
-		if ($appConfig->general()->isApplicationReplicatable()) {
-			$session->setSaveDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
-					N2N::NS, 'sessions', shared: true));
-		}
-
 		if ($appConfig->web()->getSessionSaveMode() === SessionSaveMode::APPCACHE) {
 			$session->setSaveCacheStore($appN2nContext->getAppCache()->lookupCacheStore(VarsSession::class, true));
+		} else if ($appConfig->general()->isApplicationReplicatable()) {
+			$session->setSaveDirFsPath($appN2nContext->getVarStore()->requestDirFsPath(VarStore::CATEGORY_TMP,
+					N2N::NS, 'sessions', shared: true));
 		}
 
 		return $session;
