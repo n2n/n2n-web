@@ -24,7 +24,7 @@ namespace n2n\web\http;
 class StatusException extends \Exception {
 // 	private $attributes;
 	
-	public function __construct(private int $status, string $message = null, int $code = null, \Exception $previous = null) {
+	public function __construct(private int $status, string $message = null, int $code = null, \Throwable $previous = null) {
 		parent::__construct((string) $message, (int) $code, $previous);
 // 		$this->attributes = new Attributes();
 	}
