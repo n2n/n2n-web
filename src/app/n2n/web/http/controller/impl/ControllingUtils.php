@@ -743,9 +743,14 @@ class ControllingUtils {
 	 */
 	function exec(MagicTask $magicTask, mixed $input = null, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		try {
-			return new ExecResult($magicTask->exec($this->getN2nContext(), $input), $this);
+			return new ExecResult($magicTask->exec($this->getN2nContext()), $this);
 		} catch (MagicTaskExecutionException $e) {
-			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+			if ($rejectStatus !== null) {
+				throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
+			}
+
+			throw new IllegalStateException('MagicTask execution failed. Reason: ' . $e->getMessage(),
+					previous: $e);
 		}
 	}
 
