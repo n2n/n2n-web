@@ -481,12 +481,14 @@ trait ControllingUtilsTrait {
 	/**
 	 * @template T
 	 * @param MagicTask<T> $magicTask
+	 * @param mixed $input
 	 * @param int $rejectStatus
 	 * @return ExecResult<T>
 	 * @throws StatusException
 	 */
-	protected final function exec(MagicTask $magicTask, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
-		return $this->cu()->exec($magicTask, $rejectStatus);
+	protected final function exec(MagicTask $magicTask, mixed $input = null,
+			int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
+		return $this->cu()->exec($magicTask, $input, $rejectStatus);
 	}
 
 	protected final function execIsolated(\Closure $closure, int $tries = 3, \Closure $deadlockHandler = null,
