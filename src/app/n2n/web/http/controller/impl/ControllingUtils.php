@@ -741,7 +741,7 @@ class ControllingUtils {
 	 * @return ExecResult<T>
 	 * @throws StatusException
 	 */
-	function exec(MagicTask $magicTask, mixed $input = null, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
+	function exec(MagicTask $magicTask, mixed $input = null, ?int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		try {
 			return new ExecResult($magicTask->exec($this->getN2nContext()), $this);
 		} catch (MagicTaskExecutionException $e) {

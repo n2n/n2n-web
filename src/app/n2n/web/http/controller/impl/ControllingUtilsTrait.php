@@ -487,7 +487,7 @@ trait ControllingUtilsTrait {
 	 * @throws StatusException
 	 */
 	protected final function exec(MagicTask $magicTask, mixed $input = null,
-			int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
+			?int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		return $this->cu()->exec($magicTask, $input, $rejectStatus);
 	}
 
