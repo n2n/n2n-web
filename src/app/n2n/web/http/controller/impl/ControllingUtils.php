@@ -732,7 +732,7 @@ class ControllingUtils {
 
 	/**
 	 * Executes a {@see MagicTask} and automatically converts {@see MagicTaskExecutionException}s to
-	 * {@see StatusException}s
+	 * {@see StatusException}s if parameter $rejectStatus is not null.
 	 *
 	 *
 	 * @template T
@@ -743,7 +743,7 @@ class ControllingUtils {
 	 */
 	function exec(MagicTask $magicTask, mixed $input = null, ?int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		try {
-			return new ExecResult($magicTask->exec($this->getN2nContext()), $this);
+			return new ExecResult($magicTask->exec($this->getN2nContext(), $input), $this);
 		} catch (MagicTaskExecutionException $e) {
 			if ($rejectStatus !== null) {
 				throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
