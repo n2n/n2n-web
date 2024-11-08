@@ -737,7 +737,8 @@ class ControllingUtils {
 	 *
 	 * @template T
 	 * @param MagicTask<T> $magicTask
-	 * @param int $rejectStatus
+	 * @param mixed|null $input
+	 * @param int|null $rejectStatus
 	 * @return ExecResult<T>
 	 * @throws StatusException
 	 */
