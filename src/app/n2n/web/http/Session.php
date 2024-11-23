@@ -26,12 +26,6 @@ use n2n\context\config\LookupSession;
 interface Session extends LookupSession {
 
 	/**
-	 * 
-	 * @return string
-	 */
-	public function getId(): string;
-	
-	/**
 	 * @param string $namespace
 	 * @param string $key
 	 * @return bool
