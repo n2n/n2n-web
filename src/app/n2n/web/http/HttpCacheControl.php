@@ -37,7 +37,7 @@ class HttpCacheControl {
 	 * @param \DateInterval $maxAge
 	 * @param array $directives
 	 */
-	public function __construct(\DateInterval $maxAge = null, array $directives = null) {
+	public function __construct(?\DateInterval $maxAge = null, ?array $directives = null) {
 		$this->maxAge = $maxAge;
 		$this->directives = $directives;
 	}

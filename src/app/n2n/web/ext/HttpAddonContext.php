@@ -83,7 +83,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		return $this->simpleMagicContext->has($id);
 	}
 
-	function lookupMagicObject(\ReflectionClass|string $id, bool $required = true, string $contextNamespace = null): mixed {
+	function lookupMagicObject(\ReflectionClass|string $id, bool $required = true, ?string $contextNamespace = null): mixed {
 		$this->ensureNotFinalized();
 
 		$result = $this->simpleMagicContext->lookup($id, false, $contextNamespace);
@@ -154,7 +154,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 		return true;
 	}
 
-//	public static function invokerControllers(string $subsystemName = null, Path $cmdPath = null) {
+//	public static function invokerControllers(?string $subsystemName = null, ?Path $cmdPath = null) {
 //		$n2nContext = self::_i()->n2nContext;
 //		$httpContext = $n2nContext->getHttpContext();
 //		$request = $httpContext->getRequest();

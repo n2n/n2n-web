@@ -34,7 +34,7 @@ class FilePayload extends ResourcePayload {
 	private $attachment;
 	private $attachmentName;
 	
-	public function __construct(Downloadable $downlodable, bool $attachment = false, string $attachmentName = null) {
+	public function __construct(Downloadable $downlodable, bool $attachment = false, ?string $attachmentName = null) {
 		ArgUtils::valScalar($attachment, true, 'attachment');
 		$this->downloadable = $downlodable;
 		$this->attachment = $attachment;

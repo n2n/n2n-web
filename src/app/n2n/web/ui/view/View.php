@@ -160,7 +160,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 *
 	 * @param ControllerContext $controllerContext
 	 */
-	public function setControllerContext(ControllerContext $controllerContext = null) {
+	public function setControllerContext(?ControllerContext $controllerContext = null) {
 		$this->controllerContext = $controllerContext;
 	}
 
@@ -219,7 +219,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param Response $response
 	 * @param View $contentView
 	 */
-	public final function initialize(View $contentView = null, BuildContext $buildContext = null) {
+	public final function initialize(?View $contentView = null, ?BuildContext $buildContext = null) {
 		$this->ensureContentsAreNotInitialized();
 		$this->ensureBufferIsNotActive();
 
@@ -347,7 +347,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param \Closure $bufferingEnded
 	 * @throws ViewPanelNerverEndedException
 	 */
-	protected final function bufferContents(array $viewVars, \Closure $bufferingEnded = null) {
+	protected final function bufferContents(array $viewVars, ?\Closure $bufferingEnded = null) {
 		$this->ensureBufferIsNotActive();
 
 		foreach ($this->stateListeners as $stateListener) {
@@ -596,7 +596,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string $viewNameExpression
 	 * @param mixed $params
 	 */
-	public function useTemplate(string $viewNameExpression, array $params = null) {
+	public function useTemplate(string $viewNameExpression, ?array $params = null) {
 		$this->ensureContentsAreNotInitialized();
 
 		$this->templateView = $this->getN2nContext()->lookup(ViewFactory::class)->create(
@@ -657,8 +657,8 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string|View $viewName
 	 * @param array $params
 	 */
-	public function import($viewNameExpression, array $params = null, ViewCacheControl $viewCacheControl = null,
-			Module $module = null) {
+	public function import($viewNameExpression, ?array $params = null, ?ViewCacheControl $viewCacheControl = null,
+			?Module $module = null) {
 		$this->out($this->getImport($viewNameExpression, $params, $viewCacheControl, $module));
 	}
 
@@ -666,8 +666,8 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param string|View $viewName
 	 * @param mixed $params
 	 */
-	public function getImport($viewNameExpression, array $params = null,
-			ViewCacheControl $viewCacheControl = null, Module $module = null) {
+	public function getImport($viewNameExpression, ?array $params = null,
+			?ViewCacheControl $viewCacheControl = null, ?Module $module = null) {
 		$view = null;
 		if ($viewNameExpression instanceof View) {
 			$view = $viewNameExpression;
@@ -684,8 +684,8 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return $view;
 	}
 
-	protected function createImportView(string $viewNameExpression, array $params = null,
-			ViewCacheControl $viewCacheControl = null, Module $module = null) {
+	protected function createImportView(string $viewNameExpression, ?array $params = null,
+			?ViewCacheControl $viewCacheControl = null, ?Module $module = null) {
 
 		$viewName = $this->resolveViewName($viewNameExpression);
 
@@ -787,7 +787,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	/**
 	 * @return string
 	 */
-	public function getL10nText($code, array $args = null, $num = null, array $replacements = null, $module = null) {
+	public function getL10nText($code, ?array $args = null, $num = null, ?array $replacements = null, $module = null) {
 		if ($module === null) {
 			return $this->getDynamicTextCollection()->translate($code, $args, $num, $replacements);
 		}
@@ -811,27 +811,27 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return L10nUtils::formatNumber($value, $this->getN2nContext()->getN2nLocale(), $style, $pattern);
 	}
 
-	public function getL10nDate(\DateTime $value = null, $dateStyle = null, \DateTimeZone $timeZone = null) {
+	public function getL10nDate(?\DateTime $value = null, $dateStyle = null, ?\DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), $dateStyle, DateTimeFormat::STYLE_NONE, $timeZone);
 	}
 
-	public function getL10nTime(\DateTime $value = null, $timeStyle = null, \DateTimeZone $timeZone = null) {
+	public function getL10nTime(?\DateTime $value = null, $timeStyle = null, ?\DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), DateTimeFormat::STYLE_NONE, $timeStyle, $timeZone);
 	}
 
-	public function getL10nDateTime(\DateTime $value = null, $dateStyle = null, $timeStyle = null, \DateTimeZone $timeZone = null) {
+	public function getL10nDateTime(?\DateTime $value = null, $dateStyle = null, $timeStyle = null, ?\DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), $dateStyle, $timeStyle, $timeZone);
 	}
 
-	public function getL10nDateTimeFormat(\DateTime $value = null, $icuPattern, \DateTimeZone $timeZone = null) {
+	public function getL10nDateTimeFormat(?\DateTime $value = null, $icuPattern, ?\DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTimeWithIcuPattern($value, $this->getN2nContext()->getN2nLocale(), $icuPattern, $timeZone);
 	}
 
-	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
+	public function buildUrl($murl, bool $required = true, ?string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrl($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
 		} catch (UnavailableUrlException $e) {
@@ -840,7 +840,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		}
 	}
 
-	public function buildUrlStr($murl, bool $required = true, string &$suggestedLabel = null) {
+	public function buildUrlStr($murl, bool $required = true, ?string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrlStr($murl, $this->n2nContext, $this->controllerContext, $suggestedLabel);
 		} catch (UnavailableUrlException $e) {

@@ -52,7 +52,7 @@ class ResponseCacheStore {
 		$this->decoratedStore->removeByCharacteristics($characteristicNeedles, $shared);
 	}
 
-	public function clear(bool $shared = null): void {
+	public function clear(?bool $shared = null): void {
 		$this->decoratedStore->clear();
 	}
 }

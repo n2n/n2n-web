@@ -29,7 +29,7 @@ class SimpleBuildContext implements BuildContext {
 	/**
 	 * @param View $view
 	 */
-	public function __construct(View $view = null) {
+	public function __construct(?View $view = null) {
 		$this->view = $view;
 	}
 	

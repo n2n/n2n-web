@@ -68,7 +68,7 @@ class MappingPathResolver {
 	 * @throws IllegalStateException
 	 * @return \n2n\web\dispatch\map\AnalyzerResult
 	 */
-	public function analyze(PropertyPath $propertyPath, array $allowedPropertyClassNames = null, 
+	public function analyze(PropertyPath $propertyPath, ?array $allowedPropertyClassNames = null,
 			$arrayRequired = null, $prepareForm = true): AnalyzerResult {
 		if ($propertyPath->isEmpty()) {
 			throw new \InvalidArgumentException('Passed PropertyPath is empty.');
@@ -216,7 +216,7 @@ class MappingPathResolver {
 	}
 	
 	private function createNotSetException(MappingResult $mappingResult, 
-			ManagedProperty $managedProperty, \Exception $previous = null) {
+			ManagedProperty $managedProperty, ?\Exception $previous = null) {
 		$propertyPath = new PropertyPath($this->donePathParts);
 		throw new UnresolvablePropertyPathException('Property ' . $propertyPath->__toString() 
 				. ' (' . get_class($mappingResult->getObject()) . ' - ' 

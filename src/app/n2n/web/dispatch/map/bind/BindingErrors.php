@@ -68,7 +68,7 @@ class BindingErrors {
 		}
 	}
 	
-	public function addErrorCode($propertyExpression, $errorCode, array $args = null, $moduleNamespace = null) {
+	public function addErrorCode($propertyExpression, $errorCode, ?array $args = null, $moduleNamespace = null) {
 		$this->addError($propertyExpression, Message::createCodeArg($errorCode, $args, 
 				Message::SEVERITY_ERROR, $moduleNamespace));
 		

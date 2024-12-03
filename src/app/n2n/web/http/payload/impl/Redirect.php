@@ -36,7 +36,7 @@ class Redirect extends BufferedPayload {
 	 * @param string $httpLocation
 	 * @param int $httpStatus
 	 */
-	public function __construct(string $httpLocation, int $httpStatus = null) {
+	public function __construct(string $httpLocation, ?int $httpStatus = null) {
 		$this->httpStatus = $httpStatus;
 		$this->httpLocation = $httpLocation;
 		

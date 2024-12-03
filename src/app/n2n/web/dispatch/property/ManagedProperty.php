@@ -76,7 +76,7 @@ interface ManagedProperty {
 	 * @param Form $form
 	 * @param AnalyzerResult $analyzerResult
 	 */
-	public function prepareForm(Form $form, AnalyzerResult $analyzerResult = null);
+	public function prepareForm(Form $form, ?AnalyzerResult $analyzerResult = null);
 	/**
 	 * Throw only CorruptedDispatchException if data sent from client are invalid. You must prevent 
 	 * this method from throwing any other Exception type or triggering errors or warinings.

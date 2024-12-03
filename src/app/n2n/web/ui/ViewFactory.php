@@ -49,7 +49,7 @@ class ViewFactory implements ThreadScoped {
 		$this->viewCacheStore = $viewCacheStore;
 	}
 	
-	public function createFromCache($viewName, ViewCacheControl $viewCacheControl, Module $module = null) {
+	public function createFromCache($viewName, ViewCacheControl $viewCacheControl, ?Module $module = null) {
 		$cacheItem = $this->viewCacheStore->get($viewName, $viewCacheControl->getCharacteristics());
 		if ($cacheItem === null) return null;
 			
@@ -84,7 +84,7 @@ class ViewFactory implements ThreadScoped {
 	 * @param Module $module
 	 * @return \n2n\web\ui\view\View
 	 */
-	public function create(string $viewName, array $params = null, Module $module = null) {
+	public function create(string $viewName, ?array $params = null, ?Module $module = null) {
 		return $this->createView(TypeLoader::getFilePathOfType($viewName, TypeLoader::SCRIPT_FILE_EXTENSION), 
 				$viewName, $params, $module);
 	}
@@ -97,7 +97,7 @@ class ViewFactory implements ThreadScoped {
 // 	 * @throws ViewErrorException
 // 	 * @return View
 // 	 */
-// 	public function createFromScript($scriptPath, $params, Module $module = null) {
+// 	public function createFromScript($scriptPath, $params, ?Module $module = null) {
 // 		if (!is_file($scriptPath)) {
 // 			throw new ViewNotFoundException(SysTextUtils::get('n2n_error_view_not_found', array('scriptPath' => $scriptPath)));
 // 		} else if (!is_readable($scriptPath)) {
@@ -115,7 +115,7 @@ class ViewFactory implements ThreadScoped {
 	 * @throws InvalidViewNameException
 	 * @return View
 	 */
-	private function createView($scriptPath, $viewName, array $params = null, Module $module = null) {
+	private function createView($scriptPath, $viewName, ?array $params = null, ?Module $module = null) {
 		$fileNameParts = explode(self::SCRIPT_NAME_TYPE_SEPARATOR, basename($scriptPath, TypeLoader::SCRIPT_FILE_EXTENSION));
 		if (2 != sizeof($fileNameParts) || !mb_strlen($fileNameParts[0]) || !mb_strlen($fileNameParts[1])) {
 			 throw new \InvalidArgumentException('Invalid script name: ' . $scriptPath . ' Pattern: [viewName]' 

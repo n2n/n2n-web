@@ -37,7 +37,7 @@ class PathPattern {
 		$this->extensionIncluded = (boolean) $extensionIncluded;
 	}
 	
-	public function setAllowedExtensions(array $allowedExtensions = null) {
+	public function setAllowedExtensions(?array $allowedExtensions = null) {
 		$this->allowedExtensions = $allowedExtensions;
 	}
 	
@@ -52,19 +52,19 @@ class PathPattern {
 		$this->patternDefs[] = $customDef;
 	}
 	
-	public function addConstant(string $constant, bool $required, bool $multiple, string $paramName = null) {
+	public function addConstant(string $constant, bool $required, bool $multiple, ?string $paramName = null) {
 		$this->addPatternDef(array('constant' => $constant), $required, $multiple, $paramName);
 	}
 	
-	public function addTypeConstraint(bool $required, TypeConstraint $typeConstraint, bool $multiple, string $paramName = null) {
+	public function addTypeConstraint(bool $required, TypeConstraint $typeConstraint, bool $multiple, ?string $paramName = null) {
 		$this->addPatternDef(array('typeConstraint' => $typeConstraint), $required, $multiple, $paramName);
 	}
 	
-	public function addWhitechar(bool $required, bool $multiple, string $paramName = null) {
+	public function addWhitechar(bool $required, bool $multiple, ?string $paramName = null) {
 		$this->addPatternDef(array('whitechar' => '*'), $required, $multiple, $paramName);
 	}
 	
-	public function addRegex(string $pattern, bool $required, bool $multiple, string $paramName = null) {
+	public function addRegex(string $pattern, bool $required, bool $multiple, ?string $paramName = null) {
 		$this->addPatternDef(array('regexPattern' => $pattern), $required, $multiple, $paramName);
 	}
 	

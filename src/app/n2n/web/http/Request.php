@@ -162,6 +162,6 @@ interface Request {
 	 * @param StreamFactoryInterface|null $streamFactory
 	 * @return ServerRequestInterface
 	 */
-	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface  $uploadedFileFactory = null,
-			StreamFactoryInterface $streamFactory = null): ServerRequestInterface;
+	function toPsr(ServerRequestFactoryInterface $factory, ?UploadedFileFactoryInterface $uploadedFileFactory = null,
+			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface;
 }

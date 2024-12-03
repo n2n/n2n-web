@@ -56,7 +56,7 @@ class ResponseCacheItem {
 	}
 
 	static function createFromSentPayload(Response $response, \DateTimeInterface $expireDateTime,
-			array $characteristics, string $verifierLookupId = null): ResponseCacheItem {
+			array $characteristics, ?string $verifierLookupId = null): ResponseCacheItem {
 		return new ResponseCacheItem(CachedPayload::createFromSentPayload($response, $expireDateTime),
 				$characteristics, $verifierLookupId);
 	}

@@ -30,8 +30,8 @@ class AcceptMimeType {
 	private $quality;
 	private $params;
 	
-	public function __construct(string $type = null, string $subtype = null, 
-			float $quality = null, array $params = array()) {
+	public function __construct(?string $type = null, ?string $subtype = null,
+			?float $quality = null, array $params = array()) {
 		if ($quality !== null && ($quality < 0 || $quality > 1)) {
 			throw new \InvalidArgumentException('Invalid quality: ' . $quality);
 		}

@@ -40,8 +40,8 @@ class UrlBuilder {
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
-	public static function buildUrlStr($arg, N2nContext $n2nContext = null,
-			ControllerContext $controllerContext = null, string &$suggestedLabel = null): string {
+	public static function buildUrlStr($arg, ?N2nContext $n2nContext = null,
+			?ControllerContext $controllerContext = null, ?string &$suggestedLabel = null): string {
 		if ($arg === null) {
 			throw new UnavailableUrlException(false);
 		}
@@ -74,8 +74,8 @@ class UrlBuilder {
 	 * @throws UnavailableUrlException
 	 * @return Url
 	 */
-	public static function buildUrl($arg, N2nContext $n2nContext = null,
-			ControllerContext $controllerContext = null, string &$suggestedLabel = null): Url {
+	public static function buildUrl($arg, ?N2nContext $n2nContext = null,
+			?ControllerContext $controllerContext = null, ?string &$suggestedLabel = null): Url {
 		if ($arg === null) {
 			throw new UnavailableUrlException(false);
 		}

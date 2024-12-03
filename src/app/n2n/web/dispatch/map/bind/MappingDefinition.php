@@ -33,8 +33,8 @@ class MappingDefinition {
 	private $paramInvestigator;
 	private $ignoredPropertyNames = array();
 	
-	public function __construct(MappingResult $mappingResult, ObjectItem $objectItem = null, 
-			$methodName = null, ParamInvestigator $paramInvestigator = null) {
+	public function __construct(MappingResult $mappingResult, ?ObjectItem $objectItem = null,
+			$methodName = null, ?ParamInvestigator $paramInvestigator = null) {
 		$this->mappingResult = $mappingResult;
 		$this->objectItem = $objectItem;
 		$this->methodName = $methodName;

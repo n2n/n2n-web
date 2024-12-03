@@ -189,7 +189,7 @@ class MappingResult {
 	 * @param string $recursive
 	 * @return boolean
 	 */
-	public function testErrors(PropertyPathPart $pathPart = null, $recursive = true) {
+	public function testErrors(?PropertyPathPart $pathPart = null, $recursive = true) {
 		if ($pathPart === null) {
 			if (!$this->bindingErrors->isEmpty()) return true;
 			
@@ -216,7 +216,7 @@ class MappingResult {
 	 * @param string $recursive
 	 * @return \n2n\l10n\Message[]
 	 */
-	public function filterErrorMessages(PropertyPathPart $pathPart = null, $recursive = true) {
+	public function filterErrorMessages(?PropertyPathPart $pathPart = null, $recursive = true) {
 		if ($pathPart === null) {
 			$errorMessages = $this->bindingErrors->getAllErrors();
 			

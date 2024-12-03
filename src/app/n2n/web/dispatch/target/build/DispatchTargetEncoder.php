@@ -48,7 +48,7 @@ class DispatchTargetEncoder {
 		return $this->pseudoBasePropertyPath;
 	}
 	
-	public function setPseudoBasePropertyPath(PropertyPath $pseudoBasePropertyPath = null) {
+	public function setPseudoBasePropertyPath(?PropertyPath $pseudoBasePropertyPath = null) {
 		$this->pseudoBasePropertyPath = $pseudoBasePropertyPath;
 	}
 	
@@ -57,7 +57,7 @@ class DispatchTargetEncoder {
 				$useEmptyBrackets);
 	}
 	
-	public function buildAttrParamName(PropertyPath $propertyPath, string $name = null): string {
+	public function buildAttrParamName(PropertyPath $propertyPath, ?string $name = null): string {
 		return ParamHandler::build(ParamHandler::TYPE_ATTR, $this->buildRealPropertyPath($propertyPath), 
 				 false, $name);
 	}

@@ -261,7 +261,7 @@ class HttpContext {
 	 * @param N2nLocale|null $n2nLocale
 	 * @return SubsystemRule|null
 	 */
-	public function findBestSubsystemRuleBySubsystemAndN2nLocale(Subsystem|string $subsystem, N2nLocale $n2nLocale = null) {
+	public function findBestSubsystemRuleBySubsystemAndN2nLocale(Subsystem|string $subsystem, ?N2nLocale $n2nLocale = null) {
 		if (is_string($subsystem)) {
 			$subsystem = $this->getSubsystemByName($subsystem);
 		}
@@ -300,7 +300,7 @@ class HttpContext {
 	 * @param Subsystem|SubsystemRule|string $subsystem
 	 * @return \n2n\util\uri\Url
 	 */
-	public function buildContextUrl(bool $ssl = null, Subsystem|SubsystemRule|string $subsystem = null, bool $absolute = false): Url {
+	public function buildContextUrl(?bool $ssl = null, Subsystem|SubsystemRule|string $subsystem = null, bool $absolute = false): Url {
 		$url = null;
 		
 		if ($subsystem !== null) {
@@ -333,7 +333,7 @@ class HttpContext {
 	 * @param bool|null $ssl
 	 * @return \n2n\util\uri\Url
 	 */
-	private function completeSchemaCheck(Url $url, bool $ssl = null) {
+	private function completeSchemaCheck(Url $url, ?bool $ssl = null) {
 		if ($ssl === null) return $url;
 	
 		if ($ssl) {

@@ -38,7 +38,7 @@ class ClosureValidator implements Validator {
 	private $closureFunction;
 	private $errMsg;
 	
-	public function __construct(\Closure $closure, Message $errMsg = null) {
+	public function __construct(\Closure $closure, ?Message $errMsg = null) {
 		$this->closureFunction = new \ReflectionFunction($closure);
 		$this->errMsg = $errMsg;
 	}	

@@ -28,15 +28,15 @@ class Raw implements UiComponent {
 	 * 
 	 * @param string $raw
 	 */
-	public function __construct(string $raw = null) {
+	public function __construct(?string $raw = null) {
 		$this->contents = (string) $raw;
 	}
 	
-	public function append(string $raw = null) {
+	public function append(?string $raw = null) {
 		$this->contents .= $raw;
 	}
 	
-	public function appendLn(string $raw = null) {
+	public function appendLn(?string $raw = null) {
 		$this->append($raw . "\n");
 	}
 	/**

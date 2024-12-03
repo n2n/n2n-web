@@ -251,7 +251,7 @@ class DispatchTargetExtractor {
 		throw $this->createException('Invalid key' . $key);
 	}
 			
-	private function createException($reason, \Exception $e = null) {
+	private function createException($reason, ?\Exception $e = null) {
 		return new DispatchTargetDecodingException('Corrupted dispatch target. Reason: ' . $reason, 0, $e);
 	}			
 			

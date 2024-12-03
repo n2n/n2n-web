@@ -93,7 +93,7 @@ class ContextUrlComposer implements UrlComposer {
 	 * @param string $fragment
 	 * @return \n2n\web\http\nav\ContextUrlComposer
 	 */
-	public function fragment(string $fragment = null) {
+	public function fragment(?string $fragment = null) {
 		$this->fragment = $fragment;
 		return $this;
 	}
@@ -102,7 +102,7 @@ class ContextUrlComposer implements UrlComposer {
 	 * @param bool $ssl
 	 * @return \n2n\web\http\nav\ContextUrlComposer
 	 */
-	public function ssl(bool $ssl = null) {
+	public function ssl(?bool $ssl = null) {
 		$this->ssl = $ssl;
 		return $this;
 	}
@@ -129,8 +129,8 @@ class ContextUrlComposer implements UrlComposer {
 	 * {@inheritDoc}
 	 * @see \n2n\web\http\nav\UrlComposer::toUrl()
 	 */
-	public function toUrl(N2nContext $n2nContext, ControllerContext $controllerContext = null, 
-			string &$suggestedLabel = null): Url {
+	public function toUrl(N2nContext $n2nContext, ?ControllerContext $controllerContext = null,
+			?string &$suggestedLabel = null): Url {
 		$path = null;
 		if ($this->controllerContext === null) {
 			if ($this->toController) {

@@ -130,7 +130,7 @@ class MagCollection {
 	 * @param bool $ignoreUnknown
 	 * @return array
 	 */
-	public function readValues(array $propertyNames = null, bool $ignoreUnknown = false): array {
+	public function readValues(?array $propertyNames = null, bool $ignoreUnknown = false): array {
 		$values = array();
 		
 		if ($propertyNames !== null) {

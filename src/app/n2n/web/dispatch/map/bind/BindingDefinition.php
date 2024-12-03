@@ -74,7 +74,7 @@ class BindingDefinition {
 	 * @param PropertyValidator $propertyValidator2
 	 */
 	public function val($propertyNames, PropertyValidator $propertyValidator, 
-			PropertyValidator $propertyValidator2 = null) {
+			?PropertyValidator $propertyValidator2 = null) {
 		$managedProperties = array();
 		foreach ((array) $propertyNames as $propertyName) {
 			$managedProperties[] = $this->dispatchModel->getPropertyByName($propertyName);

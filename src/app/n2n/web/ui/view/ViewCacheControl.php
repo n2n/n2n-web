@@ -29,7 +29,7 @@ class ViewCacheControl {
 	 * @param \DateInterval $cacheInterval
 	 * @param array $characteristics
 	 */
-	public function __construct(\DateInterval $cacheInterval = null, array $characteristics = array()) {
+	public function __construct(?\DateInterval $cacheInterval = null, array $characteristics = array()) {
 		$this->cacheInterval = $cacheInterval;
 		$this->characteristics = $characteristics;
 	}

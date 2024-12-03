@@ -52,7 +52,7 @@ class ControllerRegistry {
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
 	public function createControllingPlan(HttpContext $httpContext, Path $cmdPath,
-			SubsystemRule $subsystemRule = null): ControllingPlan {
+			?SubsystemRule $subsystemRule = null): ControllingPlan {
 		$contextN2nLocales = new \ArrayObject();
 		foreach ($httpContext->getSupersystem()->getN2nLocales() as $n2nLocale) {
 			$contextN2nLocales[$n2nLocale->toWebId()] = $n2nLocale;

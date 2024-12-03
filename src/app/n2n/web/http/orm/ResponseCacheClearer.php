@@ -28,7 +28,7 @@ use n2n\context\ThreadScoped;
 class ResponseCacheClearer extends ObjectAdapter implements ThreadScoped {
 	private $responseCacheControl;
 
-	private function _init(ResponseCacheStore $responseCacheStore = null) {
+	private function _init(?ResponseCacheStore $responseCacheStore = null) {
 		$this->responseCacheControl = $responseCacheStore;
 	}
 

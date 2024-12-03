@@ -430,8 +430,8 @@ class SimpleRequest implements Request {
 	 * @param StreamFactoryInterface|null $streamFactory
 	 * @return ServerRequestInterface
 	 */
-	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface $uploadedFileFactory = null,
-			StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
+	function toPsr(ServerRequestFactoryInterface $factory, ?UploadedFileFactoryInterface $uploadedFileFactory = null,
+			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
 		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(), []);
 
 		$uploadedFiles = [];

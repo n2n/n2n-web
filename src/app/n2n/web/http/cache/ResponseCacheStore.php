@@ -125,7 +125,7 @@ class ResponseCacheStore {
 	}
 
 	public function get(ResponseCacheId $responseCacheId,
-			bool $shared, DateTimeInterface $now = null): ?ResponseCacheItem {
+			bool $shared, ?DateTimeInterface $now = null): ?ResponseCacheItem {
 		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
 
 		$cacheItem = $this->getCacheStore($shared)->get(self::RESPONSE_NAME, $responseCharacteristics);
@@ -161,7 +161,7 @@ class ResponseCacheStore {
 		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
 	}
 
-// 	public function removeByFilter(string $method, string $hostName, Path $path, array $queryParams = null,
+// 	public function removeByFilter(string $method, string $hostName, Path $path, ?array $queryParams = null,
 // 			array $characteristicNeedles) {
 // 		$this->cacheStore->removeAll(self::RESPONSE_NAME, $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams, 
 // 				$characteristicNeedles));
@@ -181,7 +181,7 @@ class ResponseCacheStore {
 		});
 	}
 
-	public function clear(bool $shared = null): void {
+	public function clear(?bool $shared = null): void {
 		foreach ($this->getCacheStores($shared) as $cacheStore) {
 			$cacheStore->clear();
 		}

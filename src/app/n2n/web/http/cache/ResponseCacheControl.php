@@ -33,7 +33,7 @@ class ResponseCacheControl {
 	 * @param bool $shared
 	 * @param string|null $verifierCheckLookupId
 	 */
-	public function __construct(\DateInterval $cacheInterval = null, array $includedQueryParamNames = null,
+	public function __construct(?\DateInterval $cacheInterval = null, ?array $includedQueryParamNames = null,
 			array $characteristics = array(), private readonly bool $shared = true,
 			private readonly ?string $verifierCheckLookupId = null) {
 		$this->cacheInterval = $cacheInterval;

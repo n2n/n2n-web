@@ -32,7 +32,7 @@ abstract class ObjectPropertyAnnotation implements PropertyAnnotation, MethodAnn
 	
 	protected $creator;
 	
-	public function __construct(\Closure $creator = null) {
+	public function __construct(?\Closure $creator = null) {
 		$this->creator = $creator;
 	}
 	

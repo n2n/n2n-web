@@ -349,7 +349,7 @@ class ManagedResponse extends Response {
 	 * @param \DateTime|null $lastModified
 	 * @return bool
 	 */
-	private function notModified(?string $etag, \DateTime $lastModified = null): bool {
+	private function notModified(?string $etag, ?\DateTime $lastModified = null): bool {
 		if ($this->statusCode !== self::STATUS_200_OK) return false;
 
 		$etagNotModified = null;
@@ -652,7 +652,7 @@ class ManagedResponse extends Response {
 		return $this->responseCacheStore;
 	}
 
-	public function setResponseCacheStore(ResponseCacheStore $responseCacheStore = null): void {
+	public function setResponseCacheStore(?ResponseCacheStore $responseCacheStore = null): void {
 		$this->responseCacheStore = $responseCacheStore;
 	}
 	/**

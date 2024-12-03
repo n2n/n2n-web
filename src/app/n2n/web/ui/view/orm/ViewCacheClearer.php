@@ -29,7 +29,7 @@ use n2n\context\attribute\ThreadScoped;
 class ViewCacheClearer extends ObjectAdapter {
 	private $viewCacheControl;
 	
-	private function _init(ViewCacheStore $viewCacheStore = null) {
+	private function _init(?ViewCacheStore $viewCacheStore = null) {
 		$this->viewCacheControl = $viewCacheStore;
 	}
 	

@@ -133,7 +133,7 @@ class DynamicAccessProxy implements AccessProxy {
 		return $this->constraint;
 	}
 
-	function createRestricted(TypeConstraint $getterConstraint = null, TypeConstraint $setterConstraint = null): AccessProxy {
+	function createRestricted(?TypeConstraint $getterConstraint = null, ?TypeConstraint $setterConstraint = null): AccessProxy {
 		throw new UnsupportedOperationException();
 	}
 }

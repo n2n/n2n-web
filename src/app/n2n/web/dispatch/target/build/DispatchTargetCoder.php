@@ -37,7 +37,7 @@ class DispatchTargetCoder {
 	/**
 	 * @param Cipher $cipher
 	 */
-	public function __construct(Cipher $cipher = null) {
+	public function __construct(?Cipher $cipher = null) {
 		$this->cipher = $cipher;
 	}
 	
@@ -51,7 +51,7 @@ class DispatchTargetCoder {
 	/**
 	 * @param Cipher $cipher
 	 */
-	public function setCipher(Cipher $cipher = null) {
+	public function setCipher(?Cipher $cipher = null) {
 		$this->cipher = $cipher;
 	}
 	
@@ -93,7 +93,7 @@ class DispatchTargetCoder {
 	 * @param \Exception $e
 	 * @return DispatchTargetDecodingException
 	 */
-	private function createDispatchTargetDecodingException(\Exception $e = null) {
+	private function createDispatchTargetDecodingException(?\Exception $e = null) {
 		return new DispatchTargetDecodingException('Dispatch target could not be decoded.', 0, $e);
 	}
 	

@@ -51,7 +51,7 @@ class ActionInvokerFactory {
 	private $constantValues;
 
 	public function __construct(Path $cmdPath, Path $cmdContextPath, Request $request, $httpMethod,
-			Query $query, Query $postQuery, AcceptRange $acceptRange, MagicContext $magicContext = null) {
+			Query $query, Query $postQuery, AcceptRange $acceptRange, ?MagicContext $magicContext = null) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
 		$this->request = $request;
@@ -149,7 +149,7 @@ class ActionInvokerFactory {
 	 * @return NULL|\n2n\web\http\controller\InvokerInfo
 	 * @throws ControllerError
 	 */
-	public function createFullMagic(\ReflectionMethod $method, Path $cmdParamPath, array $allowedExtensions = null) {
+	public function createFullMagic(\ReflectionMethod $method, Path $cmdParamPath, ?array $allowedExtensions = null) {
 		$pathPattern = new PathPattern();
 
 		if ($allowedExtensions !== null) {

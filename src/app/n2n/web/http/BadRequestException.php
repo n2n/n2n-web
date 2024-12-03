@@ -22,7 +22,7 @@
 namespace n2n\web\http;
 
 class BadRequestException extends StatusException {
-	public function __construct(string $message = null, int $code = null, \Throwable $previous =  null) {
+	public function __construct(?string $message = null, ?int $code = null, \Throwable $previous =  null) {
 		parent::__construct(Response::STATUS_400_BAD_REQUEST, $message, $code, $previous);		
 	}
 }

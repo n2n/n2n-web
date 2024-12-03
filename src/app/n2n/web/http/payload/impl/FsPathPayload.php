@@ -5,7 +5,7 @@ use n2n\util\io\fs\FsPath;
 
 class FsPathPayload extends FilePayload {
 	
-	public function __construct(FsPath $fsPath, bool $attachment = false, string $attachmentName = null) {
+	public function __construct(FsPath $fsPath, bool $attachment = false, ?string $attachmentName = null) {
 		parent::__construct($fsPath->toFile(), $attachment, $attachmentName);
 	}
 }

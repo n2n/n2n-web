@@ -75,7 +75,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * {@inheritDoc}
 	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
 	 */
-	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
+	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true,
 			mixed $defaultValue = null): mixed {
 		return $this->dataMap->readAttribute($path, $typeConstraint, $mandatory, $defaultValue);
 	}
@@ -347,7 +347,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * @return HttpData|null
 	 * @throws StatusException
 	 */
-	public function reqHttpData($path, bool $nullAllowed = false, int $errStatus = null): ?HttpData {
+	public function reqHttpData($path, bool $nullAllowed = false, ?int $errStatus = null): ?HttpData {
 		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
 			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}
@@ -362,7 +362,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * @param int|null $errStatus
 	 * @return HttpData|null
 	 */
-	public function optHttpData($path, mixed $defaultValue = null, bool $nullAllowed = true, int $errStatus = null): ?HttpData {
+	public function optHttpData($path, mixed $defaultValue = null, bool $nullAllowed = true, ?int $errStatus = null): ?HttpData {
 		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
 			return new HttpData(new DataMap($array), $errStatus ?? $this->errStatus);
 		}

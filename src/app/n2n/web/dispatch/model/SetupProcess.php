@@ -62,7 +62,7 @@ class SetupProcess {
 	 * @throws ModelInitializationException
 	 */
 	public function provideManagedProperty(ManagedProperty $managedProperty, 
-			Annotation $relatedAnnotation = null) {
+			?Annotation $relatedAnnotation = null) {
 		if (!$this->dispatchModel->containsPropertyName($managedProperty->getName())) {
 			$this->dispatchModel->addProperty($managedProperty);
 			return;
@@ -72,19 +72,19 @@ class SetupProcess {
 				. ' already defined.', null, null, $relatedAnnotation);
 	}
 	
-	public function failed($reason, \ReflectionMethod $method = null, 
-			Annotation $causingAnnotation = null) {
+	public function failed($reason, ?\ReflectionMethod $method = null, 
+			?Annotation $causingAnnotation = null) {
 		throw $this->createFailedException($reason, null, $method, $causingAnnotation);
 	}
 	
-	public function failedE(\Exception $e, \ReflectionMethod $causingMethod = null, 
-			Annotation $causingAnnotation = null) {
+	public function failedE(\Exception $e, ?\ReflectionMethod $causingMethod = null, 
+			?Annotation $causingAnnotation = null) {
 		if ($e instanceof \ErrorException) throw $e;
 		throw $this->createFailedException($e->getMessage(), $e, $causingMethod, $causingAnnotation);
 	}
 	
-	private function createFailedException($reason, \Exception $causingE = null, 
-			\ReflectionMethod $causingMethod = null, Annotation $causingAnnotation = null) {
+	private function createFailedException($reason, ?\Exception $causingE = null, 
+			?\ReflectionMethod $causingMethod = null, ?Annotation $causingAnnotation = null) {
 		$tps = array();
 		if ($causingMethod !== null) {
 			$tps[] = array('fileName' => $causingMethod->getFileName(),

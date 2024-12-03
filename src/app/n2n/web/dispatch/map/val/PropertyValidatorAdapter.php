@@ -29,7 +29,7 @@ abstract class PropertyValidatorAdapter implements PropertyValidator {
 	private $array = null;
 	private $managedProperties = null;
 	
-	protected function restrictType(array $allowedTypeNames = null, $array = null) {
+	protected function restrictType(?array $allowedTypeNames = null, $array = null) {
 		$this->allowedTypeNames = $allowedTypeNames;
 		$this->array = $array;
 	}

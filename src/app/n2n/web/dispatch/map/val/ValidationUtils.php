@@ -38,7 +38,7 @@ class ValidationUtils {
 	}
 	
 	public static function buildErrorMessage(MappingResult $mappingResult, array $invalidPathParts,	
-			$fallbackTextCode, array $args, $textCodeModuleNs, Message $errorMessage = null) {
+			$fallbackTextCode, array $args, $textCodeModuleNs, ?Message $errorMessage = null) {
 		if ($errorMessage !== null && !($errorMessage instanceof TextCodeMessage
 				&& !array_key_exists(self::FIELD_ARG_KEY, $errorMessage->getArgs()))) {
 			return $errorMessage;
@@ -63,7 +63,7 @@ class ValidationUtils {
 	}
 	
 	public static function registerErrorMessage(MappingResult $mappingResult, $invalidPathParts, 
-			$fallbackTextCode, array $args, $textCodeModuleNs, Message $errorMessage = null) {
+			$fallbackTextCode, array $args, $textCodeModuleNs, ?Message $errorMessage = null) {
 		$invalidPathParts = ArgUtils::toArray($invalidPathParts);
 		$errorMessage = self::buildErrorMessage($mappingResult, $invalidPathParts, $fallbackTextCode, 
 				$args, $textCodeModuleNs, $errorMessage);

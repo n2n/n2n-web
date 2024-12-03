@@ -31,7 +31,7 @@ class ViewCacheStore implements ThreadScoped {
 		$this->cacheStore = $appCache->lookupCacheStore(ViewCacheStore::class, true);
 	}
 	
-	public function store(string $name, array $characteristics, $data, \DateTime $lastMod = null) {
+	public function store(string $name, array $characteristics, $data, ?\DateTime $lastMod = null) {
 		$this->cacheStore->store($name, $characteristics, $data, $lastMod);
 	}
 	
@@ -84,7 +84,7 @@ class ViewCacheStore implements ThreadScoped {
 // 	 * @param array $characteristics
 // 	 * @return string
 // 	 */
-// 	private function buildBaseFilePath(View $view, array $characteristics = null) {
+// 	private function buildBaseFilePath(View $view, ?array $characteristics = null) {
 // 		$characteristicsHash = null;
 // 		if (null === $characteristics) {
 // 			$characteristicsHash = HashUtils::base36Md5Hash($this->request->getHostUrl($this->request->getPath()), 9);
@@ -99,7 +99,7 @@ class ViewCacheStore implements ThreadScoped {
 // 	 * @param View $view
 // 	 * @param array $characteristics
 // 	 */
-// 	public function add(View $view, array $characteristics = null) {
+// 	public function add(View $view, ?array $characteristics = null) {
 // 		if (!$this->enabled) return;
 		
 // 		$cacheWriter = new ViewCacheWriter($this->buildBaseFilePath($view, $characteristics), (array) $characteristics);
@@ -155,7 +155,7 @@ class ViewCacheStore implements ThreadScoped {
 // 	 * @param unknown_type $module
 // 	 * @param array $characteristics
 // 	 */
-// 	public function clearByFilter($module, array $characteristics = null) {
+// 	public function clearByFilter($module, ?array $characteristics = null) {
 // 		$pattern = $this->cacheDirPath . DIRECTORY_SEPARATOR . '*.' . (isset($module) ? $this->buildNamespaceHash((string) $module) . '*' : '*');
 		
 // 		if (null === $characteristics || !sizeof($characteristics)) {

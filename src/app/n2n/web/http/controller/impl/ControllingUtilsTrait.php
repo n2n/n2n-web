@@ -154,7 +154,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::assignViewCacheControl()
 	 */
-	protected final function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
+	protected final function assignViewCacheControl(?\DateInterval $cacheInterval = null, array $characteristics = array()): void {
 		$this->cu()->assignViewCacheControl($cacheInterval, $characteristics);
 	}
 
@@ -162,7 +162,7 @@ trait ControllingUtilsTrait {
 		$this->cu()->resetViewCacheControl();
 	}
 
-	protected final function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null): void {
+	protected final function assignHttpCacheControl(?\DateInterval $maxAge = null, ?array $directives = null): void {
 		$this->cu()->assignHttpCacheControl($maxAge, $directives);
 	}
 	
@@ -170,7 +170,7 @@ trait ControllingUtilsTrait {
 		$this->cu()->resetHttpCacheControl();
 	}
 
-	protected final function assignPayloadCacheControl(\DateInterval $cacheInterval = null,
+	protected final function assignPayloadCacheControl(?\DateInterval $cacheInterval = null,
 			array $characteristics = []): void {
 		$this->cu()->assignPayloadCacheControl($cacheInterval, $characteristics);
 	}
@@ -184,9 +184,9 @@ trait ControllingUtilsTrait {
 	 * @param bool $includeQuery
 	 * @param array $characteristics
 	 */
-	protected final function assignResponseCacheControl(\DateInterval $cacheInterval = null,
+	protected final function assignResponseCacheControl(?\DateInterval $cacheInterval = null,
 			bool $includeQuery = false, array $characteristics = array(), bool $shared = true,
-			string $verifierCheckLookupId = null): void {
+			?string $verifierCheckLookupId = null): void {
 		$this->cu()->assignResponseCacheControl($cacheInterval, $includeQuery, $characteristics, $shared, $verifierCheckLookupId);
 	}
 	
@@ -199,7 +199,7 @@ trait ControllingUtilsTrait {
 	 * @param string $viewName
 	 * @param ViewCacheControl $viewCacheControl
 	 */
-	protected final function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null) {
+	protected final function createViewFromCache(string $viewNameExpression, ?string $moduleNamespace = null) {
 		try {
 			return $this->cu()->createViewFromCache($viewNameExpression, $moduleNamespace);
 		} catch (\ReflectionException $e) {
@@ -213,7 +213,7 @@ trait ControllingUtilsTrait {
 	 * @param mixed $params
 	 * @return View
 	 */
-	protected final function createView(string $viewNameExpression, array $params = null, string $moduleNamespace = null) {
+	protected final function createView(string $viewNameExpression, ?array $params = null, ?string $moduleNamespace = null) {
 		try {
 			return $this->cu()->createView($viewNameExpression, $params, $moduleNamespace);
 		} catch (\ReflectionException $e) {
@@ -226,7 +226,7 @@ trait ControllingUtilsTrait {
 	 * @param ViewCacheControl $viewCacheControl
 	 * @return bool
 	 */
-	protected final function forwardCache(string $viewNameExpression, ViewCacheControl $viewCacheControl = null) {
+	protected final function forwardCache(string $viewNameExpression, ?ViewCacheControl $viewCacheControl = null) {
 		try {
 			return $this->cu()->forwardCache($viewNameExpression, $viewCacheControl);
 		} catch (\ReflectionException $e) {
@@ -238,8 +238,8 @@ trait ControllingUtilsTrait {
 	 * @param string $viewNameExpression
 	 * @param mixed $params
 	 */
-	protected final function forward(string $viewNameExpression, array $params = null, 
-			ViewCacheControl $viewCacheControl = null) {
+	protected final function forward(string $viewNameExpression, ?array $params = null,
+			?ViewCacheControl $viewCacheControl = null) {
 		try {
 			$this->cu()->forward($viewNameExpression, $params, $viewCacheControl);
 		} catch (\ReflectionException $e) {
@@ -268,60 +268,60 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected function hasDispatch(Dispatchable $dispatchable = null, $methodName = null) {
+	protected function hasDispatch(?Dispatchable $dispatchable = null, $methodName = null) {
 		return $this->cu()->hasDispatch($dispatchable, $methodName);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function refresh(int $httpStatus = null) {
+	protected final function refresh(?int $httpStatus = null) {
 		$this->cu()->refresh($httpStatus);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function redirect($murl, int $httpStatus = null) {
+	protected final function redirect($murl, ?int $httpStatus = null) {
 		$this->cu()->redirect($murl, $httpStatus);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function getUrlToContext($pathExt = null, array $queries = null,
-			string $fragment = null, bool $ssl = null, $subsystem = null) {
+	protected final function getUrlToContext($pathExt = null, ?array $queries = null,
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToContext($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function redirectToContext($pathExt = null, array $queries = null, int $httpStatus = null,
-			string $fragment = null, bool $ssl = null, $subsystem = null) {
+	protected final function redirectToContext($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToContext($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
 	
 	/**
 	 * @see ControllingUtils::buildUrl()
 	 */
-	protected final function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
+	protected final function buildUrl($murl, bool $required = true, ?string &$suggestedLabel = null) {
 		return $this->cu()->buildUrl($murl, $required, $suggestedLabel);
 	}
 	
 	/**
 	 * @see ControllingUtils::getUrlToController()
 	 */
-	protected final function getUrlToController($pathExt = null, array $queries = null, $controllerContext = null, 
-			string $fragment = null, bool $ssl = null, $subsystem = null) {
+	protected final function getUrlToController($pathExt = null, ?array $queries = null, $controllerContext = null,
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToController($pathExt, $queries, $controllerContext, $fragment, $ssl, $subsystem);
 	}
 	
 	/**
 	 * @see ControllingUtils::redirectToController()
 	 */
-	protected final function redirectToController($pathExt = null, array $queries = null, int $httpStatus = null,
-			$controllerContext = null, string $fragment = null, bool $ssl = null, $subsystem = null) {
+	protected final function redirectToController($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
+			$controllerContext = null, ?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToController($pathExt, $queries, $httpStatus, $controllerContext, $fragment, $ssl, 
 				$subsystem);
 	}
@@ -329,16 +329,16 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::getUrlToPath()
 	 */
-	protected final function getUrlToPath($pathExt = null, array $queries = null, string $fragment = null, 
-			bool $ssl = null, $subsystem = null) {
+	protected final function getUrlToPath($pathExt = null, ?array $queries = null, ?string $fragment = null,
+			?bool $ssl = null, $subsystem = null) {
 		return $this->cu()->getUrlToPath($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
 	/**
 	 * @see ControllingUtils::redirectToPath()
 	 */
-	protected final function redirectToPath($pathExt = null, array $queries = null, int $httpStatus = null,
-			$fragment = null, bool $ssl = null, $subsystem = null) {
+	protected final function redirectToPath($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
+			$fragment = null, ?bool $ssl = null, $subsystem = null) {
 		$this->cu()->redirectToPath($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
 	
@@ -346,7 +346,7 @@ trait ControllingUtilsTrait {
 	 * @param string $httpStatus
 	 * @throws NoHttpRefererGivenException
 	 */
-	protected final function redirectToReferer(int $httpStatus = null) {
+	protected final function redirectToReferer(?int $httpStatus = null) {
 		$this->cu()->redirectToReferer($httpStatus);
 	}
 	
@@ -355,14 +355,14 @@ trait ControllingUtilsTrait {
 	 * @param int $pathPartsToShift
 	 * @return ControllerContext
 	 */
-	protected final function createDelegateContext(Controller $controller = null, int $pathPartsToShift = null) {
+	protected final function createDelegateContext(?Controller $controller = null, ?int $pathPartsToShift = null) {
 		return $this->cu()->createDelegateContext($controller, $pathPartsToShift);
 	}
 	
 	/**
 	 * @see ControllingUtils::delegate()
 	 */
-	protected final function delegate(Controller $controller, int $numPathPartsToShift = null, $execute = true,
+	protected final function delegate(Controller $controller, ?int $numPathPartsToShift = null, $execute = true,
 			bool $tryIfMain = false) {
 		return $this->cu()->delegate($controller, $numPathPartsToShift, $execute, $tryIfMain);
 	}
@@ -413,7 +413,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::sendFileAttachment()
 	 */
-	protected final function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true) {
+	protected final function sendFileAttachment(Downloadable $file, ?string $name = null, bool $includeBuffer = true) {
 		$this->cu()->sendFileAttachment($file, $name, $includeBuffer);
 	}
 	
@@ -427,7 +427,7 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::sendFsPathAttachment()
 	 */
-	protected final function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true) {
+	protected final function sendFsPathAttachment($fsPath, ?string $name = null, bool $includeBuffer = true) {
 		$this->cu()->sendFsPathAttachment($fsPath, $name, $includeBuffer);
 	}
 	
@@ -491,7 +491,7 @@ trait ControllingUtilsTrait {
 		return $this->cu()->exec($magicTask, $input, $rejectStatus);
 	}
 
-	protected final function execIsolated(\Closure $closure, int $tries = 3, \Closure $deadlockHandler = null,
+	protected final function execIsolated(\Closure $closure, int $tries = 3, ?\Closure $deadlockHandler = null,
 			bool $readOnly = false): mixed {
 		return $this->cu()->execIsolated($closure, $tries, $deadlockHandler, $readOnly);
 	}

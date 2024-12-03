@@ -33,7 +33,7 @@ interface UiComponent {
 class SimpleBuildContext implements BuildContext {
 	private $view;
 	
-	public function __construct(View $view = null) {
+	public function __construct(?View $view = null) {
 		$this->view = $view;	
 	}
 	

@@ -396,7 +396,7 @@ class ControllerInterpreter {
 	 * @return InvokerInfo
 	 * @throws ControllerError
 	 */
-	private function analyzePattern(AnnoPath $annoPath, array $allowedExtensions = null) {
+	private function analyzePattern(AnnoPath $annoPath, ?array $allowedExtensions = null) {
 		try {
 			$pathPattern = $this->pathPatternCompiler->compile($annoPath->getPattern());
 			if (null != $allowedExtensions) {

@@ -22,7 +22,7 @@ class WebTemplateDef implements HangarTemplateDef {
 		return 'Common';
 	}
 	
-	public function applyTemplate(Huo $huo, PhpClass $phpClass, MagDispatchable $magDispatchable = null) {
+	public function applyTemplate(Huo $huo, PhpClass $phpClass, ?MagDispatchable $magDispatchable = null) {
 		$phpClass->createPhpProperty('id');
 		$phpClass->createPhpGetterAndSetter('id', new PhpTypeDef('int'));
 		
@@ -50,7 +50,7 @@ class WebTemplateDef implements HangarTemplateDef {
 				new BoolMag('Abstract', false));
 	}
 	
-	public static function applyAbstractValue(PhpClass $phpClass, MagDispatchable $magDispatchable = null) {
+	public static function applyAbstractValue(PhpClass $phpClass, ?MagDispatchable $magDispatchable = null) {
 		if (null === $magDispatchable || !$magDispatchable->getPropertyValue(self::PROP_NAME_ABSTRACT)) return;
 		
 		$phpClass->setAbstract(true);
@@ -61,7 +61,7 @@ class WebTemplateDef implements HangarTemplateDef {
 				new BoolMag('Add response cache clearer', true));
 	}
 	
-	public static function applyResponseCacheClearerValue(PhpClass $phpClass, MagDispatchable $magDispatchable = null) {
+	public static function applyResponseCacheClearerValue(PhpClass $phpClass, ?MagDispatchable $magDispatchable = null) {
 		if (null === $magDispatchable || !$magDispatchable->getPropertyValue(self::PROP_NAME_ADD_RESPONSE_CACHE_CLEARER)) return;
 		
 		$phpClass->createPhpUse(ResponseCacheClearer::class);

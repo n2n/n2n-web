@@ -37,7 +37,7 @@ class ControllerContext {
 	 * @param array $contextCmds
 	 * @param Controller $controller
 	 */
-	public function __construct(Path $cmdPath, Path $cmdContextPath, Controller $controller = null,
+	public function __construct(Path $cmdPath, Path $cmdContextPath, ?Controller $controller = null,
 			private bool $payloadCachingEnabled = true, private bool $viewCachingEnabled = true) {
 		$this->cmdPath = $cmdPath;
 		$this->cmdContextPath = $cmdContextPath;
@@ -152,7 +152,7 @@ class ControllerContext {
 		return $this->cmdContextPath->ext($this->cmdPath);
 	}
 	
-	public function setModuleNamespace(string $moduleNamespace = null) {
+	public function setModuleNamespace(?string $moduleNamespace = null) {
 		$this->moduleNamespace = $moduleNamespace;
 	}
 	

@@ -67,7 +67,7 @@ class PayloadCacheStore {
 		$this->getCacheStore($shared)->store($srcName, $characteristics, $item);
 	}
 
-	public function get(string $srcName, array $characteristics, bool $shared, \DateTimeInterface $now = null): ?CachedPayload {
+	public function get(string $srcName, array $characteristics, bool $shared, ?\DateTimeInterface $now = null): ?CachedPayload {
 		$cacheStore = $this->getCacheStore($shared);
 		$cacheItem = $cacheStore->get($srcName, $characteristics);
 		if ($cacheItem === null) {
@@ -94,7 +94,7 @@ class PayloadCacheStore {
 		});
 	}
 
-	public function removeAll(string $srcName = null, array $characteristicNeedles = null, bool $shared = null): void {
+	public function removeAll(?string $srcName = null, ?array $characteristicNeedles = null, ?bool $shared = null): void {
 		$this->cacheActionQueue->registerRemoveAction(false, function ()
 				use ($shared, $srcName, $characteristicNeedles) {
 			foreach ($this->getCacheStores($shared) as $cacheStore) {
@@ -103,7 +103,7 @@ class PayloadCacheStore {
 		});
 	}
 
-	public function clear(bool $shared = null): void {
+	public function clear(?bool $shared = null): void {
 		foreach ($this->getCacheStores($shared) as $cacheStore) {
 			$cacheStore->clear();
 		}

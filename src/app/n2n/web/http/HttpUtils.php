@@ -9,7 +9,7 @@ class HttpUtils {
 	 * @param array $options
 	 * @throws HttpRuntimeException
 	 */
-	public static function sessionStart(array $options = null) {
+	public static function sessionStart(?array $options = null) {
 		if (true === ($options === null ? @session_start() : @session_start($options))) return;
 				
 		$err = error_get_last();
@@ -30,7 +30,7 @@ class HttpUtils {
 	 * @return string
 	 * @throws \InvalidArgumentException if session is is invalid according to {@self::isSessionIdValid()}
 	 */
-	public static function sessionId(string $id = null) {
+	public static function sessionId(?string $id = null) {
 		if ($id === null) {
 			return session_id();
 		}

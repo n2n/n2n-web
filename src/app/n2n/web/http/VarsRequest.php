@@ -539,8 +539,8 @@ class VarsRequest implements Request {
 	 * @param StreamFactoryInterface|null $streamFactory  null if you wish to leave out the uploaded files
 	 * @return ServerRequestInterface
 	 */
-	function toPsr(ServerRequestFactoryInterface $factory, UploadedFileFactoryInterface  $uploadedFileFactory = null,
-			StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
+	function toPsr(ServerRequestFactoryInterface $factory, ?UploadedFileFactoryInterface $uploadedFileFactory = null,
+			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
 		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(),
 				$this->serverVars);
 

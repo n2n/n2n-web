@@ -7,7 +7,7 @@ use n2n\util\io\fs\FsPath;
 
 class Sessions {
 
-	static function vars(string $applicationName, FsPath $saveDirFsPath = null, CacheStore $saveCacheStore = null): VarsSession {
+	static function vars(string $applicationName, ?FsPath $saveDirFsPath = null, ?CacheStore $saveCacheStore = null): VarsSession {
 		$session = new VarsSession($applicationName);
 		$session->setSaveDirFsPath($saveDirFsPath);
 		$session->setSaveCacheStore($saveCacheStore);

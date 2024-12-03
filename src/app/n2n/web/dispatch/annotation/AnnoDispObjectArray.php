@@ -24,7 +24,7 @@ namespace n2n\web\dispatch\annotation;
 class AnnoDispObjectArray extends ObjectPropertyAnnotation {
 	private $useArrayObject;
 	
-	public function __construct(\Closure $creator = null, $useArrayObject = null) {
+	public function __construct(?\Closure $creator = null, $useArrayObject = null) {
 		parent::__construct($creator);
 		$this->useArrayObject = $useArrayObject;
 	}

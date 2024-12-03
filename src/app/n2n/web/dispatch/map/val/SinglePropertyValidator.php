@@ -97,13 +97,13 @@ abstract class SinglePropertyValidator extends PropertyValidatorAdapter {
 		return $this->getMappingResult()->getLabel($this->getPathPart());
 	}
 	
-	protected function failed($errorMessage, $fallbackTextCode = null, array $fallbackArgs = null, $fallbackNs = null) {
+	protected function failed($errorMessage, $fallbackTextCode = null, ?array $fallbackArgs = null, $fallbackNs = null) {
 		ValidationUtils::registerErrorMessage($this->getMappingResult(), array($this->getPathPart()), 
 				$fallbackTextCode, (array) $fallbackArgs, $fallbackNs, 
 				ValidationUtils::createMessage($errorMessage));
 	}
 	
-	protected function failedCode($textCode, array $args = null, $module = null, $num = null) {
+	protected function failedCode($textCode, ?array $args = null, $module = null, $num = null) {
 		$this->getBindingErrors()->addError($this->getPathPart(), 
 				Message::createCodeArg($textCode, $args, Message::SEVERITY_ERROR, $module, $num));
 	}

@@ -37,7 +37,7 @@ class DispatchModelManager {
 		$this->dispatchModelFactory = $dispatchModelFactory;
 	}
 	
-	public function setCacheStore(CacheStore $cacheStore = null) {
+	public function setCacheStore(?CacheStore $cacheStore = null) {
 		$this->cacheStore = $cacheStore;
 	}
 	

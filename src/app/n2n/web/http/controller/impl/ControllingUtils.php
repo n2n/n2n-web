@@ -235,7 +235,7 @@ class ControllingUtils {
 	 * @param \DateInterval|null $cacheInterval
 	 * @param array $characteristics
 	 */
-	public function assignViewCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array()): void {
+	public function assignViewCacheControl(?\DateInterval $cacheInterval = null, array $characteristics = array()): void {
 		$this->viewCacheControl = new ViewCacheControl($cacheInterval, $characteristics);
 	}
 
@@ -243,7 +243,7 @@ class ControllingUtils {
 		$this->viewCacheControl = null;
 	}
 
-	function assignPayloadCacheControl(\DateInterval $cacheInterval = null, array $characteristics = array(),
+	function assignPayloadCacheControl(?\DateInterval $cacheInterval = null, array $characteristics = array(),
 			bool $shared = true): void {
 		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics, $shared);
 	}
@@ -257,7 +257,7 @@ class ControllingUtils {
 	 * @param \DateInterval|null $maxAge
 	 * @param array|null $directives
 	 */
-	public function assignHttpCacheControl(\DateInterval $maxAge = null, array $directives = null): void {
+	public function assignHttpCacheControl(?\DateInterval $maxAge = null, ?array $directives = null): void {
 		$this->httpCacheControl = new HttpCacheControl($maxAge, $directives);
 	}
 	
@@ -270,9 +270,9 @@ class ControllingUtils {
 	 * @param bool $includeQuery
 	 * @param array $characteristics
 	 */
-	public function assignResponseCacheControl(\DateInterval $cacheInterval = null,
+	public function assignResponseCacheControl(?\DateInterval $cacheInterval = null,
 			bool $includeQuery = false, array $characteristics = array(), bool $shared = true,
-			string $verifierCheckLookupId = null): void {
+			?string $verifierCheckLookupId = null): void {
 		$queryParamNames = null;
 		if ($includeQuery) {
 			$queryParamNames = array_keys($this->getInvokerInfo()->getQueryParams());
@@ -296,7 +296,7 @@ class ControllingUtils {
 	 * @param string|null $moduleNamespace
 	 * @return View|null
 	 */
-	public function createViewFromCache(string $viewNameExpression, string $moduleNamespace = null): ?View {
+	public function createViewFromCache(string $viewNameExpression, ?string $moduleNamespace = null): ?View {
 		if ($this->viewCacheControl === null || !$this->isViewCachingEnabled()) {
 			return null;
 		}
@@ -315,7 +315,7 @@ class ControllingUtils {
 	 * @param string|null $moduleNamespace
 	 * @return View
 	 */
-	public function createView(string $viewNameExpression, array $params = null, string $moduleNamespace = null) {
+	public function createView(string $viewNameExpression, ?array $params = null, ?string $moduleNamespace = null) {
 		$viewName = $this->typeExpressionResolver->resolve($viewNameExpression);
 	
 		$viewFactory = $this->getN2nContext()->lookup(ViewFactory::class);
@@ -335,7 +335,7 @@ class ControllingUtils {
 	 * @param string $viewNameExpression
 	 * @param ViewCacheControl $viewCacheControl
 	 */
-	public function forwardCache(string $viewNameExpression, ViewCacheControl $viewCacheControl = null) {
+	public function forwardCache(string $viewNameExpression, ?ViewCacheControl $viewCacheControl = null) {
 		$cachedView = $this->createViewFromCache($viewNameExpression, $viewCacheControl);
 		if (null === $cachedView) return false;
 	
@@ -347,8 +347,8 @@ class ControllingUtils {
 	 * @param string $viewNameExpression
 	 * @param mixed $params
 	 */
-	public function forward(string $viewNameExpression, array $params = null,
-			ViewCacheControl $viewCacheControl = null) {
+	public function forward(string $viewNameExpression, ?array $params = null,
+			?ViewCacheControl $viewCacheControl = null) {
 		$this->forwardView($this->createView($viewNameExpression, $params, $viewCacheControl));
 	}
 	
@@ -369,7 +369,7 @@ class ControllingUtils {
 	 * @param string|null $methodName
 	 * @return boolean
 	 */
-	public function hasDispatch(Dispatchable $dispatchable = null, $methodName = null) {
+	public function hasDispatch(?Dispatchable $dispatchable = null, $methodName = null) {
 		$dc = $this->getDispatchContext();
 		
 		return $dc->hasDispatchJob() && ($dispatchable === null 
@@ -394,7 +394,7 @@ class ControllingUtils {
 	/**
 	 * @param int|null $httpStatus
 	 */
-	public function refresh(int $httpStatus = null) {
+	public function refresh(?int $httpStatus = null) {
 		$this->redirect($this->getRequest()->getUrl(), $httpStatus);
 	}
 	
@@ -412,7 +412,7 @@ class ControllingUtils {
 	 * @param string|UrlComposer|Linkable $murl will be the first arg in the call of {@see self::buildUrl()}.
 	 * @param int $httpStatus
 	 */
-	public function redirect($murl, int $httpStatus = null) {
+	public function redirect($murl, ?int $httpStatus = null) {
 		$this->assignCacheControls();
 	
 		$url = $this->buildUrl($murl);
@@ -427,7 +427,7 @@ class ControllingUtils {
 	 * @throws UnavailableUrlException
 	 * @return \n2n\util\uri\Url|NULL
 	 */
-	public function buildUrl($murl, bool $required = true, string &$suggestedLabel = null) {
+	public function buildUrl($murl, bool $required = true, ?string &$suggestedLabel = null) {
 		try {
 			return UrlBuilder::buildUrl($murl, $this->getN2nContext(), $this->getControllerContext(), $suggestedLabel);
 		} catch (UnavailableUrlException $e) {
@@ -436,12 +436,12 @@ class ControllingUtils {
 		}
 	}
 	
-	public function getUrlToContext($pathExt = null, array $queries = null, int $httpStatus = null,
+	public function getUrlToContext($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
 			$fragment = null, $ssl = null, $subsystem = null) {
 		return $this->getHttpContext()->buildContextUrl($ssl, $subsystem)->extR($pathExt, $queries, $fragment);
 	}
 	
-	public function redirectToContext($pathExt = null, array $queries = null, int $httpStatus = null,
+	public function redirectToContext($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
 			$fragment = null, $ssl = null, $subsystem = null) {
 		$this->assignCacheControls();
 		$this->getResponse()->send(new Redirect(
@@ -449,7 +449,7 @@ class ControllingUtils {
 				$httpStatus));
 	}
 	
-	public function getUrlToController($pathExt = null, array $queries = null, $controllerContext = null,
+	public function getUrlToController($pathExt = null, ?array $queries = null, $controllerContext = null,
 			$fragment = null, $ssl = null, $subsystem = null) {
 		if (isset($controllerContext)) {
 			if (!($controllerContext instanceof ControllerContext)) {
@@ -464,7 +464,7 @@ class ControllingUtils {
 				->toUrl($this->getN2nContext());
 	}
 	
-	public function redirectToController($pathExt = null, array $queries = null, int $httpStatus = null,
+	public function redirectToController($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
 			$controllerContext = null, $fragment = null, $ssl = null, $subsystem = null) {
 		$this->assignCacheControls();
 		$this->getResponse()->send(new Redirect(
@@ -473,13 +473,13 @@ class ControllingUtils {
 	}
 	
 
-	public function getUrlToPath($pathExt = null, array $queries = null, string $fragment = null, bool $ssl = null, 
+	public function getUrlToPath($pathExt = null, ?array $queries = null, ?string $fragment = null, ?bool $ssl = null, 
 			$subsystem = null) {
 		return $this->getHttpContext()->buildContextUrl($ssl, $subsystem)->extR($this->getRequest()->getCmdPath())
 				->extR($pathExt, $queries, $fragment);
 	}
 	
-	public function redirectToPath($pathExt = null, array $queries = null, int $httpStatus = null,
+	public function redirectToPath($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
 			$fragment = null, $ssl = null, $subsystem = null) {
 		$this->assignCacheControls();
 		$this->getResponse()->send(new Redirect($this->getUrlToPath($pathExt, $queries, $fragment, $ssl, $subsystem), 
@@ -489,7 +489,7 @@ class ControllingUtils {
 	 * @param string $httpStatus
 	 * @throws NoHttpRefererGivenException
 	 */
-	public function redirectToReferer(int $httpStatus = null) {
+	public function redirectToReferer(?int $httpStatus = null) {
 		if (null !== ($referer = $this->getRequest()->getHeader('Referer'))) {
 			$this->assignCacheControls();
 			$this->redirect($referer, $httpStatus);
@@ -507,7 +507,7 @@ class ControllingUtils {
 		return $this->invokerInfo;
 	}
 	
-	public function setInvokerInfo(InvokerInfo $invokerInfo = null) {
+	public function setInvokerInfo(?InvokerInfo $invokerInfo = null) {
 		$this->invokerInfo = $invokerInfo;
 	}
 	
@@ -516,7 +516,7 @@ class ControllingUtils {
 	 * @param int $pathPartsToShift
 	 * @return \n2n\web\http\controller\ControllerContext
 	 */
-	public function createDelegateContext(Controller $controller = null, int $numPathPartsToShift = null) {
+	public function createDelegateContext(?Controller $controller = null, ?int $numPathPartsToShift = null) {
 		$controllerContext = $this->getControllerContext();
 	
 		if ($numPathPartsToShift === null) {
@@ -537,7 +537,7 @@ class ControllingUtils {
 				$cmdContextPath->ext($cmdPath->sub(0, $numPathPartsToShift)), $controller);
 	}
 	
-	public function delegate(Controller $controller, int $numPathPartsToShift = null, $execute = true, bool $try = false) {
+	public function delegate(Controller $controller, ?int $numPathPartsToShift = null, $execute = true, bool $try = false) {
 		return $this->delegateToControllerContext($this->createDelegateContext($controller, $numPathPartsToShift), $execute, 
 				$try);
 	}
@@ -603,7 +603,7 @@ class ControllingUtils {
 	 * @param string|null $name
 	 * @param bool $includeBuffer
 	 */
-	public function sendFileAttachment(Downloadable $file, string $name = null, bool $includeBuffer = true): void {
+	public function sendFileAttachment(Downloadable $file, ?string $name = null, bool $includeBuffer = true): void {
 		$this->send(new FilePayload($file, true, $name), $includeBuffer);
 	}
 	
@@ -620,7 +620,7 @@ class ControllingUtils {
 	 * @param string|null $name
 	 * @param bool $includeBuffer
 	 */
-	public function sendFsPathAttachment($fsPath, string $name = null, bool $includeBuffer = true): void {
+	public function sendFsPathAttachment($fsPath, ?string $name = null, bool $includeBuffer = true): void {
 		$this->send(new FsPathPayload(FsPath::create($fsPath), true, $name), $includeBuffer);
 	}
 
@@ -755,7 +755,7 @@ class ControllingUtils {
 		}
 	}
 
-	function execIsolated(\Closure $closure, int $tries = 3, \Closure $deadlockHandler = null,
+	function execIsolated(\Closure $closure, int $tries = 3, ?\Closure $deadlockHandler = null,
 			bool $readOnly = false): mixed {
 		return (new N2nUtil($this->getN2nContext()))->container()
 				->execIsolated($closure, $tries, $deadlockHandler, $readOnly);

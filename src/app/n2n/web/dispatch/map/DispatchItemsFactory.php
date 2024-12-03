@@ -50,7 +50,7 @@ class DispatchItemsFactory {
 	}
 	
 	public function createMappingDefinition(Dispatchable $dispatchable, N2nContext $n2nContext, 
-			ObjectItem $objectItem = null, $methodName = null, ParamInvestigator $paramInvestigator = null) {
+			?ObjectItem $objectItem = null, $methodName = null, ?ParamInvestigator $paramInvestigator = null) {
 		$mappingDefinition = new MappingDefinition(new MappingResult($dispatchable, 
 				$this->dispatchModel), $objectItem, $methodName, $paramInvestigator);
 		$this->setupMappingDefinition($mappingDefinition, $n2nContext);

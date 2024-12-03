@@ -48,12 +48,12 @@ interface UiOutfitter {
 	 * @param int $elemNature
 	 * @return HtmlElement
 	 */
-	public function createElement(int $elemNature, array $attrs = null, $contents = ''): UiComponent;
+	public function createElement(int $elemNature, ?array $attrs = null, $contents = ''): UiComponent;
 
 	/**
 	 * @param PropertyPath $propertyPath
 	 * @param HtmlView $contextView
 	 * @return UiComponent
 	 */
-	public function createMagDispatchableView(PropertyPath $propertyPath = null, HtmlView $contextView): UiComponent;
+	public function createMagDispatchableView(?PropertyPath $propertyPath = null, HtmlView $contextView): UiComponent;
 }

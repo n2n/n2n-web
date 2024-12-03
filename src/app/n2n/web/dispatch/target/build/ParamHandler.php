@@ -38,7 +38,7 @@ class ParamHandler {
 	 * @param PropertyPath $propertyPath
 	 */
 	public static function build(string $type, PropertyPath $propertyPath, bool $useEmptyBrackets, 
-			string $optionExt = null) {
+			?string $optionExt = null) {
 		if ($type == self::TYPE_PROPERTY_TARGET) {
 			return $type . '[]';
 		}
