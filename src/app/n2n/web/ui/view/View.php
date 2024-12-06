@@ -826,7 +826,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 		return L10nUtils::formatDateTime($value, $this->getN2nContext()->getN2nLocale(), $dateStyle, $timeStyle, $timeZone);
 	}
 
-	public function getL10nDateTimeFormat(?\DateTime $value = null, $icuPattern, ?\DateTimeZone $timeZone = null) {
+	public function getL10nDateTimeFormat(?\DateTime $value, string $icuPattern, ?\DateTimeZone $timeZone = null) {
 		if (is_null($value)) return $value;
 		return L10nUtils::formatDateTimeWithIcuPattern($value, $this->getN2nContext()->getN2nLocale(), $icuPattern, $timeZone);
 	}
