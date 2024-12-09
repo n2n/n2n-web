@@ -161,7 +161,7 @@ class ResponseCacheStore {
 		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
 	}
 
-// 	public function removeByFilter(string $method, string $hostName, Path $path, ?array $queryParams = null,
+// 	public function removeByFilter(string $method, string $hostName, Path $path, ?array $queryParams,
 // 			array $characteristicNeedles) {
 // 		$this->cacheStore->removeAll(self::RESPONSE_NAME, $this->buildResponseCharacteristics($method, $hostName, $path, $queryParams, 
 // 				$characteristicNeedles));
