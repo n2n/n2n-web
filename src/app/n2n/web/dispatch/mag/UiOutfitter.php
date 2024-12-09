@@ -55,5 +55,5 @@ interface UiOutfitter {
 	 * @param HtmlView $contextView
 	 * @return UiComponent
 	 */
-	public function createMagDispatchableView(?PropertyPath $propertyPath = null, HtmlView $contextView): UiComponent;
+	public function createMagDispatchableView(?PropertyPath $propertyPath, HtmlView $contextView): UiComponent;
 }
