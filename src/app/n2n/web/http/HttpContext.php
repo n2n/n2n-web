@@ -226,7 +226,7 @@ class HttpContext {
 	}
 	
 	/**
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function getBaseAssetsUrl() {
 		return $this->baseAssetsUrl;
@@ -296,11 +296,12 @@ class HttpContext {
 	}
 
 	/**
-	 * @param bool $ssl
-	 * @param Subsystem|SubsystemRule|string $subsystem
-	 * @return \n2n\util\uri\Url
+	 * @param bool|null $ssl
+	 * @param Subsystem|SubsystemRule|string|null $subsystem
+	 * @param bool $absolute
+	 * @return Url
 	 */
-	public function buildContextUrl(?bool $ssl = null, Subsystem|SubsystemRule|string $subsystem = null, bool $absolute = false): Url {
+	public function buildContextUrl(?bool $ssl = null, Subsystem|SubsystemRule|string|null $subsystem = null, bool $absolute = false): Url {
 		$url = null;
 		
 		if ($subsystem !== null) {
@@ -331,7 +332,7 @@ class HttpContext {
 	/**
 	 * @param Url $url
 	 * @param bool|null $ssl
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	private function completeSchemaCheck(Url $url, ?bool $ssl = null) {
 		if ($ssl === null) return $url;
@@ -353,7 +354,7 @@ class HttpContext {
 	
 	/**
 	 * @param Subsystem $subsystem
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	private function buildSubsystemUrl(SubsystemRule $subsystemRule) {
 		$url = new Url();
