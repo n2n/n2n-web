@@ -75,6 +75,9 @@ use n2n\web\http\cache\PayloadCacheControl;
 use n2n\web\http\cache\PayloadCacheStore;
 use n2n\web\http\cache\CachedPayload;
 use n2n\core\util\N2nUtil;
+use n2n\util\magic\MagicArray;
+use n2n\util\magic\TaskResult;
+use n2n\util\magic\impl\TaskResults;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -753,6 +756,10 @@ class ControllingUtils {
 			throw new IllegalStateException('MagicTask execution failed. Reason: ' . $e->getMessage(),
 					previous: $e);
 		}
+	}
+
+	function sendErrJson(MagicArray $errorMap): void {
+		(new ExecResult(TaskResults::invalid($errorMap), $this))->sendErrJson();
 	}
 
 	function execIsolated(\Closure $closure, int $tries = 3, ?\Closure $deadlockHandler = null,

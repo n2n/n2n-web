@@ -39,6 +39,7 @@ use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTask;
 use n2n\web\http\StatusException;
+use n2n\util\magic\MagicArray;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -490,6 +491,10 @@ trait ControllingUtilsTrait {
 			?int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		return $this->cu()->exec($magicTask, $input, $rejectStatus);
 	}
+
+	protected final function sendErrJson(MagicArray $errorMap): void {
+		$this->cu()->sendErrJson($errorMap);
+}
 
 	protected final function execIsolated(\Closure $closure, int $tries = 3, ?\Closure $deadlockHandler = null,
 			bool $readOnly = false): mixed {
