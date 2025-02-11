@@ -768,6 +768,4 @@ class ControllingUtils {
 				->execIsolated($closure, $tries, $deadlockHandler, $readOnly);
 	}
 
-
-
 }
