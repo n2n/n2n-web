@@ -78,6 +78,8 @@ use n2n\core\util\N2nUtil;
 use n2n\util\magic\MagicArray;
 use n2n\util\magic\TaskResult;
 use n2n\util\magic\impl\TaskResults;
+use n2n\reflection\UnresolvableTypeExpressionException;
+use n2n\web\http\PageNotFoundException;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -317,8 +319,9 @@ class ControllingUtils {
 	 * @param mixed $params
 	 * @param string|null $moduleNamespace
 	 * @return View
+	 * @throws UnresolvableTypeExpressionException
 	 */
-	public function createView(string $viewNameExpression, ?array $params = null, ?string $moduleNamespace = null) {
+	public function createView(string $viewNameExpression, ?array $params = null, ?string $moduleNamespace = null): View {
 		$viewName = $this->typeExpressionResolver->resolve($viewNameExpression);
 	
 		$viewFactory = $this->getN2nContext()->lookup(ViewFactory::class);
@@ -539,14 +542,20 @@ class ControllingUtils {
 		return new ControllerContext($cmdPath->sub($numPathPartsToShift),
 				$cmdContextPath->ext($cmdPath->sub(0, $numPathPartsToShift)), $controller);
 	}
-	
-	public function delegate(Controller $controller, ?int $numPathPartsToShift = null, $execute = true, bool $try = false) {
+
+	/**
+	 * @throws PageNotFoundException
+	 */
+	public function delegate(Controller $controller, ?int $numPathPartsToShift = null, $execute = true, bool $try = false): ?bool {
 		return $this->delegateToControllerContext($this->createDelegateContext($controller, $numPathPartsToShift), $execute, 
 				$try);
 	}
-	
-	public function delegateToControllerContext(ControllerContext $nextControllerContext, bool $execute = true, 
-			bool $try = false) {
+
+	/**
+	 * @throws PageNotFoundException
+	 */
+	public function delegateToControllerContext(ControllerContext $nextControllerContext, bool $execute = true,
+			bool $try = false): ?bool {
 		$plan = $this->getControllerContext()->getControllingPlan();
 	
 		if ($plan->getStatus() == ControllingPlan::STATUS_FILTER) {
@@ -565,7 +574,7 @@ class ControllingUtils {
 	 * @param array|JsonSerializable $data
 	 * @param bool $includeBuffer
 	 */
-	public function sendJson($data, bool $includeBuffer = true) {
+	public function sendJson($data, bool $includeBuffer = true): void {
 		$this->send(new JsonPayload($data), $includeBuffer);
 	}
 	
@@ -573,7 +582,7 @@ class ControllingUtils {
 	 * @param SimpleXMLElement|string $data
 	 * @param bool $includeBuffer
 	 */
-	public function sendXml($data, bool $includeBuffer = true) {
+	public function sendXml($data, bool $includeBuffer = true): void {
 		$this->send(new XmlPayload($data), $includeBuffer);
 	}
 	
@@ -581,7 +590,7 @@ class ControllingUtils {
 	 * @param string $htmlStr
 	 * @param bool $includeBuffer
 	 */
-	public function sendHtml(string $htmlStr, bool $includeBuffer = true) {
+	public function sendHtml(string $htmlStr, bool $includeBuffer = true): void {
 		$this->send(new HtmlPayload($htmlStr), $includeBuffer);
 	}
 	
@@ -589,7 +598,7 @@ class ControllingUtils {
 	 * @param string|UiComponent $uiComponent
 	 * @param bool $includeBuffer
 	 */
-	public function sendHtmlUi($uiComponent, bool $includeBuffer = true) {
+	public function sendHtmlUi($uiComponent, bool $includeBuffer = true): void {
 		$this->send(new HtmlUiPayload($uiComponent), $includeBuffer);
 	}
 	
@@ -597,7 +606,7 @@ class ControllingUtils {
 	 * @param Downloadable $file
 	 * @param bool $includeBuffer
 	 */
-	public function sendFile(Downloadable $file, bool $includeBuffer = true) {
+	public function sendFile(Downloadable $file, bool $includeBuffer = true): void {
 		$this->send(new FilePayload($file), $includeBuffer);
 	}
 
@@ -725,7 +734,7 @@ class ControllingUtils {
 	 * @return ValResult
 	 * @throws StatusException
 	 */
-	function val(MagicTask $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST) {
+	function val(MagicTask $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ValResult {
 		try {
 			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
 		} catch (MagicTaskExecutionException $e) {

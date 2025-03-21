@@ -40,6 +40,7 @@ use Psr\Http\Message\ResponseInterface;
 use n2n\util\magic\MagicTask;
 use n2n\web\http\StatusException;
 use n2n\util\magic\MagicArray;
+use n2n\web\http\BadRequestException;
 
 trait ControllingUtilsTrait {
 	private $controllingUtils;
@@ -221,26 +222,17 @@ trait ControllingUtilsTrait {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
-	/**
-	 *
-	 * @param string $viewNameExpression
-	 * @param ViewCacheControl $viewCacheControl
-	 * @return bool
-	 */
-	protected final function forwardCache(string $viewNameExpression, ?ViewCacheControl $viewCacheControl = null) {
+
+	protected final function forwardCache(string $viewNameExpression, ?ViewCacheControl $viewCacheControl = null): bool {
 		try {
 			return $this->cu()->forwardCache($viewNameExpression, $viewCacheControl);
 		} catch (\ReflectionException $e) {
 			throw $this->decorateException($viewNameExpression, $e);
 		}
 	}
-	/**
-	 *
-	 * @param string $viewNameExpression
-	 * @param mixed $params
-	 */
+
 	protected final function forward(string $viewNameExpression, ?array $params = null,
-			?ViewCacheControl $viewCacheControl = null) {
+			?ViewCacheControl $viewCacheControl = null): void {
 		try {
 			$this->cu()->forward($viewNameExpression, $params, $viewCacheControl);
 		} catch (\ReflectionException $e) {
@@ -248,20 +240,23 @@ trait ControllingUtilsTrait {
 		}
 	}
 	
-	private function decorateException(string $viewNameExpression, \Exception $e) {
-		if (!($e instanceof \ErrorException) &&
-				null !== ($lutp = ReflectionUtils::getLastMatchingUserTracemPointOfException($e, 0, (new \ReflectionClass($this))->getFileName()))) {
+	private function decorateException(string $viewNameExpression, \ReflectionException $e): ControllerError {
+		if (/*!($e instanceof \ErrorException)
+				&&*/ null !== ($lutp = ReflectionUtils::getLastMatchingUserTracemPointOfException($e, 0, (new \ReflectionClass($this))->getFileName()))) {
 			return new ControllerError('Failed to lookup view: ' . $viewNameExpression,
 					$lutp['file'], $lutp['line'], null, null, $e);
 		}
 	
-		return $e;
+		return new ControllerError('Failed to lookup view: ' . $viewNameExpression, previous: $e);
 	}
 	
-	protected final function forwardView(View $view) {
+	protected final function forwardView(View $view): void {
 		$this->cu()->forwardView($view);
 	}
-	
+
+	/**
+	 * @throws BadRequestException
+	 */
 	protected final function dispatch(Dispatchable $dispatchable, $methodName = null) {
 		return $this->cu()->dispatch($dispatchable, $methodName);
 	}
@@ -269,21 +264,21 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected function hasDispatch(?Dispatchable $dispatchable = null, $methodName = null) {
+	protected function hasDispatch(?Dispatchable $dispatchable = null, $methodName = null): bool {
 		return $this->cu()->hasDispatch($dispatchable, $methodName);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function refresh(?int $httpStatus = null) {
+	protected final function refresh(?int $httpStatus = null): void {
 		$this->cu()->refresh($httpStatus);
 	}
 	
 	/**
 	 * @see ControllingUtils::hasDispatch()
 	 */
-	protected final function redirect($murl, ?int $httpStatus = null) {
+	protected final function redirect($murl, ?int $httpStatus = null): void {
 		$this->cu()->redirect($murl, $httpStatus);
 	}
 	
@@ -291,7 +286,7 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::hasDispatch()
 	 */
 	protected final function getUrlToContext($pathExt = null, ?array $queries = null,
-			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null): \n2n\util\uri\Url {
 		return $this->cu()->getUrlToContext($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
@@ -299,14 +294,14 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::hasDispatch()
 	 */
 	protected final function redirectToContext($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
-			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null): void {
 		$this->cu()->redirectToContext($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
 	
 	/**
 	 * @see ControllingUtils::buildUrl()
 	 */
-	protected final function buildUrl($murl, bool $required = true, ?string &$suggestedLabel = null) {
+	protected final function buildUrl($murl, bool $required = true, ?string &$suggestedLabel = null): ?\n2n\util\uri\Url {
 		return $this->cu()->buildUrl($murl, $required, $suggestedLabel);
 	}
 	
@@ -314,7 +309,7 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::getUrlToController()
 	 */
 	protected final function getUrlToController($pathExt = null, ?array $queries = null, $controllerContext = null,
-			?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
+			?string $fragment = null, ?bool $ssl = null, $subsystem = null): \n2n\util\uri\Url {
 		return $this->cu()->getUrlToController($pathExt, $queries, $controllerContext, $fragment, $ssl, $subsystem);
 	}
 	
@@ -322,7 +317,7 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::redirectToController()
 	 */
 	protected final function redirectToController($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
-			$controllerContext = null, ?string $fragment = null, ?bool $ssl = null, $subsystem = null) {
+			$controllerContext = null, ?string $fragment = null, ?bool $ssl = null, $subsystem = null): void {
 		$this->cu()->redirectToController($pathExt, $queries, $httpStatus, $controllerContext, $fragment, $ssl, 
 				$subsystem);
 	}
@@ -331,7 +326,7 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::getUrlToPath()
 	 */
 	protected final function getUrlToPath($pathExt = null, ?array $queries = null, ?string $fragment = null,
-			?bool $ssl = null, $subsystem = null) {
+			?bool $ssl = null, $subsystem = null): \n2n\util\uri\Url {
 		return $this->cu()->getUrlToPath($pathExt, $queries, $fragment, $ssl, $subsystem);
 	}
 	
@@ -339,24 +334,19 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::redirectToPath()
 	 */
 	protected final function redirectToPath($pathExt = null, ?array $queries = null, ?int $httpStatus = null,
-			$fragment = null, ?bool $ssl = null, $subsystem = null) {
+			$fragment = null, ?bool $ssl = null, $subsystem = null): void {
 		$this->cu()->redirectToPath($pathExt, $queries, $httpStatus, $fragment, $ssl, $subsystem);
 	}
-	
+
 	/**
-	 * @param string $httpStatus
+	 * @param int|null $httpStatus
 	 * @throws NoHttpRefererGivenException
 	 */
-	protected final function redirectToReferer(?int $httpStatus = null) {
+	protected final function redirectToReferer(?int $httpStatus = null): void {
 		$this->cu()->redirectToReferer($httpStatus);
 	}
-	
-	/**
-	 * @param Controller $controller
-	 * @param int $pathPartsToShift
-	 * @return ControllerContext
-	 */
-	protected final function createDelegateContext(?Controller $controller = null, ?int $pathPartsToShift = null) {
+
+	protected final function createDelegateContext(?Controller $controller = null, ?int $pathPartsToShift = null): ControllerContext {
 		return $this->cu()->createDelegateContext($controller, $pathPartsToShift);
 	}
 	
@@ -364,7 +354,7 @@ trait ControllingUtilsTrait {
 	 * @see ControllingUtils::delegate()
 	 */
 	protected final function delegate(Controller $controller, ?int $numPathPartsToShift = null, $execute = true,
-			bool $tryIfMain = false) {
+			bool $tryIfMain = false): ?bool {
 		return $this->cu()->delegate($controller, $numPathPartsToShift, $execute, $tryIfMain);
 	}
 	
