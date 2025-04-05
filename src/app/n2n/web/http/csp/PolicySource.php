@@ -71,6 +71,15 @@ class PolicySource {
 		$source->type = PolicySourceType::HASH;
 		return $source;
 	}
+
+	static function fromHash(string $hash): PolicySource {
+		$policySource = new PolicySource('\'' . $hash . '\'');
+		if ($policySource->getType() === PolicySourceType::HASH) {
+			return $policySource;
+		}
+
+		throw new \InvalidArgumentException('Invalid policy source hash: ' . $hash);
+	}
 }
 
 enum PolicySourceType {
