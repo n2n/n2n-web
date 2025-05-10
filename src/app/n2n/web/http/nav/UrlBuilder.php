@@ -55,7 +55,7 @@ class UrlBuilder {
 		}
 
 		if ($arg instanceof Linkable) {
-			return (string) $arg->toUrl();
+			return (string) $arg->toUrl($suggestedLabel);
 		}
 
 		try {
