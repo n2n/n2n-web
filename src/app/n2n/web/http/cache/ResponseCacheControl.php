@@ -45,8 +45,18 @@ class ResponseCacheControl {
 		return $this->cacheInterval;
 	}
 	
-	public function getIncludedQueryParamNames() {
+	public function getIncludedQueryParamNames(): array {
 		return $this->includedQueryParamNames;
+	}
+
+	function setIncludedQueryParamNames(array $includedQueryParamNames): static {
+		$this->includedQueryParamNames = $includedQueryParamNames;
+		return $this;
+	}
+
+	function addIncludedQueryParamName(string $name): static {
+		$this->includedQueryParamNames[] = $name;
+		return $this;
 	}
 	
 	public function getCharacteristics(): array {
