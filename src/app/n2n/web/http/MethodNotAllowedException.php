@@ -24,7 +24,7 @@ namespace n2n\web\http;
 class MethodNotAllowedException extends StatusException {
 	private $allowedMethods;
 	
-	public function __construct(int $allowedMethods, $message = null, $code = null, \Exception $previous =  null) {
+	public function __construct(int $allowedMethods, $message = null, $code = null, ?\Exception $previous =  null) {
 		parent::__construct(Response::STATUS_405_METHOD_NOT_ALLOWED, $message, $code, $previous);
 		
 		$this->allowedMethods = $allowedMethods;
