@@ -22,7 +22,7 @@
 namespace n2n\web\http;
 
 class UnauthorizedException extends StatusException {
-	public function __construct($message = null, $code = null, ?\Exception $previous =  null) {
+	public function __construct(?string $message = null, ?int $code = null, ?\Exception $previous =  null) {
 		parent::__construct(Response::STATUS_401_UNAUTHORIZED, $message, $code, $previous);		
 	}
 }
