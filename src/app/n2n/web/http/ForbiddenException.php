@@ -22,7 +22,7 @@
 namespace n2n\web\http;
 
 class ForbiddenException extends StatusException {
-	public function __construct($message = null, $code = null, \Exception $previous =  null) {
+	public function __construct($message = null, $code = null, ?\Exception $previous =  null) {
 		parent::__construct(Response::STATUS_403_FORBIDDEN, $message, $code, $previous);		
 	}
 }
