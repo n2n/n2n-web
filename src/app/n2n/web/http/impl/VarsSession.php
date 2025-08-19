@@ -111,7 +111,7 @@ class VarsSession implements Session {
 		}
 
 		if (!$this->sameSite) {
-			session_set_cookie_params(['samesite' => 'None', 'Secure' => true, 'HttpOnly' => true]);
+			session_set_cookie_params(['SameSite' => 'None', 'Secure' => true, 'HttpOnly' => true]);
 		}
 
 		HttpUtils::sessionStart();
