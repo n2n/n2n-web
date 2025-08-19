@@ -45,8 +45,8 @@ class VarsSession implements Session {
 	 * @param bool $sameSite
 	 * @param FsPath|null $phpSessionDirFsPath
 	 */
-	public function __construct(private string $applicationName, private bool $sameSite = true,
-			private ?FsPath $phpSessionDirFsPath = null) {
+	public function __construct(private string $applicationName, private ?bool $sameSite = true,
+			private ?FsPath $phpSessionDirFsPath = null, private ?bool $secure = true) {
 	}
 
 	function setSaveDirFsPath(?FsPath $saveDirFsPath): static {
@@ -110,9 +110,20 @@ class VarsSession implements Session {
 			session_set_save_handler(new CacheStoreSessionHandler($this->saveCacheStore), true);
 		}
 
-		if (!$this->sameSite) {
-			session_set_cookie_params(['SameSite' => 'None', 'Secure' => true, 'HttpOnly' => true]);
+		$cookieParams = ['HttpOnly' => true];
+
+		if ($this->secure !== null) {
+			$cookieParams['Secure'] = $this->secure;
 		}
+
+		if ($this->sameSite === true) {
+			$cookieParams['SameSite'] = 'Strict';
+		} elseif ($this->sameSite === false) {
+			$cookieParams['SameSite'] = 'None';
+			$cookieParams['Secure'] = true;
+		}
+
+		session_set_cookie_params($cookieParams);
 
 		HttpUtils::sessionStart();
 
@@ -125,7 +136,8 @@ class VarsSession implements Session {
 		}
 		
 		if (!isset($_SESSION[$this->applicationName][self::SESSION_VALIDATED_KEY])) {
-			session_regenerate_id(true);
+			// arg not true, because a second Set-Cookie header would be sent.
+			session_regenerate_id();
 		
 			$_SESSION[$this->applicationName] = array();
 			$_SESSION[$this->applicationName][self::SESSION_VALIDATED_KEY] = 1;
@@ -140,7 +152,7 @@ class VarsSession implements Session {
 	/**
 	 * @return bool
 	 */
-	public function isSameSite(): bool {
+	public function isSameSite(): ?bool {
 		return $this->sameSite;
 	}
 
@@ -148,9 +160,26 @@ class VarsSession implements Session {
 	 * @param bool $sameSite
 	 * @return VarsSession
 	 */
-	public function setSameSite(bool $sameSite): static {
+	public function setSameSite(?bool $sameSite): static {
 		$this->ensureNotStarted();
 		$this->sameSite = $sameSite;
+		return $this;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSecure(): ?bool {
+		return $this->sameSite;
+	}
+
+	/**
+	 * @param bool $secure
+	 * @return VarsSession
+	 */
+	public function setSecure(?bool $secure): static {
+		$this->ensureNotStarted();
+		$this->secure = $secure;
 		return $this;
 	}
 
