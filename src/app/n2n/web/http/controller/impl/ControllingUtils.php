@@ -64,7 +64,7 @@ use n2n\web\http\StatusException;
 use n2n\core\container\N2nContext;
 use n2n\util\io\Downloadable;
 use Psr\Http\Message\ResponseInterface;
-use n2n\util\magic\MagicTaskExecutionException;
+use n2n\util\magic\TaskInputMismatchException;
 use n2n\util\magic\MagicTask;
 use n2n\core\container\Transaction;
 use n2n\web\http\controller\ParamPost;
@@ -737,13 +737,13 @@ class ControllingUtils {
 	function val(MagicTask $validationJob, int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ValResult {
 		try {
 			return new ValResult($validationJob->exec($this->getN2nContext()), $this);
-		} catch (MagicTaskExecutionException $e) {
+		} catch (TaskInputMismatchException $e) {
 			throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 		}
 	}
 
 	/**
-	 * Executes a {@see MagicTask} and automatically converts {@see MagicTaskExecutionException}s to
+	 * Executes a {@see MagicTask} and automatically converts {@see TaskInputMismatchException}s to
 	 * {@see StatusException}s if parameter $rejectStatus is not null.
 	 *
 	 *
@@ -757,7 +757,7 @@ class ControllingUtils {
 	function exec(MagicTask $magicTask, mixed $input = null, ?int $rejectStatus = Response::STATUS_400_BAD_REQUEST): ExecResult {
 		try {
 			return new ExecResult($magicTask->exec($this->getN2nContext(), $input), $this);
-		} catch (MagicTaskExecutionException $e) {
+		} catch (TaskInputMismatchException $e) {
 			if ($rejectStatus !== null) {
 				throw new StatusException($rejectStatus, $e->getMessage(), null, $e);
 			}
