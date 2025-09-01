@@ -46,7 +46,7 @@ class VarsSession implements Session {
 	 * @param FsPath|null $phpSessionDirFsPath
 	 * @param bool|null $secure
 	 */
-	public function __construct(private string $applicationName, private ?bool $sameSite = true,
+	public function __construct(private string $applicationName, private ?bool $sameSite = null,
 			private ?FsPath $phpSessionDirFsPath = null, private ?bool $secure = true) {
 	}
 
