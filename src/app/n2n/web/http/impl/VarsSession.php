@@ -82,30 +82,30 @@ class VarsSession implements Session {
 		$this->started = true;
 
 		// @todo find new place for static functions
-		
+
 		ini_set('session.use_only_cookies', true);
-		
+
 		ini_set('session.entropy_file', '/dev/urandom');
 		ini_set('session.entropy_length', '32');
 		ini_set('session.hash_bits_per_character', 6);
-		
+
 		ini_set('session.cookie_httponly', true);
 
 		// @todo find a way to use this call only for ssl requests
 // 		ini_set('session.cookie_secure', true);
 		ini_set('session.use_strict_mode', 1);
-		
+
 		ini_set('session.name', $this->applicationName . self::SESSION_COOKIE_SUFFIX);
-				
+
 // 		if (isset($_GET[self::ID_OVERWRITING_GET_PARAM])) {
 // 			session_id($_GET[self::ID_OVERWRITING_GET_PARAM]);
 // 		}
 
-        session_cache_limiter(null);
+		session_cache_limiter(null);
 
-        if ($this->phpSessionDirFsPath !== null) {
-            session_save_path((string) $this->phpSessionDirFsPath);
-        }
+		if ($this->phpSessionDirFsPath !== null) {
+			session_save_path((string) $this->phpSessionDirFsPath);
+		}
 
 		if ($this->saveCacheStore !== null) {
 			session_set_save_handler(new CacheStoreSessionHandler($this->saveCacheStore), true);
@@ -131,19 +131,20 @@ class VarsSession implements Session {
 //		if ($this->dirFsPath !== null) {
 //			session_gc();
 //		}
-		
+
 		if (!isset($_SESSION[$this->applicationName])) {
 			$_SESSION[$this->applicationName] = array();
 		}
-		
+
 		if (!isset($_SESSION[$this->applicationName][self::SESSION_VALIDATED_KEY])) {
-			// arg not true, because a second Set-Cookie header would be sent.
-			session_regenerate_id();
-		
+			// remove Set-Cookie header first, because a second Set-Cookie header will be sent with session_regenerate_id(true).
+			header_remove('Set-Cookie');
+			session_regenerate_id(true);
+
 			$_SESSION[$this->applicationName] = array();
 			$_SESSION[$this->applicationName][self::SESSION_VALIDATED_KEY] = 1;
 		}
-		
+
 		if (!isset($_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY])) {
 			$_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY] = array();
 		}
@@ -192,7 +193,7 @@ class VarsSession implements Session {
 
 		return session_id();
 	}
-	
+
 	public function has(string $namespace, string $key): bool {
 		$this->ensureStarted();
 
@@ -200,7 +201,7 @@ class VarsSession implements Session {
 				&& array_key_exists($key, $_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace]);
 	}
 	/**
-	 * 
+	 *
 	 * @param mixed $namespace
 	 * @param string $key
 	 * @param string $value
@@ -215,7 +216,7 @@ class VarsSession implements Session {
 		$_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][(string) $key] = $value;
 	}
 	/**
-	 * 
+	 *
 	 * @param mixed $namespace
 	 * @param string $key
 	 * @return string
@@ -231,7 +232,7 @@ class VarsSession implements Session {
 		return $_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][$key];
 	}
 	/**
-	 * 
+	 *
 	 * @param mixed $namespace
 	 * @param string $key
 	 */
@@ -241,7 +242,7 @@ class VarsSession implements Session {
 		if(!isset($_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace])) {
 			return;
 		}
-	
+
 		unset($_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $namespace][(string) $key]);
 	}
 
@@ -250,7 +251,7 @@ class VarsSession implements Session {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param mixed $module
 	 * @param string $key
 	 * @param mixed $obj
@@ -265,7 +266,7 @@ class VarsSession implements Session {
 		$_SESSION[$this->applicationName][self::SESSION_CONTEXT_KEY][(string) $module][(string) $key] = serialize($obj);
 	}
 	/**
-	 * 
+	 *
 	 * @param mixed $module
 	 * @param string $key
 	 * @return mixed
