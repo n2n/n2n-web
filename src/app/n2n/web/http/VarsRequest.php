@@ -124,7 +124,7 @@ class VarsRequest implements Request {
 		$originProtocol = null;
 		$originHost = null;
 		if (isset($this->serverVars['HTTP_ORIGIN'])) {
-			$url = Url::create($this->serverVars['HTTP_ORIGIN']);
+			$url = Url::create($this->serverVars['HTTP_ORIGIN'], true);
 			if ($url->hasScheme()) {
 				$originProtocol = $url->getScheme();
 			}
