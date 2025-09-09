@@ -38,7 +38,7 @@ class ControllingPlan {
 	const STATUS_EXECUTED = 'executed';
 	const STATUS_ABORTED = 'aborted';
 	const STATUS_ERROR = 'error';
-			
+
 	private HttpContext $httpContext;
 	private $status = self::STATUS_READY;
 	private $n2nLocale;
@@ -47,7 +47,7 @@ class ControllingPlan {
 	private $filterQueue;
 	private $mainQueue;
 	private $responseHeaders = [];
-	
+
 	private $onPostPrecacheClosures = [];
 	private $onMainStartClosures = [];
 
@@ -60,28 +60,28 @@ class ControllingPlan {
 		$this->filterQueue = new ControllerContextQueue();
 		$this->mainQueue = new ControllerContextQueue();
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\HttpContext
 	 */
 	function getHttpContext() {
 		return $this->httpContext;
 	}
-	
+
 	/**
 	 * @return string
 	 */
 	function getStatus() {
-	 	return $this->status;
+		return $this->status;
 	}
-	
+
 	/**
 	 * @return \n2n\l10n\N2nLocale
 	 */
 	function getN2nLocale() {
 		return $this->n2nLocale;
 	}
-	
+
 	/**
 	 * @param N2nLocale|null $n2nLocale
 	 * @return ControllingPlan
@@ -90,18 +90,18 @@ class ControllingPlan {
 		if ($n2nLocale === null && $this->status !== self::STATUS_READY) {
 			throw new ControllingPlanException('Can not set null locale on a already executing ControllingPlan.');
 		}
-		
+
 		$this->n2nLocale = $n2nLocale;
 		return $this;
 	}
-	
+
 	/**
 	 * @return bool
 	 */
 	function isResponseCachePrevented() {
 		return $this->responseCachePrevented;
 	}
-	
+
 	/**
 	 * @param bool $preventResponseCache
 	 * @return \n2n\web\http\controller\ControllingPlan
@@ -110,7 +110,7 @@ class ControllingPlan {
 		$this->responseCachePrevented = $preventResponseCache;
 		return $this;
 	}
-	
+
 	/**
 	 * @param ControllerContext $precacheFilterControllerContext
 	 * @param bool $afterCurrent
@@ -118,15 +118,15 @@ class ControllingPlan {
 	 */
 	function addPrecacheFilter(ControllerContext $precacheFilterControllerContext, bool $afterCurrent = false) {
 		$precacheFilterControllerContext->setControllingPlan($this);
-		
+
 		if ($this->status !== self::STATUS_PRECACHE) {
 			$afterCurrent = false;
 		}
-		
+
 		$this->precacheQueue->add($precacheFilterControllerContext, $afterCurrent);
 		return $this;
 	}
-	
+
 	/**
 	 * @param ControllerContext $filterControllerContext
 	 * @param bool $afterCurrent
@@ -134,15 +134,15 @@ class ControllingPlan {
 	 */
 	function addFilter(ControllerContext $filterControllerContext, bool $afterCurrent = false) {
 		$filterControllerContext->setControllingPlan($this);
-		
+
 		if ($this->status !== self::STATUS_FILTER) {
 			$afterCurrent = false;
 		}
-		
+
 		$this->filterQueue->add($filterControllerContext, $afterCurrent);
 		return $this;
 	}
-	
+
 	/**
 	 * @param ControllerContext $mainControllerContext
 	 * @param bool $afterCurrent
@@ -150,15 +150,15 @@ class ControllingPlan {
 	 */
 	public function addMain(ControllerContext $mainControllerContext, bool $afterCurrent = false) {
 		$mainControllerContext->setControllingPlan($this);
-		
+
 		if (!$afterCurrent) {
 			$afterCurrent = false;
 		}
-		
+
 		$this->mainQueue->add($mainControllerContext, $afterCurrent);
 		return $this;
 	}
-	
+
 // 	/**
 // 	 * @return ControllerContext|null
 // 	 */
@@ -166,11 +166,11 @@ class ControllingPlan {
 // 		if (isset($this->precacheFilterControllerContexts[$this->nextFilterIndex])) {
 // 			return $this->currentPrecacheFilterControllerContext = $this->precacheFilterControllerContexts[$this->nextFilterIndex++];
 // 		}
-		
+
 // 		$this->currentFilterControllerContext = null;
 // 		return null;
 // 	}
-	
+
 // 	/**
 // 	 * @return ControllerContext|null
 // 	 */
@@ -178,11 +178,11 @@ class ControllingPlan {
 // 		if (isset($this->filterControllerContexts[$this->nextFilterIndex])) {
 // 			return $this->currentFilterControllerContext = $this->filterControllerContexts[$this->nextFilterIndex++];
 // 		}
-		
+
 // 		$this->currentFilterControllerContext = null;
 // 		return null;
 // 	}
-	
+
 // 	/**
 // 	 * @return ControllerContext|null
 // 	 */
@@ -209,7 +209,7 @@ class ControllingPlan {
 		foreach ($this->responseHeaders as $responseHeader) {
 			$this->httpContext->getResponse()->setHeader($responseHeader, false);
 		}
-		
+
 		try {
 			$this->workOffQueues();
 		} catch (StatusException $e) {
@@ -219,14 +219,14 @@ class ControllingPlan {
 			$this->status = self::STATUS_ERROR;
 			throw $e;
 		}
-		
+
 		return new ExecutionResult(null);
 	}
-	
+
 	private function workOffQueues() {
 		$this->status = self::STATUS_PRECACHE;
 		while ($this->status == self::STATUS_PRECACHE && null !== ($nextPrecache = $this->precacheQueue->next())) {
-			$nextPrecache->execute(); 
+			$nextPrecache->execute();
 		}
 
 		// return when aborted
@@ -235,9 +235,9 @@ class ControllingPlan {
 		}
 
 		if (null !== ($prevStatusException = $this->httpContext->getPrevStatusException())) {
-		    throw $prevStatusException;
+			throw $prevStatusException;
 		}
-		
+
 		if (!$this->responseCachePrevented && $this->httpContext->getResponse()->sendCachedPayload()) {
 			return;
 		}
@@ -247,17 +247,17 @@ class ControllingPlan {
 		if ($this->n2nLocale !== null) {
 			$this->getHttpContext()->getN2nContext()->setN2nLocale($this->n2nLocale);
 		}
-		
+
 		$this->status = self::STATUS_FILTER;
 		while ($this->status == self::STATUS_FILTER && null !== ($nextFilter = $this->filterQueue->next())) {
 			$nextFilter->execute();
 		}
-		
+
 		// return when aborted
 		if ($this->status != self::STATUS_FILTER && $this->status != self::STATUS_MAIN) {
 			return;
 		}
-		
+
 		$this->status = self::STATUS_MAIN;
 		while ($this->status == self::STATUS_MAIN && null !== ($nextMain = $this->mainQueue->next())) {
 			if (!$nextMain->execute()) {
@@ -269,12 +269,12 @@ class ControllingPlan {
 		if ($this->mainQueue->isEmpty()) {
 			throw new PageNotFoundException();
 		}
-		
+
 		$this->status = self::STATUS_EXECUTED;
 	}
-	
 
-	
+
+
 	/**
 	 * @throws ControllingPlanException
 	 */
@@ -283,7 +283,7 @@ class ControllingPlan {
 			throw new ControllingPlanException('ControllingPlan is not executing filter controllers.');
 		}
 	}
-	
+
 	/**
 	 * @param bool $try
 	 * @throws ControllingPlanException
@@ -292,19 +292,23 @@ class ControllingPlan {
 	 */
 	function executeNextPrecache(bool $try = false) {
 		$this->ensurePrecorable();
-		
+
 		$nextPrecache = $this->precacheQueue->next();
 		if (null === $nextPrecache) {
 			throw new ControllingPlanException('No filter controller to execute.');
 		}
-		
+
 		if ($nextPrecache->execute()) return true;
-		
+
 		if ($try) return false;
-		
+
 		throw new PageNotFoundException();
 	}
-	
+
+	function hasNextPrecache(): bool {
+		return $this->precacheQueue->hasNext();
+	}
+
 	/**
 	 * @throws ControllingPlanException
 	 */
@@ -313,7 +317,7 @@ class ControllingPlan {
 			throw new ControllingPlanException('ControllingPlan is not executing filter controllers.');
 		}
 	}
-	
+
 	/**
 	 * @param bool $try
 	 * @throws ControllingPlanException
@@ -322,37 +326,41 @@ class ControllingPlan {
 	 */
 	function executeNextFilter(bool $try = false) {
 		$this->ensureFilterable();
-		
+
 		$nextFilter = $this->filterQueue->next();
 		if (null === $nextFilter) {
 			throw new ControllingPlanException('No filter controller to execute.');
 		}
-		
+
 		if ($nextFilter->execute()) return true;
-		
+
 		if ($try) return false;
-		
+
 		throw new PageNotFoundException();
 	}
-	
+
+	function hasNextFilter(): bool {
+		return $this->filterQueue->hasNext();
+	}
+
 	/**
 	 * @return boolean returns false if the ControllingPlan was aborted by a following filter
 	 */
 	function executeToMain() {
 		$this->ensureFilterable();
-		
+
 		while (null !== ($nextFilter = $this->filterQueue->next())) {
 			$nextFilter->execute();
 		}
-		
+
 		if ($this->status !== self::STATUS_FILTER) {
 			return false;
 		}
-		
+
 		$this->status = self::STATUS_MAIN;
 		return true;
 	}
-	
+
 	/**
 	 * @param bool $try
 	 * @throws ControllingPlanException
@@ -363,33 +371,37 @@ class ControllingPlan {
 		if ($this->status !== self::STATUS_MAIN) {
 			throw new ControllingPlanException('ControllingPlan is not executing main controllers.');
 		}
-		
+
 		$nextMain = $this->mainQueue->next();
 		if (null === $nextMain) {
 			throw new ControllingPlanException('No main controller to execute.');
 		}
-		
+
 		if ($nextMain->execute()) return true;
-		
+
 		if ($try) return false;
-		
+
 		throw new PageNotFoundException();
 	}
-	
+
+	function hasNextMain(): bool {
+		return $this->mainQueue->hasNext();
+	}
+
 	/**
 	 * @return boolean
 	 */
 	function isExecuting() {
 		return $this->status == self::STATUS_PRECACHE || $this->status == self::STATUS_FILTER || $this->status == self::STATUS_MAIN;
-	} 
-	
+	}
+
 	/**
 	 * @return boolean
 	 */
 	function hasCurrentPrecache() {
 		return $this->status == self::STATUS_PRECACHE && $this->precacheQueue->getCurrent() !== null;
 	}
-	
+
 	/**
 	 * @throws ControllingPlanException
 	 * @return \n2n\web\http\controller\ControllerContext|NULL
@@ -398,17 +410,17 @@ class ControllingPlan {
 		if ($this->hasCurrentFilter()) {
 			return $this->precacheQueue->getCurrent();
 		}
-		
+
 		throw new ControllingPlanException('No precache controller active.');
 	}
-	
+
 	/**
 	 * @return boolean
 	 */
 	function hasCurrentFilter() {
 		return $this->status == self::STATUS_FILTER && $this->filterQueue->getCurrent() !== null;
 	}
-	
+
 	/**
 	 * @throws ControllingPlanException
 	 * @return \n2n\web\http\controller\ControllerContext|NULL
@@ -417,7 +429,7 @@ class ControllingPlan {
 		if ($this->hasCurrentFilter()) {
 			return $this->filterQueue->getCurrent();
 		}
-		
+
 		throw new ControllingPlanException('No filter controller active.');
 	}
 
@@ -427,7 +439,7 @@ class ControllingPlan {
 	function hasCurrentMain() {
 		return $this->status == self::STATUS_MAIN && $this->mainQueue->getCurrent() !== null;
 	}
-	
+
 	/**
 	 * @throws ControllingPlanException
 	 * @return \n2n\web\http\controller\ControllerContext|NULL
@@ -436,10 +448,10 @@ class ControllingPlan {
 		if ($this->hasCurrentMain()) {
 			return $this->mainQueue->getCurrent();
 		}
-		
+
 		throw new ControllingPlanException('No main controller active.');
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @throws UnknownControllerContextException
@@ -449,18 +461,18 @@ class ControllingPlan {
 		if (null !== ($controllerContext = $this->precacheQueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		if (null !== ($controllerContext = $this->filterQueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		if (null !== ($controllerContext = $this->mainQueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		throw new UnknownControllerContextException('Unknown ControllerContext name: ' . $name);
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @throws UnknownControllerContextException
@@ -470,10 +482,10 @@ class ControllingPlan {
 		if (null !== ($controllerContext = $this->precacheueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		throw new UnknownControllerContextException('Unknown precache ControllerContext name: ' . $name);
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @throws UnknownControllerContextException
@@ -483,10 +495,10 @@ class ControllingPlan {
 		if (null !== ($controllerContext = $this->filterQueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		throw new UnknownControllerContextException('Unknown filter ControllerContext name: ' . $name);
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @throws UnknownControllerContextException
@@ -496,10 +508,10 @@ class ControllingPlan {
 		if (null !== ($controllerContext = $this->mainQueue->findByName($name))) {
 			return $controllerContext;
 		}
-		
+
 		throw new UnknownControllerContextException('Unknown main ControllerContext name: ' . $name);
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
@@ -507,7 +519,7 @@ class ControllingPlan {
 		$this->precacheQueue->skip();
 		return $this;
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
@@ -515,7 +527,7 @@ class ControllingPlan {
 		$this->filterQueue->skip();
 		return $this;
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
@@ -523,45 +535,45 @@ class ControllingPlan {
 		$this->mainQueue->skip();
 		return $this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	function abort() {
 		$this->status = self::STATUS_ABORTED;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $key
 	 * @return ControllerContext|null
 	 */
 	function getMainControllerContextByKey(string $key) {
 		return $this->mainQueue->getByKey($key);
 	}
-	
+
 	/**
 	 * @param \Closure $closure
 	 * @return \n2n\web\http\controller\ControllingPlan
 	 */
-	function onPostPrecache(\Closure $closure) { 
+	function onPostPrecache(\Closure $closure) {
 		$this->onPostPrecacheClosures[] = $closure;
 		return $this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private function triggerPostPrecache() {
 		while (null !== ($closure = array_shift($this->onPostPrecacheClosures))) {
 			$closure();
 		}
 	}
-	
+
 	function setResponseHeaders(array $responseHeaders) {
 		$this->responseHeaders = $responseHeaders;
 	}
-	
+
 	function getResponseHeaders() {
 		return $this->responseHeaders;
 	}
@@ -580,13 +592,13 @@ class ControllerContextQueue {
 	 * @var int
 	 */
 	private $nextIndex = 0;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	function __construct() {
 	}
-	
+
 	/**
 	 * @param ControllerContext $controllerContext
 	 * @param bool $afterCurrent
@@ -596,10 +608,10 @@ class ControllerContextQueue {
 			$this->controllerContexts[] = $controllerContext;
 			return;
 		}
-		
+
 		$this->insertControllerContext($this->controllerContexts, $this->nextIndex, $controllerContext);
 	}
-	
+
 	/**
 	 * @return ControllerContext|null
 	 */
@@ -607,25 +619,29 @@ class ControllerContextQueue {
 		if (isset($this->controllerContexts[$this->nextIndex])) {
 			return $this->currentControllerContext = $this->controllerContexts[$this->nextIndex++];
 		}
-		
+
 		$this->currentControllerContext = null;
 		return null;
 	}
-	
+
+	function hasNext(): bool {
+		return isset($this->controllerContexts[$this->nextIndex]);
+	}
+
 	/**
 	 * @return \n2n\web\http\controller\ControllerContext|null
 	 */
 	function getCurrent() {
 		return $this->currentControllerContext;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 */
 	function skip() {
 		$this->nextIndex = count($this->controllerContexts);
 	}
-	
+
 	/**
 	 * @param ControllerContext[] $arr
 	 * @param int $currentIndex
@@ -638,10 +654,10 @@ class ControllerContextQueue {
 			$arr[$i] = $controllerContext;
 			$controllerContext = $cc;
 		}
-		
+
 		$arr[] = $controllerContext;
 	}
-	
+
 	/**
 	 * @param string $key
 	 * @return ControllerContext|null
@@ -652,10 +668,10 @@ class ControllerContextQueue {
 				return $mainCc;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * @param string $name
 	 * @return \n2n\web\http\controller\ControllerContext|NULL
@@ -663,19 +679,19 @@ class ControllerContextQueue {
 	function findByName(string $name) {
 		for ($i = count($this->controllerContexts) - 1; $i >= 0; $i--) {
 			$ccName = $this->controllerContexts[$i]->getName();
-			
+
 			if ($ccName !== null && $ccName == $name) {
 				return $this->controllerContexts[$i];
 			}
-			
+
 			if (get_class($this->controllerContexts[$i]->getController()) == $name) {
 				return $this->controllerContexts[$i];
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	function isEmpty() {
 		return empty($this->controllerContexts);
 	}
@@ -683,15 +699,15 @@ class ControllerContextQueue {
 
 class ExecutionResult {
 	private $e;
-	
+
 	function __construct(?StatusException $e) {
-		$this->e = $e;			
+		$this->e = $e;
 	}
-	
+
 	function isSuccessful() {
 		return $this->e === null;
 	}
-	
+
 	/**
 	 * @return \n2n\web\http\StatusException|null
 	 */
