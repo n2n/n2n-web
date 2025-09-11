@@ -29,6 +29,7 @@ use n2n\reflection\property\AccessProxy;
 use n2n\web\dispatch\DispatchErrorException;
 use n2n\reflection\property\InvalidPropertyAccessMethodException;
 use n2n\impl\web\dispatch\property\ScalarProperty;
+use n2n\reflection\property\UninitializedBehaviour;
 
 class DispatchModelFactory {
 	private $managedPropertyProviderClassNames;
@@ -79,7 +80,7 @@ class DispatchModelFactory {
 	 */
 	private function assignAnnoDispProperties(\ReflectionClass $class, DispatchModel $dispatchModel) {
 		$annotationSet = ReflectionContext::getAnnotationSet($class);
-		$propertiesAnalyzer = new PropertiesAnalyzer($class);
+		$propertiesAnalyzer = new PropertiesAnalyzer($class, uninitializedBehaviour: UninitializedBehaviour::RETURN_NULL);
 		
 		$setupProcess = new SetupProcess($dispatchModel, $propertiesAnalyzer, $annotationSet);
 		foreach ($this->getManagedPropertyProviders() as $propertyProvider) {
