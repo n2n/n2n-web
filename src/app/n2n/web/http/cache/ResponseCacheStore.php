@@ -161,7 +161,8 @@ class ResponseCacheStore {
 
 	private function removeByResponseCharacteristics(CharacteristicsList|array $responseCharacteristicsList, $shared): void {
 		$responseCharacteristicsList = CharacteristicsList::fromArg($responseCharacteristicsList);
-		$indexCharacteristicsList = $this->buildIndexCharacteristicsList($responseCharacteristicsList, array());
+		$indexCharacteristicsList = $this->buildIndexCharacteristicsList($responseCharacteristicsList,
+				new CharacteristicsList(array()));
 		$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristicsList);
 		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristicsList);
 	}
