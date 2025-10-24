@@ -17,6 +17,7 @@ use n2n\web\http\cache\ResponseCacheStore;
 use n2n\web\http\cache\ResponseCacheId;
 use n2n\web\http\cache\ResponseCacheVerifying;
 use n2n\web\http\cache\ResponseCacheVerifier;
+use n2n\cache\CharacteristicsList;
 
 class ResponseCacheStoreVerifyingTest extends TestCase {
 
@@ -46,7 +47,7 @@ class ResponseCacheStoreVerifyingTest extends TestCase {
 		$responseCacheId = new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []);
 		$responseCacheItem = new ResponseCacheItem(
 				new CachedPayload('content one', 1, [], null, $this->future),
-				['char1' => '1'], 'VerifierMock');
+				new CharacteristicsList(['char1' => '1']), 'VerifierMock');
 
 
 		$verifierMock = $this->createMock(ResponseCacheVerifier::class);

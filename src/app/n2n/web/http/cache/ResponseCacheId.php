@@ -4,11 +4,13 @@ namespace n2n\web\http\cache;
 
 use n2n\util\uri\Path;
 use n2n\web\http\Request;
+use n2n\util\type\ArgUtils;
 
 class ResponseCacheId {
 
 	function __construct(private int $method, private string $hostName, private Path $path,
 			private ?array $queryParams) {
+		ArgUtils::valArray($this->queryParams, ['scalar', null], true);
 	}
 
 	public function getMethod(): int {

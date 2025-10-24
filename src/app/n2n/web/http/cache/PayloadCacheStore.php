@@ -6,6 +6,7 @@ use n2n\core\container\TransactionManager;
 use n2n\core\cache\AppCache;
 use n2n\util\ex\IllegalStateException;
 use n2n\cache\CacheStore;
+use n2n\cache\CharacteristicsList;
 
 class PayloadCacheStore {
 
@@ -52,6 +53,10 @@ class PayloadCacheStore {
 				= $this->appCache->lookupCacheStore(PayloadCacheStore::class, false);
 	}
 
+	/**
+	 * @param bool|null $shared
+	 * @return CacheStore[]
+	 */
 	private function getCacheStores(?bool $shared): array {
 		$cacheStores = [];
 		if ($shared === null || $shared === true) {
@@ -63,13 +68,14 @@ class PayloadCacheStore {
 		return $cacheStores;
 	}
 
-	public function store(string $srcName, array $characteristics, CachedPayload $item, bool $shared): void {
-		$this->getCacheStore($shared)->store($srcName, $characteristics, $item);
+	public function store(string $srcName, CharacteristicsList|array $characteristicsList, CachedPayload $item, bool $shared): void {
+		$this->getCacheStore($shared)->store($srcName, CharacteristicsList::fromArg($characteristicsList), $item);
 	}
 
-	public function get(string $srcName, array $characteristics, bool $shared, ?\DateTimeInterface $now = null): ?CachedPayload {
+	public function get(string $srcName, CharacteristicsList|array $characteristicsList, bool $shared, ?\DateTimeInterface $now = null): ?CachedPayload {
+		$characteristicsList = CharacteristicsList::fromArg($characteristicsList);
 		$cacheStore = $this->getCacheStore($shared);
-		$cacheItem = $cacheStore->get($srcName, $characteristics);
+		$cacheItem = $cacheStore->get($srcName, $characteristicsList);
 		if ($cacheItem === null) {
 			return null;
 		}
@@ -80,25 +86,27 @@ class PayloadCacheStore {
 
 		$data = $cacheItem->getData();
 		if (!($data instanceof CachedPayload) || $data->isExpired($now)) {
-			$cacheStore->remove($srcName, $characteristics);
+			$cacheStore->remove($srcName, $characteristicsList);
 			return null;
 		}
 
 		return $data;
 	}
 
-	public function remove(string $srcName, array $characteristics, bool $shared): void {
+	public function remove(string $srcName, CharacteristicsList|array $characteristicsList, bool $shared): void {
+		$characteristicsList = CharacteristicsList::fromArg($characteristicsList);
 		$this->cacheActionQueue->registerRemoveAction(false, function ()
-				use ($srcName, $characteristics, $shared) {
-			$this->getCacheStore($shared)->remove($srcName, $characteristics);
+				use ($srcName, $characteristicsList, $shared) {
+			$this->getCacheStore($shared)->remove($srcName, $characteristicsList);
 		});
 	}
 
-	public function removeAll(?string $srcName = null, ?array $characteristicNeedles = null, ?bool $shared = null): void {
+	public function removeAll(?string $srcName = null, CharacteristicsList|array|null $characteristicNeedlesList = null, ?bool $shared = null): void {
+		$characteristicNeedlesList = CharacteristicsList::fromArg($characteristicNeedlesList);
 		$this->cacheActionQueue->registerRemoveAction(false, function ()
-				use ($shared, $srcName, $characteristicNeedles) {
+				use ($shared, $srcName, $characteristicNeedlesList) {
 			foreach ($this->getCacheStores($shared) as $cacheStore) {
-				$cacheStore->removeAll($srcName, $characteristicNeedles);
+				$cacheStore->removeAll($srcName, $characteristicNeedlesList);
 			}
 		});
 	}

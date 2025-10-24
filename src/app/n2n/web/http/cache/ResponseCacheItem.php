@@ -22,6 +22,7 @@
 namespace n2n\web\http\cache;
 
 use n2n\web\http\Response;
+use n2n\cache\CharacteristicsList;
 
 class ResponseCacheItem {
 	private int $expireTimestamp;
@@ -30,7 +31,7 @@ class ResponseCacheItem {
 	 * @param CachedPayload $cachedPayload
 	 * @param string|null $verifierLookupId
 	 */
-	public function __construct(private CachedPayload $cachedPayload, private array $characteristics, private ?string $verifierLookupId = null) {
+	public function __construct(private CachedPayload $cachedPayload, private CharacteristicsList $characteristicsList, private ?string $verifierLookupId = null) {
 	}
 
 	public function isExpired(\DateTimeInterface $now): bool {
@@ -39,8 +40,8 @@ class ResponseCacheItem {
 				|| !isset($this->cachedPayload);
 	}
 
-	function getCharacteristics(): array {
-		return $this->characteristics;
+	function getCharacteristicsList(): CharacteristicsList {
+		return $this->characteristicsList;
 	}
 
 	function hasVerifier(): bool {
