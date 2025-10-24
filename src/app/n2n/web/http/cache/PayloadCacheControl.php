@@ -21,18 +21,23 @@
  */
 namespace n2n\web\http\cache;
 
+use n2n\cache\CharacteristicsList;
+
 class PayloadCacheControl {
-	
-	public function __construct(private ?\DateInterval $cacheInterval = null, private array $characteristics = array(),
+	private CharacteristicsList $characteristicsList;
+
+	public function __construct(private ?\DateInterval $cacheInterval = null,
+			CharacteristicsList|array $characteristicsList = array(),
 			private bool $shared = true) {
+		$this->characteristicsList = CharacteristicsList::fromArg($characteristicsList);
 	}
 	
 	function getCacheInterval(): ?\DateInterval {
 		return $this->cacheInterval;
 	}
 	
-	function getCharacteristics(): array {
-		return $this->characteristics;
+	function getCharacteristicsList(): CharacteristicsList {
+		return $this->characteristicsList;
 	}
 
 	function isShared(): bool {

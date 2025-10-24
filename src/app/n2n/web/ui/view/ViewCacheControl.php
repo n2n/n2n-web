@@ -21,30 +21,21 @@
  */
 namespace n2n\web\ui\view;
 
+use n2n\cache\CharacteristicsList;
+
 class ViewCacheControl {
-	private $cacheInterval;
-	private $characteristics = array();
-	/**
-	 * 
-	 * @param \DateInterval $cacheInterval
-	 * @param array $characteristics
-	 */
-	public function __construct(?\DateInterval $cacheInterval = null, array $characteristics = array()) {
+	private CharacteristicsList $characteristicsList;
+
+	public function __construct(private ?\DateInterval $cacheInterval = null, CharacteristicsList|array $characteristicsList = array()) {
 		$this->cacheInterval = $cacheInterval;
-		$this->characteristics = $characteristics;
+		$this->characteristicsList = CharacteristicsList::fromArg($characteristicsList);
 	}
-	/**
-	 * 
-	 * @return \DateInterval
-	 */
-	public function getCacheInterval() {
+
+	public function getCacheInterval(): ?\DateInterval {
 		return $this->cacheInterval;	
 	}
-	/**
-	 * 
-	 * @return array
-	 */
-	public function getCharacteristics() {
-		return $this->characteristics;
+
+	public function getCharacteristicsList(): CharacteristicsList {
+		return $this->characteristicsList;
 	}
 }

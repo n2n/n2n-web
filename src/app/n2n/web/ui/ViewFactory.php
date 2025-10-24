@@ -50,7 +50,7 @@ class ViewFactory implements ThreadScoped {
 	}
 	
 	public function createFromCache($viewName, ViewCacheControl $viewCacheControl, ?Module $module = null) {
-		$cacheItem = $this->viewCacheStore->get($viewName, $viewCacheControl->getCharacteristics());
+		$cacheItem = $this->viewCacheStore->get($viewName, $viewCacheControl->getCharacteristicsList());
 		if ($cacheItem === null) return null;
 			
 		$view = $this->create($viewName, null, $module);
@@ -206,7 +206,7 @@ class CacheViewStateListener implements ViewStateListener {
 	 * @see \n2n\web\ui\view\ViewStateListener::viewContentsInitialized()
 	 */
 	public function viewContentsInitialized(View $view): void {
-		$this->cacheStore->store($view->getName(), $this->viewCacheControl->getCharacteristics(), 
+		$this->cacheStore->store($view->getName(), $this->viewCacheControl->getCharacteristicsList(),
 				$view->toCacheData());
 	}
 

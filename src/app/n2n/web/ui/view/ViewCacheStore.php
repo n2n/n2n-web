@@ -23,23 +23,25 @@ namespace n2n\web\ui\view;
 
 use n2n\context\ThreadScoped;
 use n2n\core\cache\AppCache;
+use n2n\cache\CharacteristicsList;
+use n2n\cache\CacheStore;
 
 class ViewCacheStore implements ThreadScoped {
-	private $cacheStore;
+	private CacheStore $cacheStore;
 	
-	private function _init(AppCache $appCache) {
+	private function _init(AppCache $appCache): void {
 		$this->cacheStore = $appCache->lookupCacheStore(ViewCacheStore::class, true);
 	}
 	
-	public function store(string $name, array $characteristics, $data, ?\DateTime $lastMod = null) {
-		$this->cacheStore->store($name, $characteristics, $data, $lastMod);
+	public function store(string $name, CharacteristicsList|array $characteristicsList, $data, ?\DateTime $lastMod = null): void {
+		$this->cacheStore->store($name, CharacteristicsList::fromArg($characteristicsList), $data, $lastMod);
 	}
 	
-	public function get(string $name, array $characteristics) {
-		return $this->cacheStore->get($name, $characteristics);
+	public function get(string $name, CharacteristicsList|array $characteristicsList): ?\n2n\cache\CacheItem {
+		return $this->cacheStore->get($name, CharacteristicsList::fromArg($characteristicsList));
 	}
 	
-	public function clear() {
+	public function clear(): void {
 		$this->cacheStore->clear();
 	}
 }

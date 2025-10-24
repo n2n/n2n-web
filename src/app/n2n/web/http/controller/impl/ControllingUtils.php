@@ -80,6 +80,7 @@ use n2n\util\magic\TaskResult;
 use n2n\util\magic\impl\TaskResults;
 use n2n\reflection\UnresolvableTypeExpressionException;
 use n2n\web\http\PageNotFoundException;
+use n2n\cache\CharacteristicsList;
 
 class ControllingUtils {
 	private $relatedTypeName;
@@ -238,19 +239,19 @@ class ControllingUtils {
 	/**
 	 *
 	 * @param \DateInterval|null $cacheInterval
-	 * @param array $characteristics
+	 * @param array $characteristicsList
 	 */
-	public function assignViewCacheControl(?\DateInterval $cacheInterval = null, array $characteristics = array()): void {
-		$this->viewCacheControl = new ViewCacheControl($cacheInterval, $characteristics);
+	public function assignViewCacheControl(?\DateInterval $cacheInterval = null, CharacteristicsList|array $characteristicsList = array()): void {
+		$this->viewCacheControl = new ViewCacheControl($cacheInterval, $characteristicsList);
 	}
 
 	function resetViewCacheControl(): void {
 		$this->viewCacheControl = null;
 	}
 
-	function assignPayloadCacheControl(?\DateInterval $cacheInterval = null, array $characteristics = array(),
+	function assignPayloadCacheControl(?\DateInterval $cacheInterval = null, CharacteristicsList|array $characteristicsList = array(),
 			bool $shared = true): void {
-		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristics, $shared);
+		$this->payloadCacheControl = new PayloadCacheControl($cacheInterval, $characteristicsList, $shared);
 	}
 
 	function resetPayloadCacheControl(): void {
@@ -273,17 +274,17 @@ class ControllingUtils {
 	/**
 	 * @param \DateInterval|null $cacheInterval
 	 * @param bool $includeQuery
-	 * @param array $characteristics
+	 * @param array $characteristicsList
 	 */
 	public function assignResponseCacheControl(?\DateInterval $cacheInterval = null,
-			bool $includeQuery = false, array $characteristics = array(), bool $shared = true,
+			bool $includeQuery = false, CharacteristicsList|array $characteristicsList = array(), bool $shared = true,
 			?string $verifierCheckLookupId = null): void {
 		$queryParamNames = null;
 		if ($includeQuery) {
 			$queryParamNames = array_keys($this->getInvokerInfo()->getQueryParams());
 		}
 
-		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristics,
+		$this->responseCacheControl = new ResponseCacheControl($cacheInterval, $queryParamNames, $characteristicsList,
 				$shared, $verifierCheckLookupId);
 	}
 	
@@ -664,7 +665,7 @@ class ControllingUtils {
 		$cachedPayload = CachedPayload::createFromSentPayload($this->getResponse(), $expireDate);
 
 		$this->getN2nContext()->lookup(PayloadCacheStore::class)
-				->store($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristics(),
+				->store($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristicsList(),
 						$cachedPayload, $this->payloadCacheControl->isShared());
 	}
 
@@ -674,7 +675,7 @@ class ControllingUtils {
 		}
 
 		return $this->getN2nContext()->lookup(PayloadCacheStore::class)
-				->get($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristics(),
+				->get($this->createPayloadSrcName(), $this->payloadCacheControl->getCharacteristicsList(),
 						$this->payloadCacheControl->isShared());
 	}
 

@@ -21,24 +21,26 @@
  */
 namespace n2n\web\http\cache;
 
+use n2n\cache\CharacteristicsList;
+
 class ResponseCacheControl {
 	private $cacheInterval;
 	private $includedQueryParamNames;
-	private $characteristics;
+	private CharacteristicsList $characteristicsList;
 
 	/**
 	 * @param \DateInterval|null $cacheInterval
 	 * @param array|null $includedQueryParamNames
-	 * @param array $characteristics
+	 * @param CharacteristicsList|array $characteristicsList
 	 * @param bool $shared
 	 * @param string|null $verifierCheckLookupId
 	 */
 	public function __construct(?\DateInterval $cacheInterval = null, ?array $includedQueryParamNames = null,
-			array $characteristics = array(), private readonly bool $shared = true,
+			CharacteristicsList|array $characteristicsList = array(), private readonly bool $shared = true,
 			private readonly ?string $verifierCheckLookupId = null) {
 		$this->cacheInterval = $cacheInterval;
 		$this->includedQueryParamNames = $includedQueryParamNames;
-		$this->characteristics = $characteristics;
+		$this->characteristicsList = CharacteristicsList::fromArg($characteristicsList);
 	}
 	
 	public function getCacheInterval() {
@@ -62,8 +64,8 @@ class ResponseCacheControl {
 		return $this;
 	}
 	
-	public function getCharacteristics(): array {
-		return $this->characteristics;
+	public function getCharacteristicsList(): CharacteristicsList {
+		return $this->characteristicsList;
 	}
 
 	function isShared(): bool {

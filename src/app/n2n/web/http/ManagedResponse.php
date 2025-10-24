@@ -438,7 +438,7 @@ class ManagedResponse extends Response {
 				new ResponseCacheItem(
 						new CachedPayload($this->bodyContents, $this->statusCode,
 								$this->headerJobs, $this->httpCacheControl, $expireDate),
-						$this->responseCacheControl->getCharacteristics(),
+						$this->responseCacheControl->getCharacteristicsList(),
 						$this->responseCacheControl->getVerifierCheckLookupId()),
 				$this->responseCacheControl->isShared());
 	}
