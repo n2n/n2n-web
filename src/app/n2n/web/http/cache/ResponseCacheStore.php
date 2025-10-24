@@ -159,10 +159,11 @@ class ResponseCacheStore {
 		});
 	}
 
-	private function removeByResponseCharacteristics(array $responseCharacteristics, $shared): void {
-		$indexCharacteristics = $this->buildIndexCharacteristicsList($responseCharacteristics, array());
-		$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
-		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristics);
+	private function removeByResponseCharacteristics(CharacteristicsList|array $responseCharacteristicsList, $shared): void {
+		$responseCharacteristicsList = CharacteristicsList::fromArg($responseCharacteristicsList);
+		$indexCharacteristicsList = $this->buildIndexCharacteristicsList($responseCharacteristicsList, array());
+		$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristicsList);
+		$this->getCacheStore($shared)->removeAll(self::INDEX_NAME, $indexCharacteristicsList);
 	}
 
 // 	public function removeByFilter(string $method, string $hostName, Path $path, ?array $queryParams,
@@ -171,16 +172,16 @@ class ResponseCacheStore {
 // 				$characteristicNeedles));
 // 	}
 
-	public function removeByCharacteristics(array $characteristicNeedles, bool $shared): void {
+	public function removeByCharacteristics(CharacteristicsList|array $characteristicNeedles, bool $shared): void {
 		$cacheItems = $this->getCacheStore($shared)->findAll(self::INDEX_NAME, $this->buildIndexCharacteristicsList(
-				array(), $characteristicNeedles));
+				new CharacteristicsList(array()), CharacteristicsList::fromArg($characteristicNeedles)));
 		$this->responseCacheActionQueue->registerRemoveAction(false, function() use ($cacheItems, $shared) {
 			foreach ($cacheItems as $cacheItem) {
 				$responseCharacteristics = $cacheItem->getData();
 				if (is_array($responseCharacteristics)) {
-					$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, $responseCharacteristics);
+					$this->getCacheStore($shared)->remove(self::RESPONSE_NAME, new CharacteristicsList($responseCharacteristics));
 				}
-				$this->getCacheStore($shared)->remove(self::INDEX_NAME, $cacheItem->getCharacteristics());
+				$this->getCacheStore($shared)->remove(self::INDEX_NAME, $cacheItem->getCharacteristicsList());
 			}
 		});
 	}
