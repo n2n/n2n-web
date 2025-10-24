@@ -29,6 +29,7 @@ use n2n\web\http\Session;
 use n2n\cache\CacheStore;
 use n2n\cache\impl\fs\FileCacheStore;
 use n2n\util\DateUtils;
+use n2n\cache\CharacteristicsList;
 
 class VarsSession implements Session {
 // 	const ID_OVERWRITING_GET_PARAM = '_osid';
@@ -294,7 +295,7 @@ class CacheStoreSessionHandler implements \SessionHandlerInterface {
 	}
 
 	public function destroy(string $id): bool {
-		$this->cacheStore->remove($id, []);
+		$this->cacheStore->remove($id, new CharacteristicsList([]));
 		return true;
 	}
 
@@ -308,11 +309,11 @@ class CacheStoreSessionHandler implements \SessionHandlerInterface {
 	}
 
 	public function read(string $id): string|false {
-		return $this->cacheStore->get($id, [])?->getData() ?? '';
+		return $this->cacheStore->get($id, new CharacteristicsList([]))?->getData() ?? '';
 	}
 
 	public function write(string $id, string $data): bool {
-		$this->cacheStore->store($id, [], $data);
+		$this->cacheStore->store($id, new CharacteristicsList([]), $data);
 		return true;
 	}
 }
