@@ -9,6 +9,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use n2n\core\container\TransactionManager;
 use DateTimeImmutable;
 use DateInterval;
+use n2n\cache\CharacteristicsList;
 
 class PayloadCacheStoreTest extends TestCase {
 
@@ -47,12 +48,12 @@ class PayloadCacheStoreTest extends TestCase {
 		$this->assertEquals($cachedPayload3, $this->payloadCacheStore->get(
 				'holeradio', ['char1' => 1], true));
 		$this->assertEquals($cachedPayload3, $sharedCacheStore->get('holeradio',
-				['char1' => 1])->getData());
+				new CharacteristicsList(['char1' => 1]))->getData());
 
 		$this->assertEquals($cachedPayload1, $this->payloadCacheStore->get(
 				'holeradio', ['char1' => 1], false));
 		$this->assertEquals($cachedPayload1, $localCacheStore->get('holeradio',
-				['char1' => 1])->getData());
+				new CharacteristicsList(['char1' => 1]))->getData());
 	}
 
 	function testRemove() {

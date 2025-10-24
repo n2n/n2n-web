@@ -89,7 +89,7 @@ class ResponseCacheStore {
 		return $cacheStores;
 	}
 
-	private function buildResponseCharacteristics(ResponseCacheId $responseCacheId): CharacteristicsList {
+	private function buildResponseCharacteristicsList(ResponseCacheId $responseCacheId): CharacteristicsList {
 		$method = $responseCacheId->getMethod();
 		$hostName = $responseCacheId->getHostName();
 		$path = $responseCacheId->getPath();
@@ -121,16 +121,16 @@ class ResponseCacheStore {
 			$this->verifying->assertVerifier($item->getVerifierLookupId());
 		}
 
-		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
-		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristics, $item);
+		$responseCharacteristicsList = $this->buildResponseCharacteristicsList($responseCacheId);
+		$this->getCacheStore($shared)->store(self::RESPONSE_NAME, $responseCharacteristicsList, $item);
 		$this->getCacheStore($shared)->store(self::INDEX_NAME,
-				$this->buildIndexCharacteristicsList($responseCharacteristics, $item->getCharacteristicsList()),
-				$responseCharacteristics);
+				$this->buildIndexCharacteristicsList($responseCharacteristicsList, $item->getCharacteristicsList()),
+				$responseCharacteristicsList->toArray());
 	}
 
 	public function get(ResponseCacheId $responseCacheId,
 			bool $shared, ?DateTimeInterface $now = null): ?ResponseCacheItem {
-		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
+		$responseCharacteristics = $this->buildResponseCharacteristicsList($responseCacheId);
 
 		$cacheItem = $this->getCacheStore($shared)->get(self::RESPONSE_NAME, $responseCharacteristics);
 		if ($cacheItem === null) {
@@ -152,7 +152,7 @@ class ResponseCacheStore {
 	}
 
 	public function remove(ResponseCacheId $responseCacheId, bool $shared): void {
-		$responseCharacteristics = $this->buildResponseCharacteristics($responseCacheId);
+		$responseCharacteristics = $this->buildResponseCharacteristicsList($responseCacheId);
 		$this->responseCacheActionQueue->registerRemoveAction(false, function()
 		use ($responseCharacteristics, $shared) {
 			$this->removeByResponseCharacteristics($responseCharacteristics, $shared);

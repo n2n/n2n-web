@@ -16,6 +16,7 @@ use n2n\web\http\cache\ResponseCacheId;
 use n2n\web\http\cache\ResponseCacheItem;
 use n2n\web\http\cache\ResponseCacheStore;
 use n2n\web\http\cache\ResponseCacheVerifying;
+use n2n\cache\CharacteristicsList;
 
 class ResponseCacheStoreTest extends TestCase {
 
@@ -49,11 +50,11 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload3 = new CachedPayload('content three', 3, [], null, $this->future);
 		$cachedPayload4 = new CachedPayload('content four', 4, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload2, ['char1' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload1, ['char2' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', $path, []), new ResponseCacheItem($cachedPayload2, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', $path, []), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload4, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['char1' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char2' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', $path, []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', $path, []), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', $path, []), new ResponseCacheItem($cachedPayload4, new CharacteristicsList([])), false);
 
 		//shared
 		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
@@ -61,16 +62,16 @@ class ResponseCacheStoreTest extends TestCase {
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(
 				new ResponseCacheId(1, 'hostname', $path, []), true, $this->today)->getCachedPayload());
 		$this->assertEquals($cachedPayload1, $sharedCacheStore->get(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => []])->getData()->getCachedPayload());
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => json_encode([])]))->getData()->getCachedPayload());
 		//local
 		$this->assertCount(3, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(3, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 		$this->assertCount(1, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname']));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname'])));
 		$this->assertEquals($cachedPayload4, $this->responseCacheStore->get(
 				new ResponseCacheId(1, 'hostname', $path, []), false, $this->today)->getCachedPayload());
 		$this->assertEquals($cachedPayload4, $localCacheStore->get(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => []])->getData()->getCachedPayload());
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'path' => $path->__toString(), 'query' => json_encode([])]))->getData()->getCachedPayload());
 
 	}
 
@@ -91,64 +92,64 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload5 = new CachedPayload('content five', 5, [], null, $this->future);
 		$cachedPayload6 = new CachedPayload('content six', 6, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char1' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char2' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, ['char2' => 1]), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char1' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char2' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['char2' => 1])), true);
 		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(4, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, new CharacteristicsList([])), false);
 		$this->assertCount(7, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(8, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
 
 		//remove from local store
 		$this->assertCount(1, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1])])));
 		$this->assertCount(1, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1])])));
 		//query param need to be exact and not only part of, if it is set
 		$this->responseCacheStore->remove(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), false);
 		$this->assertCount(0, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1])])));
 		$this->assertCount(0, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1])])));
 		$this->assertCount(6, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(7, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
 
 		$this->assertCount(1, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1, 'q2' => 2]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1, 'q2' => 2])])));
 		$this->assertCount(2, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1, 'q2' => 2]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1, 'q2' => 2])])));
 		//order of query param is not relevant, they will be sorted by key (on store and on remove)
 		$this->responseCacheStore->remove(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), false);
 		$this->assertCount(0, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1, 'q2' => 2]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1, 'q2' => 2])])));
 		$this->assertCount(0, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME,
-				['method' => 1, 'hostName' => 'hostname', 'query' => ['q1' => 1, 'q2' => 2]]));
+				new CharacteristicsList(['method' => 1, 'hostName' => 'hostname', 'query' => json_encode(['q1' => 1, 'q2' => 2])])));
 		$this->assertCount(5, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(5, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
 		//shared is still intact
 		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(4, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
-		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME, ['method' => 1, 'hostName' => 'hostname']));
-		$this->assertCount(3, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME, ['method' => 1, 'hostName' => 'hostname']));
+		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME, new CharacteristicsList(['method' => 1, 'hostName' => 'hostname'])));
+		$this->assertCount(3, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME, new CharacteristicsList(['method' => 1, 'hostName' => 'hostname'])));
 		//remove same from shared store
 		$this->responseCacheStore->remove(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), true);
 		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(1, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
-		$this->assertCount(0, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME, ['method' => 1, 'hostName' => 'hostname']));
-		$this->assertCount(0, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME, ['method' => 1, 'hostName' => 'hostname']));
+		$this->assertCount(0, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME, new CharacteristicsList(['method' => 1, 'hostName' => 'hostname'])));
+		$this->assertCount(0, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME, new CharacteristicsList(['method' => 1, 'hostName' => 'hostname'])));
 
 	}
 
@@ -169,21 +170,21 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload5 = new CachedPayload('content five', 5, [], null, $this->future);
 		$cachedPayload6 = new CachedPayload('content six', 6, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char1' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char2' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, ['char2' => 1]), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char1' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char2' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['char2' => 1])), true);
 		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(4, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, new CharacteristicsList([])), false);
 		$this->assertCount(7, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(8, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
@@ -214,21 +215,21 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload5 = new CachedPayload('content five', 5, [], null, $this->future);
 		$cachedPayload6 = new CachedPayload('content six', 6, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, ['char1' => 1]), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, new CharacteristicsList(['char1' => 1])), false);
 		$this->assertCount(7, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(8, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char1' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char2' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, ['char2' => 1]), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char1' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char2' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['char2' => 1])), true);
 		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(4, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
@@ -259,21 +260,21 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload5 = new CachedPayload('content five', 5, [], null, $this->future);
 		$cachedPayload6 = new CachedPayload('content six', 6, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char1' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, ['char2' => 1]), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), true);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, ['char2' => 1]), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char1' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['char2' => 1])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), true);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['char2' => 1])), true);
 		$this->assertCount(2, $sharedCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(4, $sharedCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, ['char1' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, ['char2' => 1]), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 2, 'q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1, 'q2' => 2]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q1' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['q2' => 1]), new ResponseCacheItem($cachedPayload3, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['char1' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part4']), []), new ResponseCacheItem($cachedPayload4, new CharacteristicsList(['char2' => 1])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload5, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload6, new CharacteristicsList([])), false);
 		$this->assertCount(7, $localCacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(8, $localCacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
@@ -298,8 +299,8 @@ class ResponseCacheStoreTest extends TestCase {
 
 		$cachedPayload1 = new CachedPayload('content today one', 1, [], null, $this->today);
 		$cachedPayload2 = new CachedPayload('content today two', 1, [], null, $this->today);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
 		$this->assertCount(2, $cacheStore->findAll(ResponseCacheStore::RESPONSE_NAME));
 		$this->assertCount(2, $cacheStore->findAll(ResponseCacheStore::INDEX_NAME));
 
@@ -328,8 +329,8 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload1 = new CachedPayload('content one', 1, [], null, $this->future);
 		$cachedPayload2 = new CachedPayload('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(2, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
 
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), false, $this->today)->getCachedPayload());
 
@@ -355,8 +356,8 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload1 = new CachedPayload('content one', 1, [], null, $this->future);
 		$cachedPayload2 = new CachedPayload('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
 
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []), false, $this->today)->getCachedPayload());
 
@@ -380,8 +381,8 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload1 = new CachedPayload('content one', 1, [], null, $this->future);
 		$cachedPayload2 = new CachedPayload('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part1']), []), new ResponseCacheItem($cachedPayload1, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part1']), []), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
 
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(new ResponseCacheId(1, 'hostname', new Path(['path', 'part1']), []), false, $this->today)->getCachedPayload());
 
@@ -405,8 +406,8 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload1 = new CachedPayload('content one', 1, [], null, $this->future);
 		$cachedPayload2 = new CachedPayload('content two', 2, [], null, $this->future);
 
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['queryParam1' => 1]), new ResponseCacheItem($cachedPayload1, []), false);
-		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, []), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['queryParam1' => 1]), new ResponseCacheItem($cachedPayload1, new CharacteristicsList([])), false);
+		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []), new ResponseCacheItem($cachedPayload2, new CharacteristicsList([])), false);
 
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), ['queryParam1' => 1]), false, $this->today)->getCachedPayload());
 
@@ -432,13 +433,13 @@ class ResponseCacheStoreTest extends TestCase {
 		$cachedPayload3 = new CachedPayload('content three', 3, [], null, $this->future);
 		$cachedPayload4 = new CachedPayload('content four', 4, [], null, $this->future);
 		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part2']), []),
-				new ResponseCacheItem($cachedPayload1, ['characteristicsParam1' => 1, 'characteristicsParam2' => 1]), false);
+				new ResponseCacheItem($cachedPayload1, new CharacteristicsList(['characteristicsParam1' => 1, 'characteristicsParam2' => 1])), false);
 		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part2']), []),
-				new ResponseCacheItem($cachedPayload2, ['characteristicsParam1' => 2]), false);
+				new ResponseCacheItem($cachedPayload2, new CharacteristicsList(['characteristicsParam1' => 2])), false);
 		$this->responseCacheStore->store(new ResponseCacheId(1, 'mirror', new Path(['path', 'part3']), []),
-				new ResponseCacheItem($cachedPayload3, ['characteristicsParam2' => 1, 'characteristicsParam3' => 3]), false);
+				new ResponseCacheItem($cachedPayload3, new CharacteristicsList(['characteristicsParam2' => 1, 'characteristicsParam3' => 3])), false);
 		$this->responseCacheStore->store(new ResponseCacheId(1, 'hostname', new Path(['path', 'part4']), []),
-				new ResponseCacheItem($cachedPayload4, ['characteristicsParam1' => 1, 'characteristicsParam2' => 2]), false);
+				new ResponseCacheItem($cachedPayload4, new CharacteristicsList(['characteristicsParam1' => 1, 'characteristicsParam2' => 2])), false);
 
 		$this->assertEquals($cachedPayload1, $this->responseCacheStore->get(new ResponseCacheId(1, 'hostname',
 				new Path(['path', 'part2']), []), false, $this->today)->getCachedPayload());
