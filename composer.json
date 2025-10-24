@@ -28,7 +28,7 @@
 		}
 	},
 	"require" : {
-		"n2n/n2n-composer-module-installer" : "^7.1.5",
+		"n2n/n2n-composer-module-installer" : "^7.1.6",
 		"n2n/n2n" : "~7.5",
 		"n2n/n2n-context" : "~7.5",
 		"n2n/n2n-l10n" : "~7.4",
