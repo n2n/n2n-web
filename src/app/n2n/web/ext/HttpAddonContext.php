@@ -156,7 +156,7 @@ class HttpAddonContext implements N2nHttp, AddOnContext {
 
 //	public static function invokerControllers(?string $subsystemName = null, ?Path $cmdPath = null) {
 //		$n2nContext = self::_i()->n2nContext;
-//		$httpContext = $n2nContext->getHttpContext();
+//		$httpContext = $n2nContext->lookup(\n2n\web\http\HttpContext::class);
 //		$request = $httpContext->getRequest();
 //
 //		$subsystem = null;

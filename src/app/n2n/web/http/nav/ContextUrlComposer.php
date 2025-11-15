@@ -155,7 +155,7 @@ class ContextUrlComposer implements UrlComposer {
 		}
 
 		try {
-			return $n2nContext->getHttpContext()->buildContextUrl($this->ssl, $this->subsystem, $this->absolute)
+			return $n2nContext->lookup(\n2n\web\http\HttpContext::class)->buildContextUrl($this->ssl, $this->subsystem, $this->absolute)
 					->extR($path->ext($this->pathExts), $this->queryExt, $this->fragment);
 		} catch (HttpContextNotAvailableException $e) {
 			throw new UnavailableUrlException(true,null, null, $e);
