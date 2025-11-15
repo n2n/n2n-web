@@ -135,7 +135,7 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @return \n2n\web\http\HttpContext
 	 */
 	public function getHttpContext(): HttpContext {
-		return $this->n2nContext->getHttpContext();
+		return $this->n2nContext->lookup(\n2n\web\http\HttpContext::class);
 	}
 
 	/**

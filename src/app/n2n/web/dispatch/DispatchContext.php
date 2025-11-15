@@ -124,7 +124,7 @@ class DispatchContext implements ThreadScoped {
 	 * @throws IllegalStateException
 	 */
 	public function analyzeRequest() {
-		$request = $this->n2nContext->getHttpContext()->getRequest();
+		$request = $this->n2nContext->lookup(\n2n\web\http\HttpContext::class)->getRequest();
 		
 		$this->analyzed = true;
 		$extractor = new DispatchTargetExtractor($this->dispatchTargetCoder);
