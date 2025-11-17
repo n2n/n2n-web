@@ -132,10 +132,10 @@ abstract class View extends BufferedPayload implements UiComponent {
 	}
 
 	/**
-	 * @return \n2n\web\http\HttpContext
+	 * @return HttpContext
 	 */
 	public function getHttpContext(): HttpContext {
-		return $this->n2nContext->lookup(\n2n\web\http\HttpContext::class);
+		return $this->n2nContext->lookup(HttpContext::class);
 	}
 
 	/**
@@ -861,23 +861,23 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param View $view
 	 * @return \n2n\web\http\Request
 	 */
-	public static function request(View $view) {
+	public static function request(View $view): \n2n\web\http\Request {
 		return $view->getRequest();
 	}
 
 	/**
 	 * @param View $view
-	 * @return \n2n\web\http\Response
+	 * @return Response
 	 */
-	public static function response(View $view) {
-		return $view->getN2nContext()->getHttpContext()->getResponse();
+	public static function response(View $view): Response {
+		return $view->getHttpContext()->getResponse();
 	}
 
 	/**
 	 * @param View $view
-	 * @return \n2n\web\http\HttpContext
+	 * @return HttpContext
 	 */
-	public static function httpContext(View $view) {
+	public static function httpContext(View $view): HttpContext {
 		return $view->getHttpContext();
 	}
 }
@@ -929,14 +929,14 @@ return;
  */
 $view /*= new \n2n\web\ui\view\View()*/;
 /**
- * @var \n2n\web\http\HttpContext $httpContext
+ * @var HttpContext $httpContext
  */
-$httpContext = new \n2n\web\http\HttpContext();
+$httpContext = new HttpContext();
 /**
  * @var \n2n\web\http\VarsRequest $request
  */
 $request = new \n2n\web\http\VarsRequest();
 /**
- * @var \n2n\web\http\Response $response
+ * @var Response $response
  */
-$response = new \n2n\web\http\Response();
+$response = new Response();
