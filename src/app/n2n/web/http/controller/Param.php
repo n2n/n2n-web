@@ -33,6 +33,9 @@ use n2n\web\http\controller\impl\HttpData;
 use n2n\util\type\TypeConstraint;
 use n2n\util\type\TypeConstraints;
 use n2n\util\EnumUtils;
+use DateTimeImmutable;
+use n2n\util\DateUtils;
+use n2n\util\DateParseException;
 
 abstract class Param {
 	private string|array $value;
@@ -506,5 +509,17 @@ abstract class Param {
 
 	function getRawValue(): array|string {
 		return $this->rawValue;
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	function parseDateTimeImmutable(int $errStatus = Response::STATUS_400_BAD_REQUEST): DateTimeImmutable {
+		try {
+			return DateUtils::createDateTimeImmutableFromFormat(DateUtils::SQL_DATE_TIME_FORMAT,
+					$this->toString($errStatus));
+		} catch (DateParseException $e) {
+			throw new StatusException($errStatus, previous: $e);
+		}
 	}
 }
