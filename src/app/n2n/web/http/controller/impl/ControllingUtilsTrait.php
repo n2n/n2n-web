@@ -134,15 +134,15 @@ trait ControllingUtilsTrait {
 	/**
 	 * @see ControllingUtils::beginTransaction()
 	 */
-	protected final function beginTransaction($readOnly = false) {
-		$this->cu()->beginTransaction($readOnly);
+	protected final function beginTransaction(bool $readOnly = false, bool $nestedTransactionAllowed = true): void {
+		$this->cu()->beginTransaction($readOnly, $nestedTransactionAllowed);
 	}
 	
 	
 	/**
 	 * @see ControllingUtils::commit()
 	 */
-	protected final function commit() {
+	protected final function commit(): void {
 		$this->cu()->commit();
 	}
 	

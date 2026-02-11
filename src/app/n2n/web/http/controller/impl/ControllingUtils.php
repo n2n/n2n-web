@@ -76,7 +76,6 @@ use n2n\web\http\cache\PayloadCacheStore;
 use n2n\web\http\cache\CachedPayload;
 use n2n\core\util\N2nUtil;
 use n2n\util\magic\MagicArray;
-use n2n\util\magic\TaskResult;
 use n2n\util\magic\impl\TaskResults;
 use n2n\reflection\UnresolvableTypeExpressionException;
 use n2n\web\http\PageNotFoundException;
@@ -202,12 +201,9 @@ class ControllingUtils {
 		$this->httpCacheControl = null;
 		$this->responseCacheControl = null;
 	}
-	
-	/**
-	 * @param string $readOnly
-	 */
-	public function beginTransaction($readOnly = false) {
-		$this->transactions[] = $this->getN2nContext()->getTransactionManager()->createTransaction($readOnly);
+
+	public function beginTransaction(bool $readOnly = false, bool $nestedTransactionAllowed = true): void {
+		$this->transactions[] = $this->getN2nContext()->getTransactionManager()->createTransaction($readOnly, $nestedTransactionAllowed);
 	}
 	
 	/**
