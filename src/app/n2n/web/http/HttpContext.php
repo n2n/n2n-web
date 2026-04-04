@@ -34,58 +34,49 @@ use n2n\core\container\N2nContext;
 use n2n\core\N2N;
 
 class HttpContext {
-	
-	private $request;
-	private $response;
-	private $session;
-	private $baseAssetsUrl;
-	private $supersystem;
+
 	/**
 	 * @var Subsystem[]
 	 */
-	private $subsystems;
-	private $n2nContext;
-	private ?SubsystemRule $activeSubsystemRule;
+	private array $subsystems;
+	private N2nContext $n2nContext;
 
 	const DEFAULT_STATUS_DEV_VIEW = 'n2n\web\view\errorpages\statusDev.html';
 	const DEFAULT_STATUS_LIVE_VIEW = 'n2n\web\view\errorpages\statusLive.html';
 	const DEFAULT_500_DEV_VIEW = 'n2n\web\view\errorpages\500Dev.html';
 	const DEFAULT_500_LIVE_VIEW = 'n2n\web\view\errorpages\500Live.html';
 	
-	private $errorStatusViewNames = [];
-	private $errorStatusDefaultViewName = null;
-	private $errorStatusException = null;
-	private $prevStatusException = null;
+	private array $errorStatusViewNames = [];
+	private ?string $errorStatusDefaultViewName = null;
+	private ?StatusException $prevStatusException = null;
+	private HttpSystemContext $httpSystemContext;
 	
-	public function __construct(Request $request, Response $response, Session $session, Url $baseAssetsUrl, 
-			Supersystem $supersystem, array $subsystems, N2nContext $n2nContext) {
-		$this->request = $request;
-		$this->response = $response;
-		$this->session = $session;
-		$this->baseAssetsUrl = $baseAssetsUrl;
-		$this->supersystem = $supersystem;
+	public function __construct(private Request $request, private Response $response, private Session $session,
+			private Url $baseAssetsUrl, Supersystem $supersystem, array $subsystems, N2nContext $n2nContext) {
+
 		$this->setSubsystems($subsystems);
 		$this->n2nContext = $n2nContext;
 
-		$this->activeSubsystemRule = $this->determineSubsystemRule($request->getHostName(), $request->getContextPath());
+		$this->httpSystemContext = new HttpSystemContext($supersystem,
+				$this->determineSubsystemRule($request->getHostName(), $request->getContextPath()));
 	}
 	
 	/**
-	 * @return \n2n\web\http\Request
+	 * @return Request
 	 */
 	public function getRequest(): Request {
 		return $this->request;
 	}
 	
 	/**
-	 * @return \n2n\web\http\Response
+	 * @return Response
 	 */
 	public function getResponse(): Response {
 		return $this->response;
 	}
 	
 	/**
-	 * @return \n2n\web\http\Session
+	 * @return Session
 	 */
 	public function getSession(): Session {
 		return $this->session;
@@ -100,16 +91,16 @@ class HttpContext {
 	}
 	
 	/**
-	 * @return \n2n\l10n\N2nLocale
+	 * @return N2nLocale
 	 */
-	public function getN2nLocale() {
+	public function getN2nLocale(): N2nLocale {
 		return $this->n2nContext->getN2nLocale();
 	}
 	
 	/**
 	 * @return string
 	 */
-	public function getN2nLocaleHttpId() {
+	public function getN2nLocaleHttpId(): string {
 		return $this->n2nLocaleToHttpId($this->getN2nLocale());
 	}
 	
@@ -126,81 +117,52 @@ class HttpContext {
 	 * @return N2nLocale
 	 */
 	public function getMainN2nLocale(): N2nLocale {
-		$mainN2nLocale = ArrayUtils::first($this->getContextN2nLocales());
-		if ($mainN2nLocale !== null) {
-			return $mainN2nLocale;
-		}
-		
-		return N2nLocale::getDefault();
+		return $this->httpSystemContext->mainN2nLocale;
 	}
 	
 	/**
 	 * @param N2nLocale $n2nLocale
 	 * @return boolean
 	 */
-	public function containsContextN2nLocale(N2nLocale $n2nLocale) {
-		$n2nLocaleId = $n2nLocale->getId();
-		if ($this->supersystem->containsN2nLocaleId($n2nLocaleId)) {
-			return true;
-		}
-		
-		$subsystemRule = $this->getActiveSubsystemRule();
-		if ($subsystemRule !== null && $subsystemRule->containsN2nLocaleId($n2nLocaleId)) {
-			return true;
-		}
-		
-		return false;
+	public function containsContextN2nLocale(N2nLocale $n2nLocale): bool {
+		return $this->httpSystemContext->containsContextN2nLocale($n2nLocale);
 	}
 	
 	/**
 	 * @return N2nLocale[]
 	 */
 	public function getContextN2nLocales(): array {
-		$contextN2nLocales = $this->supersystem->getN2nLocales();
-		if ($this->activeSubsystemRule !== null) {
-			return array_merge($contextN2nLocales, $this->activeSubsystemRule->getN2nLocales());
-		}
-		return $contextN2nLocales;
+		return $this->httpSystemContext->contextN2nLocales;
 	}
 	
 	/**
 	 * @return N2nLocale[]
 	 */
-	public function getAvailableN2nLocales() {
-		$contextN2nLocales = $this->supersystem->getN2nLocales();
-		foreach ($this->getAvailableSubsystems() as $subsystem) {
+	public function getAvailableN2nLocales(): array {
+		$contextN2nLocales = $this->httpSystemContext->supersystem->getN2nLocales();
+		foreach ($this->getSubsystems() as $subsystem) {
 			$contextN2nLocales = array_merge($contextN2nLocales, $subsystem->getN2nLocales());
 		}
 		return $contextN2nLocales;
 	}
 
-	/**
-	 * @return SubsystemRule
-	 */
-	function getActiveSubsystemRule() {
-		return $this->activeSubsystemRule;
+	function getActiveSubsystemRule(): ?SubsystemRule {
+		return $this->httpSystemContext->subsystemRule;
 	}
 
-	/**
-	 * @param SubsystemRule|null $activeSubsystemRule
-	 * @return $this
-	 */
-	function setActiveSubsystemRule(?SubsystemRule $activeSubsystemRule) {
-		$this->activeSubsystemRule = $activeSubsystemRule;
+	function setActiveSubsystemRule(?SubsystemRule $activeSubsystemRule): static {
+		$this->httpSystemContext->subsystemRule = $activeSubsystemRule;
 		return $this;
 	}
 
-	/**
-	 * @return \n2n\web\http\Supersystem
-	 */
-	public function getSupersystem() {
-		return $this->supersystem;
+	public function getSupersystem(): Supersystem {
+		return $this->httpSystemContext->supersystem;
 	}
 	
 	/**
 	 * @return Subsystem[]
 	 */
-	function getSubsystems() {
+	function getSubsystems(): array {
 		return $this->subsystems;
 	}
 
@@ -208,7 +170,7 @@ class HttpContext {
 	 * @param Subsystem[] $subsystems
 	 * @return HttpContext
 	 */
-	function setSubsystems(array $subsystems) {
+	function setSubsystems(array $subsystems): static {
 		ArgUtils::valArray($subsystems, Subsystem::class);
 		$this->subsystems = [];
 		foreach ($subsystems as $subsystem) {
@@ -221,14 +183,14 @@ class HttpContext {
 	 * @return Subsystem[] 
 	 * @deprecated use {@link self::getSubsystems()}
 	 */
-	public function getAvailableSubsystems() {
+	public function getAvailableSubsystems(): array {
 		return $this->subsystems;
 	}
 	
 	/**
 	 * @return Url
 	 */
-	public function getBaseAssetsUrl() {
+	public function getBaseAssetsUrl(): Url {
 		return $this->baseAssetsUrl;
 	}
 	
@@ -249,7 +211,7 @@ class HttpContext {
 	
 	/**
 	 * @param ControllerContext $controllerContext
-	 * @return \n2n\util\uri\Path
+	 * @return Path
 	 */
 	public function getControllerContextPath(ControllerContext $controllerContext): Path {
 		return $this->request->getContextPath()->ext($controllerContext->getCmdContextPath());
@@ -261,7 +223,7 @@ class HttpContext {
 	 * @param N2nLocale|null $n2nLocale
 	 * @return SubsystemRule|null
 	 */
-	public function findBestSubsystemRuleBySubsystemAndN2nLocale(Subsystem|string $subsystem, ?N2nLocale $n2nLocale = null) {
+	public function findBestSubsystemRuleBySubsystemAndN2nLocale(Subsystem|string $subsystem, ?N2nLocale $n2nLocale = null): ?SubsystemRule {
 		if (is_string($subsystem)) {
 			$subsystem = $this->getSubsystemByName($subsystem);
 		}
@@ -274,7 +236,7 @@ class HttpContext {
 	 * @param Path $contextPath
 	 * @return SubsystemRule|null
 	 */
-	public function determineSubsystemRule(string $hostName, Path $contextPath) {
+	public function determineSubsystemRule(string $hostName, Path $contextPath): ?SubsystemRule {
 		foreach ($this->subsystems as $subsystem) {
 			foreach ($subsystem->getRules() as $subsystemRule) {
 				$ruleHostName = $subsystemRule->getHostName();
@@ -334,7 +296,7 @@ class HttpContext {
 	 * @param bool|null $ssl
 	 * @return Url
 	 */
-	private function completeSchemaCheck(Url $url, ?bool $ssl = null) {
+	private function completeSchemaCheck(Url $url, ?bool $ssl = null): Url {
 		if ($ssl === null) return $url;
 	
 		if ($ssl) {
@@ -351,12 +313,8 @@ class HttpContext {
 			
 		return $url->chScheme(Request::PROTOCOL_HTTP);
 	}
-	
-	/**
-	 * @param Subsystem $subsystem
-	 * @return Url
-	 */
-	private function buildSubsystemUrl(SubsystemRule $subsystemRule) {
+
+	private function buildSubsystemUrl(SubsystemRule $subsystemRule): Url {
 		$url = new Url();
 
 		if (null !== ($subsystemHostName = $subsystemRule->getHostName())) {
@@ -376,11 +334,11 @@ class HttpContext {
 
 	/**
 	 * @param string $name
-	 * @return \n2n\web\http\Subsystem
+	 * @return Subsystem
 	 * @throws UnknownSubsystemException
 	 * @deprecated {@link self::getSubsystemByName()}
 	 */
-	public function getAvailableSubsystemByName($name) {
+	public function getAvailableSubsystemByName(string $name): Subsystem {
 		if (isset($this->subsystems[$name])) {
 			return $this->subsystems[$name];
 		}
@@ -389,7 +347,7 @@ class HttpContext {
 	}
 
 
-	function getSubsystemRuleByName(string $subsystemRuleName) {
+	function getSubsystemRuleByName(string $subsystemRuleName): array {
 		$subsystemRules = [];
 
 		foreach ($this->subsystems as $subsystem) {
@@ -403,10 +361,10 @@ class HttpContext {
 
 	/**
 	 * @param string $name
-	 * @return \n2n\web\http\Subsystem
+	 * @return Subsystem
 	 * @throws UnknownSubsystemException
 	 */
-	public function getSubsystemByName($name) {
+	public function getSubsystemByName(string $name): Subsystem {
 		if (isset($this->subsystems[$name])) {
 			return $this->subsystems[$name];
 		}
@@ -417,21 +375,21 @@ class HttpContext {
 	/**
 	 * @return N2nContext
 	 */
-	public function getN2nContext() {
+	public function getN2nContext(): N2nContext {
 		return $this->n2nContext;
 	}
 	
 	/**
 	 * @return string[]
 	 */
-	function getErrorStatusViewNames() {
+	function getErrorStatusViewNames(): array {
 		return $this->errorStatusViewNames;
 	}
 	
 	/**
 	 * @param string[] $errorStatusViewNames
 	 */
-	function setErrorStatusViewNames(array $errorStatusViewNames) {
+	function setErrorStatusViewNames(array $errorStatusViewNames): void {
 		ArgUtils::valArray($errorStatusViewNames, 'string');
 		$this->errorStatusViewNames = $errorStatusViewNames;
 	}
@@ -439,22 +397,18 @@ class HttpContext {
 	/**
 	 * @param string|null $errorStatusDefaultViewName
 	 */
-	function setErrorStatusDefaultViewName(?string $errorStatusDefaultViewName) {
+	function setErrorStatusDefaultViewName(?string $errorStatusDefaultViewName): void {
 		$this->errorStatusDefaultViewName = $errorStatusDefaultViewName;
 	}
 	
 	/**
 	 * @return string|null
 	 */
-	function getErrorStatusDefaultViewName() {
+	function getErrorStatusDefaultViewName(): ?string {
 		return $this->errorStatusDefaultViewName;
 	}
-	
-	/**
-	 * @param int $httpStatus
-	 * @return string
-	 */
-	function determineErrorStatusViewName(int $httpStatus) {
+
+	function determineErrorStatusViewName(int $httpStatus): string {
 		$viewName = $this->errorStatusViewNames[$httpStatus] ?? $this->errorStatusDefaultViewName;
 		if ($viewName !== null) {
 			return $viewName;
@@ -470,24 +424,21 @@ class HttpContext {
 	/**
 	 * @param StatusException|null $prevStatusException
 	 */
-	function setPrevStatusException(?StatusException $prevStatusException) {
+	function setPrevStatusException(?StatusException $prevStatusException): void {
 		$this->prevStatusException = $prevStatusException;
 	}
-	
-	/**
-	 * @return StatusException
-	 */
-	function getPrevStatusException() {
+
+	function getPrevStatusException(): ?StatusException {
 		return $this->prevStatusException;
 	}
 
 	/**
 	 * @return N2nLocale
 	 */
-	function determineBestN2nLocale() {
-		$n2nLocales = $this->supersystem->getN2nLocales();
-		if ($this->activeSubsystemRule !== null) {
-			$n2nLocales = array_merge($n2nLocales, $this->activeSubsystemRule->getN2nLocales());
+	function determineBestN2nLocale(): N2nLocale {
+		$n2nLocales = $this->httpSystemContext->supersystem->getN2nLocales();
+		if ($this->httpSystemContext->subsystemRule !== null) {
+			$n2nLocales = array_merge($n2nLocales, $this->httpSystemContext->subsystemRule->getN2nLocales());
 		}
 
 		return $this->request->detectBestN2nLocale($n2nLocales);
