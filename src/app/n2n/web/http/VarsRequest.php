@@ -426,7 +426,7 @@ class VarsRequest implements Request {
 	 * @deprecated
 	 */
 	public function getSubsystem(): ?Subsystem {
-		return $this->legacyN2nContext()->getHttpContext()->getActiveSubsystemRule()?->getSubsystem();
+		return $this->legacyN2nContext()->lookup(HttpContext::class)->getActiveSubsystemRule()?->getSubsystem();
 	}
 //
 //	/**
