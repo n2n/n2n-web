@@ -264,7 +264,7 @@ class ControllerInterpreter {
 				break;
 		}
 		
-		if ($this->class->hasMethod($methodName)) {
+		if ($methodName !== null && $this->class->hasMethod($methodName)) {
 			$method = $this->class->getMethod($methodName);
 			$this->rejectHttpMethodAnnos($method);
 			return $method;
