@@ -8,7 +8,7 @@ use n2n\util\uri\Url;
 use n2n\web\http\Supersystem;
 use n2n\l10n\N2nLocale;
 use n2n\util\uri\Path;
-use n2n\web\http\mock\CommonControllerMock;
+use n2n\web\http\mock\MockedCommonController;
 use n2n\web\http\impl\SimpleSession;
 use n2n\core\container\N2nContext;
 use n2n\web\http\ManagedResponse;
@@ -30,7 +30,7 @@ class ControllingPlanTest extends TestCase {
 	function testInt() {
 		$contorllingPlan = new ControllingPlan($this->httpContext);
 		
-		$controller = new CommonControllerMock();
+		$controller = new MockedCommonController();
 		$contorllingPlan->addMain(new ControllerContext(new Path(['int', '2']), new Path(['context']), $controller));
 		
 		$result = $contorllingPlan->execute();
@@ -41,7 +41,7 @@ class ControllingPlanTest extends TestCase {
 	function testStringInt() {
 		$contorllingPlan = new ControllingPlan($this->httpContext);
 		
-		$controller = new CommonControllerMock();
+		$controller = new MockedCommonController();
 		$contorllingPlan->addMain(new ControllerContext(new Path(['stringint', '2']), new Path(['context']), $controller));
 		
 		$result = $contorllingPlan->execute();

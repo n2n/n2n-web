@@ -5,7 +5,7 @@ namespace n2n\web\http\controller;
 use PHPUnit\Framework\TestCase;
 use n2n\web\http\mock\MockedStringBackedEnum;
 use n2n\web\http\StatusException;
-use n2n\web\http\mock\PureEnumMock;
+use n2n\web\http\mock\MockedPureEnum;
 use DateTimeImmutable;
 use n2n\spec\valobj\err\IllegalValueException;
 use InvalidArgumentException;
@@ -45,11 +45,11 @@ class ParamTest extends TestCase {
 	 * @throws StatusException
 	 */
 	function testToPureEnum() {
-		$this->assertEquals(PureEnumMock::CASE1,
-				(new ParamGet('CASE1'))->toEnum(PureEnumMock::cases()));
+		$this->assertEquals(MockedPureEnum::CASE1,
+				(new ParamGet('CASE1'))->toEnum(MockedPureEnum::cases()));
 
 		$this->expectException(StatusException::class);
-		(new ParamGet('CASE3'))->toEnum(PureEnumMock::cases());
+		(new ParamGet('CASE3'))->toEnum(MockedPureEnum::cases());
 
 	}
 
