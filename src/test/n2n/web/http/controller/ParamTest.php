@@ -7,18 +7,16 @@ use n2n\web\http\mock\StringBackedEnumMock;
 use n2n\web\http\StatusException;
 use n2n\web\http\mock\PureEnumMock;
 use DateTimeImmutable;
-use n2n\web\http\mock\MockBoolValueObject;
-use n2n\web\http\mock\MockIntValueObject;
 use n2n\spec\valobj\err\IllegalValueException;
-use n2n\web\http\mock\ScalarValueObjectEntityMock;
-use n2n\web\http\mock\MockFloatValueObject;
-use n2n\web\http\mock\MockStringValueObject;
-use n2n\web\http\mock\MockSecretValueObject;
 use InvalidArgumentException;
+use n2n\web\http\controller\mock\MockedBoolValueObject;
+use n2n\web\http\controller\mock\MockedIntValueObject;
+use n2n\web\http\controller\mock\MockedFloatValueObject;
+use n2n\web\http\controller\mock\MockedStringValueObject;
+use n2n\web\http\controller\mock\MockedSecretValueObject;
 
 class ParamTest extends TestCase {
 	protected function setUp(): void {
-		$this->ScalarValueObject();
 	}
 
 	/**
@@ -67,20 +65,16 @@ class ParamTest extends TestCase {
 
 	}
 
-	private function ScalarValueObject(): void {
-		$vo = new ScalarValueObjectEntityMock();
-	}
-
 	/**
 	 * @throws StatusException
 	 */
 	function testToBoolValueObject() {
-		$this->assertEquals(new MockBoolValueObject(true),
-				(new ParamGet('1')->toBoolValueObject(MockBoolValueObject::class)));
-		$this->assertEquals(new MockBoolValueObject(false),
-				(new ParamGet('0')->toBoolValueObject(MockBoolValueObject::class)));
+		$this->assertEquals(new MockedBoolValueObject(true),
+				(new ParamGet('1')->toBoolValueObject(MockedBoolValueObject::class)));
+		$this->assertEquals(new MockedBoolValueObject(false),
+				(new ParamGet('0')->toBoolValueObject(MockedBoolValueObject::class)));
 		$this->expectException(StatusException::class);
-		(new ParamGet('10')->toBoolValueObject(MockBoolValueObject::class));
+		(new ParamGet('10')->toBoolValueObject(MockedBoolValueObject::class));
 	}
 
 	/**
@@ -88,10 +82,10 @@ class ParamTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testToIntValueObject() {
-		$this->assertEquals(new MockIntValueObject(10),
-				(new ParamGet('10')->toIntValueObject(MockIntValueObject::class)));
+		$this->assertEquals(new MockedIntValueObject(10),
+				(new ParamGet('10')->toIntValueObject(MockedIntValueObject::class)));
 		$this->expectException(StatusException::class);
-		(new ParamGet('10.5')->toIntValueObject(MockIntValueObject::class));
+		(new ParamGet('10.5')->toIntValueObject(MockedIntValueObject::class));
 	}
 
 	/**
@@ -99,21 +93,21 @@ class ParamTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testToFloatValueObject() {
-		$this->assertEquals(new MockFloatValueObject(10.5),
-				(new ParamGet('10.5')->toFloatValueObject(MockFloatValueObject::class)));
+		$this->assertEquals(new MockedFloatValueObject(10.5),
+				(new ParamGet('10.5')->toFloatValueObject(MockedFloatValueObject::class)));
 		$this->expectException(StatusException::class);
-		(new ParamGet('10.5.5')->toFloatValueObject(MockFloatValueObject::class));
+		(new ParamGet('10.5.5')->toFloatValueObject(MockedFloatValueObject::class));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	function testToStringValueObject() {
-		$this->assertEquals(new MockStringValueObject('blubb'),
-				(new ParamGet('blubb')->toStringValueObject(MockStringValueObject::class)));
+		$this->assertEquals(new MockedStringValueObject('blubb'),
+				(new ParamGet('blubb')->toStringValueObject(MockedStringValueObject::class)));
 		$this->expectException(StatusException::class);
 		$this->expectExceptionMessage('Value type not allowed with constraints');
-		(new ParamGet(['aa'])->toStringValueObject(MockStringValueObject::class));
+		(new ParamGet(['aa'])->toStringValueObject(MockedStringValueObject::class));
 	}
 
 	/**
@@ -122,7 +116,7 @@ class ParamTest extends TestCase {
 	function testToValueObjectExpectExceptionBecauseMissingImplementation() {
 		$this->expectException(InvalidArgumentException::class);
 		$this->expectExceptionMessage('Class must implement');
-		(new ParamGet('blubb')->toStringValueObject(MockIntValueObject::class));
+		(new ParamGet('blubb')->toStringValueObject(MockedIntValueObject::class));
 	}
 
 	/**
@@ -140,7 +134,7 @@ class ParamTest extends TestCase {
 	function testToValueObjectExpectExceptionBecauseInvalidClass() {
 		$this->expectException(StatusException::class);
 		$this->expectExceptionMessage('you need to provide the correct secret value');
-		(new ParamGet('blubb')->toStringValueObject(MockSecretValueObject::class));
+		(new ParamGet('blubb')->toStringValueObject(MockedSecretValueObject::class));
 	}
 
 }

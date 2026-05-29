@@ -1,6 +1,6 @@
 <?php
 
-namespace n2n\web\http\mock;
+namespace n2n\web\http\controller\mock;
 
 use n2n\spec\valobj\scalar\BoolValueObject;
 use n2n\spec\valobj\scalar\IntValueObject;
@@ -8,9 +8,7 @@ use n2n\spec\valobj\scalar\FloatValueObject;
 use n2n\spec\valobj\scalar\StringValueObject;
 use n2n\spec\valobj\err\IllegalValueException;
 
-class ScalarValueObjectEntityMock {
-}
-class MockBoolValueObject implements BoolValueObject {
+class MockedBoolValueObject implements BoolValueObject {
 	public function __construct(public bool $value) {
 	}
 
@@ -19,7 +17,9 @@ class MockBoolValueObject implements BoolValueObject {
 	}
 }
 
-class MockIntValueObject implements IntValueObject {
+ // TODO: split classes into separated files.
+
+class MockedIntValueObject implements IntValueObject {
 	public function __construct(public int $value) {
 	}
 
@@ -28,7 +28,7 @@ class MockIntValueObject implements IntValueObject {
 	}
 }
 
-class MockFloatValueObject implements FloatValueObject {
+class MockedFloatValueObject implements FloatValueObject {
 	public function __construct(public float $value) {
 	}
 
@@ -37,7 +37,7 @@ class MockFloatValueObject implements FloatValueObject {
 	}
 }
 
-class MockStringValueObject implements StringValueObject {
+class MockedStringValueObject implements StringValueObject {
 	public function __construct(public string $value) {
 	}
 
@@ -46,7 +46,7 @@ class MockStringValueObject implements StringValueObject {
 	}
 }
 
-class MockSecretValueObject implements StringValueObject {
+class MockedSecretValueObject implements StringValueObject {
 
 	public function __construct(public string $value) {
 		if ($value !== 'secret') {

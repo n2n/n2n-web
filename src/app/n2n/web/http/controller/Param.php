@@ -89,16 +89,9 @@ abstract class Param {
 
 	/**
 	 * @return bool
-	 * @deprecated use {@link self::toBoolOrReject()}
-	 */
-	public function toBool(): bool {
-		return !empty($this->value);
-	}
-
-	/**
 	 * @throws StatusException
 	 */
-	public function toBoolOrReject(string $trueStr = '1', string $falseStr = '0',
+	public function toBool(string $trueStr = '1', string $falseStr = '0',
 			int $status = Response::STATUS_404_NOT_FOUND): bool {
 		try {
 			ArgUtils::valEnum($this->rawValue, [$trueStr, $falseStr]);
@@ -110,6 +103,16 @@ abstract class Param {
 
 	/**
 	 * @throws StatusException
+	 * @deprecated use {@link self::toBool()}
+	 */
+	public function toBoolOrReject(string $trueStr = '1', string $falseStr = '0',
+			int $status = Response::STATUS_404_NOT_FOUND): bool {
+		return $this->toBool($trueStr, $falseStr, $status);
+	}
+
+	/**
+	 * @throws StatusException
+	 * @deprecated use {@link self::toInt()}
 	 */
 	public function toIntOrReject($status = Response::STATUS_404_NOT_FOUND) {
 		if (false !== ($value = filter_var($this->value, FILTER_VALIDATE_INT))) {
@@ -132,6 +135,7 @@ abstract class Param {
 
 	/**
 	 * @throws StatusException
+	 * @deprecated use {@link self::toFloat()}
 	 */
 	public function toFloatOrReject($status = Response::STATUS_404_NOT_FOUND) {
 		if (false !== ($value = filter_var($this->value, FILTER_VALIDATE_FLOAT))) {
@@ -165,12 +169,11 @@ abstract class Param {
 		throw new StatusException('Param not numeric');
 	}
 
-
 	/**
 	 * @param int $status
 	 * @return string
 	 * @throws StatusException
-	 * @deprecated
+	 * @deprecated use {@link self::toNumeric()}
 	 */
 	public function toNumericOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
 		return $this->toNumeric($status);
@@ -179,7 +182,7 @@ abstract class Param {
 	/**
 	 * @throws StatusException
 	 */
-	public function toNumeric($status = Response::STATUS_404_NOT_FOUND) {
+	public function toNumeric($status = Response::STATUS_404_NOT_FOUND): string {
 		$this->rejectIfNotNumeric();
 		
 		return $this->value;
@@ -214,10 +217,11 @@ abstract class Param {
 	private function valNotEmptyString($value): bool {
 		return is_scalar($value) && mb_strlen($value) > 0;
 	}
-	
+
 	/**
 	 * @param int $status
 	 * @return string
+	 * @throws StatusException
 	 * @deprecated
 	 */
 	public function toNotEmptyStringOrReject(int $status = Response::STATUS_404_NOT_FOUND): string {
@@ -228,6 +232,7 @@ abstract class Param {
 	 * @param string[]|\UnitEnum[] $options
 	 * @param int $rejectStatus
 	 * @return string|\UnitEnum
+	 * @throws StatusException
 	 */
 	function toEnum(array $options, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
 		try {
@@ -247,7 +252,10 @@ abstract class Param {
 		
 		return $this->value;
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function toNotEmptyStringOrNull(int $rejectStatus = Response::STATUS_404_NOT_FOUND): ?string {
 		if ($this->isEmptyString()) {
 			return null;
@@ -280,7 +288,7 @@ abstract class Param {
 	 * @param int $status
 	 * @return array
 	 * @throws StatusException
-	 * @deprecated
+	 * @deprecated use {@see self::toStringArray()}
 	 */
 	public function toStringArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND): array {
 		return $this->toStringArray($status);
@@ -309,7 +317,7 @@ abstract class Param {
 	 * @param int $status
 	 * @throws StatusException
 	 * @return array
-	 * @deprecated
+	 * @deprecated use {@see self::toIntArray()}
 	 */
 	public function toIntArrayOrReject(int $status = Response::STATUS_404_NOT_FOUND): array {
 		return $this->toIntArray($status);
@@ -345,7 +353,7 @@ abstract class Param {
 	 * @param int $status
 	 * @throws StatusException
 	 * @return array
-	 * @deprecated
+	 * @deprecated use {@see self::splitToStringArray()}
 	 */
 	public function splitToStringArrayOrReject(string $separator = ',', bool $sorted = true,
 			int $status = Response::STATUS_404_NOT_FOUND): array {
@@ -383,7 +391,7 @@ abstract class Param {
 	 * @param bool $sorted
 	 * @param int $status
 	 * @throws StatusException
-	 * @deprecated
+	 * @deprecated use {@see self::splitToIntArray()}
 	 */
 	public function splitToIntArrayOrReject(string $separator = '-', bool $sorted = true, 
 			int $status = Response::STATUS_404_NOT_FOUND): array {
@@ -424,7 +432,7 @@ abstract class Param {
 	 * @param int $errStatus
 	 * @return array
 	 * @throws StatusException
-	 * @deprecated
+	 * @deprecated use {@see self::toNotEmptyStringArray()}
 	 */
 	public function toNotEmptyStringArrayOrReject(int $errStatus = Response::STATUS_404_NOT_FOUND): array {
 		return $this->toNotEmptyStringArray($errStatus);
@@ -551,7 +559,7 @@ abstract class Param {
 	 * @return T
 	 */
 	function toIntValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
-		return $this->parseValueObject($this->toIntOrReject($rejectStatus), $className, IntValueObject::class,
+		return $this->parseValueObject($this->toInt($rejectStatus), $className, IntValueObject::class,
 				$rejectStatus);
 	}
 
@@ -563,7 +571,7 @@ abstract class Param {
 	 * @return T
 	 */
 	function toFloatValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
-		return $this->parseValueObject($this->toFloatOrReject($rejectStatus), $className, FloatValueObject::class,
+		return $this->parseValueObject($this->toFloat($rejectStatus), $className, FloatValueObject::class,
 				$rejectStatus);
 	}
 
@@ -575,7 +583,7 @@ abstract class Param {
 	 * @return T
 	 */
 	function toBoolValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
-		return $this->parseValueObject($this->toBoolOrReject(status: $rejectStatus), $className, BoolValueObject::class,
+		return $this->parseValueObject($this->toBool(status: $rejectStatus), $className, BoolValueObject::class,
 				$rejectStatus);
 	}
 
