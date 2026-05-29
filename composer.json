@@ -35,10 +35,11 @@
 		"n2n/n2n-reflection" : "~7.5.0",
 		"n2n/n2n-util": "~7.5.0",
 		"n2n/n2n-cache" : "~7.5.0",
+        "n2n/n2n-spec-valobj": "~1.0.0",
 		"psr/http-factory": "^1",
 		"psr/http-message": "^1|^2",
         "ext-simplexml": "*",
-      "ext-mbstring": "*"
+        "ext-mbstring": "*"
     },
 	"autoload" : {
 		"psr-4" : {

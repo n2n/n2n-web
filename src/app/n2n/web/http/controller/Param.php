@@ -36,6 +36,13 @@ use n2n\util\EnumUtils;
 use DateTimeImmutable;
 use n2n\util\DateUtils;
 use n2n\util\DateParseException;
+use ReflectionClass;
+use n2n\util\ex\IllegalStateException;
+use n2n\spec\valobj\scalar\StringValueObject;
+use n2n\spec\valobj\scalar\IntValueObject;
+use n2n\spec\valobj\scalar\FloatValueObject;
+use n2n\spec\valobj\scalar\BoolValueObject;
+use n2n\spec\valobj\err\IllegalValueException;
 
 abstract class Param {
 	private string|array $value;
@@ -63,21 +70,21 @@ abstract class Param {
 	 * @throws StatusException
 	 */
 	function toString(int $rejectStatus = Response::STATUS_404_NOT_FOUND): string {
-		return $this->val(TypeConstraints::string());
+		return $this->val(TypeConstraints::string(), $rejectStatus);
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	function toInt(int $rejectStatus = Response::STATUS_404_NOT_FOUND): int {
-		return $this->val(TypeConstraints::int(false, true));
+		return $this->val(TypeConstraints::int(false, true), $rejectStatus);
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	function toFloat(int $rejectStatus = Response::STATUS_404_NOT_FOUND): float {
-		return $this->val(TypeConstraints::float(false, true));
+		return $this->val(TypeConstraints::float(false, true), $rejectStatus);
 	}
 
 	/**
@@ -157,11 +164,12 @@ abstract class Param {
 		
 		throw new StatusException('Param not numeric');
 	}
-	
-	
+
+
 	/**
 	 * @param int $status
 	 * @return string
+	 * @throws StatusException
 	 * @deprecated
 	 */
 	public function toNumericOrReject(int $status = Response::STATUS_404_NOT_FOUND) {
@@ -248,12 +256,12 @@ abstract class Param {
 		// value could be an array
 		return $this->toNotEmptyString($rejectStatus);
 	}
-	
-	
+
+
 	/**
 	 * @param int $rejectStatus
+	 * @return array
 	 * @throws StatusException
-	 * @return string
 	 */
 	public function toArray(int $rejectStatus = Response::STATUS_404_NOT_FOUND): array {
 		if (is_array($this->value)) {
@@ -496,7 +504,7 @@ abstract class Param {
 	 * @throws StatusException
 	 */
 	function parseJsonToHttpData(int $errStatus = Response::STATUS_400_BAD_REQUEST): HttpData {
-		return new HttpData($this->parseJsonToDataMap($errStatus, true), $errStatus);
+		return new HttpData($this->parseJsonToDataMap($errStatus), $errStatus);
 	}
 	
 	/**
@@ -520,6 +528,80 @@ abstract class Param {
 					$this->toString($errStatus));
 		} catch (DateParseException $e) {
 			throw new StatusException($errStatus, previous: $e);
+		}
+	}
+
+	/**
+	 * @template T
+	 * @param class-string<T> $className
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return T
+	 */
+	function toStringValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
+		return $this->parseValueObject($this->toString($rejectStatus), $className, StringValueObject::class,
+				$rejectStatus);
+	}
+
+	/**
+	 * @template T
+	 * @param class-string<T> $className
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return T
+	 */
+	function toIntValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
+		return $this->parseValueObject($this->toIntOrReject($rejectStatus), $className, IntValueObject::class,
+				$rejectStatus);
+	}
+
+	/**
+	 * @template T
+	 * @param class-string<T> $className
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return T
+	 */
+	function toFloatValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
+		return $this->parseValueObject($this->toFloatOrReject($rejectStatus), $className, FloatValueObject::class,
+				$rejectStatus);
+	}
+
+	/**
+	 * @template T
+	 * @param class-string<T> $className
+	 * @param int $rejectStatus
+	 * @throws StatusException
+	 * @return T
+	 */
+	function toBoolValueObject(string $className, int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
+		return $this->parseValueObject($this->toBoolOrReject(status: $rejectStatus), $className, BoolValueObject::class,
+				$rejectStatus);
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	private function parseValueObject(mixed $value, string $className, string $interfaceName,
+			int $rejectStatus = Response::STATUS_404_NOT_FOUND): mixed {
+
+		try {
+			$class = new ReflectionClass($className);
+		} catch (\ReflectionException $e) {
+			throw new \InvalidArgumentException('Invalid value object class name passed: ' . $className,
+					previous: $e);
+		}
+
+		if (!$class->implementsInterface($interfaceName)) {
+			throw new \InvalidArgumentException($className. ' Class must implement ' . $interfaceName);
+		}
+
+		try {
+			return $class->newInstance($value);
+		} catch (\ReflectionException $e) {
+			throw new IllegalStateException(previous: $e);
+		} catch (IllegalValueException $e) {
+			throw new StatusException($rejectStatus, $e->getMessage(), previous: $e);
 		}
 	}
 }
