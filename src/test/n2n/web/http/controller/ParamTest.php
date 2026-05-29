@@ -3,7 +3,7 @@
 namespace n2n\web\http\controller;
 
 use PHPUnit\Framework\TestCase;
-use n2n\web\http\mock\StringBackedEnumMock;
+use n2n\web\http\mock\MockedStringBackedEnum;
 use n2n\web\http\StatusException;
 use n2n\web\http\mock\PureEnumMock;
 use DateTimeImmutable;
@@ -23,11 +23,11 @@ class ParamTest extends TestCase {
 	 * @throws StatusException
 	 */
 	function testToBackedEnum() {
-		$this->assertEquals(StringBackedEnumMock::VALUE1,
-				(new ParamGet('value-1'))->toEnum(StringBackedEnumMock::cases()));
+		$this->assertEquals(MockedStringBackedEnum::VALUE1,
+				(new ParamGet('value-1'))->toEnum(MockedStringBackedEnum::cases()));
 
 		$this->expectException(StatusException::class);
-		(new ParamGet('VALUE1'))->toEnum(StringBackedEnumMock::cases());
+		(new ParamGet('VALUE1'))->toEnum(MockedStringBackedEnum::cases());
 
 	}
 
