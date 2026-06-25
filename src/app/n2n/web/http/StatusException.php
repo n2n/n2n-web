@@ -48,7 +48,7 @@ class StatusException extends \Exception {
 	}
 // 	/**
 // 	 * 
-// 	 * @return \n2n\util\type\attrs\Attributes
+// 	 * @return \n2n\util\attr\Attributes
 // 	 */
 // 	public function getAttributes() {
 // 		return $this->attributes;

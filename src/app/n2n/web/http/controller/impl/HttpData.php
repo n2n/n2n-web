@@ -24,11 +24,11 @@ namespace n2n\web\http\controller\impl;
 use n2n\util\type\TypeConstraint;
 use n2n\web\http\StatusException;
 use n2n\web\http\Response;
-use n2n\util\type\attrs\AttributePath;
-use n2n\util\type\attrs\DataMap;
-use n2n\util\type\attrs\AttributeReader;
-use n2n\util\type\attrs\AttributesException;
-use n2n\util\type\attrs\AttributeWriter;
+use n2n\util\attr\AttributePath;
+use n2n\util\attr\DataMap;
+use n2n\util\attr\AttributeReader;
+use n2n\util\attr\AttributesException;
+use n2n\util\attr\AttributeWriter;
 use n2n\util\type\TypeConstraints;
 use n2n\util\StringUtils;
 
@@ -61,7 +61,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\util\type\attrs\AttributeReader::containsAttribute()
+	 * @see \n2n\util\attr\AttributeReader::containsAttribute()
 	 */
 	function containsAttribute(AttributePath $path): bool {
 		return $this->has($path);
@@ -73,7 +73,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * use {@link self::req()} instead.
 	 * 
 	 * {@inheritDoc}
-	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
+	 * @see \n2n\util\attr\AttributeReader::readAttribute()
 	 */
 	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true,
 			mixed $defaultValue = null): mixed {
@@ -116,7 +116,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	function mapStrings(array $paths, \Closure $closure) {
 		try {
 			$this->dataMap->mapStrings($paths, $closure);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 
@@ -131,7 +131,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	function mapString($path, \Closure $closure) {
 		try {
 			$this->dataMap->mapString($path, $closure);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 
@@ -146,7 +146,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	function cleanString($path, bool $simpleWhitespacesOnly = true) {
 		try {
 			$this->dataMap->cleanString($path, $simpleWhitespacesOnly);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 		return $this;
@@ -160,7 +160,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	function cleanStrings(array $paths, bool $simpleWhitespacesOnly = true) {
 		try {
 			$this->dataMap->cleanStrings($paths, $simpleWhitespacesOnly);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 		return $this;
@@ -178,7 +178,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function req($path, $type = null) {
 		try {
 			return $this->dataMap->req($path, $type);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
@@ -186,7 +186,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function opt($path, $type = null, $defaultValue = null) {
 		try {
 			return $this->dataMap->opt($path, $type, $defaultValue);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
@@ -296,7 +296,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
 		try {
 			return $this->dataMap->reqEnum($path, $allowedValues, $nullAllowed);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
@@ -307,7 +307,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
 		try {
 			return $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed);
-		} catch (\n2n\util\type\attrs\AttributesException $e) {
+		} catch (\n2n\util\attr\AttributesException $e) {
 			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
 		}
 	}
