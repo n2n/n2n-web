@@ -29,21 +29,17 @@ use n2n\util\attr\DataMap;
 use n2n\util\attr\AttributeReader;
 use n2n\util\attr\AttributesException;
 use n2n\util\attr\AttributeWriter;
-use n2n\util\type\TypeConstraints;
-use n2n\util\StringUtils;
 
 class HttpData implements AttributeReader, AttributeWriter {
 
-	private $dataMap;
-	private $errStatus;
-	
-	/**
-	 *
-	 * @param array $attrs
-	 */
-	public function __construct(DataMap $dataMap, int $errStatus = Response::STATUS_400_BAD_REQUEST) {
-		$this->dataMap = $dataMap;
-		$this->errStatus = $errStatus;
+	private DataMap $dataMap;
+
+	public function __construct(DataMap|array $dataMap, private int $errStatus = Response::STATUS_400_BAD_REQUEST) {
+		if (is_array($dataMap)) {
+			$this->dataMap = new DataMap($dataMap);
+		} else {
+			$this->dataMap = $dataMap;
+		}
 	}
 	
 // 	public function setInterceptor(?Interceptor $interceptor) {
@@ -166,185 +162,202 @@ class HttpData implements AttributeReader, AttributeWriter {
 		return $this;
 	}
 
+	/**
+	 * @throws StatusException
+	 */
+	private function try(\Closure $closure): mixed {
+		try {
+			return $closure();
+		} catch (\n2n\util\attr\AttributesException $e) {
+			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
+		}
+	}
+
 
 	/**
-	 * @param string $name
-	 * @param bool $mandatory
-	 * @param mixed $defaultValue
-	 * @param TypeConstraint $typeConstraint
 	 * @throws StatusException
-	 * @return mixed
 	 */
-	public function req($path, $type = null) {
-		try {
-			return $this->dataMap->req($path, $type);
-		} catch (\n2n\util\attr\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+	public function req(mixed $path, mixed $type = null): mixed {
+		return $this->try(fn () => $this->dataMap->req($path, $type));
 	}
-	
-	public function opt($path, $type = null, $defaultValue = null) {
-		try {
-			return $this->dataMap->opt($path, $type, $defaultValue);
-		} catch (\n2n\util\attr\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function opt(mixed $path, mixed $type = null, mixed $defaultValue = null) {
+		return $this->try(fn () => $this->dataMap->opt($path, $type, $defaultValue));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function reqScalar($path, bool $nullAllowed = false) {
-		return $this->req($path, TypeConstraint::createSimple('scalar', $nullAllowed));
+		return $this->try(fn () => $this->dataMap->reqScalar($path, $nullAllowed));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	public function optScalar($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed), $defaultValue);
+		return $this->try(fn () => $this->dataMap->optScalar($path, $defaultValue, $nullAllowed));
 	}
-	
-	public function getString($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
-		if ($mandatory) {
-			return $this->reqString($path, $nullAllowed);
-		}
-		
-		return $this->optString($path, $defaultValue, $nullAllowed);
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqString($path, bool $nullAllowed = false, bool $lenient = true) {
+		return $this->try(fn () => $this->dataMap->reqString($path, $nullAllowed, $lenient));
 	}
-	
-	public function reqString($name, bool $nullAllowed = false, bool $lenient = true) {
-		if (!$lenient) {
-			return $this->req($name, TypeConstraint::createSimple('string', $nullAllowed));
-		}
-		
-		if (null !== ($value = $this->reqScalar($name, $nullAllowed))) {
-			return (string) $value;
-		}
-		
-		return null;
-	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optString($path, $defaultValue = null, $nullAllowed = true, bool $lenient = true) {
-		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('string', $nullAllowed), $defaultValue);
-		}
-		
-		if (null !== ($value = $this->optScalar($path, $defaultValue, $nullAllowed))) {
-			return (string) $value;
-		}
-		
-		return null;
+		return $this->try(fn () => $this->dataMap->optString($path, $defaultValue, $nullAllowed, $lenient));
 	}
-	
-	public function reqBool($path, bool $nullAllowed = false, $lenient = true) {
-		if (!$lenient) {
-			return $this->req($path, TypeConstraint::createSimple('bool', $nullAllowed));
-		}
-		
-		if (null !== ($value = $this->reqScalar($path, $nullAllowed))) {
-			return (bool) $value;
-		}
-		
-		return null;
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqBool($path, bool $nullAllowed = false, bool $lenient = true) {
+		return $this->try(fn () => $this->dataMap->reqBool($path, $nullAllowed, $lenient));
 	}
-	
-	public function optBool($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
-		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
-		}
-		
-		if (null !== ($value = $this->optScalar($path, $defaultValue, $nullAllowed))) {
-			return (bool) $value;
-		}
-		
-		return $defaultValue;
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optBool($path, $defaultValue = null, bool $nullAllowed = true, bool $lenient = true) {
+		return $this->try(fn () => $this->dataMap->optBool($path, $defaultValue, $nullAllowed, $lenient));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function reqNumeric($path, bool $nullAllowed = false) {
-		return $this->req($path, TypeConstraint::createSimple('numeric', $nullAllowed));
+		return $this->try(fn () => $this->dataMap->reqNumeric($path, $nullAllowed));
 	}
-	
+
+	/**
+	 * @throws StatusException
+	 */
 	public function optNumeric($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('numeric', $nullAllowed), $defaultValue);
+		return $this->try(fn () => $this->dataMap->optNumeric($path, $defaultValue, $nullAllowed));
 	}
-	
-	public function reqInt($path, bool $nullAllowed = false, $lenient = true) {
-		if (!$lenient) {
-			return $this->req($path, TypeConstraint::createSimple('int', $nullAllowed));
-		}
-		
-		if (null !== ($value = $this->reqNumeric($path, $nullAllowed))) {
-			return (int) $value;
-		}
-		
-		return null;
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqInt($path, bool $nullAllowed = false, bool $lenient = true) {
+		return $this->try(fn () => $this->dataMap->reqInt($path, $nullAllowed, $lenient));
 	}
-	
-	public function optInt($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
-		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('int', $nullAllowed), $defaultValue);
-		}
-		
-		if (null !== ($value = $this->optNumeric($path, $defaultValue))) {
-			return (int) $value;
-		}
-		
-		return null;
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optInt($path, $defaultValue = null, bool $nullAllowed = true, bool $lenient = true) {
+		return $this->try(fn () => $this->dataMap->optInt($path, $defaultValue, $nullAllowed, $lenient));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
-		try {
-			return $this->dataMap->reqEnum($path, $allowedValues, $nullAllowed);
-		} catch (\n2n\util\attr\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+		return $this->try(fn () => $this->dataMap->reqEnum($path, $allowedValues, $nullAllowed));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
-		try {
-			return $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed);
-		} catch (\n2n\util\attr\AttributesException $e) {
-			throw new StatusException($this->errStatus, $e->getMessage(), $e->getCode(), $e);
-		}
+		return $this->try(fn () => $this->dataMap->optEnum($path, $allowedValues, $defaultValue, $nullAllowed));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
-	public function reqArray($name, $fieldType = null, bool $nullAllowed = false, $keyType = null) {
-		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType, arrayKeyType: $keyType));
+	public function reqArray($path, $fieldType = null, bool $nullAllowed = false, $keyType = null) {
+		return $this->try(fn () => $this->dataMap->reqArray($path, $fieldType, $nullAllowed, $keyType));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
-	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false, $keyType = null) {
-		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType, arrayKeyType: $keyType), $defaultValue);
+	public function optArray($path, $fieldType = null, $defaultValue = [], bool $nullAllowed = false, $keyType = null) {
+		return $this->try(fn () => $this->dataMap->optArray($path, $fieldType, $defaultValue, $nullAllowed, $keyType));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
-	public function reqScalarArray($name, bool $nullAllowed = false, bool $fieldNullAllowed = false) {
-		return $this->reqArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $nullAllowed);
+	public function reqScalarArray($path, bool $nullAllowed = false, bool $fieldNullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->reqScalarArray($path, $nullAllowed, $fieldNullAllowed));
 	}
 
 	/**
 	 * @throws StatusException
 	 */
-	public function optScalarArray($name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
-		return $this->optArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $defaultValue, $nullAllowed);
+	public function optScalarArray($path, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->optScalarArray($path, $defaultValue, $nullAllowed, $fieldNullAllowed));
 	}
 
 	/**
-	 * @param string|AttributePath|string[] $path
-	 * @param bool $nullAllowed
-	 * @param int|null $errStatus
-	 * @return HttpData|null
+	 * @throws StatusException
+	 */
+	public function reqStringValueObject($path, string $typeName, bool $nullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->reqStringValueObject($path, $typeName, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optStringValueObject($path, string $typeName, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->try(fn () => $this->dataMap->optStringValueObject($path, $typeName, $defaultValue, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqIntValueObject($path, string $typeName, bool $nullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->reqIntValueObject($path, $typeName, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optIntValueObject($path, string $typeName, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->try(fn () => $this->dataMap->optIntValueObject($path, $typeName, $defaultValue, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqFloatValueObject($path, string $typeName, bool $nullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->reqFloatValueObject($path, $typeName, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optFloatValueObject($path, string $typeName, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->try(fn () => $this->dataMap->optFloatValueObject($path, $typeName, $defaultValue, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function reqBoolValueObject($path, string $typeName, bool $nullAllowed = false) {
+		return $this->try(fn () => $this->dataMap->reqBoolValueObject($path, $typeName, $nullAllowed));
+	}
+
+	/**
+	 * @throws StatusException
+	 */
+	public function optBoolValueObject($path, string $typeName, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->try(fn () => $this->dataMap->optBoolValueObject($path, $typeName, $defaultValue, $nullAllowed));
+	}
+
+
+	/**
 	 * @throws StatusException
 	 */
 	public function reqHttpData($path, bool $nullAllowed = false, ?int $errStatus = null): ?HttpData {
@@ -356,11 +369,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	}
 
 	/**
-	 * @param string|AttributePath|string[] $path
-	 * @param mixed|null $defaultValue
-	 * @param bool $nullAllowed
-	 * @param int|null $errStatus
-	 * @return HttpData|null
+	 * @throws StatusException
 	 */
 	public function optHttpData($path, mixed $defaultValue = null, bool $nullAllowed = true, ?int $errStatus = null): ?HttpData {
 		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
@@ -378,8 +387,12 @@ class HttpData implements AttributeReader, AttributeWriter {
 		return array_map(fn ($data) => new HttpData(new DataMap($data)),
 				$this->reqArray($path, 'array', $nullAllowed));
 	}
-	
-	public function optHttpDatas($path, $defaultValue = [], bool $nullAllowed = false) {
+
+	/**
+	 * @return HttpData[]
+	 * @throws StatusException
+	 */
+	public function optHttpDatas($path, array $defaultValue = [], bool $nullAllowed = false): array {
 		$httpDatas = $this->optArray($path, 'array', null, $nullAllowed);
 		if ($httpDatas === null) {
 			return $defaultValue;
