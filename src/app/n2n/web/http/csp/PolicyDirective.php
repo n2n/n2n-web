@@ -20,4 +20,5 @@ enum PolicyDirective: string {
 	case STYLE_SRC_ELEM = 'style-src-elem';
 	case STYLE_SRC_ATTR = 'style-src-attr';
 	case WORKER_SRC = 'worker-src';
+	case FRAME_ANCESTORS = 'frame-ancestors';
 }
