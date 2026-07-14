@@ -11,9 +11,10 @@ use n2n\web\http\controller\impl\mock\FloatValueObjectMock;
 use n2n\web\http\controller\impl\mock\IntValueObjectMock;
 use n2n\web\http\controller\impl\mock\BoolValueObjectMock;
 use n2n\web\http\controller\impl\mock\StringValueObjectMock;
+use n2n\test\case\N2nTestCaseTrait;
 
 class HttpDataTest extends TestCase {
-
+	use N2nTestCaseTrait;
 	/**
 	 * @throws StatusException
 	 */
@@ -265,12 +266,12 @@ class HttpDataTest extends TestCase {
 	function testOptArray() {
 		$dataMap = new HttpData(['key1' => [10], 'key2' => StringBackedEnumMock::VALUE1]);
 		$this->assertSame([10],
-				$dataMap->optArray('key1', 'int', true));
+				$dataMap->optArray('key1', 'int', [2]));
 
-		$dataMap->optArray('key3', 'int', true);
+		$this->assertSame([2], $dataMap->optArray('key3', 'int', [2]));
 
 		$this->expectException(StatusException::class);
-		$dataMap->optArray('key2', 'int', true);
+		$dataMap->optArray('key2', 'int', []);
 	}
 
 	/**
@@ -303,12 +304,12 @@ class HttpDataTest extends TestCase {
 	function testOptScalarArray() {
 		$dataMap = new HttpData(['key1' => [10], 'key2' => StringBackedEnumMock::VALUE1]);
 		$this->assertSame([10],
-				$dataMap->optScalarArray('key1', false, true));
+				$dataMap->optScalarArray('key1', [2], true));
 
-		$dataMap->optScalarArray('key3', false, true);
+		$this->assertSame([2], $dataMap->optScalarArray('key3', [2], true));
 
 		$this->expectException(StatusException::class);
-		$dataMap->optScalarArray('key2', false, true);
+		$dataMap->optScalarArray('key2', [2], true);
 	}
 
 	/**
@@ -316,12 +317,13 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testReqStringValueObject() {
-		$dataMap = new HttpData(['key1' => new StringValueObjectMock(10) ,'key2' => StringBackedEnumMock::VALUE1]);
-		$this->assertSame('10',
-				$dataMap->reqStringValueObject('key1', StringValueObjectMock::class)->toScalar());
+		$dataMap = new HttpData(['key1' => 'a10' ,'key2' => new IntValueObjectMock(10)]);
+		$this->assertTypeSafeEquals(new StringValueObjectMock('a10'),
+				$dataMap->reqStringValueObject('key1', StringValueObjectMock::class));
+
 
 		$this->expectException(StatusException::class);
-		$dataMap->reqStringValueObject('key2', false, false);
+		$dataMap->reqStringValueObject('key2', StringValueObjectMock::class, false);
 	}
 
 	/**
@@ -341,7 +343,7 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testOptStringValueObject() {
-		$dataMap = new HttpData(['key1' => new StringValueObjectMock(10.01), 'key2' => StringBackedEnumMock::VALUE1]);
+		$dataMap = new HttpData(['key1' => 10.01, 'key2' => new IntValueObjectMock(10)]);
 		$this->assertSame('10.01',
 				$dataMap->optStringValueObject('key1', StringValueObjectMock::class, null)->toScalar());
 
@@ -357,12 +359,12 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testReqIntValueObject() {
-		$dataMap = new HttpData(['key1' => new IntValueObjectMock(10) ,'key2' => StringBackedEnumMock::VALUE1]);
-		$this->assertSame(10,
-				$dataMap->reqIntValueObject('key1', IntValueObjectMock::class)->toScalar());
+		$dataMap = new HttpData(['key1' => 10 ,'key2' => StringBackedEnumMock::VALUE1]);
+		$this->assertTypeSafeEquals(new IntValueObjectMock(10),
+				$dataMap->reqIntValueObject('key1', IntValueObjectMock::class));
 
 		$this->expectException(StatusException::class);
-		$dataMap->reqIntValueObject('key2', false, false);
+		$dataMap->reqIntValueObject('key2', IntValueObjectMock::class, false);
 	}
 
 	/**
@@ -382,7 +384,7 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testOptIntValueObject() {
-		$dataMap = new HttpData(['key1' => new IntValueObjectMock(10), 'key2' => StringBackedEnumMock::VALUE1]);
+		$dataMap = new HttpData(['key1' => 10, 'key2' => StringBackedEnumMock::VALUE1]);
 		$this->assertSame(10,
 				$dataMap->optIntValueObject('key1', IntValueObjectMock::class, null)->toScalar());
 
@@ -397,12 +399,12 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testReqFloatValueObject() {
-		$dataMap = new HttpData(['key1' => new FloatValueObjectMock(10.01) ,'key2' => StringBackedEnumMock::VALUE1]);
-		$this->assertSame(10.01,
-				$dataMap->reqFloatValueObject('key1', FloatValueObjectMock::class)->toScalar());
+		$dataMap = new HttpData(['key1' => 10.01 ,'key2' => StringBackedEnumMock::VALUE1]);
+		$this->assertTypeSafeEquals(new FloatValueObjectMock(10.01),
+				$dataMap->reqFloatValueObject('key1', FloatValueObjectMock::class));
 
 		$this->expectException(StatusException::class);
-		$dataMap->reqFloatValueObject('key2', false, false);
+		$dataMap->reqFloatValueObject('key2', FloatValueObjectMock::class, false);
 	}
 
 	/**
@@ -423,7 +425,7 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testOptFloatValueObject() {
-		$dataMap = new HttpData(['key1' => new FloatValueObjectMock(10.01), 'key2' => StringBackedEnumMock::VALUE1]);
+		$dataMap = new HttpData(['key1' => 10.01, 'key2' => StringBackedEnumMock::VALUE1]);
 		$this->assertSame(10.01,
 				$dataMap->optFloatValueObject('key1', FloatValueObjectMock::class, null)->toScalar());
 
@@ -438,12 +440,12 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testReqBoolValueObject() {
-		$dataMap = new HttpData(['key1' => new BoolValueObjectMock(false) ,'key2' => StringBackedEnumMock::VALUE1]);
-		$this->assertSame(false,
-				$dataMap->reqBoolValueObject('key1', BoolValueObjectMock::class)->toScalar());
+		$dataMap = new HttpData(['key1' => false ,'key2' => StringBackedEnumMock::VALUE1]);
+		$this->assertTypeSafeEquals(new BoolValueObjectMock(false),
+				$dataMap->reqBoolValueObject('key1', BoolValueObjectMock::class));
 
 		$this->expectException(StatusException::class);
-		$dataMap->reqBoolValueObject('key2', false, false);
+		$dataMap->reqBoolValueObject('key2', BoolValueObjectMock::class, false);
 	}
 
 	/**
@@ -463,8 +465,8 @@ class HttpDataTest extends TestCase {
 	 * @throws IllegalValueException
 	 */
 	function testOptBoolValueObject() {
-		$dataMap = new HttpData(['key1' => new BoolValueObjectMock(false), 'key2' => StringBackedEnumMock::VALUE1]);
-		$this->assertSame(false,
+		$dataMap = new HttpData(['key1' => true, 'key2' => StringBackedEnumMock::VALUE1]);
+		$this->assertSame(true,
 				$dataMap->optBoolValueObject('key1', BoolValueObjectMock::class, null)->toScalar());
 
 		$dataMap->optBoolValueObject('key3', BoolValueObjectMock::class, null );
