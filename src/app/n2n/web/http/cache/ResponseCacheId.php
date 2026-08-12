@@ -10,7 +10,9 @@ class ResponseCacheId {
 
 	function __construct(private int $method, private string $hostName, private Path $path,
 			private ?array $queryParams) {
-		ArgUtils::valArray($this->queryParams, ['scalar', null], true);
+// commented out because array query params would be no longer allowed
+//		ArgUtils::valArray($this->queryParams, ['scalar', null], true);
+
 	}
 
 	public function getMethod(): int {

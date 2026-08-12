@@ -428,7 +428,7 @@ class HttpData implements AttributeReader, AttributeWriter {
 	 * 
 	 * @return DataMap
 	 */
-	function toDataMap() {
+	function toDataMap(): DataMap {
 		return $this->dataMap;
 	}
 }
