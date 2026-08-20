@@ -178,7 +178,12 @@ class VarsRequest implements Request {
 	 * @see \n2n\web\http\Request::getHeader()
 	 */
 	public function getHeader(string $name): ?string {
-		$varKey = 'HTTP_' . str_replace('-', '_', mb_strtoupper($name));
+		$convertedHeaderName = str_replace('-', '_', mb_strtoupper($name));
+		if ($convertedHeaderName === 'CONTENT_LENGTH' || $convertedHeaderName === 'CONTENT_TYPE') {
+			return $this->headers[$name] ?? null;
+		}
+
+		$varKey = 'HTTP_' . $convertedHeaderName;
 		if (isset($this->serverVars[$varKey])) {
 			return $this->serverVars[$varKey];
 		}
@@ -202,11 +207,24 @@ class VarsRequest implements Request {
 
 	function getHeadersMap(): array {
 		$headers = [];
-		foreach ($_SERVER as $name => $value) {
-			if (str_starts_with($name, 'HTTP_')) {
-				$headers[substr($name, 5)] = $value;
+		foreach ($this->serverVars as $name => $value) {
+			if (!str_starts_with($name, 'HTTP_')) {
+				continue;
 			}
+
+			$headerName = str_replace('_', '-', substr($name, 5));
+			$headerName = ucwords(strtolower($headerName), '-');
+			$headers[$headerName] = $value;
 		}
+
+		// Include CONTENT_TYPE and CONTENT_LENGTH which are not prefixed with HTTP_
+		if (isset($this->serverVars['CONTENT_TYPE'])) {
+			$headers['Content-Type'] = $this->serverVars['CONTENT_TYPE'];
+		}
+		if (isset($this->serverVars['CONTENT_LENGTH'])) {
+			$headers['Content-Length'] = $this->serverVars['CONTENT_LENGTH'];
+		}
+
 		return $headers;
 	}
 
