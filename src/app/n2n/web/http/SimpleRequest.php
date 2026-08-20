@@ -434,6 +434,10 @@ class SimpleRequest implements Request {
 			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
 		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(), []);
 
+		foreach ($this->headers as $name => $value) {
+			$request = $request->withHeader($name, $value);
+		}
+
 		if ($streamFactory !== null && $this->body !== null) {
 			$stream = $streamFactory->createStream($this->body);
 			$request = $request->withBody($stream);

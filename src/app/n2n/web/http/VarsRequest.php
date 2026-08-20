@@ -34,6 +34,7 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use n2n\util\StringUtils;
 
 class VarsRequest implements Request {
 	const PROTOCOL_VERSION_SEPARATOR = '/';
@@ -198,6 +199,17 @@ class VarsRequest implements Request {
 		
 		return null;
 	}
+
+	function getHeadersMap(): array {
+		$headers = [];
+		foreach ($_SERVER as $name => $value) {
+			if (str_starts_with($name, 'HTTP_')) {
+				$headers[substr($name, 5)] = $value;
+			}
+		}
+		return $headers;
+	}
+
 	/**
 	 * @return boolean
 	 */
@@ -545,23 +557,27 @@ class VarsRequest implements Request {
 	 */
 	function toPsr(ServerRequestFactoryInterface $factory, ?UploadedFileFactoryInterface $uploadedFileFactory = null,
 			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
-		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(),
+		$psrRequest = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(),
 				$this->serverVars);
 
-		if (empty($request->getQueryParams())) {
-			$request = $request->withQueryParams($this->getQuery()->toArray());
+		if (empty($psrRequest->getQueryParams())) {
+			$psrRequest = $psrRequest->withQueryParams($this->getQuery()->toArray());
+		}
+
+		foreach ($this->getHeadersMap() as $name => $value) {
+			$psrRequest = $psrRequest->withHeader($name, $value);
 		}
 		
 		$postQuery = $this->getPostQuery();
 		if (!$postQuery->isEmpty()) {
-			$request = $request->withParsedBody($postQuery->toArray());
+			$psrRequest = $psrRequest->withParsedBody($postQuery->toArray());
 		}
 
 		if ($streamFactory !== null) {
 			$rawBody = $this->getBody();
 			if ($rawBody !== '') {
 				$stream = $streamFactory->createStream($rawBody);
-				$request = $request->withBody($stream);
+				$psrRequest = $psrRequest->withBody($stream);
 			}
 		}
 
@@ -572,9 +588,9 @@ class VarsRequest implements Request {
 			}
 		}
 
-		$request->withUploadedFiles($uploadedFiles);
+		$psrRequest->withUploadedFiles($uploadedFiles);
 
-		return $request;
+		return $psrRequest;
 	}
 }
 

@@ -24,6 +24,7 @@ class SimpleRequestTest extends TestCase {
 
 		$psrRequest = $simpleRequest->toPsr($httpFactory, $httpFactory, $httpFactory);
 		$this->assertSame((string) $url, (string) $psrRequest->getUri());
+		$this->assertSame('application/json', $psrRequest->getHeader('Content-Type')[0]);
 		$this->assertSame($body, $psrRequest->getBody()->getContents());
 	}
 }
