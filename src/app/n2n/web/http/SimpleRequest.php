@@ -434,6 +434,11 @@ class SimpleRequest implements Request {
 			?StreamFactoryInterface $streamFactory = null): ServerRequestInterface {
 		$request = $factory->createServerRequest(Method::toString($this->getMethod()), (string) $this->getUrl(), []);
 
+		if ($streamFactory !== null && $this->body !== null) {
+			$stream = $streamFactory->createStream($this->body);
+			$request = $request->withBody($stream);
+		}
+
 		$uploadedFiles = [];
 		if ($uploadedFileFactory !== null && $streamFactory !== null) {
 			foreach ($this->getUploadDefinitions() as $uploadDefinition) {

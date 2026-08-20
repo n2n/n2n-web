@@ -57,7 +57,7 @@ class VarsRequest implements Request {
 	private ?StatusException $prevStatusException = null;
 	
 	public function __construct(array $serverVars, array $getVars, array $postVars, 
-			array $fileVars) {
+			array $fileVars, private string $body) {
 		$this->serverVars = $serverVars;
 		$this->postQuery = new Query($postVars);
 		$this->uploadDefinitions = $this->extractUploadDefinitions($fileVars);
@@ -534,7 +534,7 @@ class VarsRequest implements Request {
 	 * @see \n2n\web\http\Request::getBody()
 	 */
 	public function getBody(): string {
-		return IoUtils::getContents('php://input');
+		return $this->body;
 	}
 
 	/**
@@ -555,6 +555,14 @@ class VarsRequest implements Request {
 		$postQuery = $this->getPostQuery();
 		if (!$postQuery->isEmpty()) {
 			$request = $request->withParsedBody($postQuery->toArray());
+		}
+
+		if ($streamFactory !== null) {
+			$rawBody = $this->getBody();
+			if ($rawBody !== '') {
+				$stream = $streamFactory->createStream($rawBody);
+				$request = $request->withBody($stream);
+			}
 		}
 
 		$uploadedFiles = [];

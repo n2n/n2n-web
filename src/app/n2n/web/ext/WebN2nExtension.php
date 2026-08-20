@@ -36,6 +36,7 @@ use n2n\web\http\Session;
 use n2n\reflection\magic\MagicMethodInvoker;
 use n2n\util\type\TypeConstraints;
 use n2n\core\config\web\SessionSaveMode;
+use n2n\util\io\IoUtils;
 
 class WebN2nExtension implements ConfigN2nExtension {
 
@@ -86,7 +87,8 @@ class WebN2nExtension implements ConfigN2nExtension {
 		}
 
 		$phpVars = $appN2nContext->getPhpVars();
-		$request = new VarsRequest($phpVars->server, $phpVars->get, $phpVars->post, $phpVars->files);
+		$request = new VarsRequest($phpVars->server, $phpVars->get, $phpVars->post, $phpVars->files,
+				IoUtils::getContents('php://input'));
 		$request->legacyN2nContext = $appN2nContext;
 		$appConfig = $appN2nContext->getAppConfig();
 

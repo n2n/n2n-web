@@ -53,6 +53,7 @@
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "^9.6.20",
-        "n2n/n2n-test": "~7.5.0"
+        "n2n/n2n-test": "~7.5.0",
+        "guzzlehttp/psr7": "^3.0"
     }
 }
