@@ -32,6 +32,7 @@ use n2n\web\http\Method;
 use n2n\web\http\AcceptRange;
 use n2n\web\http\Request;
 use n2n\util\type\TypeConstraints;
+use n2n\util\type\TypeName;
 
 class ActionInvokerFactory {
 	const PARAM_CMD_CONTEXT_PATH = 'cmdContextPath';
@@ -257,7 +258,8 @@ class ActionInvokerFactory {
 		foreach ($method->getParameters() as $parameter) {
 			$paramName = $parameter->getName();
 			if (array_key_exists($paramName, $paramValues)) {
-				$invoker->setParamValue($paramName, $paramValues[$paramName]);
+				$invoker->setParamValue($paramName,
+							$this->convertParamValueFromPathPattern($paramValues[$paramName], $parameter->getType()));
 				continue;
 			}
 
@@ -286,6 +288,16 @@ class ActionInvokerFactory {
 		$numSinglePathParts = $pathPattern->size();
 		if ($pathPattern->hasMultiple()) $numSinglePathParts--;
 		return new InvokerInfo($invoker, $numSinglePathParts, $queryParams);
+	}
+
+	private function convertParamValueFromPathPattern(mixed $value, ?\ReflectionType $type) {
+		foreach (TypeName::extractNamedTypeNames($type) as $namedTypeName) {
+			if ($namedTypeName === ParamPath::class) {
+				return new ParamPath($value);
+			}
+		}
+
+		return $value;
 	}
 
 	public function createNonMagic(\ReflectionMethod $method) {
