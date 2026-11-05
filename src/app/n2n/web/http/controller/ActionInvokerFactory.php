@@ -291,6 +291,10 @@ class ActionInvokerFactory {
 	}
 
 	private function convertParamValueFromPathPattern(mixed $value, ?\ReflectionType $type) {
+		if ($type === null) {
+			return $value;
+		}
+
 		foreach (TypeName::extractNamedTypeNames($type) as $namedTypeName) {
 			if ($namedTypeName === ParamPath::class) {
 				return new ParamPath($value);
