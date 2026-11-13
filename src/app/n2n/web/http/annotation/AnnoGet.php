@@ -27,6 +27,9 @@ use n2n\reflection\annotation\AnnotationTrait;
 use n2n\reflection\attribute\legacy\LegacyAnnotation;
 use n2n\web\http\attribute\Get;
 
+/**
+ * @deprecated use { @link Get } now
+ */
 class AnnoGet implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 

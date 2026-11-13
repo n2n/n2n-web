@@ -30,6 +30,9 @@ use n2n\util\type\ArgUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 
+/**
+ * @deprecated use { @link Ext } now
+ */
 class AnnoExt implements ClassAnnotation, MethodAnnotation, LegacyAnnotation {
 	use ClassAnnotationTrait, MethodAnnotationTrait, AnnotationTrait;
 	

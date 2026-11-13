@@ -27,6 +27,9 @@ use n2n\reflection\annotation\AnnotationTrait;
 use n2n\reflection\attribute\legacy\LegacyAnnotation;
 use n2n\web\http\attribute\Delete;
 
+/**
+ * @deprecated use { @link Delete } now
+ */
 class AnnoDelete implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 

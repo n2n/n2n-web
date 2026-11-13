@@ -29,6 +29,9 @@ use n2n\web\http\attribute\Intercept;
 use n2n\reflection\annotation\ClassAnnotation;
 use n2n\reflection\annotation\ClassAnnotationTrait;
 
+/**
+ * @deprecated use { @link Intercept } now
+ */
 class AnnoIntercept implements ClassAnnotation, MethodAnnotation, LegacyAnnotation {
     use ClassAnnotationTrait, MethodAnnotationTrait, AnnotationTrait;
     

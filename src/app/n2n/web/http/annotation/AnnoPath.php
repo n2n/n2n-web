@@ -28,6 +28,9 @@ use n2n\reflection\attribute\legacy\LegacyAnnotation;
 use n2n\web\http\attribute\PathPattern;
 use n2n\util\type\ArgUtils;
 
+/**
+ * @deprecated use { @link PathPattern } now
+ */
 class AnnoPath implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 	

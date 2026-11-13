@@ -27,6 +27,9 @@ use n2n\reflection\annotation\AnnotationTrait;
 use n2n\reflection\attribute\legacy\LegacyAnnotation;
 use n2n\web\http\attribute\Consums;
 
+/**
+ * @deprecated use { @link Consums } now
+ */
 class AnnoConsums implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 	
