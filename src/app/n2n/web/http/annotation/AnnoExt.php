@@ -24,11 +24,13 @@ namespace n2n\web\http\annotation;
 use n2n\reflection\annotation\ClassAnnotation;
 use n2n\reflection\annotation\ClassAnnotationTrait;
 use n2n\reflection\annotation\AnnotationTrait;
+use n2n\reflection\attribute\legacy\LegacyAnnotation;
+use n2n\web\http\attribute\Ext;
 use n2n\util\type\ArgUtils;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 
-class AnnoExt implements ClassAnnotation, MethodAnnotation {
+class AnnoExt implements ClassAnnotation, MethodAnnotation, LegacyAnnotation {
 	use ClassAnnotationTrait, MethodAnnotationTrait, AnnotationTrait;
 	
 	private $names;
@@ -40,5 +42,13 @@ class AnnoExt implements ClassAnnotation, MethodAnnotation {
 	
 	public function getNames() {
 		return $this->names;
+	}
+
+	public function getAttributeName(): string {
+		return Ext::class;
+	}
+
+	public function toAttributeInstance() {
+		return new Ext(...array_map('strval', $this->names));
 	}
 }

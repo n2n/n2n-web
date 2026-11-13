@@ -24,7 +24,17 @@ namespace n2n\web\http\annotation;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\AnnotationTrait;
+use n2n\reflection\attribute\legacy\LegacyAnnotation;
+use n2n\web\http\attribute\Get;
 
-class AnnoGet implements MethodAnnotation {
+class AnnoGet implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
+
+	public function getAttributeName(): string {
+		return Get::class;
+	}
+
+	public function toAttributeInstance() {
+		return new Get();
+	}
 }

@@ -24,9 +24,11 @@ namespace n2n\web\http\annotation;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\AnnotationTrait;
+use n2n\reflection\attribute\legacy\LegacyAnnotation;
+use n2n\web\http\attribute\PathPattern;
 use n2n\util\type\ArgUtils;
 
-class AnnoPath implements MethodAnnotation {
+class AnnoPath implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 	
 	protected $method;
@@ -39,5 +41,13 @@ class AnnoPath implements MethodAnnotation {
 	
 	public function getPattern() {
 		return $this->pattern;
+	}
+
+	public function getAttributeName(): string {
+		return PathPattern::class;
+	}
+
+	public function toAttributeInstance() {
+		return new PathPattern((string) $this->pattern);
 	}
 }

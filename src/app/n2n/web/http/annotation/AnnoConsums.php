@@ -24,8 +24,10 @@ namespace n2n\web\http\annotation;
 use n2n\reflection\annotation\MethodAnnotationTrait;
 use n2n\reflection\annotation\MethodAnnotation;
 use n2n\reflection\annotation\AnnotationTrait;
+use n2n\reflection\attribute\legacy\LegacyAnnotation;
+use n2n\web\http\attribute\Consums;
 
-class AnnoConsums implements MethodAnnotation {
+class AnnoConsums implements MethodAnnotation, LegacyAnnotation {
 	use MethodAnnotationTrait, AnnotationTrait;
 	
 	private $mimeTypes;
@@ -36,5 +38,13 @@ class AnnoConsums implements MethodAnnotation {
 	
 	public function getMimeTypes() {
 		return $this->mimeTypes;
+	}
+
+	public function getAttributeName(): string {
+		return Consums::class;
+	}
+
+	public function toAttributeInstance() {
+		return new Consums(...$this->mimeTypes);
 	}
 }
