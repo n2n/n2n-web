@@ -183,7 +183,7 @@
 					</div>
 				<?php endforeach ?>
 				
-				<?php if (0 < mb_strlen($output = $throwableModel->getOutput())): ?>
+				<?php if (0 < mb_strlen((string) ($output = $throwableModel->getOutput()))): ?>
 					<div id="output" class="output">
 						<h2>Output</h2>
 						<div class="code">
