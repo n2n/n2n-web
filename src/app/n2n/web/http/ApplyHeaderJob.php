@@ -21,7 +21,7 @@ class ApplyHeaderJob implements HeaderJob {
 
 		// @todo maybe throw an illegalargument exception headerStr contains illegal characters.
 		$this->headerStr = str_replace(array("\r", "\n"), '', (string) $headerStr);
-		$this->replace = (boolean) $replace;
+		$this->replace = (bool) $replace;
 	}
 
 	private function ensureNameValueAnalyzed(): void {

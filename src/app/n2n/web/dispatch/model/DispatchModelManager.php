@@ -50,7 +50,7 @@ class DispatchModelManager {
 	 */
 	public function getDispatchModel(Dispatchable $dispatchable) {
 		if ($dispatchable instanceof DynamicDispatchable) {
-			$objHash = spl_object_hash($dispatchable);
+			$objHash = spl_object_id($dispatchable);
 			if (isset($this->dynamicDispatchModels[$objHash])) {
 				return $this->dynamicDispatchModels[$objHash];
 			}	

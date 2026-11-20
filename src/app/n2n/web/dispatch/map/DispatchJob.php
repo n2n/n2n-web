@@ -276,10 +276,10 @@ class DispatchJob {
 // 	}
 	
 // 	public function registerDispatchListener(DispatchListener $dispatchListener) {
-// 		$this->dispatchListeners[spl_object_hash($dispatchListener)] = $dispatchListener;
+// 		$this->dispatchListeners[spl_object_id($dispatchListener)] = $dispatchListener;
 // 	}
 	
 // 	public function unregisterDispatchListener(DispatchListener $dispatchListener) {
-// 		unset($this->dispatchListeners[spl_object_hash($dispatchListener)]);
+// 		unset($this->dispatchListeners[spl_object_id($dispatchListener)]);
 // 	}
 }

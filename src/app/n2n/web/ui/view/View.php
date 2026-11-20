@@ -324,14 +324,14 @@ abstract class View extends BufferedPayload implements UiComponent {
 	 * @param ViewStateListener $stateListener
 	 */
 	public function registerStateListener(ViewStateListener $stateListener) {
-		$this->stateListeners[spl_object_hash($stateListener)] = $stateListener;
+		$this->stateListeners[spl_object_id($stateListener)] = $stateListener;
 	}
 	/**
 	 *
 	 * @param ViewStateListener $stateListener
 	 */
 	public function unregisterStateListener(ViewStateListener $stateListener) {
-		unset($this->stateListeners[spl_object_hash($stateListener)]);
+		unset($this->stateListeners[spl_object_id($stateListener)]);
 	}
 	/**
 	 *

@@ -36,7 +36,7 @@ class PropertyPathPart {
 	 */
 	public function __construct($propertyName, $array = false, $arrayKey = null) {
 		$this->propertyName = (string) $propertyName;
-		$this->array = (boolean) $array;
+		$this->array = (bool) $array;
 		$this->arrayKey = $arrayKey;
 		$this->resolvedArrayKey = $arrayKey;
 	}

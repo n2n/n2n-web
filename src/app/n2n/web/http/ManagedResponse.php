@@ -722,10 +722,10 @@ class ManagedResponse extends Response {
 	}
 
 	public function registerListener(ResponseListener $listener): void {
-		$this->listeners[spl_object_hash($listener)] = $listener;
+		$this->listeners[spl_object_id($listener)] = $listener;
 	}
 
 	public function unregisterListener(ResponseListener $listener): void {
-		unset($this->listeners[spl_object_hash($listener)]);
+		unset($this->listeners[spl_object_id($listener)]);
 	}
 }

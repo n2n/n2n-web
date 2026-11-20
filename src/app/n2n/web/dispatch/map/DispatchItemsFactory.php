@@ -104,7 +104,6 @@ class DispatchItemsFactory {
 						$method->getFileName(), $method->getStartLine());
 			}
 			
-			$method->setAccessible(true);
 		}
 		
 		return $methods;

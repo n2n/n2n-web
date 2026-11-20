@@ -285,7 +285,8 @@ class VarsSession implements Session {
 }
 
 
-class CacheStoreSessionHandler implements \SessionHandlerInterface {
+class CacheStoreSessionHandler implements \SessionHandlerInterface, \SessionIdInterface,
+		\SessionUpdateTimestampHandlerInterface {
 
 	function __construct(private CacheStore $cacheStore) {
 	}
@@ -315,5 +316,17 @@ class CacheStoreSessionHandler implements \SessionHandlerInterface {
 	public function write(string $id, string $data): bool {
 		$this->cacheStore->store($id, new CharacteristicsList([]), $data);
 		return true;
+	}
+
+	public function create_sid(): string {
+		return session_create_id();
+	}
+
+	public function validateId(string $id): bool {
+		return null !== $this->cacheStore->get($id, new CharacteristicsList([]));
+	}
+
+	public function updateTimestamp(string $id, string $data): bool {
+		return $this->write($id, $data);
 	}
 }

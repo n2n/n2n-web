@@ -83,7 +83,6 @@ class ContentSecurityPolicyTest extends \PHPUnit\Framework\TestCase {
 	private function extractPolicySourceType(PolicySource $policySource): mixed {
 		$class = new \ReflectionClass($policySource);
 		$property = $class->getProperty('type');
-		$property->setAccessible(true);
 		return $property->getValue($policySource);
 	}
 }

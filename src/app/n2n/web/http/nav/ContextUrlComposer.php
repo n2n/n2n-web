@@ -40,7 +40,7 @@ class ContextUrlComposer implements UrlComposer {
 	private $absolute = false;
 
 	public function __construct($toController) {
-		$this->toController = (boolean) $toController;
+		$this->toController = (bool) $toController;
 	}
 
 	/**

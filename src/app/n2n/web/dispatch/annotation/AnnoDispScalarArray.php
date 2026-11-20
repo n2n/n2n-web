@@ -33,7 +33,7 @@ class AnnoDispScalarArray implements PropertyAnnotation, MethodAnnotation {
 	private $useArrayObject;
 	
 	public function __construct($useArrayObject = false) {
-		$this->useArrayObject = (boolean) $useArrayObject;
+		$this->useArrayObject = (bool) $useArrayObject;
 	}
 	
 	public function useArrayObject() {

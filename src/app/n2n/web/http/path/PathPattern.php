@@ -34,7 +34,7 @@ class PathPattern {
 	private $multiple = false;
 	
 	public function setExtensionIncluded($extensionIncluded) {
-		$this->extensionIncluded = (boolean) $extensionIncluded;
+		$this->extensionIncluded = (bool) $extensionIncluded;
 	}
 	
 	public function setAllowedExtensions(?array $allowedExtensions = null) {
@@ -46,8 +46,8 @@ class PathPattern {
 			throw new PathPatternComposeException('Cannot add path part after multiple modifier.');
 		}
 				
-		$customDef['required'] = (boolean) $required;
-		$this->multiple = $customDef['multiple'] = (boolean) $multiple;
+		$customDef['required'] = (bool) $required;
+		$this->multiple = $customDef['multiple'] = (bool) $multiple;
 		$customDef['paramName'] = $paramName;
 		$this->patternDefs[] = $customDef;
 	}
