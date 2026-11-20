@@ -29,10 +29,10 @@ class BindingTree {
 	private $bindingDefinitions = array();
 	
 	public function registerBase(BindingDefinition $binding) {
-		if (isset($this->bindingDefinitions[''])) {
+		if (isset($this->bindingDefinitions[(string) null])) {
 			throw new BindingTreeConflictException('Base Binding already defined.');
 		}
-		$this->bindingDefinitions[''] = $binding;
+		$this->bindingDefinitions[(string) null] = $binding;
 	}
 	
 	public function register(PropertyPath $propertyPath, BindingDefinition $bindingDefinition) {
@@ -68,7 +68,7 @@ class BindingTree {
 	
 	public function containsPropertyPath(PropertyPath $propertyPath) {
 		if ($propertyPath->isEmpty()) {
-			return isset($this->bindingDefinitions['']);
+			return isset($this->bindingDefinitions[(string) null]);
 		}
 		
 		$lastPart = $propertyPath->getLast();
@@ -133,8 +133,8 @@ class BindingTree {
 	
 	public function lookup(PropertyPath $propertyPath) {
 		if ($propertyPath->isEmpty()) {
-			if (isset($this->bindingDefinitions[''])) {
-				return $this->bindingDefinitions[''];
+			if (isset($this->bindingDefinitions[(string) null])) {
+				return $this->bindingDefinitions[(string) null];
 			}
 		} else if (!$propertyPath->getLast()->isArray()) {
 			$propertyPathStr = (string) $propertyPath;
