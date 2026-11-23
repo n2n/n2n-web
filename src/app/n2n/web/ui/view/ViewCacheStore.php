@@ -61,7 +61,7 @@ class ViewCacheStore implements ThreadScoped {
 // 	 */
 // 	public function __construct($cacheDirPath, $enabled, Request $request) {
 // 		$this->cacheDirPath = (string) $cacheDirPath;
-// 		$this->enabled = (boolean) $enabled;
+// 		$this->enabled = (bool) $enabled;
 // 		$this->request = $request;
 // 	}
 // 	/**
