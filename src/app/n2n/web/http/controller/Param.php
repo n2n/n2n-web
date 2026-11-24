@@ -43,6 +43,7 @@ use n2n\spec\valobj\scalar\IntValueObject;
 use n2n\spec\valobj\scalar\FloatValueObject;
 use n2n\spec\valobj\scalar\BoolValueObject;
 use n2n\spec\valobj\err\IllegalValueException;
+use n2n\util\type\TypeUtils;
 
 abstract class Param {
 	private string|array $value;
@@ -463,19 +464,28 @@ abstract class Param {
 	public function parseJsonOrReject(int $errStatus = Response::STATUS_400_BAD_REQUEST, bool $assoc = true): object|array {
 		return $this->parseJson($errStatus, $assoc);
 	}
-	
+
 	/**
 	 * @param int $errStatus
 	 * @param bool $assoc
-	 * @throws StatusException
+	 * @param bool $nonComplexRootAllowed
 	 * @return array|object
+	 * @throws StatusException
 	 */
-	public function parseJson(int $errStatus = Response::STATUS_400_BAD_REQUEST, bool $assoc = true): object|array {
+	public function parseJson(int $errStatus = Response::STATUS_400_BAD_REQUEST, bool $assoc = true,
+			bool $nonComplexRootAllowed = false): object|array {
 		try {
-			return StringUtils::jsonDecode($this->value, $assoc);
+			$value = StringUtils::jsonDecode($this->value, $assoc);
 		} catch (\n2n\util\JsonDecodeFailedException $e) {
 			throw new StatusException($errStatus, null, null, $e);
 		}
+
+		if ($nonComplexRootAllowed || is_array($value) || is_object($value)) {
+			return $value;
+		}
+
+		throw new StatusException($errStatus, 'JSON root value type not allowed: '
+				. TypeUtils::getTypeInfo($value));
 	}
 	
 	/**
